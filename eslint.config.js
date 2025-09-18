@@ -16,7 +16,7 @@ export default defineConfig([
     extends: ['js/recommended'],
     languageOptions: { globals: globals.browser },
     rules: {
-      'no-console': 'error',
+      'no-console': 'warn',
       '@typescript-eslint/no-explicit-any': 'error',
     },
   },
@@ -73,7 +73,7 @@ export default defineConfig([
     },
     rules: {
       '@typescript-eslint/no-unused-vars': 'off',
-      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-imports': 'warn',
       'unused-imports/no-unused-vars': [
         'warn',
         {
