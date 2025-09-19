@@ -1,4 +1,6 @@
-import { Button, Input } from '@/components';
+import { CornerDownLeft, TrashIcon } from 'lucide-react';
+import { Button, ButtonGroup, Input, Separator } from '@/components';
+import { cn } from '@/utils';
 
 export interface LinkMainProps {
   url: string;
@@ -8,6 +10,8 @@ export interface LinkMainProps {
   isActive: boolean;
   placeholder?: string;
   confirmText?: string;
+  label?: string;
+  linkPopoverClassName?: string;
 }
 
 export const LinkMain: React.FC<LinkMainProps> = ({
@@ -17,7 +21,7 @@ export const LinkMain: React.FC<LinkMainProps> = ({
   removeLink,
   placeholder,
   isActive,
-  confirmText,
+  linkPopoverClassName,
 }: LinkMainProps) => {
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
@@ -27,20 +31,29 @@ export const LinkMain: React.FC<LinkMainProps> = ({
   };
 
   return (
-    <div className={'flex flex-col gap-2'}>
-      <Input
-        type='url'
-        placeholder={placeholder}
-        value={url}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUrl(e.target.value)}
-        onKeyDown={handleKeyDown}
-        autoComplete='off'
-        autoCorrect='off'
-        autoCapitalize='off'
-      />
-      <Button type='button' onClick={setLink} title='확인 버튼' disabled={!url && !isActive}>
-        {confirmText || '확인'}
-      </Button>
+    <div className={cn('flex w-full items-start gap-1', linkPopoverClassName)}>
+      <div className='flex w-full gap-1'>
+        <Input
+          type='url'
+          placeholder={placeholder || '링크를 입력해주세요.'}
+          value={url}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUrl(e.target.value)}
+          onKeyDown={handleKeyDown}
+          autoComplete='off'
+          autoCorrect='off'
+          autoCapitalize='off'
+          className='w-full'
+        />
+        <ButtonGroup orientation='horizontal'>
+          <Button type='button' onClick={setLink} disabled={!url && !isActive}>
+            <CornerDownLeft />
+          </Button>
+          <Separator orientation='vertical' />
+          <Button type='button' onClick={removeLink} title='Remove link' disabled={!url && !isActive} variant='ghost'>
+            <TrashIcon />
+          </Button>
+        </ButtonGroup>
+      </div>
     </div>
   );
 };

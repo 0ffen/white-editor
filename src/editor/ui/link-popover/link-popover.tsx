@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Popover, PopoverContent, PopoverTrigger, type ButtonProps } from '@/components';
 
 import { useTiptapEditor } from '@/hooks';
+import { cn } from '@/utils';
 import { LinkButton } from './link-button';
 import { LinkMain } from './link-main';
 import { useLinkPopover, type UseLinkPopoverConfig } from './use-link-popover';
@@ -10,7 +11,8 @@ import { useLinkPopover, type UseLinkPopoverConfig } from './use-link-popover';
 export interface LinkPopoverProps extends Omit<ButtonProps, 'type'>, UseLinkPopoverConfig {
   onOpenChange?: (isOpen: boolean) => void;
   autoOpenOnLinkActive?: boolean;
-  confirmText?: string;
+  placeholder?: string;
+  linkPopoverClassName?: string;
 }
 
 /**
@@ -28,7 +30,8 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
       autoOpenOnLinkActive = true,
       onClick,
       children,
-      confirmText,
+      placeholder,
+      linkPopoverClassName,
       ...buttonProps
     },
     ref
@@ -87,18 +90,18 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
             {...buttonProps}
             ref={ref}
           >
-            {children ?? <Icon className='tiptap-button-icon' />}
+            {children ?? <Icon />}
           </LinkButton>
         </PopoverTrigger>
 
-        <PopoverContent>
+        <PopoverContent className={cn('border-none p-2 shadow-sm', linkPopoverClassName)}>
           <LinkMain
             url={url}
             setUrl={setUrl}
             setLink={handleSetLink}
             removeLink={removeLink}
             isActive={isActive}
-            confirmText={confirmText}
+            placeholder={placeholder}
           />
         </PopoverContent>
       </Popover>
