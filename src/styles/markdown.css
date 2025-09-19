@@ -1,0 +1,108 @@
+div[role='presentation'] {
+  @apply mb-4 p-4;
+}
+
+div[role='presentation'] :is(h1) {
+  @apply text-2xl;
+}
+
+div[role='presentation'] :is(h2) {
+  @apply text-xl;
+}
+
+div[role='presentation'] :is(h3) {
+  @apply mb-3 text-lg;
+}
+
+div[role='presentation'] :is(h4) {
+  @apply mb-3 text-base;
+}
+
+div[role='presentation'] :is(h1, h2, h3, h4, h5, h6) {
+  @apply scroll-mt-32 font-semibold;
+}
+
+div[role='presentation'] code:not(pre > code) {
+  @apply bg-muted rounded p-1 px-[0.3rem] py-[0.2rem] font-mono text-sm font-medium before:hidden after:hidden;
+}
+
+div[role='presentation'] blockquote {
+  @apply border-primary text-secondary-foreground/80 my-0 py-0 text-sm font-normal not-italic;
+
+  p {
+    @apply my-0 py-[2px] before:content-normal after:content-normal;
+  }
+
+  ol,
+  ul {
+    @apply my-0 py-0;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-secondary-foreground/80 my-0 py-0;
+  }
+}
+
+div[role='presentation'] li,
+p {
+  @apply m-0 p-0 py-1 pl-1;
+  padding-block: 0;
+}
+
+div[role='presentation'] table {
+  @apply w-full border-collapse border;
+}
+
+div[role='presentation'] th {
+  @apply bg-background border p-2;
+}
+
+div[role='presentation'] td {
+  @apply border p-2;
+}
+
+div[role='presentation'] hr {
+  @apply border-border my-6 border-0 border-b;
+}
+
+div[role='presentation'] a {
+  @apply font-normal text-sky-500 no-underline hover:text-sky-600;
+}
+
+div[role='presentation'] input[type='checkbox']:disabled {
+  @apply text-foreground focus:ring-primary border;
+}
+
+div[role='presentation'] [data-type='taskList'] {
+  @apply list-none pl-1;
+}
+
+div[role='presentation'] [data-type='taskList'] li {
+  @apply flex items-center gap-2;
+}
+
+div[role='presentation'] [data-type='taskList'] input[type='checkbox'] {
+  @apply h-4 w-4;
+}
+
+div[role='presentation'] details {
+  @apply py-2 transition-all;
+}
+
+div[role='presentation'] summary {
+  @apply text-foreground flex cursor-pointer items-center justify-between py-2 font-medium;
+}
+
+div[role='presentation'] summary::after {
+  content: '';
+  @apply border-foreground inline-block h-2 w-2 -rotate-45 border-b-2 border-l-2 transition-all;
+}
+
+div[role='presentation'] details[open] summary::after {
+  transform: rotate(135deg);
+}
