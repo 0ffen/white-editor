@@ -3,6 +3,7 @@ import { Table } from 'lucide-react';
 import { useTiptapEditor } from '@/hooks';
 import { isExtensionAvailable, isNodeTypeSelected } from '@/utils';
 import type { Editor } from '@tiptap/react';
+import type { TableActions } from './contents';
 
 export interface UseTableConfig {
   editor?: Editor | null;
@@ -40,7 +41,11 @@ const insertNewTable = (editor: Editor | null) => {
   }
 };
 
-export function shouldShowTableButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
+export function shouldShowTableButton(props: {
+  editor: Editor | null;
+  hideWhenUnavailable: boolean;
+  actions?: TableActions;
+}): boolean {
   const { editor, hideWhenUnavailable } = props;
 
   if (!editor || !editor.isEditable) return false;
