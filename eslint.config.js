@@ -9,7 +9,7 @@ import tseslint from 'typescript-eslint';
 import js from '@eslint/js';
 
 export default defineConfig([
-  globalIgnores(['.vscode/**', 'dist/**', 'node_modules/**', 'public/**']),
+  globalIgnores(['.vscode/**', 'dist/**', 'node_modules/**', 'public/**', 'src/assets/**']),
   {
     files: ['**/*.{ts,mts,cts,tsx}'],
     plugins: { js },
