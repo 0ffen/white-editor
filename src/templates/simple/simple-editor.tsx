@@ -83,11 +83,6 @@ const MainToolbarContent = () => {
         <MarkButton type='code' />
         <MarkButton type='underline' />
         <LinkPopover />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
         <TableButton />
       </ToolbarGroup>
 

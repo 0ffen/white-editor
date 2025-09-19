@@ -8,18 +8,6 @@
   height: 30px;
 }
 
-/* 활성화된 툴바 버튼 아이콘 스타일 */
-.toolbar-wrapper button[data-active='true'] svg {
-  color: #3b82f6; /* 기본 활성 색상 (예: blue-500) */
-  transition: all 0.1s ease-in-out;
-}
-
-/* 비활성화된 툴바 버튼 아이콘 스타일 */
-.toolbar-wrapper button:disabled svg {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
 .ProseMirror {
   @apply h-[500px];
 }
