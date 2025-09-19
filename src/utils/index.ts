@@ -1,2 +1,2 @@
-export * from './tiptap-utils';
+export * from './editor-utils';
 export * from './utils';
