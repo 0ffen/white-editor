@@ -1,3 +1,11 @@
+.editor-wrapper {
+  @apply border-border bg-background min-h-96 rounded-md border;
+}
+
+.ProseMirror {
+  @apply min-h-[200px] overflow-y-auto;
+}
+
 .ProseMirror:focus {
   outline: none;
 }
