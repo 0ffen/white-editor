@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Redo2Icon, Undo2Icon } from 'lucide-react';
 import { useTiptapEditor } from '@/hooks/use-tiptap-editor';
 
-import { isNodeTypeSelected } from '@/utils/tiptap-utils';
+import { isNodeTypeSelected } from '@/utils/editor-utils';
 
 import { type Editor } from '@tiptap/react';
 

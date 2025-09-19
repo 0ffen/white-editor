@@ -3,7 +3,7 @@ import * as React from 'react';
 import { TextQuote } from 'lucide-react';
 import { useTiptapEditor } from '@/hooks/use-tiptap-editor';
 
-import { findNodePosition, isNodeInSchema, isNodeTypeSelected, isValidPosition } from '@/utils/tiptap-utils';
+import { findNodePosition, isNodeInSchema, isNodeTypeSelected, isValidPosition } from '@/utils/editor-utils';
 import { NodeSelection, TextSelection } from '@tiptap/pm/state';
 import type { Editor } from '@tiptap/react';
 export const BLOCKQUOTE_SHORTCUT_KEY = 'mod+shift+b';

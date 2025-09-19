@@ -10,7 +10,7 @@ import {
   UnderlineIcon,
 } from 'lucide-react';
 import { useTiptapEditor } from '@/hooks/use-tiptap-editor';
-import { isMarkInSchema, isNodeTypeSelected } from '@/utils/tiptap-utils';
+import { isMarkInSchema, isNodeTypeSelected } from '@/utils/editor-utils';
 import type { Editor } from '@tiptap/react';
 
 export type Mark = 'bold' | 'italic' | 'strike' | 'code' | 'underline' | 'superscript' | 'subscript';

@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { AlignCenterIcon, AlignJustifyIcon, AlignLeftIcon, AlignRightIcon } from 'lucide-react';
 import { useTiptapEditor } from '@/hooks/use-tiptap-editor';
-import { isExtensionAvailable, isNodeTypeSelected } from '@/utils/tiptap-utils';
+import { isExtensionAvailable, isNodeTypeSelected } from '@/utils/editor-utils';
 import { type Editor } from '@tiptap/react';
 import type { ChainedCommands } from '@tiptap/react';
 
