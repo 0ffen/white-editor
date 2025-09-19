@@ -5,7 +5,7 @@ import { cn } from '@/utils/utils';
 import { Slot } from '@radix-ui/react-slot';
 
 const buttonVariants = cva(
-  'inline-flex items-center w-full justify-center gap-2 whitespace-nowrap rounded-sm text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  'inline-flex items-center data-[active=true]:bg-primary/10 data-[active=true]:[&_svg]:text-primary w-full justify-center gap-2 whitespace-nowrap rounded-sm text-sm font-normal transition-colors focus-visible:outline-none  disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
@@ -20,7 +20,7 @@ const buttonVariants = cva(
         default: 'h-8 p-2',
         sm: 'h-6 rounded-md px-3 text-xs',
         lg: 'h-10 rounded-md px-8',
-        icon: 'p-1',
+        icon: 'p-1 justify-center',
       },
       justify: {
         center: 'justify-center',
@@ -51,7 +51,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : 'button';
     return (
       <Comp
-        className={cn(buttonVariants({ className, variant, size, justify }), { 'bg-accent': isActive })}
+        className={cn(buttonVariants({ className, variant, size, justify }))}
         data-active={isActive}
         ref={ref}
         {...props}

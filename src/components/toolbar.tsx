@@ -13,16 +13,8 @@ const toolbarVariants = cva('flex items-center gap-1', {
         'sticky top-0 z-10 w-full min-h-[2.75rem]',
         'bg-transparent border-b border-border',
         'px-2 overflow-x-auto overscroll-x-contain',
-        'scrollbar-none',
-        'max-sm:absolute max-sm:top-auto max-sm:h-[calc(2.75rem+env(safe-area-inset-bottom,0px))]',
-        'max-sm:border-t max-sm:border-b-0 max-sm:pb-[env(safe-area-inset-bottom,0px)]',
-        'max-sm:flex-nowrap max-sm:justify-start',
       ],
-      floating: [
-        'p-0.5 rounded-lg border border-border',
-        'bg-background shadow-md outline-none overflow-hidden',
-        'max-sm:w-full max-sm:rounded-none max-sm:border-none max-sm:shadow-none',
-      ],
+      floating: ['p-0.5 rounded-lg border border-border', 'bg-background shadow-sm outline-none overflow-hidden'],
     },
   },
   defaultVariants: {

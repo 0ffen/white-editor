@@ -1,7 +1,3 @@
-.markdown {
-  @apply p-2;
-}
-
 .markdown :is(h1) {
   @apply text-2xl;
 }
@@ -27,7 +23,7 @@
 }
 
 .markdown blockquote {
-  @apply border-primary text-secondary-foreground/80 my-0 py-0 text-sm font-normal not-italic;
+  @apply border-primary! text-secondary-foreground/80! my-0! py-0! text-sm! font-normal not-italic!;
 
   p {
     @apply my-0 py-[2px] before:content-normal after:content-normal;
@@ -55,11 +51,15 @@ p {
 }
 
 .markdown table {
-  @apply w-full border-collapse border;
+  @apply w-full border;
+}
+
+.markdown tr {
+  @apply [&>.selectedCell]:bg-border/10 [&>.selectedCell.tableSelection]:bg-border/50;
 }
 
 .markdown th {
-  @apply bg-background border p-2;
+  @apply bg-accent border p-2;
 }
 
 .markdown td {
@@ -71,7 +71,7 @@ p {
 }
 
 .markdown a {
-  @apply font-normal text-sky-500 no-underline underline hover:text-sky-600;
+  @apply text-primary hover:text-primary/80 cursor-pointer font-normal underline;
 }
 
 .markdown input[type='checkbox']:disabled {
@@ -87,7 +87,7 @@ p {
 }
 
 .markdown [data-type='taskList'] input[type='checkbox'] {
-  @apply h-4 w-4;
+  @apply h-4 w-4 rounded-none;
 }
 
 .markdown details {
