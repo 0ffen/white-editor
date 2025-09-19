@@ -12,3 +12,5 @@ export * from './toolbar';
 export * from './toolbar-button';
 export * from './toggle';
 export * from './toggle-group';
+export * from './context-menu';
+export * from './floating-toolbar';
