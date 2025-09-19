@@ -15,11 +15,6 @@ export interface LinkPopoverProps extends Omit<ButtonProps, 'type'>, UseLinkPopo
   linkPopoverClassName?: string;
 }
 
-/**
- * @name LinkPopover
- *
- * 커스텀 팝오버 구현이 필요한 경우 useLinkPopover 훅을 사용
- */
 export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>(
   (
     {
@@ -39,7 +34,7 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
     const { editor } = useTiptapEditor(providedEditor);
     const [isOpen, setIsOpen] = React.useState(false);
 
-    const { isVisible, canSet, isActive, url, setUrl, setLink, removeLink, openLink, label, Icon } = useLinkPopover({
+    const { isVisible, canSet, isActive, url, setUrl, setLink, removeLink, openLink, Icon } = useLinkPopover({
       editor,
       hideWhenUnavailable,
       onSetLink,
@@ -84,8 +79,9 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
             disabled={!canSet}
             data-active-state={isActive ? 'on' : 'off'}
             data-disabled={!canSet}
-            aria-label={label}
+            aria-label={'link'}
             aria-pressed={isActive}
+            isActive={isActive}
             onClick={handleClick}
             {...buttonProps}
             ref={ref}
@@ -94,7 +90,7 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
           </LinkButton>
         </PopoverTrigger>
 
-        <PopoverContent className={cn('border-none p-2 shadow-sm', linkPopoverClassName)}>
+        <PopoverContent className={cn('rounded-4xl px-2 py-1 pr-3', linkPopoverClassName)}>
           <LinkMain
             url={url}
             setUrl={setUrl}

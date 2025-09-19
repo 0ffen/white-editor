@@ -1,5 +1,6 @@
-import { CornerDownLeft, TrashIcon } from 'lucide-react';
-import { Button, ButtonGroup, Input, Separator } from '@/components';
+import { useEffect, useRef } from 'react';
+import { CornerDownLeft, Trash2Icon } from 'lucide-react';
+import { Button, ButtonGroup, Input } from '@/components';
 import { cn } from '@/utils';
 
 export interface LinkMainProps {
@@ -9,8 +10,6 @@ export interface LinkMainProps {
   removeLink: () => void;
   isActive: boolean;
   placeholder?: string;
-  confirmText?: string;
-  label?: string;
   linkPopoverClassName?: string;
 }
 
@@ -23,6 +22,16 @@ export const LinkMain: React.FC<LinkMainProps> = ({
   isActive,
   linkPopoverClassName,
 }: LinkMainProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+      const length = inputRef.current.value.length;
+      inputRef.current.setSelectionRange(length, length);
+    }
+  }, []);
+
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
       event.preventDefault();
@@ -31,29 +40,42 @@ export const LinkMain: React.FC<LinkMainProps> = ({
   };
 
   return (
-    <div className={cn('flex w-full items-start gap-1', linkPopoverClassName)}>
-      <div className='flex w-full gap-1'>
-        <Input
-          type='url'
-          placeholder={placeholder || '링크를 입력해주세요.'}
-          value={url}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUrl(e.target.value)}
-          onKeyDown={handleKeyDown}
-          autoComplete='off'
-          autoCorrect='off'
-          autoCapitalize='off'
-          className='w-full'
-        />
-        <ButtonGroup orientation='horizontal'>
-          <Button type='button' onClick={setLink} disabled={!url && !isActive}>
-            <CornerDownLeft />
-          </Button>
-          <Separator orientation='vertical' />
-          <Button type='button' onClick={removeLink} title='Remove link' disabled={!url && !isActive} variant='ghost'>
-            <TrashIcon />
-          </Button>
-        </ButtonGroup>
-      </div>
+    <div className={cn('flex w-full gap-1 rounded-4xl', linkPopoverClassName)}>
+      <Input
+        type='url'
+        placeholder={placeholder || 'Paste a Link'}
+        value={url}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUrl(e.target.value)}
+        onKeyDown={handleKeyDown}
+        autoComplete='off'
+        autoCorrect='off'
+        autoCapitalize='off'
+        className='w-full border-none'
+        ref={inputRef}
+      />
+      <ButtonGroup orientation='horizontal'>
+        <Button
+          type='button'
+          onClick={setLink}
+          disabled={!url && !isActive}
+          title='Apply Link'
+          className='text-foreground/80'
+          size={'icon'}
+        >
+          <CornerDownLeft />
+        </Button>
+        <Button
+          type='button'
+          onClick={removeLink}
+          title='Remove link'
+          disabled={!url && !isActive}
+          variant='ghost'
+          className='text-foreground/80'
+          size={'icon'}
+        >
+          <Trash2Icon />
+        </Button>
+      </ButtonGroup>
     </div>
   );
 };
