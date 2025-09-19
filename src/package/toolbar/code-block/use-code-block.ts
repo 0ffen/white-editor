@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 import { CodeSquareIcon } from 'lucide-react';
 import { useTiptapEditor } from '@/hooks/use-tiptap-editor';
@@ -9,28 +7,12 @@ import { type Editor } from '@tiptap/react';
 
 export const CODE_BLOCK_SHORTCUT_KEY = 'mod+alt+c';
 
-/**
- * Configuration for the code block functionality
- */
 export interface UseCodeBlockConfig {
-  /**
-   * The Tiptap editor instance.
-   */
   editor?: Editor | null;
-  /**
-   * Whether the button should hide when code block is not available.
-   * @default false
-   */
   hideWhenUnavailable?: boolean;
-  /**
-   * Callback function called after a successful code block toggle.
-   */
   onToggled?: () => void;
 }
 
-/**
- * Checks if code block can be toggled in the current editor state
- */
 export function canToggle(editor: Editor | null, turnInto: boolean = true): boolean {
   if (!editor || !editor.isEditable) return false;
   if (!isNodeInSchema('codeBlock', editor) || isNodeTypeSelected(editor, ['image'])) return false;
