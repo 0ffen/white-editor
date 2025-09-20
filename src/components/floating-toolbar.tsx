@@ -82,7 +82,6 @@ export const FloatingToolbar = React.forwardRef<HTMLDivElement, FloatingToolbarP
       }
     }, [isOpen, anchorElement, offset.x, offset.y, placement]);
 
-    // 포탈 렌더링
     if (!isOpen || !position || typeof document === 'undefined') {
       return null;
     }
@@ -98,10 +97,11 @@ export const FloatingToolbar = React.forwardRef<HTMLDivElement, FloatingToolbarP
           }
         }}
         variant='floating'
-        className={cn('bg-popover text-popover-foreground fixed z-50 shadow-xs', className)}
+        className={cn('bg-popover text-popover-foreground fixed z-50 border-0', className)}
         style={{
           top: `${position.top}px`,
           left: `${position.left}px`,
+          boxShadow: 'var(--popover-shadow)',
         }}
         onClick={(e) => e.stopPropagation()}
       >

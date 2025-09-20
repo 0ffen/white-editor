@@ -14,7 +14,7 @@ const toolbarVariants = cva('flex items-center gap-1', {
         'bg-transparent border-b border-border',
         'px-2 overflow-x-auto overscroll-x-contain',
       ],
-      floating: ['p-0.5 rounded-lg border border-border', 'bg-background shadow-sm outline-none overflow-hidden'],
+      floating: ['p-0.5 rounded-lg border border-border', 'bg-background shadow-xs outline-none overflow-hidden'],
     },
   },
   defaultVariants: {
