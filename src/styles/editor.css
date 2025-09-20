@@ -3,16 +3,54 @@
 }
 
 .ProseMirror {
-  @apply min-h-[200px] overflow-y-auto;
-  flex: 1 1;
+  @apply min-h-[200px] flex-1 overflow-y-auto;
   padding: 3rem 3rem 30vh;
 }
 
 .ProseMirror:focus {
-  outline: none;
+  @apply outline-0;
 }
 
 .prosemirror-dropcursor-block,
 .prosemirror-dropcursor-inline {
   @apply bg-border/50! h-[0.188rem] w-full cursor-grabbing rounded-4xl;
+}
+
+.ProseMirror table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  overflow: hidden;
+}
+
+.ProseMirror td,
+.ProseMirror th {
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.ProseMirror td:not([data-colwidth]):not(.column-resize-dragging),
+.ProseMirror th:not([data-colwidth]):not(.column-resize-dragging) {
+  min-width: 200px;
+}
+
+.ProseMirror .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  z-index: 20;
+  background-color: #adf;
+  pointer-events: none;
+}
+
+.ProseMirror.resize-cursor {
+  cursor: ew-resize;
+  cursor: col-resize;
+}
+
+.ProseMirror .selection {
+  @apply bg-primary/5;
 }

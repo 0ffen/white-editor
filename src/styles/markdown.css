@@ -50,8 +50,12 @@ p {
   padding-block: 0;
 }
 
+.markdown li {
+  @apply marker:text-foreground;
+}
+
 .markdown table {
-  @apply w-full border;
+  @apply w-full max-w-[1440px] border;
 }
 
 .markdown tr {
@@ -71,7 +75,7 @@ p {
 }
 
 .markdown a {
-  @apply text-primary hover:text-primary/80 cursor-pointer font-normal underline;
+  @apply text-primary hover:text-primary/80 font-normal;
 }
 
 .markdown input[type='checkbox']:disabled {

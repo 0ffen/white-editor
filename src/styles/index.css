@@ -1,3 +1,5 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable-dynamic-subset.css');
+
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 @plugin 'tailwindcss-animate';
@@ -10,44 +12,33 @@
 
 html,
 body {
+  @apply antialiased;
   scroll-behavior: smooth;
   overflow-y: scroll;
   margin: 0;
   padding: 0;
-  width: 100vw;
+  width: 100%;
   height: 100%;
   min-width: 1200px;
+
+  font-family:
+    'Pretendard Variable',
+    Pretendard,
+    -apple-system,
+    serif;
 }
 
-::-webkit-scrollbar {
-  width: 16px;
-  height: 16px;
+@theme {
+  --font-pretendard: 'Pretendard Variable', Pretendard, -apple-system, serif;
 }
 
-::-webkit-scrollbar-thumb {
-  outline: none;
-  border-radius: 10px;
-  border: 4px solid transparent;
-  box-shadow: inset 8px 8px 0 rgba(34, 34, 34, 0.15);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  border: 4px solid transparent;
-  box-shadow: inset 8px 8px 0 rgba(34, 34, 34, 0.25);
-}
-
-::-webkit-scrollbar-thumb:active {
-  border: 4px solid transparent;
-  box-shadow: inset 8px 8px 0 rgba(34, 34, 34, 0.35);
-}
-
-::-webkit-scrollbar-track {
-  box-shadow: none;
-  background-color: transparent;
-}
-
-::-webkit-scrollbar-corner {
-  background-color: transparent;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
 @theme inline {
@@ -121,6 +112,9 @@ body {
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.623 0.214 259.815);
+  --popover-shadow:
+    0px 16px 48px 0px rgba(17, 24, 39, 0.04), 0px 12px 24px 0px rgba(17, 24, 39, 0.04),
+    0px 6px 8px 0px rgba(17, 24, 39, 0.02), 0px 2px 3px 0px rgba(17, 24, 39, 0.02);
 }
 
 .dark {
@@ -157,11 +151,82 @@ body {
   --sidebar-ring: oklch(0.488 0.243 264.376);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+/* Text colors */
+:root {
+  --tt-color-text-gray: hsl(0, 0%, 61%);
+  --tt-color-text-yellow: hsl(49, 100%, 62%);
+  --tt-color-text-green: hsl(141, 79%, 46%);
+  --tt-color-text-blue: hsl(221, 100%, 63%);
+  --tt-color-text-purple: hsl(270, 100%, 67%);
+  --tt-color-text-red: hsl(1, 100%, 66%);
+  --tt-color-text-gray-contrast: hsla(37, 8%, 33%, 0.15);
+  --tt-color-text-yellow-contrast: hsla(44, 82%, 59%, 0.39);
+  --tt-color-text-green-contrast: hsla(126, 29%, 60%, 0.27);
+  --tt-color-text-blue-contrast: hsla(202, 54%, 59%, 0.27);
+  --tt-color-text-purple-contrast: hsla(274, 37%, 64%, 0.27);
+  --tt-color-text-red-contrast: hsla(8, 79%, 79%, 0.4);
+}
+
+/* Highlight colors */
+:root {
+  --tt-color-highlight-yellow: #fef9c3;
+  --tt-color-highlight-green: #dcfce7;
+  --tt-color-highlight-blue: #e0f2fe;
+  --tt-color-highlight-purple: #f3e8ff;
+  --tt-color-highlight-red: #ffe4e6;
+  --tt-color-highlight-gray: rgb(248, 248, 247);
+  --tt-color-highlight-yellow-contrast: #fbe604;
+  --tt-color-highlight-green-contrast: #c7fad8;
+  --tt-color-highlight-blue-contrast: #ceeafd;
+  --tt-color-highlight-purple-contrast: #e4ccff;
+  --tt-color-highlight-red-contrast: #ffccd0;
+  --tt-color-highlight-gray-contrast: rgba(84, 72, 49, 0.15);
+}
+
+.dark {
+  --tt-color-highlight-yellow: #b2b928;
+  --tt-color-highlight-green: #2bed6f67;
+  --tt-color-highlight-blue: #296cfc49;
+  --tt-color-highlight-purple: #7105c49d;
+  --tt-color-highlight-red: #722329f3;
+  --tt-color-highlight-yellow-contrast: #58531eba;
+  --tt-color-highlight-green-contrast: #2bed6f2b;
+  --tt-color-highlight-blue-contrast: #296cfc42;
+  --tt-color-highlight-purple-contrast: #7105c479;
+  --tt-color-highlight-red-contrast: #72232a;
+}
+
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-thumb {
+  outline: none;
+  border-radius: 10px;
+  border: 4px solid transparent;
+  box-shadow: inset 8px 8px 0 rgba(34, 34, 34, 0.15);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  border: 4px solid transparent;
+  box-shadow: inset 8px 8px 0 rgba(34, 34, 34, 0.25);
+}
+
+::-webkit-scrollbar-thumb:active {
+  border: 4px solid transparent;
+  box-shadow: inset 8px 8px 0 rgba(34, 34, 34, 0.35);
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: none;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+::selection {
+  @apply bg-primary/10;
 }
