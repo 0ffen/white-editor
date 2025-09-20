@@ -3,7 +3,8 @@ import * as React from 'react';
 import { Toolbar, ToolbarGroup, ToolbarSeparator } from '@/components';
 import { Spacer } from '@/components';
 
-import { HorizontalRule } from '@/package/extensions';
+import { TableButton } from '@/editor';
+import { HeadingDropdownMenu } from '@/editor';
 import {
   BlockquoteButton,
   CodeBlockButton,
@@ -13,11 +14,10 @@ import {
   MarkButton,
   TextAlignButton,
   UndoRedoButton,
-} from '@/package/toolbar';
-import { HeadingDropdownMenu } from '@/package/toolbar/heading/heading-dropdown-menu';
-import type { HeadingOption } from '@/package/toolbar/heading/heading.type';
-import { ImageUploadNode } from '@/package/toolbar/image/image-upload-node/image-upload-node-extension';
-import { TableButton } from '@/package/toolbar/table/table-button';
+} from '@/editor';
+import { HorizontalRule } from '@/editor';
+import type { HeadingOption } from '@/editor/heading/type/heading.type';
+import { ImageUploadNode } from '@/editor/image/image-upload-node/image-upload-node-extension';
 import { handleImageUpload, MAX_FILE_SIZE } from '@/utils';
 import { Image } from '@tiptap/extension-image';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
@@ -25,7 +25,8 @@ import { Subscript } from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';
 import { TableCell, TableHeader, TableKit, TableRow } from '@tiptap/extension-table';
 import { TextAlign } from '@tiptap/extension-text-align';
-import { Typography } from '@tiptap/extension-typography';
+
+import { TextStyleKit } from '@tiptap/extension-text-style';
 import { Selection } from '@tiptap/extensions';
 import { EditorContent, EditorContext, useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
@@ -148,7 +149,7 @@ export function SimpleEditor() {
       TaskList,
       TaskItem.configure({ nested: true }),
       Image,
-      Typography,
+      TextStyleKit,
       Superscript,
       Subscript,
       Selection,
