@@ -114,6 +114,9 @@ importers:
       '@tiptap/extension-table':
         specifier: ^3.4.4
         version: 3.4.4(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))(@tiptap/pm@3.4.3)
+      '@tiptap/extension-text':
+        specifier: ^3.4.4
+        version: 3.4.4(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))
       '@tiptap/extension-text-align':
         specifier: ^3.4.3
         version: 3.4.3(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))
@@ -1544,10 +1547,10 @@ packages:
     peerDependencies:
       '@tiptap/core': ^3.4.3
 
-  '@tiptap/extension-text@3.4.3':
-    resolution: {integrity: sha512-3TXQMPtMpYs5UYPieN/vTxIBQXM2JekrIHrTp2Z4oWKkAeneYcRCFChZb9P/dNliO3h13EIbIn26Himq3pqgZg==}
+  '@tiptap/extension-text@3.4.4':
+    resolution: {integrity: sha512-0tj3dQ2WWeecL/lJirQPpF423dNTDC8anXaVMUd6gk6vjCpRS4Rz+YSpJhvCPA9UycwVGIcpC7r83FdWHL2BLA==}
     peerDependencies:
-      '@tiptap/core': ^3.4.3
+      '@tiptap/core': ^3.4.4
 
   '@tiptap/extension-typography@3.4.3':
     resolution: {integrity: sha512-TXsOQQCbPj4rOjZybxPvryyqnyVZtGCBpjOxijEX0e0Vpizv+rWahBfCZBrC+OztEV8xeTTEcvpipAwCfxheHg==}
@@ -5013,7 +5016,7 @@ snapshots:
     dependencies:
       '@tiptap/core': 3.4.3(@tiptap/pm@3.4.3)
 
-  '@tiptap/extension-text@3.4.3(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))':
+  '@tiptap/extension-text@3.4.4(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))':
     dependencies:
       '@tiptap/core': 3.4.3(@tiptap/pm@3.4.3)
 
@@ -5090,7 +5093,7 @@ snapshots:
       '@tiptap/extension-ordered-list': 3.4.3(@tiptap/extension-list@3.4.3(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))(@tiptap/pm@3.4.3))
       '@tiptap/extension-paragraph': 3.4.3(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))
       '@tiptap/extension-strike': 3.4.3(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))
-      '@tiptap/extension-text': 3.4.3(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))
+      '@tiptap/extension-text': 3.4.4(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))
       '@tiptap/extension-underline': 3.4.3(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))
       '@tiptap/extensions': 3.4.3(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))(@tiptap/pm@3.4.3)
       '@tiptap/pm': 3.4.3
