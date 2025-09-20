@@ -8,4 +8,6 @@ export * from './mark';
 export * from './text-align';
 export * from './undo-redo';
 export * from './table';
+export * from './color';
 export * from './horizontal';
+export * from './highlight';
