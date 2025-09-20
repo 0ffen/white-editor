@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { ChevronDownIcon } from 'lucide-react';
+import TextSizeIcon from '@/assets/icons/text-size.svg?react';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -32,7 +33,6 @@ export const HeadingDropdownMenu = React.forwardRef<HTMLButtonElement, HeadingDr
       hideWhenUnavailable = false,
       onOpenChange,
       triggerClassName,
-      iconClassName,
       contentClassName,
       itemButtonClassName,
       itemTextClassName,
@@ -43,7 +43,7 @@ export const HeadingDropdownMenu = React.forwardRef<HTMLButtonElement, HeadingDr
   ) => {
     const { editor } = useTiptapEditor(providedEditor);
     const [isOpen, setIsOpen] = React.useState(false);
-    const { isVisible, isActive, canToggle, activeLevel } = useHeadingDropdownMenu({
+    const { isVisible, isActive, canToggle } = useHeadingDropdownMenu({
       editor,
       hideWhenUnavailable,
     });
@@ -61,8 +61,6 @@ export const HeadingDropdownMenu = React.forwardRef<HTMLButtonElement, HeadingDr
       return null;
     }
 
-    const displayLabel = options.find((option) => option.level === activeLevel)?.label || options[0]?.label;
-
     return (
       <DropdownMenu modal open={isOpen} onOpenChange={handleOpenChange}>
         <DropdownMenuTrigger asChild>
@@ -75,12 +73,13 @@ export const HeadingDropdownMenu = React.forwardRef<HTMLButtonElement, HeadingDr
             data-disabled={!canToggle}
             aria-label='heading dropdown menu'
             aria-pressed={isActive}
-            className={cn(triggerClassName)}
+            isActive={isActive}
+            className={cn('gap-1 [&_svg:nth-child(1)]:size-4 [&_svg:nth-child(2)]:size-3', triggerClassName)}
             {...buttonProps}
             ref={ref}
           >
-            <span>{displayLabel}</span>
-            <ChevronDownIcon className={cn(iconClassName)} />
+            <TextSizeIcon />
+            <ChevronDownIcon className='text-muted-foreground size-2' />
           </Button>
         </DropdownMenuTrigger>
 
