@@ -29,7 +29,7 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor);
-    const [isOpen, setIsOpen] = React.useState(false);
+    const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
     const { isVisible, canSet, isActive, url, setUrl, setLink, removeLink, Icon } = useLinkPopover({
       editor,
@@ -87,7 +87,7 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
           </LinkButton>
         </PopoverTrigger>
 
-        <PopoverContent className={cn('rounded-4xl px-2 py-1 pr-3', linkPopoverClassName)}>
+        <PopoverContent className={cn('w-[300px] rounded-2xl px-2 py-2 pr-3', linkPopoverClassName)}>
           <LinkMain
             url={url}
             setUrl={setUrl}
