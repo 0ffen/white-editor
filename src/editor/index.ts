@@ -11,3 +11,4 @@ export * from './table';
 export * from './color';
 export * from './horizontal';
 export * from './highlight';
+export * from './mathematics';
