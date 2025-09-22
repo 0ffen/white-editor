@@ -14,3 +14,5 @@ export * from './toggle';
 export * from './toggle-group';
 export * from './context-menu';
 export * from './floating-toolbar';
+export * from './command';
+export * from './select';
