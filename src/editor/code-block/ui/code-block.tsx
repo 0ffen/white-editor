@@ -38,15 +38,18 @@ export const CodeBlock = ({
   updateAttributes,
   extension,
 }: Props) => {
+  const [isCopied, setIsCopied] = React.useState<boolean>(false);
+  const preRef = React.useRef<HTMLPreElement>(null);
+
   const languageOptions = extension.options.lowlight.listLanguages().map((lang) => ({
     label: lang,
     value: lang,
   }));
 
-  const [isCopied, setIsCopied] = React.useState<boolean>(false);
-
   const handleCopy = React.useCallback(() => {
     setIsCopied(true);
+    navigator.clipboard.writeText(preRef.current?.textContent || '');
+
     setTimeout(() => {
       setIsCopied(false);
     }, 2000);
@@ -106,7 +109,7 @@ export const CodeBlock = ({
             )}
           </Button>
         </div>
-        <code>
+        <code ref={preRef}>
           <NodeViewContent as='div' />
         </code>
       </pre>
