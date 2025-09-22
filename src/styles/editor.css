@@ -52,5 +52,13 @@
 }
 
 .ProseMirror .selection {
-  @apply bg-primary/5;
+  @apply bg-primary/5 dark:bg-primary/50;
+}
+
+.block-math-inner {
+  @apply hover:bg-accent flex items-center justify-center rounded-2xl bg-transparent px-2 py-4 transition-all duration-300 hover:cursor-pointer;
+}
+
+.tiptap-mathematics-render[data-type='inline-math'] {
+  @apply hover:bg-accent inline-block rounded-sm px-1 py-0.5 transition-all duration-300 hover:cursor-pointer;
 }
