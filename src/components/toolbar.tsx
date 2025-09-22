@@ -140,6 +140,6 @@ export const ToolbarGroup = React.forwardRef<HTMLDivElement, BaseProps>(({ child
 ToolbarGroup.displayName = 'ToolbarGroup';
 
 export const ToolbarSeparator = React.forwardRef<HTMLDivElement, BaseProps>(({ ...props }, ref) => (
-  <Separator ref={ref} orientation='vertical' decorative className='h-4' {...props} />
+  <Separator ref={ref} orientation='vertical' decorative className='h-5!' {...props} />
 ));
 ToolbarSeparator.displayName = 'ToolbarSeparator';
