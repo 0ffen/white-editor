@@ -30,7 +30,7 @@ export const MathPopoverContent = (props: Props) => {
         output: 'html',
         strict: false,
       });
-    } catch (error) {
+    } catch {
       return `<span style="color: #e11d48;">Invalid LaTeX: ${mathString}</span>`;
     }
   }, [mathString]);
@@ -38,8 +38,11 @@ export const MathPopoverContent = (props: Props) => {
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
-      const length = inputRef.current.value.length;
-      inputRef.current.setSelectionRange(length, length);
+      const value = inputRef.current.value;
+      if (value) {
+        const length = value.length;
+        inputRef.current.setSelectionRange(length, length);
+      }
     }
   }, []);
 
