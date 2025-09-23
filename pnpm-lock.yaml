@@ -47,6 +47,9 @@ importers:
       '@tiptap/extension-mathematics':
         specifier: ^3.4.4
         version: 3.4.4(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))(@tiptap/pm@3.4.3)(katex@0.16.22)
+      '@tiptap/extension-mention':
+        specifier: ^3.4.6
+        version: 3.4.6(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))(@tiptap/pm@3.4.3)(@tiptap/suggestion@3.4.6(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))(@tiptap/pm@3.4.3))
       '@tiptap/extension-subscript':
         specifier: ^3.4.3
         version: 3.4.3(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))(@tiptap/pm@3.4.3)
@@ -102,6 +105,9 @@ importers:
       '@eslint/js':
         specifier: ^9.33.0
         version: 9.35.0
+      '@floating-ui/dom':
+        specifier: ^1.7.4
+        version: 1.7.4
       '@radix-ui/react-separator':
         specifier: ^1.1.7
         version: 1.1.7(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -1574,6 +1580,13 @@ packages:
       '@tiptap/pm': ^3.4.4
       katex: ^0.16.4
 
+  '@tiptap/extension-mention@3.4.6':
+    resolution: {integrity: sha512-NAQOfNdajcf+++ayrubzgbEG0Op/FLe1sXpceJ0h3V7kNWItayVIV29hfN33B1x3e0jcidIMy3n89+DZQ+/XCg==}
+    peerDependencies:
+      '@tiptap/core': ^3.4.6
+      '@tiptap/pm': ^3.4.6
+      '@tiptap/suggestion': ^3.4.6
+
   '@tiptap/extension-ordered-list@3.4.3':
     resolution: {integrity: sha512-zZ/c8on3itYQmZyFfQUcpwsUz68UtUH8x5E9G183oaQGloCtH3YTvO4k89FA0TASrdvQPfmJ7R2hyiO8TYdBFw==}
     peerDependencies:
@@ -1653,6 +1666,12 @@ packages:
 
   '@tiptap/starter-kit@3.4.3':
     resolution: {integrity: sha512-pZE/Fkl8tg65d25FgLC76RWlVYIvso/rucxsi8fYbkw89cOo0nOaPWfqxpOKrl0SfQhCAxfWo2lEz0gj2McSvA==}
+
+  '@tiptap/suggestion@3.4.6':
+    resolution: {integrity: sha512-WWEqcWrvrFSZovKxNhHDsxllsvSNLPg6TTAcyGjVXThUntxpDbBBRiY3NqiGXY3d4SLtrXhPrRuXbmni+t7afA==}
+    peerDependencies:
+      '@tiptap/core': ^3.4.6
+      '@tiptap/pm': ^3.4.6
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -5140,6 +5159,12 @@ snapshots:
       '@tiptap/pm': 3.4.3
       katex: 0.16.22
 
+  '@tiptap/extension-mention@3.4.6(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))(@tiptap/pm@3.4.3)(@tiptap/suggestion@3.4.6(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))(@tiptap/pm@3.4.3))':
+    dependencies:
+      '@tiptap/core': 3.4.3(@tiptap/pm@3.4.3)
+      '@tiptap/pm': 3.4.3
+      '@tiptap/suggestion': 3.4.6(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))(@tiptap/pm@3.4.3)
+
   '@tiptap/extension-ordered-list@3.4.3(@tiptap/extension-list@3.4.3(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))(@tiptap/pm@3.4.3))':
     dependencies:
       '@tiptap/extension-list': 3.4.3(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))(@tiptap/pm@3.4.3)
@@ -5255,6 +5280,11 @@ snapshots:
       '@tiptap/extension-text': 3.4.4(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))
       '@tiptap/extension-underline': 3.4.3(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))
       '@tiptap/extensions': 3.4.3(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))(@tiptap/pm@3.4.3)
+      '@tiptap/pm': 3.4.3
+
+  '@tiptap/suggestion@3.4.6(@tiptap/core@3.4.3(@tiptap/pm@3.4.3))(@tiptap/pm@3.4.3)':
+    dependencies:
+      '@tiptap/core': 3.4.3(@tiptap/pm@3.4.3)
       '@tiptap/pm': 3.4.3
 
   '@types/babel__core@7.20.5':
