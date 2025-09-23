@@ -24,6 +24,7 @@ export const defaultToolbar = ToolbarContainer({
       highlight: true,
       link: true,
       table: true,
+      codeblock: true,
       math: ['inline', 'block'],
     },
     {

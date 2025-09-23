@@ -15,7 +15,7 @@ import {
 import { cn } from '@/shared/utils';
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 
-import '@/styles/github-dark.css';
+import '@/shared/styles/github-dark.css';
 
 interface Props {
   node: {
