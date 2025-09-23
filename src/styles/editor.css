@@ -62,3 +62,20 @@
 .tiptap-mathematics-render[data-type='inline-math'] {
   @apply hover:bg-accent inline-block rounded-sm px-1 py-0.5 transition-all duration-300 hover:cursor-pointer;
 }
+
+.tiptap {
+  :first-child {
+    margin-top: 0;
+  }
+
+  [data-type='mention'] {
+    @apply bg-primary/10 dark:bg-primary/20;
+    @apply border-primary/20 dark:border-primary/50 rounded-md;
+    @apply text-primary p-1;
+    box-decoration-break: clone;
+
+    &::after {
+      @apply content-normal;
+    }
+  }
+}
