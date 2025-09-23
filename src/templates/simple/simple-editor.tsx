@@ -1,122 +1,38 @@
 import * as React from 'react';
 
-import { Toolbar, ToolbarGroup, ToolbarSeparator } from '@/components';
+import { all, createLowlight } from 'lowlight';
+
+import { Toolbar } from '@/components';
 import { Spacer } from '@/components';
 
-import { TableButton } from '@/editor';
-import { HeadingDropdownMenu } from '@/editor';
-import {
-  BlockquoteButton,
-  CodeBlockButton,
-  ImageUploadButton,
-  LinkPopover,
-  ListButton,
-  MarkButton,
-  TextAlignButton,
-  UndoRedoButton,
-} from '@/editor';
-import { HorizontalRule } from '@/editor';
-import type { HeadingOption } from '@/editor/heading/type/heading.type';
+import { CodeBlock, MentionNode, DefaultToolbar } from '@/editor';
 import { ImageUploadNode } from '@/editor/image/image-upload-node/image-upload-node-extension';
-import { handleImageUpload, MAX_FILE_SIZE } from '@/utils';
+import { handleImageUpload, MAX_FILE_SIZE, type ListItemConfig } from '@/utils';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import { Highlight } from '@tiptap/extension-highlight';
 import { Image } from '@tiptap/extension-image';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
+import { migrateMathStrings, Mathematics } from '@tiptap/extension-mathematics';
 import { Subscript } from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';
-import { TableCell, TableHeader, TableKit, TableRow } from '@tiptap/extension-table';
+import { TableKit } from '@tiptap/extension-table';
 import { TextAlign } from '@tiptap/extension-text-align';
-
-import { TextStyleKit } from '@tiptap/extension-text-style';
+import { Color, TextStyleKit } from '@tiptap/extension-text-style';
 import { Selection } from '@tiptap/extensions';
-import { EditorContent, EditorContext, useEditor } from '@tiptap/react';
+import { EditorContent, EditorContext, ReactNodeViewRenderer, useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
-
-import { ThemeToggle } from './theme-toggle';
+export { createListConfig } from '@/utils';
 
 import './simple-editor.css';
 
-const MainToolbarContent = () => {
-  const HeadingOptions: HeadingOption[] = [
-    {
-      label: 'Normal Text',
-      level: null,
-    },
-    {
-      label: 'Heading 1',
-      level: 1,
-    },
-    {
-      label: 'Heading 2',
-      level: 2,
-    },
-    {
-      label: 'Heading 3',
-      level: 3,
-    },
-  ];
+const lowlight = createLowlight(all);
 
-  return (
-    <div className='toolbar-wrapper'>
-      <Spacer />
+interface SimpleEditorProps<T> {
+  mentionItems?: ListItemConfig<T>;
+  toolbar?: React.ReactNode;
+}
 
-      <ToolbarGroup>
-        <UndoRedoButton action='undo' />
-        <UndoRedoButton action='redo' />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        <HeadingDropdownMenu options={HeadingOptions} />
-        <ListButton type='bulletList' />
-        <ListButton type='orderedList' />
-        <ListButton type='taskList' />
-        <BlockquoteButton />
-        <CodeBlockButton />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        <MarkButton type='bold' />
-        <MarkButton type='italic' />
-        <MarkButton type='strike' />
-        <MarkButton type='code' />
-        <MarkButton type='underline' />
-        <LinkPopover />
-        <TableButton />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        <MarkButton type='superscript' />
-        <MarkButton type='subscript' />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        <TextAlignButton align='left' />
-        <TextAlignButton align='center' />
-        <TextAlignButton align='right' />
-        <TextAlignButton align='justify' />
-      </ToolbarGroup>
-
-      <ToolbarSeparator />
-
-      <ToolbarGroup>
-        <ImageUploadButton />
-      </ToolbarGroup>
-      <ToolbarGroup>
-        <ThemeToggle />
-      </ToolbarGroup>
-      <Spacer />
-    </div>
-  );
-};
-
-export function SimpleEditor() {
+export function SimpleEditor<T>({ mentionItems, toolbar }: SimpleEditorProps<T>) {
   const toolbarRef = React.useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
@@ -141,41 +57,42 @@ export function SimpleEditor() {
       TableKit.configure({
         table: { resizable: true },
       }),
-      TableRow,
-      TableHeader,
-      TableCell,
-      HorizontalRule,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
       TaskList,
       TaskItem.configure({ nested: true }),
       Image,
       TextStyleKit,
+      Color.configure({
+        types: ['textStyle'],
+      }),
+      Highlight.configure({ multicolor: true }),
       Superscript,
       Subscript,
       Selection,
+      CodeBlockLowlight.extend({
+        addNodeView() {
+          return ReactNodeViewRenderer(CodeBlock as React.FC);
+        },
+      }).configure({ lowlight }),
       ImageUploadNode.configure({
         accept: 'image/*',
         maxSize: MAX_FILE_SIZE,
         limit: 3,
         upload: handleImageUpload,
-        onError: (error) => console.error('Upload failed:', error),
+        onError: (error) => {
+          console.error('Upload failed:', error);
+        },
       }),
+      Mathematics.configure({
+        blockOptions: {},
+        inlineOptions: {},
+      }),
+      ...(mentionItems ? [MentionNode(mentionItems)] : []),
     ],
+    onCreate: ({ editor: currentEditor }) => {
+      migrateMathStrings(currentEditor);
+    },
     content: `
-    <table>
-      <tbody>
-        <tr>
-          <th>Name</th>
-          <th colspan="3">Description</th>
-        </tr>
-        <tr>
-          <td>Cyndi Lauper</td>
-          <td>Singer</td>
-          <td>Songwriter</td>
-          <td>Actress</td>
-        </tr>
-      </tbody>
-    </table>
   `,
   });
 
@@ -183,7 +100,15 @@ export function SimpleEditor() {
     <div className='editor-wrapper'>
       <EditorContext.Provider value={{ editor }}>
         <Toolbar ref={toolbarRef} role='toolbar'>
-          <MainToolbarContent />
+          {toolbar ? (
+            <div className='toolbar-wrapper'>
+              <Spacer />
+              {toolbar}
+              <Spacer />
+            </div>
+          ) : (
+            <DefaultToolbar />
+          )}
         </Toolbar>
 
         <EditorContent editor={editor} className='markdown prose dark:prose-invert max-w-full' />
