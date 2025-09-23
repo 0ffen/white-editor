@@ -12,3 +12,4 @@ export * from './color';
 export * from './horizontal';
 export * from './highlight';
 export * from './mathematics';
+export * from './mention';
