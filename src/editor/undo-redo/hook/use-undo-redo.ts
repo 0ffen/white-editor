@@ -7,8 +7,8 @@ import {
   UNDO_REDO_SHORTCUT_KEYS,
   type UseUndoRedoConfig,
 } from '@/editor';
-import { useTiptapEditor } from '@/hooks';
-import { isNodeTypeSelected } from '@/utils';
+import { useTiptapEditor } from '@/shared/hooks';
+import { isNodeTypeSelected } from '@/shared/utils';
 import { type Editor } from '@tiptap/react';
 
 export function canExecuteUndoRedoAction(editor: Editor | null, action: UndoRedoAction): boolean {

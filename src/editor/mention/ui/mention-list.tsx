@@ -1,6 +1,6 @@
 import React, { useEffect, useImperativeHandle, useState } from 'react';
-import { Button } from '@/components';
-import { cn } from '@/utils';
+import { Button } from '@/shared/components';
+import { cn } from '@/shared/utils';
 
 interface MentionItem {
   label: string;

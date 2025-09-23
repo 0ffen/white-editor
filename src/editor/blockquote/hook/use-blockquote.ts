@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import { TextQuote } from 'lucide-react';
-import { useTiptapEditor } from '@/hooks';
-import { findNodePosition, isNodeInSchema, isNodeTypeSelected, isValidPosition } from '@/utils';
+import { useTiptapEditor } from '@/shared/hooks';
+import { findNodePosition, isNodeInSchema, isNodeTypeSelected, isValidPosition } from '@/shared/utils';
 import { NodeSelection, TextSelection } from '@tiptap/pm/state';
 import type { Editor } from '@tiptap/react';
 
@@ -104,42 +104,6 @@ function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: b
   return true;
 }
 
-/**
- * Custom hook that provides blockquote functionality for Tiptap editor
- *
- * @example
- * ```tsx
- * // Simple usage - no params needed
- * function MySimpleBlockquoteButton() {
- *   const { isVisible, handleToggle, isActive } = useBlockquote()
- *
- *   if (!isVisible) return null
- *
- *   return <button onClick={handleToggle}>Blockquote</button>
- * }
- *
- * // Advanced usage with configuration
- * function MyAdvancedBlockquoteButton() {
- *   const { isVisible, handleToggle, label, isActive } = useBlockquote({
- *     editor: myEditor,
- *     hideWhenUnavailable: true,
- *     onToggled: () => console.log('Blockquote toggled!')
- *   })
- *
- *   if (!isVisible) return null
- *
- *   return (
- *     <MyButton
- *       onClick={handleToggle}
- *       aria-label={label}
- *       aria-pressed={isActive}
- *     >
- *       Toggle Blockquote
- *     </MyButton>
- *   )
- * }
- * ```
- */
 export function useBlockquote(config?: UseBlockquoteConfig) {
   const { editor: providedEditor, hideWhenUnavailable = false, onToggled } = config || {};
 

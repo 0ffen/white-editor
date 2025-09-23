@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import { CloudUploadIcon, FileIcon, SidebarCloseIcon } from 'lucide-react';
-import { Button } from '@/components';
-import { focusNextNode, isValidPosition } from '@/utils';
+import { Button } from '@/shared/components';
+import { focusNextNode, isValidPosition } from '@/shared/utils';
 import type { NodeViewProps } from '@tiptap/react';
 import { NodeViewWrapper } from '@tiptap/react';
 

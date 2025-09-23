@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import { LinkIcon } from 'lucide-react';
-import { useTiptapEditor } from '@/hooks';
-import { isMarkInSchema, sanitizeUrl } from '@/utils';
+import { useTiptapEditor } from '@/shared/hooks';
+import { isMarkInSchema, sanitizeUrl } from '@/shared/utils';
 import type { Editor } from '@tiptap/react';
 
 export interface UseLinkPopoverConfig {

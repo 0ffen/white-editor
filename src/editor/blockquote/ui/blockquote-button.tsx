@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { Button, type ButtonProps } from '@/components';
 import { useBlockquote, type UseBlockquoteConfig } from '@/editor';
-import { useTiptapEditor } from '@/hooks';
-import { cn } from '@/utils';
+import { Button, type ButtonProps } from '@/shared/components';
+import { useTiptapEditor } from '@/shared/hooks';
+import { cn } from '@/shared/utils';
 
 export interface BlockquoteButtonProps extends Omit<ButtonProps, 'type'>, UseBlockquoteConfig {
   className?: string;

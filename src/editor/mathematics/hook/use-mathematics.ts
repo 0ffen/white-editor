@@ -1,10 +1,8 @@
-// @tiptap/extension-mathematics
-
 import React from 'react';
-import { useTiptapEditor } from '@/hooks';
-import { isNodeInSchema } from '@/utils';
+import type { MathematicsConfig, MathHandlerProps, MathType } from '@/editor';
+import { useTiptapEditor } from '@/shared/hooks';
+import { isNodeInSchema } from '@/shared/utils';
 import { type Editor } from '@tiptap/react';
-import type { MathematicsConfig, MathHandlerProps, MathType } from '../type/math.type';
 
 export function canSetMath(editor: Editor | null): boolean {
   if (!editor || !editor.isEditable) {

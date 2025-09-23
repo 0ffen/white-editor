@@ -1,8 +1,8 @@
 import React from 'react';
-import { ToolbarButton } from '@/components';
+import { ToolbarButton } from '@/shared/components';
 import { canExecuteAction, executeTableAction, useTableToolbar, type TableActionItem } from '@/editor';
-import { useTiptapEditor } from '@/hooks';
-import { cn } from '@/utils';
+import { useTiptapEditor } from '@/shared/hooks';
+import { cn } from '@/shared/utils';
 import type { Editor } from '@tiptap/react';
 
 const TableActionButton = React.forwardRef<

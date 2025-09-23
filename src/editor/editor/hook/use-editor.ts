@@ -1,8 +1,8 @@
 import { all, createLowlight } from 'lowlight';
-import { CodeBlock } from '@/editor/code-block';
+import { MentionNode, CodeBlock } from '@/editor';
 import { ImageUploadNode } from '@/editor/image/image-upload-node/image-upload-node-extension';
-import { MentionNode } from '@/editor/mention/util/mention-node';
-import { handleImageUpload, MAX_FILE_SIZE, type ListItemConfig } from '@/utils';
+import { handleImageUpload, MAX_FILE_SIZE, type ListItemConfig } from '@/shared/utils';
+
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import Image from '@tiptap/extension-image';

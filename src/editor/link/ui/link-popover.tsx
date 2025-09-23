@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { Popover, PopoverContent, PopoverTrigger, type ButtonProps } from '@/components';
 import { useLinkPopover, type UseLinkPopoverConfig, LinkMain, LinkButton } from '@/editor';
-import { useTiptapEditor } from '@/hooks';
-import { cn } from '@/utils';
+import { Popover, PopoverContent, PopoverTrigger, type ButtonProps } from '@/shared/components';
+import { useTiptapEditor } from '@/shared/hooks';
+import { cn } from '@/shared/utils';
 
 export interface LinkPopoverProps extends Omit<ButtonProps, 'type'>, UseLinkPopoverConfig {
   onOpenChange?: (isOpen: boolean) => void;

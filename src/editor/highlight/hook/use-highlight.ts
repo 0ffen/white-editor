@@ -2,8 +2,8 @@ import * as React from 'react';
 import { LucideHighlighter } from 'lucide-react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { COLOR_HIGHLIGHT_SHORTCUT_KEY, HIGHLIGHT_COLORS, type UseColorHighlightConfig } from '@/editor';
-import { useTiptapEditor } from '@/hooks';
-import { isMarkInSchema, isNodeTypeSelected } from '@/utils';
+import { useTiptapEditor } from '@/shared/hooks';
+import { isMarkInSchema, isNodeTypeSelected } from '@/shared/utils';
 import { type Editor } from '@tiptap/react';
 
 export function pickHighlightColorsByValue(values: string[]) {

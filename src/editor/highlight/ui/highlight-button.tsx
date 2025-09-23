@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Button, type ButtonProps } from '@/components';
 import { useColorHighlight, type UseColorHighlightConfig } from '@/editor';
-import { useTiptapEditor } from '@/hooks';
-import { cn } from '@/utils';
+import { Button, type ButtonProps } from '@/shared/components';
+import { useTiptapEditor } from '@/shared/hooks';
+import { cn } from '@/shared/utils';
 
 export interface HighlightColorButtonProps extends Omit<ButtonProps, 'type'>, UseColorHighlightConfig {
   text?: string;

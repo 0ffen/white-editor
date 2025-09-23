@@ -1,6 +1,6 @@
-import { TooltipProvider } from './components';
 import { ToolbarContainer, WhiteEditor } from './editor';
-import { createListConfig } from './utils';
+import { TooltipProvider } from './shared/components';
+import { createListConfig } from './shared/utils';
 import type { HeadingOption } from './editor/heading/type/heading.type';
 
 interface User {

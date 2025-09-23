@@ -1,4 +1,4 @@
-import type { ButtonProps } from '@/components';
+import type { ButtonProps } from '@/shared/components';
 import type { Editor } from '@tiptap/react';
 
 interface MathematicsConfig {

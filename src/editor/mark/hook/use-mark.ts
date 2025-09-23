@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import { MARK_SHORTCUT_KEYS, markIcons, type Mark, type UseMarkConfig } from '@/editor';
-import { useTiptapEditor } from '@/hooks';
-import { isMarkInSchema, isNodeTypeSelected } from '@/utils';
+import { useTiptapEditor } from '@/shared/hooks';
+import { isMarkInSchema, isNodeTypeSelected } from '@/shared/utils';
 import type { Editor } from '@tiptap/react';
 
 export function canToggleMark(editor: Editor | null, type: Mark): boolean {

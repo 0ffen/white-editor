@@ -1,4 +1,4 @@
-import type { ListItemConfig } from '@/utils';
+import type { ListItemConfig } from '@/shared/utils';
 import Mention, { type MentionOptions } from '@tiptap/extension-mention';
 import mentionSuggestion from './mention-suggestion';
 

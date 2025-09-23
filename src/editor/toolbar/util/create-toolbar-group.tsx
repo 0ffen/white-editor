@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { ThemeToggle } from '@/components';
 import {
   BlockquoteButton,
   CodeBlockButton,
@@ -16,6 +15,7 @@ import {
   TableButton,
   type EditorToolbarConfig,
 } from '@/editor';
+import { ThemeToggle } from '@/shared/components';
 
 export const createToolbarGroup = (groupConfig: EditorToolbarConfig): React.ReactNode[] => {
   const items: React.ReactNode[] = [];

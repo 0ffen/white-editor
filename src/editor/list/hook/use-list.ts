@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import { listIcons, listLabels, type ListType, type UseListConfig } from '@/editor';
-import { useTiptapEditor } from '@/hooks';
+import { useTiptapEditor } from '@/shared/hooks';
 
-import { findNodePosition, isNodeInSchema, isNodeTypeSelected, isValidPosition } from '@/utils';
+import { findNodePosition, isNodeInSchema, isNodeTypeSelected, isValidPosition } from '@/shared/utils';
 import { NodeSelection, TextSelection } from '@tiptap/pm/state';
 import { type Editor } from '@tiptap/react';
 

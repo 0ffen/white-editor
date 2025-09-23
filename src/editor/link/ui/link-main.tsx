@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { CornerDownLeft, Trash2Icon } from 'lucide-react';
-import { Button, ButtonGroup, Input } from '@/components';
-import { cn } from '@/utils';
+import { Button, ButtonGroup, Input } from '@/shared/components';
+import { cn } from '@/shared/utils';
 
 export interface LinkMainProps {
   url: string;

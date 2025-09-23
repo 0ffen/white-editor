@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { Button, type ButtonProps } from '@/components';
-import { useTiptapEditor } from '@/hooks';
+import { Button, type ButtonProps } from '@/shared/components';
+import { useTiptapEditor } from '@/shared/hooks';
 import { useImageUpload, type UseImageUploadConfig } from './use-image-upload';
 
 export interface ImageUploadButtonProps extends Omit<ButtonProps, 'type'>, UseImageUploadConfig {

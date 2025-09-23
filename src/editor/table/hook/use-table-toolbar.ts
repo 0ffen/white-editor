@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { isTableActive, shouldShowTableButton, type TableActionItem } from '@/editor';
-import { useTiptapEditor } from '@/hooks';
+import { useTiptapEditor } from '@/shared/hooks';
 import type { Editor } from '@tiptap/react';
 
 export interface UseTableDropdownMenuConfig {

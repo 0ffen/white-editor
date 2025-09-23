@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { CodeSquareIcon } from 'lucide-react';
-import { useTiptapEditor } from '@/hooks';
-import { findNodePosition, isNodeInSchema, isNodeTypeSelected, isValidPosition } from '@/utils';
+import { useTiptapEditor } from '@/shared/hooks';
+import { findNodePosition, isNodeInSchema, isNodeTypeSelected, isValidPosition } from '@/shared/utils';
 import { NodeSelection, TextSelection } from '@tiptap/pm/state';
 import { type Editor } from '@tiptap/react';
 
@@ -40,9 +40,6 @@ export function canToggle(editor: Editor | null, turnInto: boolean = true): bool
   }
 }
 
-/**
- * Toggles code block in the editor
- */
 export function toggleCodeBlock(editor: Editor | null): boolean {
   if (!editor || !editor.isEditable) return false;
   if (!canToggle(editor)) return false;

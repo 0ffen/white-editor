@@ -1,4 +1,4 @@
-import type { ListItem } from '@/utils';
+import type { ListItem } from '@/shared/utils';
 import type { Editor } from '@tiptap/react';
 
 interface SuggestionProps {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ImagePlusIcon } from 'lucide-react';
-import { useTiptapEditor } from '@/hooks';
-import { isExtensionAvailable, isNodeTypeSelected } from '@/utils';
+import { useTiptapEditor } from '@/shared/hooks';
+import { isExtensionAvailable, isNodeTypeSelected } from '@/shared/utils';
 import { type Editor } from '@tiptap/react';
 
 export interface UseImageUploadConfig {

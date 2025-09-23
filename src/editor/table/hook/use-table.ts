@@ -1,8 +1,8 @@
 import React from 'react';
 import { Table } from 'lucide-react';
 import type { TableActions } from '@/editor';
-import { useTiptapEditor } from '@/hooks';
-import { isExtensionAvailable, isNodeTypeSelected } from '@/utils';
+import { useTiptapEditor } from '@/shared/hooks';
+import { isExtensionAvailable, isNodeTypeSelected } from '@/shared/utils';
 import type { Editor } from '@tiptap/react';
 
 export interface UseTableConfig {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MoonStarIcon, SunIcon } from 'lucide-react';
-import { Button } from '@/components/button';
+import { Button } from '@/shared/components/button';
 
 export function ThemeToggle() {
   const [isDarkMode, setIsDarkMode] = React.useState<boolean>(false);

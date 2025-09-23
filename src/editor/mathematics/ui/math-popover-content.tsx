@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
 import katex from 'katex';
 import { CornerDownLeft, Trash2Icon } from 'lucide-react';
-import { Button, ButtonGroup, Input } from '@/components';
-import { cn } from '@/utils';
+import { Button, ButtonGroup, Input } from '@/shared/components';
+import { cn } from '@/shared/utils';
 
 interface Props {
   mathPopoverClassName?: string;

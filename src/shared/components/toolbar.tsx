@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 
-import { Separator } from '@/components';
-import { useComposedRef, useMenuNavigation } from '@/hooks';
+import { Separator } from '@/shared/components';
+import { useComposedRef, useMenuNavigation } from '@/shared/hooks';
 
-import { cn } from '@/utils/utils';
+import { cn } from '@/shared/utils/utils';
 
 const toolbarVariants = cva('flex items-center gap-1', {
   variants: {

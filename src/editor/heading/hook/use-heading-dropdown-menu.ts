@@ -7,7 +7,7 @@ import {
   type Level,
   type UseHeadingDropdownMenuConfig,
 } from '@/editor';
-import { useTiptapEditor } from '@/hooks';
+import { useTiptapEditor } from '@/shared/hooks';
 import type { Editor } from '@tiptap/react';
 
 export function getActiveHeadingLevel(editor: Editor | null, levels: Level[] = [1, 2, 3, 4, 5, 6]): Level | undefined {

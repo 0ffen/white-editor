@@ -11,8 +11,8 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components';
-import { cn } from '@/utils';
+} from '@/shared/components';
+import { cn } from '@/shared/utils';
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 
 import '@/styles/github-dark.css';

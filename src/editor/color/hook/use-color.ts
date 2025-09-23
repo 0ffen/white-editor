@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TEXT_COLORS, type ColorValue } from '@/editor';
-import { useTiptapEditor } from '@/hooks';
-import { isMarkInSchema, isNodeTypeSelected } from '@/utils';
+import { useTiptapEditor } from '@/shared/hooks';
+import { isMarkInSchema, isNodeTypeSelected } from '@/shared/utils';
 import { type Editor } from '@tiptap/react';
 
 export function pickTextColorsByValue(values: string[]) {

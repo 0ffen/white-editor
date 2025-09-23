@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cn } from '@/utils/utils';
+import { cn } from '@/shared/utils/utils';
 import * as SeparatorPrimitive from '@radix-ui/react-separator';
 
 function Separator({

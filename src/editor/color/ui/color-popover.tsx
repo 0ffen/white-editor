@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import { Ban, TypeIcon } from 'lucide-react';
 
-import { Button, PopoverContent, PopoverTrigger, Separator, type ButtonProps } from '@/components';
 import {
   pickTextColorsByValue,
   TEXT_COLORS_MAP,
@@ -11,8 +10,8 @@ import {
   type ColorValue,
   type UseTextColorConfig,
 } from '@/editor';
-
-import { useTiptapEditor } from '@/hooks';
+import { Button, PopoverContent, PopoverTrigger, Separator, type ButtonProps } from '@/shared/components';
+import { useTiptapEditor } from '@/shared/hooks';
 import { Popover } from '@radix-ui/react-popover';
 import { type Editor } from '@tiptap/react';
 

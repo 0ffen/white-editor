@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, type ButtonProps } from '@/components';
+import { Button, type ButtonProps } from '@/shared/components';
 
 export const LinkButton = React.forwardRef<HTMLButtonElement, ButtonProps>(({ className, children, ...props }, ref) => {
   return (

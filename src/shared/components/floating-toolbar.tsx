@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createPortal } from 'react-dom';
-import { cn } from '@/utils';
+import { cn } from '@/shared/utils';
 import { Toolbar, ToolbarGroup } from './toolbar';
 
 interface FloatingToolbarProps {

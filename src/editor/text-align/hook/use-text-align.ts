@@ -7,8 +7,8 @@ import {
   type TextAlign,
   type UseTextAlignConfig,
 } from '@/editor';
-import { useTiptapEditor } from '@/hooks';
-import { isExtensionAvailable, isNodeTypeSelected } from '@/utils';
+import { useTiptapEditor } from '@/shared/hooks';
+import { isExtensionAvailable, isNodeTypeSelected } from '@/shared/utils';
 import { type Editor } from '@tiptap/react';
 import type { ChainedCommands } from '@tiptap/react';
 
