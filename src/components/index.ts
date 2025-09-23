@@ -16,3 +16,4 @@ export * from './context-menu';
 export * from './floating-toolbar';
 export * from './command';
 export * from './select';
+export * from './theme-toggle';
