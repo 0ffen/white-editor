@@ -13,4 +13,5 @@ export * from './horizontal';
 export * from './highlight';
 export * from './mathematics';
 export * from './mention';
-export * from './editor-toolbar';
+export * from './toolbar';
+export * from './white-editor';
