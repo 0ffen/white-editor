@@ -1,6 +1,5 @@
-import { SimpleEditor } from '@/templates/simple/simple-editor';
 import { TooltipProvider } from './components';
-import { ToolbarContainer } from './editor';
+import { ToolbarContainer, WhiteEditor } from './editor';
 import { createListConfig } from './utils';
 import type { HeadingOption } from './editor/heading/type/heading.type';
 
@@ -67,7 +66,12 @@ export default function App() {
     <TooltipProvider>
       <main className='mx-auto flex flex-col gap-5 p-4'>
         <h1 className='text-2xl font-bold'>Editor</h1>
-        <SimpleEditor mentionItems={userListConfig} />
+        {/* 뷰어, 에디터 분류 필요  */}
+        <WhiteEditor
+          mentionItems={userListConfig}
+          contentClassName='enki-editor'
+          editorClassName='enki-editor-wrapper'
+        />
       </main>
     </TooltipProvider>
   );
