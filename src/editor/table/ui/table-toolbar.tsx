@@ -57,10 +57,10 @@ export const TableToolbar = ({
   }
 
   return (
-    <>
+    <div className='grid grid-cols-3 gap-1 overflow-auto md:w-full md:grid-rows-3'>
       {options.map((option) => (
         <TableActionButton key={option.action} editor={editor} action={option} />
       ))}
-    </>
+    </div>
   );
 };

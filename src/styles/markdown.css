@@ -59,7 +59,11 @@ p {
 }
 
 .markdown tr {
-  @apply [&>.selectedCell]:bg-border/10 [&>.selectedCell.tableSelection]:bg-border/50;
+  @apply [&>.selectedCell]:bg-primary/10 [&>.selectedCell.tableSelection]:bg-primary/10;
+
+  p {
+    @apply my-0 py-0;
+  }
 }
 
 .markdown th {

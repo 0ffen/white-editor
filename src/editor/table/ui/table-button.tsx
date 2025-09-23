@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { ChevronDownIcon } from 'lucide-react';
 
-import { Button, type ButtonProps, FloatingToolbar } from '@/components';
+import { Button, type ButtonProps, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent } from '@/components';
 import { useTable, type UseTableConfig, tableActions, TableToolbar } from '@/editor';
 import { useTiptapEditor } from '@/hooks';
 import { cn } from '@/utils';
@@ -38,37 +39,24 @@ export const TableButton = React.forwardRef<HTMLButtonElement, TableButtonProps>
       onInserted,
     });
 
-    const buttonRef = React.useRef<HTMLButtonElement>(null);
-    const [toolbarOpen, setToolbarOpen] = React.useState<boolean>(false);
+    const [dropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
 
-    const combinedRef = React.useCallback(
-      (node: HTMLButtonElement | null) => {
-        buttonRef.current = node;
-        if (typeof ref === 'function') {
-          ref(node);
-        } else if (ref) {
-          ref.current = node;
-        }
-      },
-      [ref]
-    );
-
-    React.useEffect(() => {
-      setToolbarOpen(isActive);
-    }, [isActive]);
+    const handleDropdownOpenChange = React.useCallback((open: boolean) => {
+      setDropdownOpen(open);
+    }, []);
 
     const handleClick = React.useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event);
         if (event.defaultPrevented) return;
-        handleTable();
+        if (isActive) {
+          setDropdownOpen((prev) => !prev);
+        } else {
+          handleTable();
+        }
       },
-      [handleTable, onClick]
+      [handleTable, onClick, isActive]
     );
-
-    const handleToolbarClose = React.useCallback(() => {
-      setToolbarOpen(false);
-    }, []);
 
     if (!isVisible) {
       return null;
@@ -77,36 +65,34 @@ export const TableButton = React.forwardRef<HTMLButtonElement, TableButtonProps>
     const RenderIcon = icon || (defaultIcon && React.createElement(defaultIcon));
 
     return (
-      <>
-        <Button
-          type='button'
-          data-style='ghost'
-          data-active-state={isActive ? 'on' : 'off'}
-          role='button'
-          tabIndex={-1}
-          disabled={!canInsert}
-          data-disabled={!canInsert}
-          aria-label={label}
-          aria-pressed={isActive}
-          tooltip={label}
-          onClick={handleClick}
-          isActive={isActive}
-          className={cn(className)}
-          {...buttonProps}
-          ref={combinedRef}
-        >
-          {children ?? <>{RenderIcon}</>}
-        </Button>
+      <DropdownMenu open={dropdownOpen && isActive} onOpenChange={handleDropdownOpenChange}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            type='button'
+            data-style='ghost'
+            data-active-state={isActive ? 'on' : 'off'}
+            role='button'
+            tabIndex={-1}
+            disabled={!canInsert}
+            data-disabled={!canInsert}
+            aria-label={label}
+            aria-pressed={isActive}
+            tooltip={label}
+            onClick={handleClick}
+            isActive={isActive}
+            className={cn('gap-1', className)}
+            {...buttonProps}
+            ref={ref}
+          >
+            {children ?? <>{RenderIcon}</>}
+            {isActive && <ChevronDownIcon className='text-muted-foreground size-2' />}
+          </Button>
+        </DropdownMenuTrigger>
 
-        <FloatingToolbar
-          isOpen={toolbarOpen}
-          onClose={handleToolbarClose}
-          anchorElement={buttonRef.current}
-          placement='bottom'
-        >
+        <DropdownMenuContent align='start' className={cn('w-fit')}>
           <TableToolbar editor={editor} options={tableActions} hideWhenUnavailable={hideWhenUnavailable} />
-        </FloatingToolbar>
-      </>
+        </DropdownMenuContent>
+      </DropdownMenu>
     );
   }
 );
