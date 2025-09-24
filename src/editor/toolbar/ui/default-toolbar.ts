@@ -55,13 +55,15 @@ export const defaultToolbar = ToolbarContainer({
       link: {
         show: true,
       },
+    },
+    {
+      table: {
+        show: true,
+      },
       code: {
         show: true,
       },
       codeblock: {
-        show: true,
-      },
-      table: {
         show: true,
       },
       inlineMath: {
@@ -70,9 +72,9 @@ export const defaultToolbar = ToolbarContainer({
       blockMath: {
         show: true,
       },
+      imageUpload: true,
     },
     {
-      imageUpload: true,
       theme: true,
     },
   ],
