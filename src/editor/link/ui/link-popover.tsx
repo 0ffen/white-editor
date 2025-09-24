@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { LinkIcon } from 'lucide-react';
 import { useLinkPopover, type UseLinkPopoverConfig, LinkMain, LinkButton } from '@/editor';
 import { Popover, PopoverContent, PopoverTrigger, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
@@ -10,6 +11,7 @@ export interface LinkPopoverProps extends Omit<ButtonProps, 'type'>, UseLinkPopo
   autoOpenOnLinkActive?: boolean;
   placeholder?: string;
   linkPopoverClassName?: string;
+  icon?: React.ReactNode;
 }
 
 export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>(
@@ -21,7 +23,7 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
       onOpenChange,
       autoOpenOnLinkActive = true,
       onClick,
-      children,
+      icon,
       placeholder,
       linkPopoverClassName,
       ...buttonProps
@@ -83,7 +85,7 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
             {...buttonProps}
             ref={ref}
           >
-            {children ?? <Icon />}
+            {icon || <LinkIcon />}
           </LinkButton>
         </PopoverTrigger>
 

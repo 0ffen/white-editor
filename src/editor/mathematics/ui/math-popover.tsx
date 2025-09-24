@@ -17,6 +17,7 @@ export const MathPopover = React.forwardRef<HTMLButtonElement, MathPopoverProps>
       onClick,
       placeholder,
       mathPopoverClassName,
+      icon,
       ...buttonProps
     },
     ref
@@ -91,7 +92,7 @@ export const MathPopover = React.forwardRef<HTMLButtonElement, MathPopoverProps>
             {...buttonProps}
             ref={ref}
           >
-            {type === 'block' ? <BlockMathIcon /> : <InlineMathIcon />}
+            {type === 'block' ? icon || <BlockMathIcon /> : icon || <InlineMathIcon />}
           </Button>
         </PopoverTrigger>
         <PopoverContent align='start' className={cn('w-[300px] rounded-2xl px-2 py-2 pr-3', mathPopoverClassName)}>

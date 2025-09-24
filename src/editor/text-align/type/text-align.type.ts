@@ -5,7 +5,7 @@ type TextAlign = 'left' | 'center' | 'right' | 'justify';
 
 interface UseTextAlignConfig {
   editor?: Editor | null;
-  align: TextAlign;
+  align?: TextAlign;
   hideWhenUnavailable?: boolean;
   onAligned?: () => void;
 }

@@ -15,10 +15,11 @@ interface MathHandlerProps {
 
 interface MathPopoverProps extends Omit<ButtonProps, 'type'>, MathematicsConfig {
   className?: string;
+  icon?: React.ReactNode;
   onOpenChange?: (isOpen: boolean) => void;
   placeholder?: string;
   mathPopoverClassName?: string;
-  type: 'block' | 'inline';
+  type?: 'block' | 'inline';
 }
 
 type MathType = 'block' | 'inline';

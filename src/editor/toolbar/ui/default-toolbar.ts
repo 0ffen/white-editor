@@ -3,29 +3,73 @@ import { ToolbarContainer } from './toolbar-container';
 export const defaultToolbar = ToolbarContainer({
   groups: [
     {
-      undo: true,
-      redo: true,
+      undo: {
+        show: true,
+      },
+      redo: {
+        show: true,
+      },
     },
     {
       heading: {
-        options: [
-          { label: 'Normal Text', level: null },
-          { label: 'Heading 1', level: 1 },
-          { label: 'Heading 2', level: 2 },
-          { label: 'Heading 3', level: 3 },
-        ],
+        show: true,
       },
-      textAlign: ['left', 'center', 'right'],
+      textAlignLeft: {
+        show: true,
+      },
+      textAlignCenter: {
+        show: true,
+      },
+      textAlignRight: {
+        show: true,
+      },
+      textAlignJustify: {
+        show: true,
+      },
     },
     {
-      list: ['bulletList', 'orderedList', 'taskList'],
-      marks: ['bold', 'italic', 'strike', 'code', 'underline', 'superscript', 'subscript'],
-      color: true,
-      highlight: true,
-      link: true,
-      table: true,
-      codeblock: true,
-      math: ['inline', 'block'],
+      bulletList: {
+        show: true,
+      },
+      orderedList: {
+        show: true,
+      },
+      taskList: {
+        show: true,
+      },
+      bold: {
+        show: true,
+      },
+      italic: {
+        show: true,
+      },
+      strike: {
+        show: true,
+      },
+      color: {
+        show: true,
+      },
+      highlight: {
+        show: true,
+      },
+      link: {
+        show: true,
+      },
+      code: {
+        show: true,
+      },
+      codeblock: {
+        show: true,
+      },
+      table: {
+        show: true,
+      },
+      inlineMath: {
+        show: true,
+      },
+      blockMath: {
+        show: true,
+      },
     },
     {
       imageUpload: true,

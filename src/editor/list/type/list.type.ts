@@ -11,7 +11,7 @@ export type ListOptions = {
 
 export interface UseListConfig {
   editor?: Editor | null;
-  type: ListType;
+  type?: ListType;
   hideWhenUnavailable?: boolean;
   listOptions?: ListOptions[];
   onToggled?: () => void;

@@ -16,14 +16,22 @@ import { cn } from '@/shared/utils';
 
 export interface HeadingDropdownMenuProps extends Omit<ButtonProps, 'type'>, UseHeadingDropdownMenuConfig {
   onOpenChange?: (isOpen: boolean) => void;
-  options: HeadingOption[];
+  options?: HeadingOption[];
   triggerClassName?: string;
   contentClassName?: string;
   itemButtonClassName?: string;
   itemTextClassName?: string;
   iconClassName?: string;
   sideOffset?: number;
+  icon?: React.ReactNode;
 }
+
+const defaultHeadingOptions: HeadingOption[] = [
+  { label: 'Normal Text', level: null },
+  { label: 'Heading 1', level: 1 },
+  { label: 'Heading 2', level: 2 },
+  { label: 'Heading 3', level: 3 },
+];
 
 export const HeadingDropdownMenu = React.forwardRef<HTMLButtonElement, HeadingDropdownMenuProps>(
   (
@@ -37,6 +45,7 @@ export const HeadingDropdownMenu = React.forwardRef<HTMLButtonElement, HeadingDr
       itemButtonClassName,
       itemTextClassName,
       sideOffset,
+      icon,
       ...buttonProps
     },
     ref
@@ -61,6 +70,10 @@ export const HeadingDropdownMenu = React.forwardRef<HTMLButtonElement, HeadingDr
       return null;
     }
 
+    if (!options) {
+      options = defaultHeadingOptions;
+    }
+
     return (
       <DropdownMenu modal open={isOpen} onOpenChange={handleOpenChange}>
         <DropdownMenuTrigger asChild>
@@ -78,7 +91,7 @@ export const HeadingDropdownMenu = React.forwardRef<HTMLButtonElement, HeadingDr
             {...buttonProps}
             ref={ref}
           >
-            <TextSizeIcon />
+            {icon || <TextSizeIcon />}
             <ChevronDownIcon className='text-muted-foreground size-2' />
           </Button>
         </DropdownMenuTrigger>

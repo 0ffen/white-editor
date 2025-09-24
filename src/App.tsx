@@ -1,7 +1,6 @@
 import { ToolbarContainer, WhiteEditor } from './editor';
 import { TooltipProvider } from './shared/components';
 import { createListConfig } from './shared/utils';
-import type { HeadingOption } from './editor/heading/type/heading.type';
 
 interface User {
   uuid: number;
@@ -19,48 +18,6 @@ const userListConfig = createListConfig(apiUsers, {
   label: 'nickname',
 });
 
-const HeadingOptions: HeadingOption[] = [
-  {
-    label: 'Nor Text',
-    level: null,
-  },
-  {
-    label: 'Heading 1',
-    level: 1,
-  },
-  {
-    label: 'Heading 2',
-    level: 2,
-  },
-  {
-    label: 'Heading 3',
-    level: 3,
-  },
-];
-
-const toolbar = ToolbarContainer({
-  groups: [
-    {
-      undo: true,
-      redo: true,
-      heading: {
-        options: HeadingOptions,
-      },
-      textAlign: ['left', 'center', 'right'],
-    },
-    {
-      list: ['bulletList', 'orderedList'],
-      marks: ['bold', 'italic', 'strike'],
-      color: true,
-      link: true,
-    },
-    {
-      imageUpload: true,
-      theme: true,
-    },
-  ],
-});
-
 export default function App() {
   return (
     <TooltipProvider>
@@ -68,6 +25,7 @@ export default function App() {
         <h1 className='text-2xl font-bold'>Editor</h1>
         {/* 뷰어, 에디터 분류 필요  */}
         <WhiteEditor
+          // toolbar={toolbar}
           mentionItems={userListConfig}
           contentClassName='enki-editor'
           editorClassName='enki-editor-wrapper'
@@ -76,3 +34,104 @@ export default function App() {
     </TooltipProvider>
   );
 }
+
+const toolbar = ToolbarContainer({
+  groups: [
+    {
+      undo: {
+        show: true,
+        props: {},
+      },
+      redo: {
+        show: true,
+        props: {},
+      },
+      heading: {
+        show: true,
+        props: {},
+      },
+      textAlignLeft: {
+        show: true,
+        props: {},
+      },
+      textAlignCenter: {
+        show: true,
+        props: {},
+      },
+      textAlignRight: {
+        show: true,
+        props: {},
+      },
+      textAlignJustify: {
+        show: true,
+        props: {},
+      },
+    },
+    {
+      bulletList: {
+        show: true,
+        props: {},
+      },
+      orderedList: {
+        show: true,
+        props: {},
+      },
+      bold: {
+        show: true,
+        props: {},
+      },
+      italic: {
+        show: true,
+        props: {},
+      },
+      strike: {
+        show: true,
+        props: {},
+      },
+      code: {
+        show: true,
+        props: {},
+      },
+      codeblock: {
+        show: true,
+        props: {},
+      },
+      underline: {
+        show: true,
+        props: {},
+      },
+      superscript: {
+        show: true,
+        props: {},
+      },
+      subscript: {
+        show: true,
+        props: {},
+      },
+      color: {
+        show: true,
+        props: {},
+      },
+      highlight: {
+        show: true,
+        props: {},
+      },
+      link: {
+        show: true,
+        props: {},
+      },
+      inlineMath: {
+        show: true,
+        props: {},
+      },
+      blockMath: {
+        show: true,
+        props: {},
+      },
+    },
+    {
+      imageUpload: true,
+      theme: true,
+    },
+  ],
+});

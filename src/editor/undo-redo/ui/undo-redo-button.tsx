@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { Button, type ButtonProps } from '@/shared/components';
 import { useUndoRedo, type UseUndoRedoConfig } from '@/editor';
+import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks/use-tiptap-editor';
 import { cn } from '@/shared/utils';
 
@@ -19,7 +19,6 @@ export const UndoRedoButton = React.forwardRef<HTMLButtonElement, UndoRedoButton
       className,
       hideWhenUnavailable = false,
       onExecuted,
-
       onClick,
       children,
       ...buttonProps

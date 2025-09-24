@@ -5,7 +5,7 @@ type UndoRedoAction = 'undo' | 'redo';
 
 interface UseUndoRedoConfig {
   editor?: Editor | null;
-  action: UndoRedoAction; //실행할 history action
+  action?: UndoRedoAction; //실행할 history action
   hideWhenUnavailable?: boolean;
   onExecuted?: () => void; //액션 성공시 호출하는 콜백함수
 }

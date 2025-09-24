@@ -10,6 +10,7 @@ import {
   type ColorValue,
   type UseTextColorConfig,
 } from '@/editor';
+import { cn } from '@/shared';
 import { Button, PopoverContent, PopoverTrigger, Separator, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { Popover } from '@radix-ui/react-popover';
@@ -24,23 +25,27 @@ export interface ColorPopoverProps
   extends Omit<ButtonProps, 'type'>,
     Pick<UseTextColorConfig, 'editor' | 'hideWhenUnavailable' | 'onApplied'> {
   textColors?: ColorValue[];
+  icon?: React.ReactNode;
 }
 
-const ColorPickerButton = React.forwardRef<HTMLButtonElement, ButtonProps>(({ className, children, ...props }, ref) => (
-  <Button
-    type='button'
-    className={className}
-    data-style='ghost'
-    data-appearance='default'
-    role='button'
-    tabIndex={-1}
-    aria-label='Text Color'
-    ref={ref}
-    {...props}
-  >
-    {children ?? <TypeIcon />}
-  </Button>
-));
+const ColorPickerButton = React.forwardRef<HTMLButtonElement, ButtonProps & { currentTextColor?: string }>(
+  ({ className, currentTextColor, children, ...props }, ref) => (
+    <Button
+      type='button'
+      className={cn(className, 'data-[active=true]:[&_svg]:text-[var(--current-text-color)]')}
+      data-style='ghost'
+      data-appearance='default'
+      role='button'
+      tabIndex={-1}
+      aria-label='Text Color'
+      ref={ref}
+      style={{ '--current-text-color': currentTextColor } as React.CSSProperties}
+      {...props}
+    >
+      {children}
+    </Button>
+  )
+);
 
 ColorPickerButton.displayName = 'ColorPickerButton';
 
@@ -49,6 +54,7 @@ export function ColorPopover({
   textColors = pickTextColorsByValue(TEXT_COLORS_MAP),
   hideWhenUnavailable = false,
   onApplied,
+  icon,
   ...props
 }: ColorPopoverProps) {
   const { editor } = useTiptapEditor(providedEditor);
@@ -76,9 +82,10 @@ export function ColorPopover({
           aria-label={label}
           tooltip={label}
           isActive={isActive}
+          currentTextColor={currentTextColor}
           {...props}
         >
-          <TypeIcon style={{ color: currentTextColor }} />
+          {icon || <TypeIcon />}
         </ColorPickerButton>
       </PopoverTrigger>
 

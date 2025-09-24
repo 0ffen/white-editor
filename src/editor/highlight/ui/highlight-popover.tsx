@@ -23,6 +23,7 @@ export interface HighlightPopoverProps
   extends Omit<ButtonProps, 'type'>,
     Pick<UseColorHighlightConfig, 'editor' | 'hideWhenUnavailable' | 'onApplied'> {
   highlightColors?: HighlightColor[];
+  icon?: React.ReactNode;
 }
 
 const HighlightPickerButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -51,6 +52,7 @@ export function HighlightPopover({
   highlightColors = pickHighlightColorsByValue(HIGHLIGHT_COLORS_MAP),
   hideWhenUnavailable = false,
   onApplied,
+  icon,
   ...props
 }: HighlightPopoverProps) {
   const { editor } = useTiptapEditor(providedEditor);
@@ -81,7 +83,7 @@ export function HighlightPopover({
           activeClassName={currentHighlightColor}
           {...props}
         >
-          <LucideHighlighter />
+          {icon || <LucideHighlighter />}
         </HighlightPickerButton>
       </PopoverTrigger>
 

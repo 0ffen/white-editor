@@ -14,7 +14,7 @@ type Mark = 'bold' | 'italic' | 'strike' | 'code' | 'underline' | 'superscript' 
 
 interface UseMarkConfig {
   editor?: Editor | null;
-  type: Mark;
+  type?: Mark;
   hideWhenUnavailable?: boolean;
   onToggled?: () => void;
 }
