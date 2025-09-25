@@ -153,6 +153,9 @@ body {
 
 /* Text colors */
 :root {
+  --tt-color-text-white: hsl(0, 0%, 100%);
+  --tt-color-text-transparent: hsla(0, 0%, 0%, 0);
+  --tt-color-text-black: hsl(0, 0%, 0%);
   --tt-color-text-gray: hsl(0, 0%, 61%);
   --tt-color-text-yellow: hsl(49, 100%, 62%);
   --tt-color-text-green: hsl(141, 79%, 46%);

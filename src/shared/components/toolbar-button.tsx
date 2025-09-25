@@ -11,7 +11,7 @@ interface ToolbarButtonProps extends React.ComponentProps<typeof Toggle> {
 }
 
 export const ToolbarButton = ({
-  isActive,
+  isActive = false,
   children,
   tooltip,
   className,
