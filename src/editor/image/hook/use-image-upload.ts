@@ -52,42 +52,6 @@ export function shouldShowImageUploadButton(props: { editor: Editor | null; hide
   return true;
 }
 
-/**
- * Custom hook that provides image functionality for Tiptap editor
- *
- * @example
- * ```tsx
- * // Simple usage - no params needed
- * function MySimpleImageButton() {
- *   const { isVisible, handleImage } = useImage()
- *
- *   if (!isVisible) return null
- *
- *   return <button onClick={handleImage}>Add Image</button>
- * }
- *
- * // Advanced usage with configuration
- * function MyAdvancedImageButton() {
- *   const { isVisible, handleImage, label, isActive } = useImage({
- *     editor: myEditor,
- *     hideWhenUnavailable: true,
- *     onInserted: () => console.log('Image inserted!')
- *   })
- *
- *   if (!isVisible) return null
- *
- *   return (
- *     <MyButton
- *       onClick={handleImage}
- *       aria-pressed={isActive}
- *       aria-label={label}
- *     >
- *       Add Image
- *     </MyButton>
- *   )
- * }
- * ```
- */
 export function useImageUpload(config?: UseImageUploadConfig) {
   const { editor: providedEditor, hideWhenUnavailable = false, onInserted } = config || {};
 
@@ -127,7 +91,7 @@ export function useImageUpload(config?: UseImageUploadConfig) {
     isActive,
     handleImage,
     canInsert,
-    label: '이미지 업로드',
+    label: 'Image Upload',
     Icon: ImagePlusIcon,
   };
 }

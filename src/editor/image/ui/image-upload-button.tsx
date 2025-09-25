@@ -1,20 +1,18 @@
 import * as React from 'react';
 
+import { ImagePlusIcon } from 'lucide-react';
+import { useImageUpload, type UseImageUploadConfig } from '@/editor';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
-import { useImageUpload, type UseImageUploadConfig } from './use-image-upload';
 
 export interface ImageUploadButtonProps extends Omit<ButtonProps, 'type'>, UseImageUploadConfig {
-  text?: string;
+  icon?: React.ReactNode;
 }
 
 export const ImageUploadButton = React.forwardRef<HTMLButtonElement, ImageUploadButtonProps>(
-  (
-    { editor: providedEditor, text, hideWhenUnavailable = false, onInserted, onClick, children, ...buttonProps },
-    ref
-  ) => {
+  ({ editor: providedEditor, icon, hideWhenUnavailable = false, onInserted, onClick, ...buttonProps }, ref) => {
     const { editor } = useTiptapEditor(providedEditor);
-    const { isVisible, canInsert, handleImage, label, isActive, Icon } = useImageUpload({
+    const { isVisible, canInsert, handleImage, label, isActive } = useImageUpload({
       editor,
       hideWhenUnavailable,
       onInserted,
@@ -48,12 +46,7 @@ export const ImageUploadButton = React.forwardRef<HTMLButtonElement, ImageUpload
         {...buttonProps}
         ref={ref}
       >
-        {children ?? (
-          <>
-            <Icon className='tiptap-button-icon' />
-            {text && <span className='tiptap-button-text'>{text}</span>}
-          </>
-        )}
+        <>{icon || <ImagePlusIcon />}</>
       </Button>
     );
   }

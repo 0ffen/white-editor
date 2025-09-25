@@ -7,10 +7,26 @@ import { cn } from '@/shared/utils';
 import { EditorContent, EditorContext } from '@tiptap/react';
 
 export function WhiteEditor<T>(props: WhiteEditorProps<T>) {
-  const { mentionItems, toolbar, contentClassName, editorClassName } = props;
+  const { mentionItems, toolbar, contentClassName, editorClassName, imageConfig } = props;
 
   const toolbarRef = React.useRef<HTMLDivElement>(null);
-  const { editor } = useWhiteEditor<T>(mentionItems, contentClassName);
+  const { editor } = useWhiteEditor<T>({ mentionItems, contentClassName, imageConfig });
+
+  // const editorConfig:  = {
+  //   extensions: [
+  //     ImageUploadNode.configure({
+  //       accept: 'image/*',
+  //       maxSize: MAX_FILE_SIZE,
+  //       limit: 3,
+  //       upload: () => Promise.resolve('upload'),
+  //       onError: (error) => {
+  //         console.error('Upload failed:', error);
+  //       },
+  //     }),
+  //   ],
+  //   onUpdate: () => {},
+  //   onPaste: () => {},
+  // };
 
   return (
     <div className={cn('editor-wrapper', editorClassName)}>

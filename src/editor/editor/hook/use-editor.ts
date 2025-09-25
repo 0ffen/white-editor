@@ -1,7 +1,8 @@
 import { all, createLowlight } from 'lowlight';
-import { MentionNode, CodeBlock } from '@/editor';
+import { CodeBlock } from '@/editor/code-block/ui/code-block';
 import { ImageUploadNode } from '@/editor/image/image-upload-node/image-upload-node-extension';
-import { handleImageUpload, MAX_FILE_SIZE, type ListItemConfig } from '@/shared/utils';
+import { MentionNode } from '@/editor/mention/util/mention-node';
+import { handleImageUpload, MAX_FILE_SIZE } from '@/shared/utils';
 
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
@@ -16,8 +17,10 @@ import { Color, TextStyleKit } from '@tiptap/extension-text-style';
 import { Selection } from '@tiptap/extensions';
 import { ReactNodeViewRenderer, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import type { WhiteEditorProps } from '../type/white-editor.type';
 
-export const useWhiteEditor = <T>(mentionItems?: ListItemConfig<T>, contentClassName?: string) => {
+export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
+  const { mentionItems, contentClassName, imageConfig } = props;
   const lowlight = createLowlight(all);
 
   const editor = useEditor({
@@ -60,13 +63,15 @@ export const useWhiteEditor = <T>(mentionItems?: ListItemConfig<T>, contentClass
         },
       }).configure({ lowlight }),
       ImageUploadNode.configure({
-        accept: 'image/*',
-        maxSize: MAX_FILE_SIZE,
-        limit: 3,
-        upload: handleImageUpload,
-        onError: (error) => {
-          console.error('Upload failed:', error);
-        },
+        accept: imageConfig?.accept || 'image/*',
+        maxSize: imageConfig?.maxSize || MAX_FILE_SIZE,
+        limit: imageConfig?.limit || 1,
+        upload: imageConfig?.upload || handleImageUpload,
+        onError:
+          imageConfig?.onError ||
+          ((error) => {
+            console.error('Upload failed:', error);
+          }),
       }),
       Mathematics.configure({
         blockOptions: {},
@@ -78,12 +83,6 @@ export const useWhiteEditor = <T>(mentionItems?: ListItemConfig<T>, contentClass
       migrateMathStrings(currentEditor);
     },
     content: '',
-    onUpdate: ({ editor: currentEditor }) => {
-      console.log('onUpdate', currentEditor.getHTML());
-    },
-    onPaste(e, slice) {
-      console.log('onPaste', e, slice);
-    },
   });
 
   return { editor };

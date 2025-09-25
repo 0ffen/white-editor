@@ -1,6 +1,7 @@
 import { ToolbarContainer, WhiteEditor } from './editor';
 import { TooltipProvider } from './shared/components';
-import { createListConfig } from './shared/utils';
+import { createListConfig, handleImageUpload } from './shared/utils';
+import type { ImageUploadConfig } from './editor';
 
 interface User {
   uuid: number;
@@ -34,6 +35,16 @@ export default function App() {
     </TooltipProvider>
   );
 }
+
+const imageUploadConfig: ImageUploadConfig = {
+  accept: 'image/*',
+  maxSize: 10 * 1024 * 1024, // 10MB
+  limit: 5,
+  upload: handleImageUpload,
+  onError: (error) => {
+    alert('업로드 실패: ' + error.message);
+  },
+};
 
 const toolbar = ToolbarContainer({
   groups: [
@@ -130,7 +141,12 @@ const toolbar = ToolbarContainer({
       },
     },
     {
-      imageUpload: true,
+      imageUpload: {
+        show: true,
+        props: {
+          imageConfig: imageUploadConfig,
+        },
+      },
       theme: true,
     },
   ],

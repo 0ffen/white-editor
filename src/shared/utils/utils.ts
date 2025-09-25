@@ -276,16 +276,15 @@ export const handleImageUpload = async (
     throw new Error(`File size exceeds maximum allowed (${fileSize / (1024 * 1024)}MB)`);
   }
 
-  // 데모/테스트용: 업로드 진행률을 시뮬레이션합니다. 실제 환경에서는 아래 코드를 교체하세요.
   for (let progress = 0; progress <= 100; progress += 10) {
     if (abortSignal?.aborted) {
       throw new Error('Upload cancelled');
     }
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 300));
     onProgress?.({ progress });
   }
 
-  return '/images/tiptap-ui-placeholder-image.jpg';
+  return URL.createObjectURL(file);
 };
 
 type ProtocolOptions = {
