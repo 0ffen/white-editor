@@ -1,3 +1,4 @@
+import { handleImageUpload } from '@/shared/utils';
 import { ToolbarContainer } from './toolbar-container';
 
 export const defaultToolbar = ToolbarContainer({
@@ -72,7 +73,20 @@ export const defaultToolbar = ToolbarContainer({
       blockMath: {
         show: true,
       },
-      imageUpload: true,
+      imageUpload: {
+        show: true,
+        props: {
+          imageConfig: {
+            accept: 'image/*',
+            maxSize: 10 * 1024 * 1024,
+            limit: 1,
+            upload: handleImageUpload,
+            onError: (error) => {
+              console.error('Upload failed:', error);
+            },
+          },
+        },
+      },
     },
     {
       theme: true,

@@ -3,7 +3,6 @@ import {
   BlockquoteButton,
   CodeBlockButton,
   HeadingDropdownMenu,
-  ImageUploadButton,
   LinkPopover,
   ListButton,
   MarkButton,
@@ -14,9 +13,15 @@ import {
   MathPopover,
   TableButton,
   type EditorToolbarConfig,
+  ImageModal,
 } from '@/editor';
 import { ThemeToggle } from '@/shared/components';
 
+/**
+ * @name createToolbarGroup
+ * @param groupConfig
+ * Toolbar 을 만드는 메인 함수
+ */
 export const createToolbarGroup = (groupConfig: EditorToolbarConfig): React.ReactNode[] => {
   const items: React.ReactNode[] = [];
 
@@ -117,7 +122,7 @@ export const createToolbarGroup = (groupConfig: EditorToolbarConfig): React.Reac
 
   /** 이미지 업로드 */
   if (groupConfig.imageUpload) {
-    items.push(<ImageUploadButton key='image' />);
+    items.push(<ImageModal key='image' {...groupConfig.imageUpload.props} />);
   }
 
   /** 테마 */

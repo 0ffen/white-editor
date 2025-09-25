@@ -3,6 +3,7 @@ import type { CodeBlockButtonProps } from '@/editor/code-block';
 import type { ColorPopoverProps } from '@/editor/color';
 import type { HeadingDropdownMenuProps } from '@/editor/heading';
 import type { HighlightPopoverProps } from '@/editor/highlight';
+import type { ImageDialogProps } from '@/editor/image';
 import type { LinkPopoverProps } from '@/editor/link';
 import type { ListButtonProps } from '@/editor/list';
 import type { MarkButtonProps } from '@/editor/mark';
@@ -112,6 +113,9 @@ export interface EditorToolbarConfig {
     show: boolean;
     props?: TextAlignButtonProps;
   };
-  imageUpload?: boolean;
+  imageUpload?: {
+    show: boolean;
+    props?: ImageDialogProps;
+  };
   theme?: boolean;
 }
