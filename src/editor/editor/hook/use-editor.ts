@@ -1,12 +1,10 @@
 import { all, createLowlight } from 'lowlight';
 import { CodeBlock } from '@/editor/code-block/ui/code-block';
-import { ImageUploadNode } from '@/editor/image/image-upload-node/image-upload-node-extension';
+import { ResizableImage } from '@/editor/image/extension/resizable-image';
 import { MentionNode } from '@/editor/mention/util/mention-node';
-import { handleImageUpload, MAX_FILE_SIZE } from '@/shared/utils';
 
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
-import Image from '@tiptap/extension-image';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
 import Mathematics, { migrateMathStrings } from '@tiptap/extension-mathematics';
 import Subscript from '@tiptap/extension-subscript';
@@ -20,7 +18,7 @@ import StarterKit from '@tiptap/starter-kit';
 import type { WhiteEditorProps } from '../type/white-editor.type';
 
 export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
-  const { mentionItems, contentClassName, imageConfig } = props;
+  const { mentionItems, contentClassName, imageConfig: _imageConfig } = props;
   const lowlight = createLowlight(all);
 
   const editor = useEditor({
@@ -45,10 +43,10 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
       TableKit.configure({
         table: { resizable: true },
       }),
-      TextAlign.configure({ types: ['heading', 'paragraph'] }),
+      TextAlign.configure({ types: ['heading', 'paragraph', 'image'] }),
       TaskList,
       TaskItem.configure({ nested: true }),
-      Image,
+      ResizableImage,
       TextStyleKit,
       Color.configure({
         types: ['textStyle'],
@@ -62,17 +60,6 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
           return ReactNodeViewRenderer(CodeBlock as React.FC);
         },
       }).configure({ lowlight }),
-      ImageUploadNode.configure({
-        accept: imageConfig?.accept || 'image/*',
-        maxSize: imageConfig?.maxSize || MAX_FILE_SIZE,
-        limit: imageConfig?.limit || 1,
-        upload: imageConfig?.upload || handleImageUpload,
-        onError:
-          imageConfig?.onError ||
-          ((error) => {
-            console.error('Upload failed:', error);
-          }),
-      }),
       Mathematics.configure({
         blockOptions: {},
         inlineOptions: {},

@@ -1,19 +1,29 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import TuiImageEditor from 'tui-image-editor';
 import { ImageEditorToolbar, CropEditor, DrawEditor, ShapeEditor, TextEditor } from '@/editor';
+import { Input } from '@/shared';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
+export interface ImageEditorRef {
+  getEditedImageAsBlob: () => Promise<Blob | null>;
+  toDataURL: () => string | null;
+}
 interface ImageEditorProps {
   imageUrl: string;
+  onCaptionChange?: (caption: string) => void;
+  defaultCaption?: string;
 }
 
-export function ImageEditor({ imageUrl }: ImageEditorProps) {
+export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, ref) => {
+  const { imageUrl, onCaptionChange, defaultCaption = '' } = props;
+
   const rootEl = useRef<HTMLDivElement | null>(null);
   const editorRef = useRef<TuiImageEditorType | null>(null);
 
   const [activeMode, setActiveMode] = useState<string | null>(null);
   const [drawingColor, setDrawingColor] = useState<string>('#000000');
   const [drawingRange, setDrawingRange] = useState<number>(10);
+  const [caption, setCaption] = useState<string>(defaultCaption);
 
   useEffect(() => {
     if (rootEl.current) {
@@ -32,9 +42,7 @@ export function ImageEditor({ imageUrl }: ImageEditorProps) {
       });
 
       editorRef.current = instance;
-
       instance.loadImageFromURL(imageUrl, 'UploadedImage').then(() => {});
-
       return () => {
         instance.destroy();
         editorRef.current = null;
@@ -70,15 +78,63 @@ export function ImageEditor({ imageUrl }: ImageEditorProps) {
     [startCropMode, startDrawMode]
   );
 
+  const handleCaptionChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newCaption = e.target.value;
+      setCaption(newCaption);
+      onCaptionChange?.(newCaption);
+    },
+    [onCaptionChange]
+  );
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      getEditedImageAsBlob: async (): Promise<Blob | null> => {
+        if (!editorRef.current) return null;
+
+        try {
+          const dataURL = editorRef.current.toDataURL();
+          const response = await fetch(dataURL);
+          return await response.blob();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('Failed to get edited image as blob:', error);
+          return null;
+        }
+      },
+      toDataURL: (): string | null => {
+        if (!editorRef.current) return null;
+
+        try {
+          return editorRef.current.toDataURL();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('Failed to get data URL:', error);
+          return null;
+        }
+      },
+    }),
+    []
+  );
+
   return (
     <div className='flex w-full flex-col'>
       {/* Toolbar */}
       <ImageEditorToolbar editorRef={editorRef} activeMode={activeMode} handleModeChange={handleModeChange} />
       {/* Image */}
       <div ref={rootEl} className='bg-muted flex h-[300px] w-full items-center justify-center rounded' />
+      {!activeMode && (
+        <div className='mx-auto mt-4 flex w-full flex-col space-y-4 p-2'>
+          <div className='flex w-full flex-col space-y-2'>
+            <h3 className='text-muted-foreground text-xs font-medium'>Caption</h3>
+            <Input name='caption' type='text' value={caption} onChange={handleCaptionChange} />
+          </div>
+        </div>
+      )}
       {/* Editor Options */}
       {activeMode && (
-        <div className='mx-auto mt-6 w-full rounded-lg'>
+        <div className='mx-auto mt-4 w-full'>
           {activeMode === 'crop' && <CropEditor editorRef={editorRef} setActiveMode={setActiveMode} />}
           {activeMode === 'text' && <TextEditor editorRef={editorRef} />}
           {activeMode === 'draw' && (
@@ -96,4 +152,6 @@ export function ImageEditor({ imageUrl }: ImageEditorProps) {
       )}
     </div>
   );
-}
+});
+
+ImageEditor.displayName = 'ImageEditor';

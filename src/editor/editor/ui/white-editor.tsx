@@ -12,22 +12,6 @@ export function WhiteEditor<T>(props: WhiteEditorProps<T>) {
   const toolbarRef = React.useRef<HTMLDivElement>(null);
   const { editor } = useWhiteEditor<T>({ mentionItems, contentClassName, imageConfig });
 
-  // const editorConfig:  = {
-  //   extensions: [
-  //     ImageUploadNode.configure({
-  //       accept: 'image/*',
-  //       maxSize: MAX_FILE_SIZE,
-  //       limit: 3,
-  //       upload: () => Promise.resolve('upload'),
-  //       onError: (error) => {
-  //         console.error('Upload failed:', error);
-  //       },
-  //     }),
-  //   ],
-  //   onUpdate: () => {},
-  //   onPaste: () => {},
-  // };
-
   return (
     <div className={cn('editor-wrapper', editorClassName)}>
       <EditorContext.Provider value={{ editor }}>

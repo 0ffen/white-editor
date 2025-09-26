@@ -30,6 +30,7 @@ export default function App() {
           mentionItems={userListConfig}
           contentClassName='enki-editor'
           editorClassName='enki-editor-wrapper'
+          imageConfig={imageUploadConfig}
         />
       </main>
     </TooltipProvider>
@@ -41,9 +42,12 @@ const imageUploadConfig: ImageUploadConfig = {
   maxSize: 10 * 1024 * 1024, // 10MB
   limit: 5,
   upload: handleImageUpload,
-  onError: (error) => {
-    alert('업로드 실패: ' + error.message);
-  },
+  // onError: (error) => {
+  //   alert('업로드 실패: ' + error.message);
+  // },
+  // onSuccess: (url) => {
+  //   console.log('업로드 성공: ' + url);
+  // },
 };
 
 const toolbar = ToolbarContainer({

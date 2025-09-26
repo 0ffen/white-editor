@@ -12,38 +12,26 @@ export interface UseImageUploadConfig {
 
 export function canInsertImage(editor: Editor | null): boolean {
   if (!editor || !editor.isEditable) return false;
-  if (!isExtensionAvailable(editor, 'imageUpload') || isNodeTypeSelected(editor, ['image'])) return false;
-
-  return editor.can().insertContent({ type: 'imageUpload' });
+  return isExtensionAvailable(editor, 'image') && !isNodeTypeSelected(editor, ['codeBlock']);
 }
 
 export function isImageActive(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable) return false;
-  return editor.isActive('imageUpload');
+  if (!editor) return false;
+  return editor.isActive('image');
 }
 
 export function insertImage(editor: Editor | null): boolean {
   if (!editor || !editor.isEditable) return false;
   if (!canInsertImage(editor)) return false;
 
-  try {
-    return editor
-      .chain()
-      .focus()
-      .insertContent({
-        type: 'imageUpload',
-      })
-      .run();
-  } catch {
-    return false;
-  }
+  return true;
 }
 
 export function shouldShowImageUploadButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
   const { editor, hideWhenUnavailable } = props;
 
   if (!editor || !editor.isEditable) return false;
-  if (!isExtensionAvailable(editor, 'imageUpload')) return false;
+  if (!isExtensionAvailable(editor, 'image')) return false;
 
   if (hideWhenUnavailable && !editor.isActive('code')) {
     return canInsertImage(editor);

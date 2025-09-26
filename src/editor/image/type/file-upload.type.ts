@@ -19,16 +19,6 @@ export interface UploadOptions {
    * @returns {Promise<string>} 업로드된 파일의 URL을 반환하는 Promise
    */
   upload: (file: File, onProgress: (event: { progress: number }) => void, signal: AbortSignal) => Promise<string>;
-  /**
-   * 파일 업로드가 성공적으로 완료되었을 때 호출되는 콜백
-   * @param {string} url - 업로드된 파일의 URL
-   * @optional
-   */
   onSuccess?: (url: string) => void;
-  /**
-   * 업로드 중 오류가 발생했을 때 호출되는 콜백
-   * @param {Error} error - 발생한 에러 객체
-   * @optional
-   */
   onError?: (error: Error) => void;
 }

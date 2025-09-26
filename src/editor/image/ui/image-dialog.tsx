@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { useCallback } from 'react';
 import { XIcon } from 'lucide-react';
-import type { ImageUploadConfig } from '@/editor';
 import {
   type UploadOptions,
   ImageUploadButton,
@@ -8,6 +8,9 @@ import {
   ImageUploadingProgress,
   useFileUpload,
   ImageEditor,
+  useImageSave,
+  type ImageServerAPI,
+  type ImageEditorRef,
 } from '@/editor';
 import { handleImageUpload } from '@/shared';
 import {
@@ -19,19 +22,64 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/shared/components';
+import { useTiptapEditor } from '@/shared/hooks';
+import type { Editor } from '@tiptap/react';
+
+export interface ImageUploadConfig {
+  accept?: string;
+  maxSize?: number;
+  limit?: number;
+  upload?: (file: File) => Promise<string>;
+  onError?: (error: Error) => void;
+  onSuccess?: (result: string) => void;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onSave?: (url: string, caption: string) => void;
+  imageUrl?: string;
+  currentCaption?: string;
+}
 
 export interface ImageDialogProps extends Partial<ImageUploadConfig> {
   cancelText?: string;
   saveText?: string;
   icon?: React.ReactNode;
   imageConfig?: ImageUploadConfig;
+  editor?: Editor | null;
+  serverAPI?: ImageServerAPI;
+  onImageInserted?: (url: string, caption?: string) => void;
 }
 
-export function ImageModal(props: ImageDialogProps) {
-  const { cancelText, saveText, accept = 'image/*', maxSize, limit = 1, upload, onError, onSuccess, icon } = props;
+export function ImageDialog(props: ImageDialogProps) {
+  const {
+    cancelText,
+    saveText,
+    accept = 'image/*',
+    maxSize,
+    limit = 1,
+    upload,
+    onError,
+    onSuccess,
+    icon,
+    editor: providedEditor,
+    serverAPI,
+    onImageInserted,
+  } = props;
+
+  const { editor } = useTiptapEditor(providedEditor);
+  // 이미지 저장 훅 사용
+  const { saveImage } = useImageSave({
+    editor: editor ?? undefined,
+    serverAPI,
+    upload,
+    onSuccess,
+    onError,
+  });
 
   const [isOpen, setIsOpen] = React.useState(false);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+  const [caption, setCaption] = React.useState<string>('');
+
+  const imageEditorRef = React.useRef<ImageEditorRef>(null);
 
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -75,10 +123,11 @@ export function ImageModal(props: ImageDialogProps) {
     }
   };
 
-  const handleRemovePreview = () => {
+  const handleRemovePreview = useCallback(() => {
     clearAllFiles();
     setPreviewUrl(null);
-  };
+    setCaption('');
+  }, [clearAllFiles]);
 
   const handleCancel = () => {
     handleRemovePreview();
@@ -89,8 +138,37 @@ export function ImageModal(props: ImageDialogProps) {
     setIsOpen(open);
     if (!open) {
       handleRemovePreview();
+      setCaption('');
     }
   };
+
+  const handleSave = useCallback(async () => {
+    if (!editor || !previewUrl || fileItems.length === 0) {
+      return;
+    }
+
+    try {
+      const editedImageBlob = imageEditorRef.current?.toDataURL();
+      const imageDataToUse = editedImageBlob || previewUrl;
+      const filename = `${fileItems[0].file.name}.png`;
+      const currentCaption = caption;
+
+      const result = await saveImage({
+        imageData: imageDataToUse,
+        caption: currentCaption,
+        filename,
+        insertToEditor: true,
+        onImageInserted,
+      });
+
+      if (result.success) {
+        setIsOpen(false);
+        handleRemovePreview();
+      }
+    } catch (error) {
+      onError?.(error instanceof Error ? error : new Error('Failed to save image'));
+    }
+  }, [editor, previewUrl, fileItems, caption, saveImage, onImageInserted, handleRemovePreview, onError]);
 
   const hasFiles = fileItems.length > 0;
 
@@ -106,7 +184,12 @@ export function ImageModal(props: ImageDialogProps) {
 
         {previewUrl && (
           <div className='relative flex w-full items-center justify-center overflow-y-auto'>
-            <ImageEditor imageUrl={previewUrl || ''} />
+            <ImageEditor
+              ref={imageEditorRef}
+              imageUrl={previewUrl || ''}
+              onCaptionChange={setCaption}
+              defaultCaption={caption}
+            />
             <Button
               type='button'
               variant='ghost'
@@ -151,14 +234,14 @@ export function ImageModal(props: ImageDialogProps) {
           )}
         </div>
 
-        {hasFiles && (
+        {hasFiles && previewUrl && (
           <DialogFooter className=''>
             <Button type='button' variant='secondary' onClick={handleCancel}>
-              {cancelText || 'cancel'}
+              {cancelText || 'Cancel'}
             </Button>
 
-            <Button type='button' variant='default' onClick={handleClick}>
-              {saveText || 'save'}
+            <Button type='button' variant='default' onClick={handleSave} className='min-w-20'>
+              {saveText || 'Save'}
             </Button>
           </DialogFooter>
         )}

@@ -13,7 +13,7 @@ import {
   MathPopover,
   TableButton,
   type EditorToolbarConfig,
-  ImageModal,
+  ImageDialog,
 } from '@/editor';
 import { ThemeToggle } from '@/shared/components';
 
@@ -122,7 +122,7 @@ export const createToolbarGroup = (groupConfig: EditorToolbarConfig): React.Reac
 
   /** 이미지 업로드 */
   if (groupConfig.imageUpload) {
-    items.push(<ImageModal key='image' {...groupConfig.imageUpload.props} />);
+    items.push(<ImageDialog key='image' {...groupConfig.imageUpload.props} />);
   }
 
   /** 테마 */

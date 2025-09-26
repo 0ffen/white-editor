@@ -83,3 +83,7 @@
     }
   }
 }
+
+.node-image {
+  @apply inline-block;
+}
