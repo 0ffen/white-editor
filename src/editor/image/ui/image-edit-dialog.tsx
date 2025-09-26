@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import { ImageEditor, type ImageEditorRef } from '@/editor';
 import { Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/shared';
 
@@ -8,19 +9,23 @@ interface ImageEditDialogProps {
   imageUrl: string;
   currentCaption: string;
   onSave: (imageUrl: string, caption: string) => void;
+  cancelText?: string;
+  saveText?: string;
 }
 
 export function ImageEditDialog(props: ImageEditDialogProps) {
-  const { isOpen, onOpenChange, imageUrl, currentCaption, onSave } = props;
+  const { isOpen, onOpenChange, imageUrl, currentCaption, onSave, cancelText, saveText } = props;
 
   const imageRef = useRef<ImageEditorRef>(null);
   const [caption, setCaption] = useState<string>(currentCaption);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   const handleCaptionChange = (newCaption: string) => {
     setCaption(newCaption);
   };
 
   const handleSaveClick = () => {
+    setIsSaving(true);
     try {
       const editedDataURL = imageRef.current?.toDataURL();
       const srcToSave = editedDataURL || imageUrl;
@@ -29,6 +34,8 @@ export function ImageEditDialog(props: ImageEditDialogProps) {
       // eslint-disable-next-line no-console
       console.error(err);
       onSave(imageUrl, caption);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -49,11 +56,11 @@ export function ImageEditDialog(props: ImageEditDialogProps) {
         </div>
 
         <DialogFooter>
-          <Button type='button' variant='secondary' onClick={() => onOpenChange(false)}>
-            {'Cancel'}
+          <Button type='button' variant='secondary' onClick={() => onOpenChange(false)} disabled={isSaving}>
+            {cancelText || 'Cancel'}
           </Button>
-          <Button type='button' variant='default' onClick={handleSaveClick} className='min-w-20'>
-            {'Save'}
+          <Button type='button' variant='default' onClick={handleSaveClick} className='min-w-20' disabled={isSaving}>
+            {isSaving ? <Loader2 className='h-4 w-4 animate-spin' /> : saveText || 'Save'}
           </Button>
         </DialogFooter>
       </DialogContent>

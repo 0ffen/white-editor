@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import TuiImageEditor from 'tui-image-editor';
 import { ImageEditorToolbar, CropEditor, DrawEditor, ShapeEditor, TextEditor } from '@/editor';
-import { Input } from '@/shared';
+import { Textarea } from '@/shared';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
 export interface ImageEditorRef {
@@ -79,7 +79,7 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
   );
 
   const handleCaptionChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const newCaption = e.target.value;
       setCaption(newCaption);
       onCaptionChange?.(newCaption);
@@ -128,7 +128,7 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
         <div className='mx-auto mt-4 flex w-full flex-col space-y-4 p-2'>
           <div className='flex w-full flex-col space-y-2'>
             <h3 className='text-muted-foreground text-xs font-medium'>Caption</h3>
-            <Input name='caption' type='text' value={caption} onChange={handleCaptionChange} />
+            <Textarea name='caption' value={caption} onChange={handleCaptionChange} rows={3} className='resize-none' />
           </div>
         </div>
       )}

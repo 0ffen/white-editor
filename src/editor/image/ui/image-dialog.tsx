@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useCallback } from 'react';
-import { XIcon } from 'lucide-react';
+import { Loader2, XIcon } from 'lucide-react';
 import {
   type UploadOptions,
   ImageUploadButton,
@@ -78,6 +78,7 @@ export function ImageDialog(props: ImageDialogProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
   const [caption, setCaption] = React.useState<string>('');
+  const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
   const imageEditorRef = React.useRef<ImageEditorRef>(null);
 
@@ -146,7 +147,7 @@ export function ImageDialog(props: ImageDialogProps) {
     if (!editor || !previewUrl || fileItems.length === 0) {
       return;
     }
-
+    setIsSaving(true);
     try {
       const editedImageBlob = imageEditorRef.current?.toDataURL();
       const imageDataToUse = editedImageBlob || previewUrl;
@@ -167,6 +168,8 @@ export function ImageDialog(props: ImageDialogProps) {
       }
     } catch (error) {
       onError?.(error instanceof Error ? error : new Error('Failed to save image'));
+    } finally {
+      setIsSaving(false);
     }
   }, [editor, previewUrl, fileItems, caption, saveImage, onImageInserted, handleRemovePreview, onError]);
 
@@ -236,12 +239,12 @@ export function ImageDialog(props: ImageDialogProps) {
 
         {hasFiles && previewUrl && (
           <DialogFooter className=''>
-            <Button type='button' variant='secondary' onClick={handleCancel}>
+            <Button type='button' variant='secondary' onClick={handleCancel} disabled={isSaving}>
               {cancelText || 'Cancel'}
             </Button>
 
-            <Button type='button' variant='default' onClick={handleSave} className='min-w-20'>
-              {saveText || 'Save'}
+            <Button type='button' variant='default' onClick={handleSave} className='min-w-20' disabled={isSaving}>
+              {isSaving ? <Loader2 className='h-4 w-4 animate-spin' /> : saveText || 'Save'}
             </Button>
           </DialogFooter>
         )}
