@@ -18,3 +18,4 @@ export * from './command';
 export * from './select';
 export * from './theme-toggle';
 export * from './slider';
+export * from './textarea';
