@@ -57,13 +57,20 @@ export const ImageControls: React.FC<ImageControlsProps> = (props: ImageControls
 
 interface ImageCaptionProps {
   caption?: string;
+  imageWidth?: string | number;
 }
 
 /**
  * 이미지 캡션 컴포넌트
  */
-export const ImageCaption: React.FC<ImageCaptionProps> = ({ caption }) => {
+export const ImageCaption: React.FC<ImageCaptionProps> = ({ caption, imageWidth }) => {
   if (!caption) return null;
 
-  return <div className='text-muted-foreground mt-2 text-center text-sm font-medium'>{caption}</div>;
+  const captionStyle = imageWidth ? { maxWidth: typeof imageWidth === 'string' ? imageWidth : `${imageWidth}px` } : {};
+
+  return (
+    <div className='text-foreground/80 word-break-keep mt-2 text-center text-xs' style={captionStyle}>
+      {caption}
+    </div>
+  );
 };

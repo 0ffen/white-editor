@@ -90,7 +90,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           }}
           draggable={false}
         />
-        {caption && <ImageCaption caption={caption} />}
+        {caption && <ImageCaption caption={caption} imageWidth={currentWidth} />}
         {props.selected && (
           <ImageControls
             onEditClick={handleEditClick}
