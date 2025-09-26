@@ -61,7 +61,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
 
   return (
     <NodeViewWrapper
-      className={cn('w-full')}
+      className={cn('my-2 w-full')}
       data-type='image'
       draggable='true'
       data-drag-handle

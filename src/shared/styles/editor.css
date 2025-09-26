@@ -3,12 +3,12 @@
 }
 
 .toolbar-wrapper {
-  @apply flex items-center gap-2 rounded-md py-1;
+  @apply flex items-center gap-2 py-1;
 }
 
 .ProseMirror {
   @apply min-h-[200px] flex-1 overflow-y-auto;
-  padding: 3rem 3rem 30vh;
+  padding: 2rem 2rem;
 }
 
 .ProseMirror:focus {
@@ -17,7 +17,7 @@
 
 .prosemirror-dropcursor-block,
 .prosemirror-dropcursor-inline {
-  @apply bg-border/50! h-[0.188rem] w-full cursor-grabbing rounded-4xl;
+  @apply bg-border! h-[0.188rem] w-full cursor-grabbing rounded-4xl;
 }
 
 .ProseMirror table {

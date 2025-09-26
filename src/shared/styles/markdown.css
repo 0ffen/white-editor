@@ -15,43 +15,40 @@
 }
 
 .markdown :is(h1, h2, h3, h4, h5, h6) {
-  @apply my-2 scroll-mt-32 font-semibold;
+  @apply text-foreground my-3 scroll-mt-32 py-0 font-semibold;
 }
 
 .markdown code:not(pre > code) {
-  @apply bg-muted rounded p-1 px-[0.3rem] py-[0.2rem] font-mono text-sm font-medium before:hidden after:hidden;
+  @apply bg-muted rounded-sm p-0 px-[0.3rem] py-[0.2rem] font-mono text-sm font-medium text-amber-500 before:hidden after:hidden dark:bg-[#18181b] dark:text-amber-600;
 }
 
 .markdown blockquote {
-  @apply border-primary! text-secondary-foreground/80! my-0! py-0! text-sm! font-normal not-italic!;
+  @apply border-primary my-2 py-0! text-sm! font-normal not-italic!;
+  p,
+  ul,
+  li,
+  ol {
+    @apply my-0 py-0.5;
+  }
+  [data-type='taskList'] label {
+    @apply mt-1.5;
+  }
+}
 
+.markdown {
   p {
-    @apply my-0 py-[2px] before:content-normal after:content-normal;
+    @apply my-2 py-2 before:content-normal after:content-normal;
+    padding-block: 0;
   }
 
   ol,
   ul {
-    @apply my-0 py-0;
+    @apply my-0 inline-block w-full py-0;
   }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply text-secondary-foreground/80 my-0 py-0;
+  li {
+    @apply marker:text-foreground my-2 p-0;
+    padding-block: 0;
   }
-}
-
-.markdown li,
-p {
-  @apply my-2 p-0;
-  padding-block: 0;
-}
-
-.markdown li {
-  @apply marker:text-foreground;
 }
 
 .markdown table {
@@ -67,7 +64,7 @@ p {
 }
 
 .markdown th {
-  @apply bg-accent border p-2;
+  @apply bg-accent/50 border p-2;
 }
 
 .markdown td {
@@ -94,7 +91,7 @@ p {
   @apply flex items-center gap-2;
 }
 
-.markdown [data-type='taskList'] input[type='checkbox'] {
+.markdown [data-type='taskList'] li input[type='checkbox'] {
   @apply h-4 w-4 rounded-none;
 }
 

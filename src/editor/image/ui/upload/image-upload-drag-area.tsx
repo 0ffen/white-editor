@@ -45,17 +45,17 @@ export const ImageUploadDragArea: React.FC<ImageUploadDragAreaProps> = (props: I
   return (
     <div
       className={cn(
-        'border-border hover:border-primary/30 bg-background flex cursor-pointer flex-col items-center justify-center gap-4 rounded-md border border-dashed p-8 transition-colors',
-        isDragActive ? 'border-primary bg-primary/10' : ''
+        'border-border/70 hover:border-border bg-background flex cursor-pointer flex-col items-center justify-center gap-4 rounded-md border border-dashed p-8 transition-colors',
+        isDragActive ? 'border-border bg-border/5' : ''
       )}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
       <CloudUploadIcon className={cn('text-primary/95 h-10 w-10', isDragActive ? 'text-primary' : '')} />
-      <div className='text-muted-foreground flex flex-col items-center gap-1'>
-        <span className='text-base'>Click to upload or drag and drop</span>
-        <span className='text-muted-foreground/80 text-sm font-bold'>
+      <div className='text-muted-foreground/80 flex flex-col items-center gap-1'>
+        <span className='text-sm'>Click to upload or drag and drop</span>
+        <span className='text-xs'>
           Maximum {limit} file{limit === 1 ? '' : 's'}, {maxSize / 1024 / 1024}MB
         </span>
       </div>

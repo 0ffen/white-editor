@@ -56,6 +56,7 @@ export const BlockquoteButton = React.forwardRef<HTMLButtonElement, BlockquoteBu
     return (
       <Button
         type='button'
+        variant='ghost'
         data-style='ghost'
         data-active-state={isActive ? 'on' : 'off'}
         role='button'
