@@ -47,17 +47,17 @@ export function getFormattedMarkName(type: Mark): string {
 
 export function useMark(config: UseMarkConfig) {
   const { editor: providedEditor, type, hideWhenUnavailable = false, onToggled } = config;
-
   const { editor } = useTiptapEditor(providedEditor);
   const [isVisible, setIsVisible] = React.useState<boolean>(true);
-  const canToggle = canToggleMark(editor, type);
-  const isActive = isMarkActive(editor, type);
+
+  const canToggle = canToggleMark(editor, type!);
+  const isActive = isMarkActive(editor, type!);
 
   React.useEffect(() => {
     if (!editor) return;
 
     const handleSelectionUpdate = () => {
-      setIsVisible(shouldShowMarkButton({ editor, type, hideWhenUnavailable }));
+      setIsVisible(shouldShowMarkButton({ editor, type: type!, hideWhenUnavailable }));
     };
 
     handleSelectionUpdate();
@@ -72,7 +72,7 @@ export function useMark(config: UseMarkConfig) {
   const handleMark = React.useCallback(() => {
     if (!editor) return false;
 
-    const success = toggleMark(editor, type);
+    const success = toggleMark(editor, type!);
     if (success) {
       onToggled?.();
     }
@@ -84,8 +84,8 @@ export function useMark(config: UseMarkConfig) {
     isActive,
     handleMark,
     canToggle,
-    label: getFormattedMarkName(type),
-    shortcutKeys: MARK_SHORTCUT_KEYS[type],
-    Icon: markIcons[type],
+    label: getFormattedMarkName(type!),
+    shortcutKeys: MARK_SHORTCUT_KEYS[type!],
+    Icon: markIcons[type!],
   };
 }

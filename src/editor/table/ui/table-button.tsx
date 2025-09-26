@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { ChevronDownIcon } from 'lucide-react';
 
-import { Button, type ButtonProps, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent } from '@/shared/components';
 import { useTable, type UseTableConfig, tableActions, TableToolbar } from '@/editor';
+import { Button, type ButtonProps, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
 
@@ -73,7 +73,7 @@ export const TableButton = React.forwardRef<HTMLButtonElement, TableButtonProps>
             data-active-state={isActive ? 'on' : 'off'}
             role='button'
             tabIndex={-1}
-            disabled={!canInsert}
+            disabled={!isVisible}
             data-disabled={!canInsert}
             aria-label={label}
             aria-pressed={isActive}

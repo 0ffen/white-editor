@@ -88,6 +88,7 @@ export const MathPopover = React.forwardRef<HTMLButtonElement, MathPopoverProps>
             aria-label={'math'}
             aria-pressed={isActive}
             isActive={isActive}
+            disabled={!isVisible}
             onClick={handleClick}
             {...buttonProps}
             ref={ref}

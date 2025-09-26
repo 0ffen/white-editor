@@ -47,13 +47,13 @@ export function useUndoRedo(config: UseUndoRedoConfig) {
 
   const { editor } = useTiptapEditor(providedEditor);
   const [isVisible, setIsVisible] = React.useState<boolean>(true);
-  const canExecute = canExecuteUndoRedoAction(editor, action);
+  const canExecute = canExecuteUndoRedoAction(editor, action!);
 
   React.useEffect(() => {
     if (!editor) return;
 
     const handleUpdate = () => {
-      setIsVisible(shouldShowUndoButton({ editor, hideWhenUnavailable, action }));
+      setIsVisible(shouldShowUndoButton({ editor, hideWhenUnavailable, action: action! }));
     };
 
     handleUpdate();
@@ -68,7 +68,7 @@ export function useUndoRedo(config: UseUndoRedoConfig) {
   const handleAction = React.useCallback(() => {
     if (!editor) return false;
 
-    const success = executeUndoRedoAction(editor, action);
+    const success = executeUndoRedoAction(editor, action!);
     if (success) {
       onExecuted?.();
     }
@@ -79,8 +79,8 @@ export function useUndoRedo(config: UseUndoRedoConfig) {
     isVisible,
     handleAction,
     canExecute,
-    label: historyActionLabels[action],
-    shortcutKeys: UNDO_REDO_SHORTCUT_KEYS[action],
-    Icon: historyIcons[action],
+    label: historyActionLabels[action!],
+    shortcutKeys: UNDO_REDO_SHORTCUT_KEYS[action!],
+    Icon: historyIcons[action!],
   };
 }
