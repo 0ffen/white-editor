@@ -22,7 +22,7 @@ export function TextEditor(props: TextEditorProps) {
         .addText(textInput, {
           styles: {
             fill: textColor,
-            fontSize: 50,
+            fontSize: 40,
           },
           position: { x: 150, y: 150 },
         })

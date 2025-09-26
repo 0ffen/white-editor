@@ -69,7 +69,7 @@ export const ImageCaption: React.FC<ImageCaptionProps> = ({ caption, imageWidth 
   const captionStyle = imageWidth ? { maxWidth: typeof imageWidth === 'string' ? imageWidth : `${imageWidth}px` } : {};
 
   return (
-    <div className='text-foreground/80 word-break-keep mt-2 text-center text-xs' style={captionStyle}>
+    <div className='text-foreground/80 word-break-keep mt-2 text-center text-xs whitespace-pre' style={captionStyle}>
       {caption}
     </div>
   );
