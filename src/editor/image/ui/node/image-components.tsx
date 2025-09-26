@@ -1,33 +1,51 @@
 import React from 'react';
-import { Edit3 } from 'lucide-react';
-import { Button } from '@/shared';
+import { AlignCenter, AlignLeft, AlignRight, Edit3 } from 'lucide-react';
+import { Button, cn, Separator, Toolbar } from '@/shared';
 
 interface ImageControlsProps {
   onEditClick: (e: React.MouseEvent) => void;
   onResizeStart: (e: React.MouseEvent) => void;
   showControls: boolean;
+  align: 'left' | 'center' | 'right';
+  onAlignChange: (align: 'left' | 'center' | 'right') => void;
 }
 
-/**
- * 이미지 편집 및 리사이즈 컨트롤 컴포넌트
- */
-export const ImageControls: React.FC<ImageControlsProps> = ({ onEditClick, onResizeStart, showControls }) => {
+const alignButtons = [
+  { type: 'left', icon: AlignLeft, title: 'Align left' },
+  { type: 'center', icon: AlignCenter, title: 'Align center' },
+  { type: 'right', icon: AlignRight, title: 'Align right' },
+];
+
+export const ImageControls: React.FC<ImageControlsProps> = (props: ImageControlsProps) => {
+  const { onEditClick, onResizeStart, showControls, align, onAlignChange } = props;
   if (!showControls) return null;
 
   return (
     <>
-      {/* Edit Button */}
-      <Button
-        onClick={onEditClick}
-        variant='secondary'
-        className='absolute top-2 right-2 h-6 w-6 rounded-full p-2 shadow-lg'
-        title='Edit image'
-        type='button'
+      <Toolbar
+        variant='floating'
+        className='absolute top-2 right-1/2 h-[40px] w-fit translate-x-1/2 border-none p-2'
+        style={{
+          boxShadow: 'var(--popover-shadow)',
+        }}
       >
-        <Edit3 size={16} className='text-muted-foreground' />
-      </Button>
-
-      {/* Resize Handle */}
+        {alignButtons.map(({ type, icon: Icon, title }) => (
+          <Button
+            key={type}
+            onClick={() => onAlignChange(type as 'left' | 'center' | 'right')}
+            title={title}
+            type='button'
+            className={cn(align === type && 'bg-primary/20')}
+            isActive={align === type}
+          >
+            <Icon size={16} className={cn(align === type && 'text-primary')} />
+          </Button>
+        ))}
+        <Separator orientation='vertical' className='mx-0.5 h-2' />
+        <Button onClick={onEditClick} title='Edit image' type='button'>
+          <Edit3 />
+        </Button>
+      </Toolbar>
       <div
         className='resize-handle bg-primary absolute -right-2 -bottom-2 h-4 w-4 cursor-se-resize rounded-full'
         onMouseDown={onResizeStart}

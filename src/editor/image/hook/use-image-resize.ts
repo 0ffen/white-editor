@@ -28,7 +28,6 @@ export function useImageResize(options: ImageResizeOptions = {}) {
   const [isResizing, setIsResizing] = useState(false);
 
   const imageRef = useRef<HTMLImageElement>(null);
-
   const handleResizeStart = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
@@ -39,16 +38,14 @@ export function useImageResize(options: ImageResizeOptions = {}) {
       setIsResizing(true);
 
       const startX = e.clientX;
-      const startY = e.clientY;
       const startWidth = imageRef.current.offsetWidth;
       const startHeight = imageRef.current.offsetHeight;
+      const aspectRatio = startWidth / startHeight;
 
       const handleMouseMove = (moveEvent: MouseEvent) => {
         const deltaX = moveEvent.clientX - startX;
-        const deltaY = moveEvent.clientY - startY;
-
         const newWidth = Math.max(minWidth, startWidth + deltaX);
-        const newHeight = Math.max(minHeight, startHeight + deltaY);
+        const newHeight = Math.max(minHeight, newWidth / aspectRatio);
 
         const widthPx = `${newWidth}px`;
         const heightPx = `${newHeight}px`;

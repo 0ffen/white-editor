@@ -68,6 +68,8 @@ export function useImageSave(options: ImageSaveOptions = {}) {
             src: imageUrl,
             alt: caption || 'Image',
             caption,
+            width: '300px',
+            height: 'auto',
           });
         }
 

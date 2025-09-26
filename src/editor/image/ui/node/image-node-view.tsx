@@ -1,9 +1,11 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useImageEdit, useImageHover, useImageResize, ImageEditDialog } from '@/editor';
 import { cn } from '@/shared';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { ImageControls, ImageCaption } from './image-components';
+
+type AlignType = 'left' | 'center' | 'right';
 
 /**
  * @name ImageNodeView
@@ -11,11 +13,12 @@ import { ImageControls, ImageCaption } from './image-components';
  */
 export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const { getPos } = props;
-  const { src, alt, title, width, height, caption } = props.node.attrs;
+  const { src, alt, title, width, height, caption, align } = props.node.attrs;
   const containerRef = useRef<HTMLDivElement>(null);
+  const [_align, setAlign] = useState<AlignType>(align || 'center');
 
   const { imageRef, resizeState, resizeHandlers } = useImageResize({
-    initialWidth: width || 'auto',
+    initialWidth: width || '300px',
     initialHeight: height || 'auto',
     onResize: (newWidth, newHeight) => {
       props.updateAttributes({
@@ -46,8 +49,24 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const showControls = hoverState.isHovered || props.selected;
   const { currentWidth, currentHeight, isResizing } = resizeState;
 
+  const handleAlignChange = useCallback(
+    (newAlign: AlignType) => {
+      props.updateAttributes({
+        align: newAlign,
+      });
+      setAlign(newAlign);
+    },
+    [props]
+  );
+
   return (
-    <NodeViewWrapper className='relative inline-block' data-type='image' draggable='true' data-drag-handle>
+    <NodeViewWrapper
+      className={cn('w-full')}
+      data-type='image'
+      draggable='true'
+      data-drag-handle
+      style={{ textAlign: _align }}
+    >
       <section
         ref={containerRef}
         className={cn(
@@ -64,7 +83,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           src={src}
           alt={alt}
           title={title}
-          className='mb-0 h-auto max-w-full rounded shadow-md'
+          className='mb-0 inline-block h-auto max-w-full rounded shadow-md'
           style={{
             width: currentWidth !== 'auto' ? currentWidth : undefined,
             height: currentHeight !== 'auto' ? currentHeight : undefined,
@@ -77,6 +96,8 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
             onEditClick={handleEditClick}
             onResizeStart={resizeHandlers.handleResizeStart}
             showControls={showControls}
+            align={_align}
+            onAlignChange={handleAlignChange}
           />
         )}
       </section>
