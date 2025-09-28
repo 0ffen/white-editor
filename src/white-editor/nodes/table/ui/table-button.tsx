@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { ChevronDownIcon } from 'lucide-react';
 
-import { useTable, type UseTableConfig, tableActions, TableToolbar } from '@/editor';
 import { Button, type ButtonProps, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
+import { useTable, type UseTableConfig, tableActions, TableToolbar } from '@/white-editor';
 
 export interface TableButtonProps extends Omit<ButtonProps, 'type'>, UseTableConfig {
   icon?: React.ReactNode;

@@ -1,4 +1,4 @@
-import { ToolbarRenderer, type ToolbarItem, type ToolbarItemProps } from '@/editor';
+import { ToolbarRenderer, type ToolbarItem, type ToolbarItemProps } from '@/white-editor';
 import { createToolbarConfigFromItems } from '../util/toolbar-utils';
 
 interface EditorToolbarProps {

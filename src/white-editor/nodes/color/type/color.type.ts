@@ -1,4 +1,4 @@
-import type { ColorValue } from '@/editor';
+import type { ColorValue } from '@/white-editor';
 import { type Editor } from '@tiptap/react';
 
 type TextColor = (typeof TEXT_COLORS)[number];

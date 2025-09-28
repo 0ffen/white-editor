@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { Ban, LucideHighlighter } from 'lucide-react';
+import { Button, PopoverContent, PopoverTrigger, Separator, type ButtonProps } from '@/shared/components';
+import { useTiptapEditor } from '@/shared/hooks';
+import { cn } from '@/shared/utils';
 import {
   HIGHLIGHT_COLORS_MAP,
   pickHighlightColorsByValue,
@@ -7,10 +10,7 @@ import {
   type HighlightColor,
   type UseColorHighlightConfig,
   HighlightColorButton,
-} from '@/editor';
-import { Button, PopoverContent, PopoverTrigger, Separator, type ButtonProps } from '@/shared/components';
-import { useTiptapEditor } from '@/shared/hooks';
-import { cn } from '@/shared/utils';
+} from '@/white-editor';
 import { Popover } from '@radix-ui/react-popover';
 import { type Editor } from '@tiptap/react';
 

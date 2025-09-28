@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
+import { ThemeToggle } from '@/shared/components';
 import {
   BlockquoteButton,
   CodeBlockButton,
@@ -16,8 +17,7 @@ import {
   ImageDialog,
   type EditorToolbarConfig,
   type ToolbarItem,
-} from '@/editor';
-import { ThemeToggle } from '@/shared/components';
+} from '@/white-editor';
 
 type ToolbarItemRenderer = (config: Record<string, any>, key: string) => React.ReactNode;
 

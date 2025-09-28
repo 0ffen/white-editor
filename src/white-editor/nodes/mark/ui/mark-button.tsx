@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { useMark, type UseMarkConfig } from '@/editor';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
+import { useMark, type UseMarkConfig } from '@/white-editor';
 
 export interface MarkButtonProps extends Omit<ButtonProps, 'type'>, UseMarkConfig {
   icon?: React.ReactNode;

@@ -1,10 +1,10 @@
 import React from 'react';
 import BlockMathIcon from '@/assets/icons/math-block.svg?react';
 import InlineMathIcon from '@/assets/icons/math-inline.svg?react';
-import { MathPopoverContent, type MathPopoverProps, useMathematics } from '@/editor';
 import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
+import { MathPopoverContent, type MathPopoverProps, useMathematics } from '@/white-editor';
 
 export const MathPopover = React.forwardRef<HTMLButtonElement, MathPopoverProps>(
   (

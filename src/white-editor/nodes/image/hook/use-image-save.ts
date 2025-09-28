@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import type { ImageServerAPI } from '@/editor';
+import type { ImageServerAPI } from '@/white-editor';
 import { handleImageUpload } from '@/shared/utils';
 import type { Editor } from '@tiptap/react';
 

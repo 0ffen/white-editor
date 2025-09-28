@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Ban, Circle, Square, Triangle } from 'lucide-react';
-import { EDITOR_COLORS, TRANSPARENT_COLOR } from '@/editor';
 import { Button, cn, Slider } from '@/shared';
+import { EDITOR_COLORS, TRANSPARENT_COLOR } from '@/white-editor';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
 interface ShapeEditorProps {

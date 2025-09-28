@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { ImagePlusIcon } from 'lucide-react';
-import { useImageUpload, type UseImageUploadConfig } from '@/editor';
+import { useImageUpload, type UseImageUploadConfig } from '@/white-editor';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 

@@ -1,17 +1,6 @@
 import * as React from 'react';
 import { useCallback } from 'react';
 import { Loader2, XIcon } from 'lucide-react';
-import {
-  type UploadOptions,
-  ImageUploadButton,
-  ImageUploadDragArea,
-  ImageUploadingProgress,
-  useFileUpload,
-  ImageEditor,
-  useImageSave,
-  type ImageServerAPI,
-  type ImageEditorRef,
-} from '@/editor';
 import { handleImageUpload } from '@/shared';
 import {
   Button,
@@ -23,6 +12,17 @@ import {
   DialogTrigger,
 } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
+import {
+  type UploadOptions,
+  ImageUploadButton,
+  ImageUploadDragArea,
+  ImageUploadingProgress,
+  useFileUpload,
+  ImageEditor,
+  useImageSave,
+  type ImageServerAPI,
+  type ImageEditorRef,
+} from '@/white-editor';
 import type { Editor } from '@tiptap/react';
 
 export interface ImageUploadConfig {

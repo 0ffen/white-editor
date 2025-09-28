@@ -1,10 +1,10 @@
 import * as React from 'react';
 
 import { LinkIcon } from 'lucide-react';
-import { useLinkPopover, type UseLinkPopoverConfig, LinkMain, LinkButton } from '@/editor';
 import { Popover, PopoverContent, PopoverTrigger, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
+import { useLinkPopover, type UseLinkPopoverConfig, LinkMain, LinkButton } from '@/white-editor';
 
 export interface LinkPopoverProps extends Omit<ButtonProps, 'type'>, UseLinkPopoverConfig {
   onOpenChange?: (isOpen: boolean) => void;
@@ -33,7 +33,7 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
     const { editor } = useTiptapEditor(providedEditor);
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
-    const { isVisible, canSet, isActive, url, setUrl, setLink, removeLink, Icon } = useLinkPopover({
+    const { isVisible, canSet, isActive, url, setUrl, setLink, removeLink } = useLinkPopover({
       editor,
       hideWhenUnavailable,
       onSetLink,

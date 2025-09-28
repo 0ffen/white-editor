@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import TuiImageEditor from 'tui-image-editor';
-import { ImageEditorToolbar, CropEditor, DrawEditor, ShapeEditor, TextEditor } from '@/editor';
 import { Textarea } from '@/shared';
+import { ImageEditorToolbar, CropEditor, DrawEditor, ShapeEditor, TextEditor } from '@/white-editor';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
 export interface ImageEditorRef {

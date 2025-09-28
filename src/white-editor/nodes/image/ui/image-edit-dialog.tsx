@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import { ImageEditor, type ImageEditorRef } from '@/editor';
 import { Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/shared';
+import { ImageEditor, type ImageEditorRef } from '@/white-editor';
 
 interface ImageEditDialogProps {
   isOpen: boolean;

@@ -1,5 +1,4 @@
-import type { MentionConfig } from '@/editor/nodes/mention';
-import type { ToolbarItem, ToolbarItemProps } from '@/editor/toolbar/type/toolbar.type';
+import type { ToolbarItem, ToolbarItemProps, MentionConfig } from '@/white-editor';
 import type { JSONContent, Content } from '@tiptap/react';
 import type { Editor } from '@tiptap/react';
 

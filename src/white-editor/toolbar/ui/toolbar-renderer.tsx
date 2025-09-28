@@ -1,6 +1,6 @@
 import type React from 'react';
-import { type EditorToolbarConfig } from '@/editor';
 import { ToolbarGroup, ToolbarSeparator } from '@/shared/components';
+import { type EditorToolbarConfig } from '@/white-editor';
 import { createToolbarGroup } from '../util/toolbar-utils';
 
 interface ToolbarConfig {

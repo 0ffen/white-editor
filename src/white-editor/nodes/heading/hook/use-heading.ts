@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import type { Level } from '@/editor';
 import { useTiptapEditor } from '@/shared/hooks';
 import { findNodePosition, isNodeInSchema, isNodeTypeSelected, isValidPosition } from '@/shared/utils';
+import type { Level } from '@/white-editor';
 import { NodeSelection, TextSelection } from '@tiptap/pm/state';
 import { type Editor } from '@tiptap/react';
 

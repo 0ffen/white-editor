@@ -1,5 +1,5 @@
-import { MentionList, type KeyDownProps, type MentionSuggestionConfig, type SuggestionProps } from '@/editor';
 import { transformToLabeledItems, updatePosition, type ListItemConfig } from '@/shared/utils';
+import { MentionList, type KeyDownProps, type MentionSuggestionConfig, type SuggestionProps } from '@/white-editor';
 import { ReactRenderer } from '@tiptap/react';
 
 const mentionSuggestion = <T>({ mentionList }: { mentionList: ListItemConfig<T> }): MentionSuggestionConfig => ({

@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { useHeading, type UseHeadingConfig } from '@/editor';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
+import { useHeading, type UseHeadingConfig } from '@/white-editor';
 
 export interface HeadingButtonProps extends Omit<ButtonProps, 'type'>, UseHeadingConfig {
   text?: string;

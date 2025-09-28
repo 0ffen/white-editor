@@ -1,10 +1,9 @@
 import * as React from 'react';
 
-import { useWhiteEditor, type WhiteEditorProps, defaultToolbarItems } from '@/editor';
-import { EditorToolbar } from '@/editor/toolbar/ui/editor-toolbar';
 import { Toolbar, TooltipProvider } from '@/shared/components';
 import { applyTheme } from '@/shared/utils';
 import { cn } from '@/shared/utils';
+import { useWhiteEditor, type WhiteEditorProps, defaultToolbarItems, EditorToolbar } from '@/white-editor';
 import { EditorContent, EditorContext } from '@tiptap/react';
 
 export function WhiteEditor<T>(props: WhiteEditorProps<T>) {

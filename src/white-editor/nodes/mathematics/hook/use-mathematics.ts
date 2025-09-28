@@ -1,7 +1,7 @@
 import React from 'react';
-import type { MathematicsConfig, MathHandlerProps, MathType } from '@/editor';
 import { useTiptapEditor } from '@/shared/hooks';
 import { isNodeInSchema } from '@/shared/utils';
+import type { MathematicsConfig, MathHandlerProps, MathType } from '@/white-editor';
 import { type Editor } from '@tiptap/react';
 
 export function canSetMath(editor: Editor | null): boolean {

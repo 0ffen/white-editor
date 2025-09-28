@@ -1,4 +1,4 @@
-import type { ToolbarItem } from '@/editor';
+import type { ToolbarItem } from '@/white-editor';
 
 export const defaultToolbarItems: ToolbarItem[][] = [
   ['undo', 'redo'],

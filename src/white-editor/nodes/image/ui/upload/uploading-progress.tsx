@@ -1,5 +1,5 @@
 import { CloudUploadIcon, XIcon } from 'lucide-react';
-import type { FileItem } from '@/editor';
+import type { FileItem } from '@/white-editor';
 import { Button } from '@/shared/components';
 
 interface ImageUploadingProgressProps {

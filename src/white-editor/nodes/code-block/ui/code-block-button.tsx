@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { useCodeBlock, type UseCodeBlockConfig } from '@/editor';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
+import { useCodeBlock, type UseCodeBlockConfig } from '@/white-editor';
 
 export interface CodeBlockButtonProps extends Omit<ButtonProps, 'type'>, UseCodeBlockConfig {
   icon?: React.ReactNode;

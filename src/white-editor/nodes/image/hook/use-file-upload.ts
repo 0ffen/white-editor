@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import type { FileItem, UploadOptions } from '@/editor';
+import type { FileItem, UploadOptions } from '@/white-editor';
 
 /**
  * @name useFileUpload

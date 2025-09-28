@@ -1,14 +1,14 @@
 import * as React from 'react';
 
+import { useTiptapEditor } from '@/shared/hooks';
+import { isExtensionAvailable, isNodeTypeSelected } from '@/shared/utils';
 import {
   TEXT_ALIGN_SHORTCUT_KEYS,
   textAlignIcons,
   textAlignLabels,
   type TextAlign,
   type UseTextAlignConfig,
-} from '@/editor';
-import { useTiptapEditor } from '@/shared/hooks';
-import { isExtensionAvailable, isNodeTypeSelected } from '@/shared/utils';
+} from '@/white-editor';
 import { type Editor } from '@tiptap/react';
 import type { ChainedCommands } from '@tiptap/react';
 
@@ -64,11 +64,12 @@ export function useTextAlign(config: UseTextAlignConfig) {
 
   const { editor } = useTiptapEditor(providedEditor);
   const [isVisible, setIsVisible] = React.useState<boolean>(true);
-  const canAlign = canSetTextAlign(editor, align);
-  const isActive = isTextAlignActive(editor, align);
+
+  const canAlign = align ? canSetTextAlign(editor, align) : false;
+  const isActive = align ? isTextAlignActive(editor, align) : false;
 
   React.useEffect(() => {
-    if (!editor) return;
+    if (!editor || !align) return;
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowTextAlignButton({ editor, align, hideWhenUnavailable }));
@@ -84,7 +85,7 @@ export function useTextAlign(config: UseTextAlignConfig) {
   }, [editor, hideWhenUnavailable, align]);
 
   const handleTextAlign = React.useCallback(() => {
-    if (!editor) return false;
+    if (!editor || !align) return false;
 
     const success = setTextAlign(editor, align);
     if (success) {
@@ -92,6 +93,18 @@ export function useTextAlign(config: UseTextAlignConfig) {
     }
     return success;
   }, [editor, align, onAligned]);
+
+  if (!align) {
+    return {
+      isVisible: false,
+      isActive: false,
+      handleTextAlign: () => false,
+      canAlign: false,
+      label: '',
+      shortcutKeys: [],
+      Icon: null,
+    };
+  }
 
   return {
     isVisible,

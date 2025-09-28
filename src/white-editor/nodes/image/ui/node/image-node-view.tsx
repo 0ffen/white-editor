@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { useImageEdit, useImageHover, useImageResize, ImageEditDialog } from '@/editor';
 import { cn } from '@/shared';
+import { useImageEdit, useImageHover, useImageResize, ImageEditDialog } from '@/white-editor';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { ImageControls, ImageCaption } from './image-components';

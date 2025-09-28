@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import { ChevronDownIcon } from 'lucide-react';
 import TextSizeIcon from '@/assets/icons/text-size.svg?react';
-import { HeadingButton, useHeadingDropdownMenu, type UseHeadingDropdownMenuConfig, type HeadingOption } from '@/editor';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -13,6 +12,12 @@ import {
 } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
+import {
+  HeadingButton,
+  useHeadingDropdownMenu,
+  type UseHeadingDropdownMenuConfig,
+  type HeadingOption,
+} from '@/white-editor';
 
 export interface HeadingDropdownMenuProps extends Omit<ButtonProps, 'type'>, UseHeadingDropdownMenuConfig {
   onOpenChange?: (isOpen: boolean) => void;

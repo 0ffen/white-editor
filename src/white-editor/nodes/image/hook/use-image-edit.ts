@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import type { ImageServerAPI } from '@/editor';
+import type { ImageServerAPI } from '@/white-editor';
 import type { Editor } from '@tiptap/react';
 
 export interface ImageEditContext {

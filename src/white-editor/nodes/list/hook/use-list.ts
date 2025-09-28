@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { listIcons, listLabels, type ListType, type UseListConfig } from '@/editor';
 import { useTiptapEditor } from '@/shared/hooks';
 
 import { findNodePosition, isNodeInSchema, isNodeTypeSelected, isValidPosition } from '@/shared/utils';
+import { listIcons, listLabels, type ListType, type UseListConfig } from '@/white-editor';
 import { NodeSelection, TextSelection } from '@tiptap/pm/state';
 import { type Editor } from '@tiptap/react';
 
@@ -67,7 +67,6 @@ export function toggleList(editor: Editor | null, type: ListType): boolean {
     let state = view.state;
     let tr = state.tr;
 
-    // No selection, find the the cursor position
     if (state.selection.empty || state.selection instanceof TextSelection) {
       const pos = findNodePosition({
         editor,
@@ -97,10 +96,8 @@ export function toggleList(editor: Editor | null, type: ListType): boolean {
     }
 
     if (editor.isActive(type)) {
-      // Unwrap list
       chain.liftListItem('listItem').lift('bulletList').lift('orderedList').lift('taskList').run();
     } else {
-      // Wrap in specific list type
       const toggleMap: Record<ListType, () => typeof chain> = {
         bulletList: () => chain.toggleBulletList(),
         orderedList: () => chain.toggleOrderedList(),
@@ -143,11 +140,12 @@ export function useList(config: UseListConfig) {
 
   const { editor } = useTiptapEditor(providedEditor);
   const [isVisible, setIsVisible] = React.useState<boolean>(true);
-  const canToggle = canToggleList(editor, type);
-  const isActive = isListActive(editor, type);
+
+  const canToggle = type ? canToggleList(editor, type) : false;
+  const isActive = type ? isListActive(editor, type) : false;
 
   React.useEffect(() => {
-    if (!editor) return;
+    if (!editor || !type) return;
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowListButton({ editor, type, hideWhenUnavailable }));
@@ -163,7 +161,7 @@ export function useList(config: UseListConfig) {
   }, [editor, type, hideWhenUnavailable]);
 
   const handleToggle = React.useCallback(() => {
-    if (!editor) return false;
+    if (!editor || !type) return false;
 
     const success = toggleList(editor, type);
     if (success) {
@@ -171,6 +169,17 @@ export function useList(config: UseListConfig) {
     }
     return success;
   }, [editor, type, onToggled]);
+
+  if (!type) {
+    return {
+      isVisible: false,
+      isActive: false,
+      handleToggle: () => false,
+      canToggle: false,
+      label: '',
+      Icon: null,
+    };
+  }
 
   return {
     isVisible,

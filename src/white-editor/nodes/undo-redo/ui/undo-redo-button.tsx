@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { useUndoRedo, type UseUndoRedoConfig } from '@/editor';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks/use-tiptap-editor';
 import { cn } from '@/shared/utils';
+import { useUndoRedo, type UseUndoRedoConfig } from '@/white-editor';
 
 export interface UndoRedoButtonProps extends Omit<ButtonProps, 'type'>, UseUndoRedoConfig {
   icon?: React.ReactNode;

@@ -6,7 +6,7 @@ import {
   shouldShowHeadingButton,
   type Level,
   type UseHeadingDropdownMenuConfig,
-} from '@/editor';
+} from '@/white-editor';
 import { useTiptapEditor } from '@/shared/hooks';
 import type { Editor } from '@tiptap/react';
 

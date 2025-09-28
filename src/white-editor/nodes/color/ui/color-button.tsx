@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useTextColor, type UseTextColorConfig } from '@/editor';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
+import { useTextColor, type UseTextColorConfig } from '@/white-editor';
 
 export interface TextColorButtonProps extends Omit<ButtonProps, 'type'>, UseTextColorConfig {
   text?: string;

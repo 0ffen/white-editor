@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { EDITOR_COLORS } from '@/editor';
 import { Button, cn, Slider } from '@/shared';
+import { EDITOR_COLORS } from '@/white-editor';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
 interface DrawEditorProps {

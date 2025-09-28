@@ -1,4 +1,4 @@
-import { ImageNodeView } from '@/editor';
+import { ImageNodeView } from '@/white-editor';
 import Image from '@tiptap/extension-image';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 

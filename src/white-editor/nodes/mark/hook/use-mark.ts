@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { MARK_SHORTCUT_KEYS, markIcons, type Mark, type UseMarkConfig } from '@/editor';
 import { useTiptapEditor } from '@/shared/hooks';
 import { isMarkInSchema, isNodeTypeSelected } from '@/shared/utils';
+import { MARK_SHORTCUT_KEYS, markIcons, type Mark, type UseMarkConfig } from '@/white-editor';
 import type { Editor } from '@tiptap/react';
 
 export function canToggleMark(editor: Editor | null, type: Mark): boolean {
@@ -50,14 +50,14 @@ export function useMark(config: UseMarkConfig) {
   const { editor } = useTiptapEditor(providedEditor);
   const [isVisible, setIsVisible] = React.useState<boolean>(true);
 
-  const canToggle = canToggleMark(editor, type!);
-  const isActive = isMarkActive(editor, type!);
+  const canToggle = type ? canToggleMark(editor, type) : false;
+  const isActive = type ? isMarkActive(editor, type) : false;
 
   React.useEffect(() => {
-    if (!editor) return;
+    if (!editor || !type) return;
 
     const handleSelectionUpdate = () => {
-      setIsVisible(shouldShowMarkButton({ editor, type: type!, hideWhenUnavailable }));
+      setIsVisible(shouldShowMarkButton({ editor, type, hideWhenUnavailable }));
     };
 
     handleSelectionUpdate();
@@ -70,22 +70,34 @@ export function useMark(config: UseMarkConfig) {
   }, [editor, type, hideWhenUnavailable]);
 
   const handleMark = React.useCallback(() => {
-    if (!editor) return false;
+    if (!editor || !type) return false;
 
-    const success = toggleMark(editor, type!);
+    const success = toggleMark(editor, type);
     if (success) {
       onToggled?.();
     }
     return success;
   }, [editor, type, onToggled]);
 
+  if (!type) {
+    return {
+      isVisible: false,
+      isActive: false,
+      handleMark: () => false,
+      canToggle: false,
+      label: '',
+      shortcutKeys: [],
+      Icon: null,
+    };
+  }
+
   return {
     isVisible,
     isActive,
     handleMark,
     canToggle,
-    label: getFormattedMarkName(type!),
-    shortcutKeys: MARK_SHORTCUT_KEYS[type!],
-    Icon: markIcons[type!],
+    label: getFormattedMarkName(type),
+    shortcutKeys: MARK_SHORTCUT_KEYS[type],
+    Icon: markIcons[type],
   };
 }

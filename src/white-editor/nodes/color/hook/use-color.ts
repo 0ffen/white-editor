@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { TEXT_COLORS, type ColorValue } from '@/editor';
 import { useTiptapEditor } from '@/shared/hooks';
 import { isMarkInSchema, isNodeTypeSelected } from '@/shared/utils';
+import { TEXT_COLORS, type ColorValue } from '@/white-editor';
 import { type Editor } from '@tiptap/react';
 
 export function pickTextColorsByValue(values: string[]) {
-  const colorMap = new Map(TEXT_COLORS.map((color) => [color.value, color]));
+  const colorMap = new Map(TEXT_COLORS.map((color: ColorValue) => [color.value, color]));
   return values.map((value) => colorMap.get(value)).filter((color): color is (typeof TEXT_COLORS)[number] => !!color);
 }
 

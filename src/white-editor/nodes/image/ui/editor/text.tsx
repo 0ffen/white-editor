@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Check, Plus, Trash2 } from 'lucide-react';
-import { EDITOR_COLORS } from '@/editor';
 import { Button, cn, Input } from '@/shared';
+import { EDITOR_COLORS } from '@/white-editor';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
 interface TextEditorProps {

@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { useList, type UseListConfig } from '@/editor';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
+import { useList, type UseListConfig } from '@/white-editor';
 
 export interface ListButtonProps extends Omit<ButtonProps, 'type'>, UseListConfig {
   icon?: React.ReactNode;

@@ -1,16 +1,18 @@
-import type { BlockquoteButtonProps } from '@/editor/nodes/blockquote';
-import type { CodeBlockButtonProps } from '@/editor/nodes/code-block';
-import type { ColorPopoverProps } from '@/editor/nodes/color';
-import type { HeadingDropdownMenuProps } from '@/editor/nodes/heading';
-import type { HighlightPopoverProps } from '@/editor/nodes/highlight';
-import type { ImageDialogProps } from '@/editor/nodes/image';
-import type { LinkPopoverProps } from '@/editor/nodes/link';
-import type { ListButtonProps } from '@/editor/nodes/list';
-import type { MarkButtonProps } from '@/editor/nodes/mark';
-import type { MathPopoverProps } from '@/editor/nodes/mathematics';
-import type { TableButtonProps } from '@/editor/nodes/table';
-import type { TextAlignButtonProps } from '@/editor/nodes/text-align';
-import type { UndoRedoButtonProps } from '@/editor/nodes/undo-redo';
+import type {
+  BlockquoteButtonProps,
+  CodeBlockButtonProps,
+  ColorPopoverProps,
+  HeadingDropdownMenuProps,
+  HighlightPopoverProps,
+  ImageDialogProps,
+  LinkPopoverProps,
+  ListButtonProps,
+  MarkButtonProps,
+  MathPopoverProps,
+  TableButtonProps,
+  TextAlignButtonProps,
+  UndoRedoButtonProps,
+} from '@/white-editor';
 
 export type ToolbarItem =
   | 'undo'

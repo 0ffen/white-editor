@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { useTextAlign, type UseTextAlignConfig } from '@/editor';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
+import { useTextAlign, type UseTextAlignConfig } from '@/white-editor';
 
 export interface TextAlignButtonProps extends Omit<ButtonProps, 'type'>, UseTextAlignConfig {
   className?: string;
