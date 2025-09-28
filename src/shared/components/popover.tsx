@@ -12,26 +12,6 @@ const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
 >(({ className, align = 'center', sideOffset = 4, ...props }, ref) => {
-  const [isDarkMode, setIsDarkMode] = React.useState<boolean>(false);
-
-  React.useEffect(() => {
-    const checkDarkMode = () => {
-      setIsDarkMode(document.documentElement.classList.contains('dark'));
-    };
-
-    // 초기 다크모드 상태 확인
-    checkDarkMode();
-
-    // 다크모드 체크
-    const observer = new MutationObserver(checkDarkMode);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Content
@@ -43,7 +23,7 @@ const PopoverContent = React.forwardRef<
           className
         )}
         style={{
-          ...(isDarkMode ? {} : { boxShadow: 'var(--popover-shadow)' }),
+          boxShadow: 'var(--popover-shadow)',
         }}
         {...props}
       />

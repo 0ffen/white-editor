@@ -76,7 +76,7 @@
 }
 
 .markdown a {
-  @apply text-primary hover:text-primary/80 font-normal;
+  @apply text-primary hover:text-primary/80 font-normal underline;
 }
 
 .markdown input[type='checkbox']:disabled {

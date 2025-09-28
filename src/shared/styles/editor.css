@@ -72,6 +72,10 @@
     margin-top: 0;
   }
 
+  strong {
+    color: inherit !important;
+  }
+
   [data-type='mention'] {
     @apply bg-primary/10 dark:bg-primary/20;
     @apply border-primary/20 dark:border-primary/50 rounded-md;
@@ -80,6 +84,16 @@
 
     &::after {
       @apply content-normal;
+    }
+  }
+
+  a {
+    span {
+      @apply text-primary! hover:text-primary/80! underline;
+      strong {
+        @apply text-primary! hover:text-primary/80!;
+        text-decoration: inherit;
+      }
     }
   }
 }
