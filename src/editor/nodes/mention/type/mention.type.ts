@@ -23,4 +23,10 @@ interface MentionSuggestionConfig {
   };
 }
 
-export type { SuggestionProps, KeyDownProps, MentionSuggestionConfig };
+interface MentionConfig<T> {
+  listData: T[];
+  id: keyof T;
+  label: keyof T;
+}
+
+export type { SuggestionProps, KeyDownProps, MentionSuggestionConfig, MentionConfig };

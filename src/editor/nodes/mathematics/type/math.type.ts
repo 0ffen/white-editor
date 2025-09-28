@@ -20,6 +20,7 @@ interface MathPopoverProps extends Omit<ButtonProps, 'type'>, MathematicsConfig 
   placeholder?: string;
   mathPopoverClassName?: string;
   type?: 'block' | 'inline';
+  readOnly?: boolean;
 }
 
 type MathType = 'block' | 'inline';

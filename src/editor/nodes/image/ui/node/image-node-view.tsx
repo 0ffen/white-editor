@@ -73,7 +73,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           'group relative inline-block',
           caption && 'mb-2',
           isResizing ? 'resizing' : '',
-          props.selected ? 'selected ring-primary/40 rounded-xs ring-2 ring-offset-2' : ''
+          props.selected && props.editor.isEditable ? 'selected ring-primary/40 rounded-xs ring-2 ring-offset-2' : ''
         )}
         onMouseEnter={hoverHandlers.handleMouseEnter}
         onMouseLeave={hoverHandlers.handleMouseLeave}
@@ -91,7 +91,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           draggable={false}
         />
         {caption && <ImageCaption caption={caption} imageWidth={currentWidth} />}
-        {props.selected && (
+        {props.editor.isEditable && props.selected && (
           <ImageControls
             onEditClick={handleEditClick}
             onResizeStart={resizeHandlers.handleResizeStart}

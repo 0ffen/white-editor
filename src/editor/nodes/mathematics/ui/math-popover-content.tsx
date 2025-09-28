@@ -88,7 +88,7 @@ export const MathPopoverContent = (props: Props) => {
 
       {previewHtml && (
         <div className='bg-muted/50 flex min-h-8 items-center justify-center rounded px-2 py-3'>
-          <div className='text-muted-foreground text-sm' dangerouslySetInnerHTML={{ __html: previewHtml }} />
+          <div className='text-foreground text-sm' dangerouslySetInnerHTML={{ __html: previewHtml }} />
         </div>
       )}
     </div>

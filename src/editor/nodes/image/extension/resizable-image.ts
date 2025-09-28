@@ -17,9 +17,6 @@ declare module '@tiptap/react' {
   }
 }
 
-/**
- * Extended Image extension with resizable capabilities and edit functionality
- */
 export const ResizableImage = Image.extend({
   name: 'image',
 
