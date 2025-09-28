@@ -1,8 +1,6 @@
 import { all, createLowlight } from 'lowlight';
-import { CodeBlock } from '@/editor/nodes/code-block/ui/code-block';
-import { ResizableImage } from '@/editor/nodes/image/extension/resizable-image';
-import { MentionNode } from '@/editor/nodes/mention/util/mention-node';
 import { type ListItemConfig } from '@/shared/utils';
+import { MentionNode, ResizableImage, CodeBlock } from '@/white-editor';
 
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
