@@ -43,4 +43,4 @@ interface WhiteEditorProps<T> extends WhiteEditorUIProps, WhiteEditorExtensions<
   onSelectionUpdate?: (editor: Editor) => void;
 }
 
-export type { WhiteEditorProps };
+export type { WhiteEditorProps, WhiteEditorUIProps, WhiteEditorExtensions, TipTapEditorOptions, EditorExtensions };
