@@ -1,0 +1,36 @@
+name: package-deploy
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  publish-npm-registry:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Git Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com/
+
+      - name: Install Dependencies
+        run: pnpm install
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.EDITOR_PACKAGE_KEY}}
+
+      - name: Build
+        run: pnpm build
+
+      - name: npm Publish
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.EDITOR_PACKAGE_KEY}}
