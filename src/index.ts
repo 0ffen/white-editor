@@ -37,6 +37,7 @@ export type {
 
 //tiptap types
 export type { JSONContent } from '@tiptap/react';
+export type { Editor } from '@tiptap/react';
 
 //utils
 export { getHtmlContent } from './shared/utils';
