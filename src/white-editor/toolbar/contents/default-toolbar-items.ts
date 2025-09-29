@@ -2,9 +2,9 @@ import type { ToolbarItem } from '@/white-editor';
 
 export const defaultToolbarItems: ToolbarItem[][] = [
   ['undo', 'redo'],
-  ['heading', 'bold', 'italic', 'strike', 'underline'],
+  ['heading', 'bulletList', 'orderedList', 'blockquote'],
+  ['bold', 'italic', 'strike', 'code', 'underline', 'color', 'highlight'],
   ['textAlignLeft', 'textAlignCenter', 'textAlignRight', 'textAlignJustify'],
-  ['bulletList', 'orderedList', 'blockquote'],
-  ['color', 'highlight', 'table', 'image', 'link'],
-  ['codeblock', 'code', 'inlineMath', 'blockMath'],
+  ['codeblock', 'inlineMath', 'blockMath'],
+  ['link', 'table', 'image'],
 ];
