@@ -13,9 +13,9 @@ type AlignType = 'left' | 'center' | 'right';
  */
 export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const { getPos } = props;
-  const { src, alt, title, width, height, caption, align } = props.node.attrs;
+  const { src, alt, title, width, height, caption, textAlign } = props.node.attrs;
   const containerRef = useRef<HTMLDivElement>(null);
-  const [_align, setAlign] = useState<AlignType>(align || 'center');
+  const [_align, setAlign] = useState<AlignType>(textAlign || 'center');
 
   const { imageRef, resizeState, resizeHandlers } = useImageResize({
     initialWidth: width || '300px',
@@ -52,7 +52,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const handleAlignChange = useCallback(
     (newAlign: AlignType) => {
       props.updateAttributes({
-        align: newAlign,
+        textAlign: newAlign,
       });
       setAlign(newAlign);
     },
