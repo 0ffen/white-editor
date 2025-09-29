@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  white-editor: link:../.local/share/pnpm/global/5/node_modules/@enki/white-editor
+
 importers:
 
   .:
@@ -17,6 +20,9 @@ importers:
       react-dom:
         specifier: ^19.1.1
         version: 19.1.1(react@19.1.1)
+      white-editor:
+        specifier: link:../.local/share/pnpm/global/5/node_modules/@enki/white-editor
+        version: link:../.local/share/pnpm/global/5/node_modules/@enki/white-editor
     devDependencies:
       '@commitlint/cli':
         specifier: ^19.8.1
