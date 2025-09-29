@@ -123,7 +123,7 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
       {/* Toolbar */}
       <ImageEditorToolbar editorRef={editorRef} activeMode={activeMode} handleModeChange={handleModeChange} />
       {/* Image */}
-      <div ref={rootEl} className='bg-muted flex h-[300px] w-full items-center justify-center rounded' />
+      <div ref={rootEl} className='bg-border flex h-[300px] w-full items-center justify-center rounded' />
       {!activeMode && (
         <div className='mx-auto mt-4 flex w-full flex-col space-y-4 p-2'>
           <div className='flex w-full flex-col space-y-2'>
