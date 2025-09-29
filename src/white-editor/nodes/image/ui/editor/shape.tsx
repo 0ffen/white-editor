@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Ban, Circle, Square, Triangle } from 'lucide-react';
 import { Button, cn, Slider } from '@/shared';
-import { EDITOR_COLORS, TRANSPARENT_COLOR } from '@/white-editor';
+import { EDITOR_COLORS } from '@/white-editor';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
 interface ShapeEditorProps {
@@ -9,12 +9,13 @@ interface ShapeEditorProps {
 }
 
 const transparentColor = '#ffffff00';
+const defaultColor = '#000000'; //black
 
 export function ShapeEditor(props: ShapeEditorProps) {
   const { editorRef } = props;
 
-  const [shapeFillColor, setShapeFillColor] = useState<string>(TRANSPARENT_COLOR);
-  const [shapeStrokeColor, setShapeStrokeColor] = useState<string>('#000000');
+  const [shapeFillColor, setShapeFillColor] = useState<string>(defaultColor);
+  const [shapeStrokeColor, setShapeStrokeColor] = useState<string>(defaultColor);
   const [shapeStroke, setShapeStroke] = useState<number>(10);
   const [shapeType, setShapeType] = useState<string | null>(null);
   const [activeObjectId, setActiveObjectId] = useState<number | null>(null);
@@ -149,16 +150,6 @@ export function ShapeEditor(props: ShapeEditorProps) {
       <div className='flex w-full flex-col gap-2'>
         <h3 className='text-muted-foreground text-xs font-medium'>Fill Color</h3>
         <div className='flex flex-wrap items-center gap-3'>
-          <button
-            type='button'
-            onClick={() => handleShapeFillColorChange(transparentColor)}
-            className={cn(
-              'h-6 w-6 cursor-pointer rounded-4xl border border-none transition-all',
-              shapeFillColor === transparentColor && 'outline-primary outline-2'
-            )}
-          >
-            <Ban size={24} className='text-muted-foreground' />
-          </button>
           {EDITOR_COLORS.map((color) => (
             <Button
               type='button'
@@ -174,6 +165,16 @@ export function ShapeEditor(props: ShapeEditorProps) {
               isActive={shapeFillColor === color.hex}
             />
           ))}
+          <button
+            type='button'
+            onClick={() => handleShapeFillColorChange(transparentColor)}
+            className={cn(
+              'h-6 w-6 cursor-pointer rounded-4xl border border-none transition-all',
+              shapeFillColor === transparentColor && 'outline-primary outline-2'
+            )}
+          >
+            <Ban size={24} className='text-muted-foreground' />
+          </button>
         </div>
       </div>
 
