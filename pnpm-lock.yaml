@@ -4,35 +4,10 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  white-editor: link:../.local/share/pnpm/global/5/node_modules/@enki/white-editor
-
 importers:
 
   .:
     dependencies:
-      '@tiptap/core':
-        specifier: ^3.6.1
-        version: 3.6.1(@tiptap/pm@3.4.3)
-      react:
-        specifier: ^19.1.1
-        version: 19.1.1
-      react-dom:
-        specifier: ^19.1.1
-        version: 19.1.1(react@19.1.1)
-      white-editor:
-        specifier: link:../.local/share/pnpm/global/5/node_modules/@enki/white-editor
-        version: link:../.local/share/pnpm/global/5/node_modules/@enki/white-editor
-    devDependencies:
-      '@commitlint/cli':
-        specifier: ^19.8.1
-        version: 19.8.1(@types/node@24.4.0)(typescript@5.8.3)
-      '@commitlint/config-conventional':
-        specifier: ^19.8.1
-        version: 19.8.1
-      '@eslint/js':
-        specifier: ^9.33.0
-        version: 9.35.0
       '@floating-ui/dom':
         specifier: ^1.7.4
         version: 1.7.4
@@ -72,21 +47,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.8
         version: 1.2.8(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      '@rollup/plugin-node-resolve':
-        specifier: ^16.0.1
-        version: 16.0.1(rollup@4.50.2)
-      '@rollup/plugin-typescript':
-        specifier: ^12.1.4
-        version: 12.1.4(rollup@4.50.2)(tslib@2.8.1)(typescript@5.8.3)
-      '@tailwindcss/postcss':
-        specifier: ^4.1.13
-        version: 4.1.13
-      '@tailwindcss/typography':
-        specifier: ^0.5.16
-        version: 0.5.16(tailwindcss@4.1.13)
-      '@tailwindcss/vite':
-        specifier: ^4.1.13
-        version: 4.1.13(vite@7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1)(sass-embedded@1.92.1)(sass@1.92.1)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(yaml@2.8.1))
+      '@tiptap/core':
+        specifier: ^3.4.3
+        version: 3.6.1(@tiptap/pm@3.4.3)
       '@tiptap/extension-code-block':
         specifier: ^3.4.4
         version: 3.4.4(@tiptap/core@3.6.1(@tiptap/pm@3.4.3))(@tiptap/pm@3.4.3)
@@ -153,6 +116,67 @@ importers:
       '@toast-ui/react-image-editor':
         specifier: ^3.15.2
         version: 3.15.2(react@19.1.1)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      katex:
+        specifier: ^0.16.22
+        version: 0.16.22
+      lodash.throttle:
+        specifier: ^4.1.1
+        version: 4.1.1
+      lowlight:
+        specifier: ^3.3.0
+        version: 3.3.0
+      lucide-react:
+        specifier: ^0.544.0
+        version: 0.544.0(react@19.1.1)
+      react:
+        specifier: ^19.1.1
+        version: 19.1.1
+      react-dom:
+        specifier: ^19.1.1
+        version: 19.1.1(react@19.1.1)
+      react-hotkeys-hook:
+        specifier: ^5.1.0
+        version: 5.1.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.3.1
+      tiptap-markdown:
+        specifier: ^0.9.0
+        version: 0.9.0(@tiptap/core@3.6.1(@tiptap/pm@3.4.3))
+      tui-image-editor:
+        specifier: ^3.15.3
+        version: 3.15.3
+    devDependencies:
+      '@commitlint/cli':
+        specifier: ^19.8.1
+        version: 19.8.1(@types/node@24.4.0)(typescript@5.8.3)
+      '@commitlint/config-conventional':
+        specifier: ^19.8.1
+        version: 19.8.1
+      '@eslint/js':
+        specifier: ^9.33.0
+        version: 9.35.0
+      '@rollup/plugin-node-resolve':
+        specifier: ^16.0.1
+        version: 16.0.1(rollup@4.50.2)
+      '@rollup/plugin-typescript':
+        specifier: ^12.1.4
+        version: 12.1.4(rollup@4.50.2)(tslib@2.8.1)(typescript@5.8.3)
+      '@tailwindcss/postcss':
+        specifier: ^4.1.13
+        version: 4.1.13
+      '@tailwindcss/typography':
+        specifier: ^0.5.16
+        version: 0.5.16(tailwindcss@4.1.13)
+      '@tailwindcss/vite':
+        specifier: ^4.1.13
+        version: 4.1.13(vite@7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1)(sass-embedded@1.92.1)(sass@1.92.1)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(yaml@2.8.1))
       '@types/lodash.throttle':
         specifier: ^4.1.9
         version: 4.1.9
@@ -171,12 +195,6 @@ importers:
       autoprefixer:
         specifier: ^10.4.21
         version: 10.4.21(postcss@8.5.6)
-      class-variance-authority:
-        specifier: ^0.7.1
-        version: 0.7.1
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
       cmdk:
         specifier: ^1.1.1
         version: 1.1.1(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -219,21 +237,9 @@ importers:
       init:
         specifier: ^0.1.2
         version: 0.1.2
-      katex:
-        specifier: ^0.16.22
-        version: 0.16.22
       lint-staged:
         specifier: ^16.1.5
         version: 16.1.6
-      lodash.throttle:
-        specifier: ^4.1.1
-        version: 4.1.1
-      lowlight:
-        specifier: ^3.3.0
-        version: 3.3.0
-      lucide-react:
-        specifier: ^0.544.0
-        version: 0.544.0(react@19.1.1)
       postcss:
         specifier: ^8.5.6
         version: 8.5.6
@@ -246,24 +252,12 @@ importers:
       prop-types:
         specifier: ^15.8.1
         version: 15.8.1
-      react-hotkeys-hook:
-        specifier: ^5.1.0
-        version: 5.1.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
-      tailwind-merge:
-        specifier: ^3.3.1
-        version: 3.3.1
       tailwindcss:
         specifier: ^4.1.13
         version: 4.1.13
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@4.1.13)
-      tiptap-markdown:
-        specifier: ^0.9.0
-        version: 0.9.0(@tiptap/core@3.6.1(@tiptap/pm@3.4.3))
-      tui-image-editor:
-        specifier: ^3.15.3
-        version: 3.15.3
       typescript:
         specifier: ~5.8.3
         version: 5.8.3
