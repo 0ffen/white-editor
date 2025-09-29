@@ -1,25 +1,58 @@
 {
-  "name": "tools",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@enki/white-editor",
+  "author": {
+    "name": "subin",
+    "email": "sblee.b@enki.co.kr"
+  },
+  "private": false,
+  "license": "MIT",
+  "version": "1.0.0",
+  "description": "A WYSIWYG editor and viewer built with TipTap and Tui Image Editor",
+  "keywords": [
+    "editor",
+    "wysiwyg",
+    "viewer",
+    "tiptap",
+    "tui-image-editor",
+    "react",
+    "typescript"
+  ],
   "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/index.css": "./dist/index.css"
+  },
   "scripts": {
     "dev": "vite",
-    "build": "rm -rf build && tsc -b && vite build",
+    "build": "rm -rf ./dist && tsc -b && vite build && node scripts/inject-css.js",
     "lint": "eslint ./src",
     "lint:debug": "eslint ./src --debug",
     "lint:fix": "eslint ./src --fix",
     "preview": "vite preview",
     "format": "prettier --check \"src/**/*\" --write",
     "lint-staged": "lint-staged",
-    "prepare": "husky && husky install",
-    "postinstall": "husky install"
+    "prepare": "husky"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
       "pnpm lint",
       "pnpm format"
     ]
+  },
+  "peerDependencies": {
+    "@tiptap/core": "^3.6.1",
+    "@tiptap/pm": "^3.6.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
   },
   "dependencies": {
     "react": "^19.1.1",
@@ -42,6 +75,8 @@
     "@radix-ui/react-toggle": "^1.1.10",
     "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-typescript": "^12.1.4",
     "@tailwindcss/postcss": "^4.1.13",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.13",
@@ -85,8 +120,10 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "eslint-plugin-unused-imports": "^4.2.0",
+    "glob": "^11.0.0",
     "globals": "^16.3.0",
     "husky": "^9.1.7",
+    "init": "^0.1.2",
     "katex": "^0.16.22",
     "lint-staged": "^16.1.5",
     "lodash.throttle": "^4.1.1",
@@ -100,12 +137,13 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.13",
     "tailwindcss-animate": "^1.0.7",
-    "tiptap-extension-resizable-image": "^2.0.0",
     "tiptap-markdown": "^0.9.0",
     "tui-image-editor": "^3.15.3",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.1",
     "vite": "^7.1.2",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-plugin-lib-inject-css": "^2.2.2",
     "vite-plugin-svgr": "^4.5.0",
     "vite-tsconfig-paths": "^5.1.4"
   }
