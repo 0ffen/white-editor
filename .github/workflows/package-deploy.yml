@@ -41,8 +41,9 @@ jobs:
         run: pnpm build
 
       - name: Publish to GitHub Package Registry
+
         run: |
           echo "Publishing packages to GitHub Package Registry..."
-          pnpm publish @0ffen/white-editor
+          pnpm --filter @0ffen/white-editor publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
