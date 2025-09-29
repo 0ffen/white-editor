@@ -31,7 +31,7 @@ export const MathPopoverContent = (props: Props) => {
         strict: false,
       });
     } catch {
-      return `<span style="color: #e11d48;">Invalid LaTeX: ${mathString}</span>`;
+      return `<span>Invalid LaTeX: ${mathString}</span>`;
     }
   }, [mathString]);
 
@@ -87,7 +87,7 @@ export const MathPopoverContent = (props: Props) => {
       </div>
 
       {previewHtml && (
-        <div className='bg-muted/50 flex min-h-8 items-center justify-center rounded px-2 py-3'>
+        <div className='bg-muted/50 flex min-h-8 items-center justify-center rounded-md px-2 py-3'>
           <div className='text-foreground text-sm' dangerouslySetInnerHTML={{ __html: previewHtml }} />
         </div>
       )}

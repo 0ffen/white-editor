@@ -96,7 +96,7 @@ export const MathPopover = React.forwardRef<HTMLButtonElement, MathPopoverProps>
             {type === 'block' ? icon || <BlockMathIcon /> : icon || <InlineMathIcon />}
           </Button>
         </PopoverTrigger>
-        <PopoverContent align='start' className={cn('w-[300px] rounded-2xl px-2 py-2 pr-3', mathPopoverClassName)}>
+        <PopoverContent align='start' className={cn('w-[300px] rounded-2xl px-2 py-2', mathPopoverClassName)}>
           <MathPopoverContent
             mathString={mathString}
             setMathString={setMathString}

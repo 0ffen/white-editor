@@ -80,8 +80,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-2xl);
-  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  padding: 1rem;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
 

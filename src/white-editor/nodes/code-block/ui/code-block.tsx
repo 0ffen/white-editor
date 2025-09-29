@@ -70,7 +70,7 @@ export const CodeBlock = ({
                   variant='ghost'
                   role='combobox'
                   className={cn(
-                    'text-muted-foreground hover:text-muted-foreground w-fit justify-between hover:bg-transparent'
+                    'text-muted-foreground/50 hover:text-muted-foreground/80 w-fit justify-between hover:bg-transparent'
                   )}
                 >
                   {defaultLanguage || 'Select language'}
@@ -106,12 +106,12 @@ export const CodeBlock = ({
           <Button
             onClick={handleCopy}
             variant='ghost'
-            className='hover:text-primary absolute -top-1 -right-1 w-fit hover:cursor-pointer hover:bg-stone-800'
+            className='absolute -top-1 -right-1 w-fit hover:cursor-pointer hover:bg-stone-800'
           >
             {isCopied ? (
-              <Check className='text-muted-foreground size-4' />
+              <Check className='text-muted-foreground/50 size-4' />
             ) : (
-              <Copy className='text-muted-foreground size-4' />
+              <Copy className='text-muted-foreground/50 size-4' />
             )}
           </Button>
         </div>

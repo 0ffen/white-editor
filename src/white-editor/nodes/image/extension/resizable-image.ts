@@ -12,6 +12,7 @@ declare module '@tiptap/react' {
         caption?: string;
         width?: string;
         height?: string;
+        textAlign?: string;
       }) => ReturnType;
     };
   }
@@ -82,6 +83,16 @@ export const ResizableImage = Image.extend({
           return { 'data-caption': attributes.caption };
         },
       },
+      textAlign: {
+        default: null,
+        parseHTML: (element: HTMLElement) => element.style.textAlign || null,
+        renderHTML: (attributes: { textAlign?: string }) => {
+          if (!attributes.textAlign) {
+            return {};
+          }
+          return { style: `text-align: ${attributes.textAlign}` };
+        },
+      },
     };
   },
 
@@ -92,7 +103,15 @@ export const ResizableImage = Image.extend({
   addCommands() {
     return {
       setResizableImage:
-        (options: { src: string; alt?: string; title?: string; caption?: string; width?: string; height?: string }) =>
+        (options: {
+          src: string;
+          alt?: string;
+          title?: string;
+          caption?: string;
+          width?: string;
+          height?: string;
+          textAlign?: string;
+        }) =>
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ({ commands }: { commands: any }) => {
           return commands.insertContent({
@@ -104,6 +123,7 @@ export const ResizableImage = Image.extend({
               caption: options.caption || '',
               width: options.width || null,
               height: options.height || null,
+              textAlign: options.textAlign || null,
             },
           });
         },

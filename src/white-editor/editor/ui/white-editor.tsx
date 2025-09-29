@@ -43,7 +43,7 @@ export function WhiteEditor<T>(props: WhiteEditorProps<T>) {
             editor={editor}
             className={cn('markdown prose dark:prose-invert max-w-full', contentClassName)}
           />
-          {footer && <div className='editor-footer mt-2'>{footer}</div>}
+          {footer && <div className='mt-2'>{footer}</div>}
         </EditorContext.Provider>
       </div>
     </TooltipProvider>
