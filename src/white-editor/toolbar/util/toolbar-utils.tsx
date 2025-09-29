@@ -24,27 +24,30 @@ type ToolbarItemRenderer = (config: Record<string, any>, key: string) => React.R
 /**
  * 툴바 그룹 생성 함수
  */
-export function createToolbarGroup(groupConfig: EditorToolbarConfig): React.ReactNode[] {
+export function createToolbarGroup(groupConfig: EditorToolbarConfig, toolbarItems?: ToolbarItem[]): React.ReactNode[] {
   const items: React.ReactNode[] = [];
 
-  (Object.keys(TOOLBAR_ITEM_REGISTRY) as ToolbarItem[]).forEach((toolbarItem) => {
-    const configKey = TOOLBAR_ITEM_TO_CONFIG_KEY[toolbarItem];
-    const itemConfig = groupConfig[configKey];
+  if (toolbarItems) {
+    toolbarItems.forEach((toolbarItem) => {
+      const configKey = TOOLBAR_ITEM_TO_CONFIG_KEY[toolbarItem];
+      const itemConfig = groupConfig[configKey];
 
-    if (itemConfig && (typeof itemConfig === 'object' ? itemConfig.show : itemConfig)) {
-      const renderer = TOOLBAR_ITEM_REGISTRY[toolbarItem];
-      const renderedItem = renderer(itemConfig as EditorToolbarConfig, toolbarItem);
-      if (renderedItem) {
-        items.push(renderedItem);
+      if (itemConfig && (typeof itemConfig === 'object' ? itemConfig.show : itemConfig)) {
+        const renderer = TOOLBAR_ITEM_REGISTRY[toolbarItem];
+        const renderedItem = renderer(itemConfig as EditorToolbarConfig, toolbarItem);
+        if (renderedItem) {
+          items.push(renderedItem);
+        }
       }
-    }
-  });
+    });
+  }
 
   return items;
 }
 
 /**
- * ToolbarItem -> EditorToolbarConfig로 변환
+ * @name createToolbarConfigFromItems
+ * @description ToolbarItem을 EditorToolbarConfig로 변환
  */
 export function createToolbarConfigFromItems(
   toolbarItems: ToolbarItem[],

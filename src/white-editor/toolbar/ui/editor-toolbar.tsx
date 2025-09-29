@@ -1,5 +1,4 @@
-import { ToolbarRenderer, type ToolbarItem, type ToolbarItemProps } from '@/white-editor';
-import { createToolbarConfigFromItems } from '../util/toolbar-utils';
+import { ToolbarRenderer, type ToolbarItem, type ToolbarItemProps, createToolbarConfigFromItems } from '@/white-editor';
 
 interface EditorToolbarProps {
   toolbarItems: ToolbarItem[][];
@@ -10,9 +9,12 @@ export function EditorToolbar(props: EditorToolbarProps) {
   const { toolbarItems, toolbarProps = {} } = props;
 
   const convertToToolbarConfig = (items: ToolbarItem[][]) => {
-    return items.map((group) => createToolbarConfigFromItems(group, toolbarProps));
+    return items.map((group) => ({
+      config: createToolbarConfigFromItems(group, toolbarProps),
+      items: group,
+    }));
   };
 
-  const toolbarConfig = convertToToolbarConfig(toolbarItems);
-  return <ToolbarRenderer groups={toolbarConfig} />;
+  const toolbarConfigWithItems = convertToToolbarConfig(toolbarItems);
+  return <ToolbarRenderer groups={toolbarConfigWithItems} />;
 }

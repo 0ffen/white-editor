@@ -1,10 +1,14 @@
 import type React from 'react';
 import { ToolbarGroup, ToolbarSeparator } from '@/shared/components';
-import { type EditorToolbarConfig } from '@/white-editor';
-import { createToolbarGroup } from '../util/toolbar-utils';
+import { type EditorToolbarConfig, type ToolbarItem, createToolbarGroup } from '@/white-editor';
+
+interface ToolbarGroupWithItems {
+  config: EditorToolbarConfig;
+  items: ToolbarItem[];
+}
 
 interface ToolbarConfig {
-  groups?: EditorToolbarConfig[];
+  groups?: (EditorToolbarConfig | ToolbarGroupWithItems)[];
 }
 
 /**
@@ -15,10 +19,16 @@ interface ToolbarConfig {
 export const ToolbarRenderer = (config: ToolbarConfig): React.ReactNode => {
   const result: React.ReactNode[] = [];
 
-  //   그룹 설정
   if (config.groups && config.groups.length > 0) {
     config.groups.forEach((groupConfig, groupIndex) => {
-      const groupItems = createToolbarGroup(groupConfig);
+      let groupItems: React.ReactNode[];
+
+      if ('config' in groupConfig && 'items' in groupConfig) {
+        const groupWithItems = groupConfig as ToolbarGroupWithItems;
+        groupItems = createToolbarGroup(groupWithItems.config, groupWithItems.items);
+      } else {
+        groupItems = createToolbarGroup(groupConfig as EditorToolbarConfig);
+      }
 
       if (groupItems.length > 0) {
         result.push(<ToolbarGroup key={`group-${groupIndex}`}>{groupItems}</ToolbarGroup>);
