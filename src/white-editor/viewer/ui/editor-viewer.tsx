@@ -1,7 +1,7 @@
 import { cn } from '@/shared/utils';
-import { createViewerExtensions } from '@/shared/utils/extensions';
-import './editor-viewer.css';
+import { createViewerExtensions } from '@/shared/utils';
 import { useEditor, EditorContent, type JSONContent } from '@tiptap/react';
+import './editor-viewer.css';
 
 interface EditorViewerProps {
   content: JSONContent;

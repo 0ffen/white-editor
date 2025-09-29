@@ -1,7 +1,6 @@
-import { createListConfig } from '@/shared/utils';
-import { createEditorExtensions, migrateMathStrings } from '@/shared/utils/extensions';
+import { createListConfig, createEditorExtensions, migrateMathStrings } from '@/shared/utils';
+import type { WhiteEditorProps } from '@/white-editor';
 import { useEditor } from '@tiptap/react';
-import type { WhiteEditorProps } from '../type/white-editor.type';
 
 export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
   const { extension, contentClassName, onChange, onUpdate, onBlur, onFocus, onCreate, onDestroy, onSelectionUpdate } =
