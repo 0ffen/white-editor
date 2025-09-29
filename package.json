@@ -5,7 +5,7 @@
     "email": "sblee.b@enki.co.kr"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "@0ffen:registry": "https://npm.pkg.github.com"
   },
   "repository": {
     "type": "git",
