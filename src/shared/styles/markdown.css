@@ -1,111 +1,186 @@
 .markdown :is(h1) {
-  @apply text-2xl;
+  font-size: 24px;
 }
 
 .markdown :is(h2) {
-  @apply text-xl;
+  font-size: 20px;
 }
 
 .markdown :is(h3) {
-  @apply text-lg;
+  font-size: 18px;
 }
 
 .markdown :is(h4) {
-  @apply text-base;
+  font-size: 16px;
 }
 
 .markdown :is(h1, h2, h3, h4, h5, h6) {
-  @apply text-foreground my-3 scroll-mt-32 py-0 font-semibold;
+  color: var(--foreground);
+  margin: 12px 0;
+  scroll-margin-top: 8rem;
+  padding: 0;
+  font-weight: 600;
 }
 
 .markdown code:not(pre > code) {
-  @apply bg-muted rounded-sm p-0 px-[0.3rem] py-[0.2rem] font-mono text-sm font-medium text-amber-500 before:hidden after:hidden dark:bg-[#18181b] dark:text-amber-600;
+  background-color: var(--muted);
+  border-radius: 0.25rem;
+  padding: 0.2rem 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-orange-400);
+  &::before,
+  &::after {
+    content: none;
+  }
 }
 
 .markdown blockquote {
-  @apply border-primary my-2 py-0! text-sm! font-normal not-italic!;
+  border-color: var(--primary);
+  margin-block: calc(var(--spacing) * 2);
+  padding: 0 calc(var(--spacing) * 3);
+  font-weight: 400;
+  font-size: 14px;
+  font-style: normal;
+
   p,
   ul,
   li,
   ol {
-    @apply my-0 py-0.5;
+    margin-block: 0;
+    padding-block: calc(var(--spacing) * 0.5);
   }
   [data-type='taskList'] label {
-    @apply mt-1.5;
+    margin-top: 0.375rem;
   }
 }
 
 .markdown {
   p {
-    @apply my-2 py-2 before:content-normal after:content-normal;
+    margin-block: calc(var(--spacing) * 2);
     padding-block: 0;
+    font-size: 14px;
+
+    &::before {
+      content: normal;
+    }
+    &::after {
+      content: normal;
+    }
   }
 
   ol,
   ul {
-    @apply my-0 inline-block w-full py-0;
+    margin-block: 0;
+    padding-block: 0;
+    display: inline-block;
+    width: 100%;
   }
   li {
-    @apply marker:text-foreground my-2 p-0;
+    margin-block: calc(var(--spacing) * 2);
     padding-block: 0;
+    font-size: 14px;
+
+    &::marker {
+      color: var(--foreground);
+    }
   }
 }
 
 .markdown table {
-  @apply w-full max-w-[1440px] border;
+  width: 100%;
+  max-width: 1440px;
+  border: 1px solid var(--border);
 }
 
 .markdown tr {
-  @apply [&>.selectedCell]:bg-primary/10 [&>.selectedCell.tableSelection]:bg-primary/10;
-
   p {
-    @apply my-0 py-0;
+    margin-block: 0;
+    padding-block: 0;
   }
 }
 
+.markdown tr > .selectedCell,
+.markdown tr > .selectedCell.tableSelection {
+  background-color: hsl(var(--primary) / 0.1);
+}
+
 .markdown th {
-  @apply bg-accent/50 border p-2;
+  border: 1px solid var(--border);
+  padding: calc(var(--spacing) * 2);
+  background-color: var(--accent);
 }
 
 .markdown td {
-  @apply border p-2;
+  border: 1px solid var(--border);
+  padding: calc(var(--spacing) * 2);
+}
+
+.markdown td {
+  border: 1px solid var(--border);
+  padding: calc(var(--spacing) * 2);
 }
 
 .markdown hr {
-  @apply border-border my-6 border-0 border-b;
+  border-color: var(--border);
+  margin-block: calc(var(--spacing) * 6);
+  border-width: 0;
+  border-bottom-width: 1px;
 }
 
 .markdown a {
-  @apply text-primary hover:text-primary/80 font-normal underline;
+  color: var(--primary);
+  font-weight: 400;
+  text-decoration: underline;
 }
 
 .markdown input[type='checkbox']:disabled {
-  @apply text-foreground focus:ring-primary border;
+  color: var(--foreground);
+  border-color: var(--primary);
+  focus: ring-primary;
 }
 
 .markdown [data-type='taskList'] {
-  @apply list-none pl-1;
+  list-style-type: none;
+  padding-left: 0.25rem;
 }
 
 .markdown [data-type='taskList'] li {
-  @apply flex items-center gap-2;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .markdown [data-type='taskList'] li input[type='checkbox'] {
-  @apply h-4 w-4 rounded-none;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0;
 }
 
 .markdown details {
-  @apply py-2 transition-all;
+  padding-block: 0.5rem;
+  transition: all 0.2s ease-in-out;
 }
 
 .markdown summary {
-  @apply text-foreground flex cursor-pointer items-center justify-between py-2 font-medium;
+  color: var(--foreground);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 0.5rem;
+  font-weight: 500;
 }
 
 .markdown summary::after {
   content: '';
-  @apply border-foreground inline-block h-2 w-2 -rotate-45 border-b-2 border-l-2 transition-all;
+  border-color: var(--foreground);
+  border-width: 2px;
+  border-style: solid;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+  transform: rotate(-45deg);
+  transition: all 0.2s ease-in-out;
 }
 
 .markdown details[open] summary::after {
