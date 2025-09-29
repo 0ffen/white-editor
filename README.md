@@ -38,9 +38,8 @@ Core
 ## 설치 방법
 
 ```bash
-pnpm install @enki/white-editor
-# or
-yarn add @enki/white-editor
+npm config set @0ffen:registry=https://npm.pkg.github.com
+pnpm install @0ffen/white-editor
 ```
 
 ## 사용 방법
@@ -48,7 +47,7 @@ yarn add @enki/white-editor
 ### 1. White Editor
 
 ```tsx
-import { WhiteEditor } from '@enki/white-editor';
+import { WhiteEditor } from '@0ffen/white-editor';
 
 <WhiteEditor
   theme={'light'}
@@ -212,7 +211,7 @@ toolbarProps: {
 읽기 전용 뷰어 컴포넌트
 
 ```tsx
-import { EditorViewer, type JSONContent } from '@enki/white-editor';
+import { EditorViewer, type JSONContent } from '@0ffen/white-editor';
 
 const sampleContent: JSONContent = {
   type: 'doc',
@@ -238,7 +237,7 @@ const sampleContent: JSONContent = {
 
 ```tsx
 import { useState } from 'react';
-import { WhiteEditor, Editor } from '@enki/white-editor';
+import { WhiteEditor, Editor } from '@0ffen/white-editor';
 
 function MyComponent() {
   const [editor, setEditor] = useState<Editor | null>(null);
@@ -263,7 +262,7 @@ function MyComponent() {
 JSONContent를 HTML 문자열로 변환합니다.
 
 ```tsx
-import { WhiteEditor, getHtmlContent } from '@enki/white-editor';
+import { WhiteEditor, getHtmlContent } from '@0ffen/white-editor';
 
 <WhiteEditor
   onChange={(content) => {
