@@ -41,20 +41,17 @@ export function WhiteEditor<T>(props: WhiteEditorProps<T>) {
           </Toolbar>
           <EditorContent
             editor={editor}
-            className={cn('markdown prose dark:prose-invert max-w-full', contentClassName)}
+            className={cn('markdown prose dark:prose-invert max-w-full flex-1 overflow-y-auto', contentClassName)}
           />
-          {extension?.character?.show && (
-            <span
-              className={cn(
-                'text-border flex justify-end px-2 py-1.5 text-sm select-none',
-                extension?.character?.className
-              )}
-            >
-              {charactersCount}
-              {extension?.character?.limit && `/${extension.character.limit}`}
-            </span>
-          )}
-          {footer && <div>{footer}</div>}
+          <div className='mt-auto flex flex-col justify-end gap-2 p-2'>
+            {extension?.character?.show && (
+              <span className={cn('text-border flex justify-end text-sm select-none', extension?.character?.className)}>
+                {charactersCount}
+                {extension?.character?.limit && `/${extension.character.limit}`}
+              </span>
+            )}
+            {footer && <>{footer}</>}
+          </div>
         </EditorContext.Provider>
       </div>
     </TooltipProvider>
