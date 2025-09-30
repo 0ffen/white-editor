@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { cn } from '@/shared';
+import { cn, Dialog, DialogContent, DialogTitle } from '@/shared';
 import { useImageEdit, useImageHover, useImageResize, ImageEditDialog } from '@/white-editor';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
@@ -16,6 +16,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const { src, alt, title, width, height, caption, textAlign } = props.node.attrs;
   const containerRef = useRef<HTMLDivElement>(null);
   const [_align, setAlign] = useState<AlignType>(textAlign || 'center');
+  const [isViewerImageDialogOpen, setIsViewerImageDialogOpen] = useState<boolean>(false);
 
   const { imageRef, resizeState, resizeHandlers } = useImageResize({
     initialWidth: width || '300px',
@@ -77,6 +78,11 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
         )}
         onMouseEnter={hoverHandlers.handleMouseEnter}
         onMouseLeave={hoverHandlers.handleMouseLeave}
+        onClick={() => {
+          if (!props.editor.isEditable) {
+            setIsViewerImageDialogOpen(true);
+          }
+        }}
       >
         <img
           ref={imageRef}
@@ -110,6 +116,26 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           currentCaption={editingImage.caption || ''}
           onSave={handleImageSave}
         />
+      )}
+      {isViewerImageDialogOpen && (
+        <Dialog open={isViewerImageDialogOpen} onOpenChange={setIsViewerImageDialogOpen}>
+          <DialogTitle className='sr-only'>View Image</DialogTitle>
+          <DialogContent className='mx-auto justify-center'>
+            <img
+              style={{
+                width: 'auto',
+                height: '300px',
+              }}
+              ref={imageRef}
+              src={src}
+              alt={alt}
+              title={title}
+              className='mb-0 inline-block h-auto max-w-full rounded text-center'
+              draggable={false}
+            />
+            {caption && <ImageCaption caption={caption} className='mt-0 text-center' />}
+          </DialogContent>
+        </Dialog>
       )}
     </NodeViewWrapper>
   );
