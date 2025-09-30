@@ -2,11 +2,11 @@ name: package-deploy
 
 on:
   push:
-    tags:
-      - v*
+    branches:
+      - production
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22.x'
   PNPM_VERSION: '10.14.0'
 
 jobs:
@@ -40,7 +40,29 @@ jobs:
       - name: Build packages
         run: pnpm build
 
+      - name: Check version changed
+        id: version-check
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "current-version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+          if git tag --list | grep -q "v$CURRENT_VERSION"; then
+            echo "version-changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "version-changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Git Tag
+        if: steps.version-check.outputs.version-changed == 'true' && github.ref == 'refs/heads/production'
+        run: |
+          VERSION=${{ steps.version-check.outputs.current-version }}
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v$VERSION" -m "Release v$VERSION"
+          git push origin "v$VERSION"
+
       - name: Publish to GitHub Package Registry
+        if: steps.version-check.outputs.version-changed == 'true'
         run: |
           echo "Publishing packages to GitHub Package Registry..."
           pnpm publish --no-git-checks
