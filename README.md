@@ -73,7 +73,7 @@ import { WhiteEditor } from '@0ffen/white-editor';
 
 <WhiteEditor
   theme={'light'}
-  editorClassName={'white-editor-class'}
+  editorClassName={'white-editor-class'} //해당 클래스에는 import(!) 작성 필요
   contentClassName={'content-class'}
   toolbarItems={[
     ['undo', 'redo'],
@@ -137,6 +137,12 @@ interface WhiteEditorUIProps {
 interface WhiteEditorExtensions<T> {
   extension?: {
     mention?: MentionConfig<T>; // @멘션 기능을 위한 멘션 옵션 설정
+    character?: {
+      //클자수 카운트를 위한 옵션 설정
+      show?: boolean;
+      limit?: number; //limit을 작성하지 않으면 count만 노출
+      className?: string;
+    };
   };
 }
 ```
@@ -298,4 +304,37 @@ return
 
 ```
  <h1>h1</h1><p>paragraph</p><p></p>
+```
+
+### setCSSVariables CSS 변수 커스텀
+
+스타일 변수를 커스텀할 수 있게 해주는 유틸함수
+변경해주고 싶은 컬러의 변수를 수정해주세요.
+에디터의 컬러는 [shadcn ui](https://ui.shadcn.com/themes) 의 variable을 따릅니다.
+
+```tsx
+useEffect(() => {
+  setCSSVariables({
+    '--primary': '#000000',
+    '--secondary': '#000000',
+    '--background': '#000000',
+    '--border': '#000000',
+  });
+}, []);
+
+<WhiteEditor />;
+```
+
+### creatEmptyContent
+
+간단한 빈 콘텐츠를 생성하는 유틸리티 함수
+빈 JSONContent 값을 입력해야할 때 사용합니다.
+
+```tsx
+export function createEmptyContent() {
+  return {
+    type: 'doc',
+    content: [],
+  };
+}
 ```
