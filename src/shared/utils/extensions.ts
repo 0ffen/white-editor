@@ -47,7 +47,7 @@ export function createEditorExtensions<T>(mentionItems?: ListItemConfig<T>, maxC
       addNodeView() {
         return ReactNodeViewRenderer(CodeBlock as React.FC);
       },
-    }).configure({ lowlight }),
+    }).configure({ lowlight, enableTabIndentation: true }),
     Mathematics.configure({
       blockOptions: {},
       inlineOptions: {},
