@@ -1,10 +1,20 @@
 import { createListConfig, createEditorExtensions, migrateMathStrings } from '@/shared/utils';
 import type { WhiteEditorProps } from '@/white-editor';
-import { useEditor } from '@tiptap/react';
+import { useEditor, useEditorState } from '@tiptap/react';
 
 export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
-  const { extension, contentClassName, onChange, onUpdate, onBlur, onFocus, onCreate, onDestroy, onSelectionUpdate } =
-    props;
+  const {
+    extension,
+    contentClassName,
+    onChange,
+    editorProps,
+    onUpdate,
+    onBlur,
+    onFocus,
+    onCreate,
+    onDestroy,
+    onSelectionUpdate,
+  } = props;
 
   // for mention
   const mentionItems = extension?.mention
@@ -24,9 +34,11 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
         autocapitalize: 'off',
         'aria-label': 'Editor Content',
         class: contentClassName || '',
+        ...(editorProps?.attributes || {}),
       },
+      ...(editorProps || {}),
     },
-    extensions: createEditorExtensions(mentionItems),
+    extensions: createEditorExtensions(mentionItems, extension?.character?.limit),
     onCreate: ({ editor: currentEditor }) => {
       migrateMathStrings(currentEditor);
       onCreate?.(currentEditor);
@@ -50,5 +62,14 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
     },
   });
 
-  return { editor };
+  const editorState = useEditorState({
+    editor,
+    selector: (context) => ({
+      charactersCount: context.editor?.storage.characterCount.characters(),
+    }),
+  });
+
+  const charactersCount = editorState?.charactersCount || 0;
+
+  return { editor, charactersCount };
 };

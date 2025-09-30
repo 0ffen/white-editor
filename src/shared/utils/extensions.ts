@@ -12,12 +12,12 @@ import Superscript from '@tiptap/extension-superscript';
 import { TableKit } from '@tiptap/extension-table';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyleKit } from '@tiptap/extension-text-style';
-import { Selection } from '@tiptap/extensions';
+import { Selection, CharacterCount } from '@tiptap/extensions';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
 // 에디터 전용 extensions
-export function createEditorExtensions<T>(mentionItems?: ListItemConfig<T>) {
+export function createEditorExtensions<T>(mentionItems?: ListItemConfig<T>, maxCharacters?: number) {
   const lowlight = createLowlight(all);
 
   return [
@@ -27,6 +27,9 @@ export function createEditorExtensions<T>(mentionItems?: ListItemConfig<T>) {
         openOnClick: false,
         enableClickSelection: true,
       },
+    }),
+    CharacterCount.configure({
+      limit: maxCharacters || null,
     }),
     TableKit.configure({
       table: { resizable: true },
@@ -44,7 +47,7 @@ export function createEditorExtensions<T>(mentionItems?: ListItemConfig<T>) {
       addNodeView() {
         return ReactNodeViewRenderer(CodeBlock as React.FC);
       },
-    }).configure({ lowlight }),
+    }).configure({ lowlight, enableTabIndentation: true }),
     Mathematics.configure({
       blockOptions: {},
       inlineOptions: {},

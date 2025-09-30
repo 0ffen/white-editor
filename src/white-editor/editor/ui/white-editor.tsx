@@ -10,7 +10,7 @@ export function WhiteEditor<T>(props: WhiteEditorProps<T>) {
   const { extension, toolbarItems, toolbarProps, contentClassName, editorClassName, footer, theme } = props;
 
   const toolbarRef = React.useRef<HTMLDivElement>(null);
-  const { editor } = useWhiteEditor<T>({
+  const { editor, charactersCount } = useWhiteEditor<T>({
     extension,
     contentClassName,
     ...props,
@@ -41,9 +41,17 @@ export function WhiteEditor<T>(props: WhiteEditorProps<T>) {
           </Toolbar>
           <EditorContent
             editor={editor}
-            className={cn('markdown prose dark:prose-invert max-w-full', contentClassName)}
+            className={cn('markdown prose dark:prose-invert max-w-full flex-1 overflow-y-auto', contentClassName)}
           />
-          {footer && <div className='mt-2'>{footer}</div>}
+          <div className='mt-auto flex flex-col justify-end gap-2 p-2'>
+            {extension?.character?.show && (
+              <span className={cn('text-border flex justify-end text-sm select-none', extension?.character?.className)}>
+                {charactersCount}
+                {extension?.character?.limit && `/${extension.character.limit}`}
+              </span>
+            )}
+            {footer && <>{footer}</>}
+          </div>
         </EditorContext.Provider>
       </div>
     </TooltipProvider>

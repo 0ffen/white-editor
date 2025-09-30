@@ -1,8 +1,12 @@
 .editor-wrapper {
   min-height: 100px;
+  height: 100%;
   background-color: var(--background);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
 }
 
 .toolbar-wrapper {
@@ -10,6 +14,7 @@
   align-items: center;
   gap: 0.5rem;
   padding-block: 0.25rem;
+  height: 40px;
 }
 
 .ProseMirror {
