@@ -35,9 +35,9 @@ export type {
   EditorExtensions,
 } from './white-editor';
 
-//tiptap types
+//tiptap
 export type { JSONContent } from '@tiptap/react';
 export type { Editor } from '@tiptap/react';
 
 //utils
-export { getHtmlContent } from './shared/utils';
+export { getHtmlContent, createEmptyContent, setCSSVariables } from './shared/utils';
