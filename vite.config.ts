@@ -1,5 +1,6 @@
-import path, { resolve } from 'node:path';
+import path from 'node:path';
 import { defineConfig } from 'vite';
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import dts from 'vite-plugin-dts';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -19,6 +20,7 @@ export default defineConfig({
       insertTypesEntry: true,
     }),
     tailwindcss(),
+    cssInjectedByJsPlugin(),
   ],
   resolve: {
     alias: {
@@ -31,7 +33,7 @@ export default defineConfig({
     sourcemap: false,
     cssCodeSplit: false,
     lib: {
-      entry: resolve(__dirname, './src/index.ts'),
+      entry: path.resolve(__dirname, './src/index.ts'),
       name: 'white-editor',
       fileName: (format) => `index.${format}.js`,
       formats: ['es'],
