@@ -46,6 +46,28 @@ pnpm install @0ffen/white-editor
 
 ### 1. White Editor
 
+### Next
+
+```tsx
+'use client';
+
+import dynamic from 'next/dynamic';
+import { useEffect, useState } from 'react';
+
+// SSR 비활성화로 동적 임포트
+const WhiteEditor = dynamic(
+  () => import('@0ffen/white-editor').then((mod) => ({ default: mod.WhiteEditor })),
+  { ssr: false }
+);
+
+export default function Home() {
+  return (
+    <WhiteEditor />
+  );
+```
+
+### React
+
 ```tsx
 import { WhiteEditor } from '@0ffen/white-editor';
 
