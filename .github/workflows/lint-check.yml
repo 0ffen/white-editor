@@ -10,7 +10,7 @@ on:
 
 env:
   NODE_VERSION: '22.x'
-  PNPM_VERSION: '10.14.0'
+  PNPM_VERSION: '10.x'
 
 jobs:
   lint-check:
@@ -25,7 +25,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          registry-url: 'https://npm.pkg.github.com'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
