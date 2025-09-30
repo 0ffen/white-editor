@@ -168,6 +168,8 @@ export function findNodeAtPosition(editor: Editor, position: number) {
     }
     return node;
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to find node at position:', error);
     return null;
   }
 }

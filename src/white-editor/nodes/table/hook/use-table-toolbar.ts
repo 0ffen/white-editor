@@ -72,6 +72,7 @@ const executeTableAction = (editor: Editor, action: string) => {
       chain.deleteTable().run();
       break;
     default:
+      // eslint-disable-next-line no-console
       console.warn(`Unknown table action: ${action}`);
   }
 };

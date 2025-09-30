@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import { ImagePlusIcon } from 'lucide-react';
-import { useImageUpload, type UseImageUploadConfig } from '@/white-editor';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
+import { useImageUpload, type UseImageUploadConfig } from '@/white-editor';
 
 export interface ImageUploadButtonProps extends Omit<ButtonProps, 'type'>, UseImageUploadConfig {
   icon?: React.ReactNode;

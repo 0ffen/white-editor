@@ -49,6 +49,7 @@ export function useImageEdit(options: UseImageEditOptions = {}) {
 
         closeImageEdit();
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Failed to update image:', error);
       }
     },
