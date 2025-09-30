@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { JSONContent } from '@tiptap/react';
-import { Button, createEmptyContent } from './shared';
+import { Button, createEmptyContent, ThemeToggle } from './shared';
 import { EditorViewer, WhiteEditor } from './white-editor';
 
 export default function App() {
@@ -9,10 +9,13 @@ export default function App() {
   return (
     <main className='p-6'>
       <h1 className='mb-8 border-b pb-6 text-center text-4xl font-bold italic'>White Editor</h1>
+      <div className='absolute top-8 right-16 w-fit justify-end'>
+        <ThemeToggle />
+      </div>
 
       <div className='grid grid-cols-1 gap-8 lg:grid-cols-2'>
         <section className='space-y-3'>
-          <h2 className='mb-8 text-center text-3xl font-bold italic'>Editor</h2>
+          <h2 className='mb-8 text-center text-3xl font-bold'>Editor</h2>
           <WhiteEditor
             editorClassName='!h-[500px]'
             contentClassName='h-full'
@@ -44,7 +47,7 @@ export default function App() {
         </section>
 
         <section className='space-y-3'>
-          <h2 className='mb-8 text-center text-3xl font-bold italic'>Viewer</h2>
+          <h2 className='mb-8 text-center text-3xl font-bold'>Viewer</h2>
           <EditorViewer className='h-[500px] rounded-md border' content={content} key={JSON.stringify(content)} />
         </section>
       </div>
