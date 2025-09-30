@@ -1,9 +1,15 @@
 import type { ToolbarItem, ToolbarItemProps, MentionConfig } from '@/white-editor';
+import type { EditorProps } from '@tiptap/pm/view';
 import type { JSONContent, Content } from '@tiptap/react';
 import type { Editor } from '@tiptap/react';
 
 interface EditorExtensions<T> {
   mention?: MentionConfig<T>;
+  character?: {
+    show?: boolean;
+    limit?: number;
+    className?: string;
+  };
 }
 
 interface WhiteEditorUIProps {
@@ -41,6 +47,7 @@ interface WhiteEditorProps<T> extends WhiteEditorUIProps, WhiteEditorExtensions<
   onCreate?: (editor: Editor) => void;
   onDestroy?: () => void;
   onSelectionUpdate?: (editor: Editor) => void;
+  editorProps?: EditorProps;
 }
 
 export type { WhiteEditorProps, WhiteEditorUIProps, WhiteEditorExtensions, TipTapEditorOptions, EditorExtensions };
