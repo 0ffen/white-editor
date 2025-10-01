@@ -62,4 +62,5 @@ export default defineConfig({
       copyright: 'Copyright © 2025 ENKI',
     },
   },
+  base: '/white-editor/',
 });
