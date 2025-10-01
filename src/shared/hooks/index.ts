@@ -1,5 +1,6 @@
 export * from './use-composed-ref';
 export * from './use-cursor-visibility';
+export * from './use-debounce';
 export * from './use-element-rect';
 export * from './use-menu-navigation';
 export * from './use-scrolling';
