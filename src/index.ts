@@ -4,7 +4,7 @@ import './shared/styles/markdown.css';
 import './shared/styles/github-dark.css';
 
 //editor, viewer
-export { WhiteEditor, useWhiteEditor, EditorViewer } from './white-editor';
+export { WhiteEditor, useWhiteEditor, WhiteViewer } from './white-editor';
 
 //toolbar types
 export type {
