@@ -45,6 +45,9 @@ export function createEditorExtensions<T>(mentionItems?: ListItemConfig<T>, maxC
     Selection,
     CodeBlockLowlight.extend({
       addNodeView() {
+        if (typeof window === 'undefined') {
+          return null;
+        }
         return ReactNodeViewRenderer(CodeBlock as React.FC);
       },
     }).configure({ lowlight, enableTabIndentation: true }),
@@ -82,6 +85,9 @@ export function createViewerExtensions() {
     Selection,
     CodeBlockLowlight.extend({
       addNodeView() {
+        if (typeof window === 'undefined') {
+          return null;
+        }
         return ReactNodeViewRenderer(CodeBlock as React.FC);
       },
     }).configure({ lowlight }),

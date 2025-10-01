@@ -51,6 +51,11 @@ export const CodeBlock = ({
   }));
 
   const handleCopy = React.useCallback(() => {
+    // CSR 환경에서만 clipboard API 사용
+    if (typeof window === 'undefined' || !navigator.clipboard) {
+      return;
+    }
+
     setIsCopied(true);
     navigator.clipboard.writeText(preRef.current?.textContent || '');
 
