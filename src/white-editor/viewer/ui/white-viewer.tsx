@@ -4,12 +4,14 @@ import { createViewerExtensions } from '@/shared/utils';
 import { useEditor, EditorContent, type JSONContent } from '@tiptap/react';
 import './viewer.css';
 
-interface WhiteViewerProps {
+export interface WhiteViewerProps {
   content: JSONContent;
   className?: string;
 }
 
-export const WhiteViewer = React.memo(function WhiteViewer({ content, className }: WhiteViewerProps) {
+export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerProps) {
+  const { content, className } = props;
+
   const extensions = useMemo(() => createViewerExtensions(), []);
 
   const editor = useEditor({
@@ -27,7 +29,7 @@ export const WhiteViewer = React.memo(function WhiteViewer({ content, className 
   }, [editor, content]);
 
   return (
-    <div className={cn('markdown prose dark:prose-invert readonly max-w-full', className)}>
+    <div className={cn('white-editor markdown prose dark:prose-invert readonly max-w-full', className)}>
       <EditorContent editor={editor} />
     </div>
   );

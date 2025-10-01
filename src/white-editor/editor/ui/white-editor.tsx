@@ -34,7 +34,7 @@ export function WhiteEditor<T>(props: WhiteEditorProps<T>) {
 
   return (
     <TooltipProvider>
-      <div className={cn('editor-wrapper', editorClassName)}>
+      <div className={cn('white-editor', editorClassName)}>
         <EditorContext.Provider value={{ editor }}>
           <Toolbar ref={toolbarRef} role='toolbar'>
             <div className={cn('toolbar-wrapper')}>{renderToolbar()}</div>

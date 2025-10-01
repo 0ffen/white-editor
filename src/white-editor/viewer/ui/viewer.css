@@ -1,27 +1,36 @@
-.readonly {
+.white-editor .readonly {
+  .ProseMirror {
+    padding: 1rem;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 100px;
+  }
+}
+
+.white-editor .readonly {
   user-select: text;
   pointer-events: auto;
 }
 
-.readonly [data-type='inline-math'],
-.readonly [data-type='block-math'] {
+.white-editor .readonly [data-type='inline-math'],
+.white-editor .readonly [data-type='block-math'] {
   cursor: default !important;
   pointer-events: none !important;
   user-select: none !important;
 }
 
-.readonly .viewer-task-item input[type='checkbox'],
-.readonly input[type='checkbox'] {
+.white-editor .readonly .viewer-task-item input[type='checkbox'],
+.white-editor .readonly input[type='checkbox'] {
   pointer-events: none !important;
   cursor: default !important;
 }
 
-.readonly .hljs {
+.white-editor .readonly .hljs {
   cursor: default !important;
   user-select: text !important;
 }
 
-.readonly .ProseMirror-selectednode {
+.white-editor .readonly .ProseMirror-selectednode {
   outline: none !important;
   box-shadow: none !important;
   background-color: transparent !important;
@@ -29,7 +38,7 @@
   pointer-events: none !important;
 }
 
-.readonly * {
+.white-editor .readonly * {
   -webkit-user-drag: none !important;
   -khtml-user-drag: none !important;
   -moz-user-drag: none !important;
@@ -37,23 +46,23 @@
   user-drag: none !important;
 }
 
-.readonly a {
+.white-editor .readonly a {
   pointer-events: auto !important;
   cursor: pointer !important;
 }
 
-.readonly p,
-.readonly h1,
-.readonly h2,
-.readonly h3,
-.readonly h4,
-.readonly h5,
-.readonly h6,
-.readonly li,
-.readonly span {
+.white-editor .readonly p,
+.white-editor .readonly h1,
+.white-editor .readonly h2,
+.white-editor .readonly h3,
+.white-editor .readonly h4,
+.white-editor .readonly h5,
+.white-editor .readonly h6,
+.white-editor .readonly li,
+.white-editor .readonly span {
   user-select: text !important;
 }
 
-.readonly .tiptap-mathematics-render {
+.white-editor .readonly .tiptap-mathematics-render {
   pointer-events: none !important;
 }
