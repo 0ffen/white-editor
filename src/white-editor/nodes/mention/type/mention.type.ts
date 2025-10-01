@@ -24,7 +24,7 @@ interface MentionSuggestionConfig {
 }
 
 interface MentionConfig<T> {
-  listData: T[];
+  data: T[] | null;
   id: keyof T;
   label: keyof T;
 }

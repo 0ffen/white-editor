@@ -17,8 +17,8 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
   } = props;
 
   // for mention
-  const mentionItems = extension?.mention
-    ? createListConfig(extension.mention.listData, {
+  const mentionItems = extension?.mention?.data
+    ? createListConfig(extension.mention.data, {
         id: extension.mention.id,
         label: extension.mention.label,
       })
@@ -35,6 +35,14 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
         'aria-label': 'Editor Content',
         class: contentClassName || '',
         ...(editorProps?.attributes || {}),
+      },
+      handleKeyDown: (view, event) => {
+        // 스페이스바 키 이벤트 처리
+        if (event.key === ' ') {
+          //불필요한 paragraph 생성 방지
+          return false;
+        }
+        return editorProps?.handleKeyDown?.(view, event);
       },
       ...(editorProps || {}),
     },
