@@ -1,14 +1,10 @@
 import { useState } from 'react';
 import type { JSONContent } from '@tiptap/react';
-import { Button, createEmptyContent, ThemeToggle, useDebounce } from './shared';
+import { Button, createEmptyContent, ThemeToggle } from './shared';
 import { WhiteEditor, WhiteViewer } from './white-editor';
 
 export default function App() {
   const [content, setContent] = useState<JSONContent>(createEmptyContent());
-
-  const debouncedSetContent = useDebounce((newContent: JSONContent) => {
-    setContent(newContent);
-  }, 300);
 
   return (
     <main className='p-6'>
@@ -23,7 +19,7 @@ export default function App() {
           <WhiteEditor
             editorClassName='!h-[500px]'
             contentClassName='h-full'
-            onChange={debouncedSetContent}
+            onChange={setContent}
             extension={{
               mention: {
                 data: [
@@ -50,7 +46,7 @@ export default function App() {
 
         <section className='space-y-3'>
           <h2 className='mb-8 text-center text-3xl font-bold'>Viewer</h2>
-          <WhiteViewer className='h-[500px] rounded-md border' content={content} key={JSON.stringify(content)} />
+          <WhiteViewer className='h-[500px] overflow-y-auto rounded-md border' content={content} />
         </section>
       </div>
     </main>
