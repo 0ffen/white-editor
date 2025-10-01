@@ -17,7 +17,7 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
   } = props;
 
   // for mention
-  const mentionItems = extension?.mention
+  const mentionItems = extension?.mention?.data
     ? createListConfig(extension.mention.data, {
         id: extension.mention.id,
         label: extension.mention.label,
