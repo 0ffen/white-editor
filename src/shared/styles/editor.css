@@ -108,6 +108,10 @@
   }
 }
 
+.ProseMirror-separator {
+  display: none;
+}
+
 .tiptap {
   :first-child {
     margin-top: 0;
