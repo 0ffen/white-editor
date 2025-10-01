@@ -42,7 +42,14 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
       });
 
       editorRef.current = instance;
-      instance.loadImageFromURL(imageUrl, 'UploadedImage').then(() => {});
+
+      instance.loadImageFromURL(imageUrl, 'UploadedImage').then(() => {
+        // 초기 이미지 로드 후 undo 스택을 클리어하여 초기 상태가 undo되지 않도록 함
+        setTimeout(() => {
+          instance.clearUndoStack();
+        }, 100);
+      });
+
       return () => {
         instance.destroy();
         editorRef.current = null;
