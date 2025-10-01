@@ -1,1 +1,1 @@
-export * from './ui/editor-viewer';
+export * from './ui/white-viewer';
