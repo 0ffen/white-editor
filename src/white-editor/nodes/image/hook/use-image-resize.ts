@@ -52,11 +52,13 @@ export function useImageResize(options: ImageResizeOptions = {}) {
 
         setCurrentWidth(widthPx);
         setCurrentHeight(heightPx);
+
+        // 실시간으로 onResize 콜백 호출하여 뷰어에 즉시 반영
+        onResize?.(widthPx, heightPx);
       };
 
       const handleMouseUp = () => {
         setIsResizing(false);
-        onResize?.(currentWidth, currentHeight);
 
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
@@ -65,7 +67,7 @@ export function useImageResize(options: ImageResizeOptions = {}) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     },
-    [currentWidth, currentHeight, minWidth, minHeight, onResize]
+    [minWidth, minHeight, onResize]
   );
 
   const resizeState: ImageResizeState = {

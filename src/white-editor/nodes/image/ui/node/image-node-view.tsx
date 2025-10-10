@@ -15,25 +15,33 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const { getPos } = props;
   const { src, alt, title, width, height, caption, textAlign } = props.node.attrs;
   const containerRef = useRef<HTMLDivElement>(null);
+
   const [_align, setAlign] = useState<AlignType>(textAlign || 'center');
+
+  const [currentWidth, setCurrentWidth] = useState<string>(width || '300px');
+  const [currentHeight, setCurrentHeight] = useState<string>(height || 'auto');
   const [isViewerImageDialogOpen, setIsViewerImageDialogOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    if (textAlign && textAlign !== _align) {
-      setAlign(textAlign as AlignType);
-    }
-  }, [textAlign, _align]);
+    if (textAlign && textAlign !== _align) setAlign(textAlign as AlignType);
+    if (width && width !== currentWidth) setCurrentWidth(width);
+    if (height && height !== currentHeight) setCurrentHeight(height);
+  }, [textAlign, width, height, _align, currentWidth, currentHeight]);
 
   const { imageRef, resizeState, resizeHandlers } = useImageResize({
-    initialWidth: width || '300px',
-    initialHeight: height || 'auto',
+    initialWidth: currentWidth,
+    initialHeight: currentHeight,
     onResize: (newWidth, newHeight) => {
+      setCurrentWidth(newWidth);
+      setCurrentHeight(newHeight);
+
       props.updateAttributes({
         width: newWidth,
         height: newHeight,
       });
     },
   });
+
   const { hoverState, hoverHandlers } = useImageHover();
   const { editingImage, isDialogOpen, openImageEdit, handleImageSave, setIsDialogOpen } = useImageEdit({
     editor: props.editor,
@@ -54,13 +62,10 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   );
 
   const showControls = hoverState.isHovered || props.selected;
-  const { currentWidth, currentHeight, isResizing } = resizeState;
 
   const handleAlignChange = useCallback(
     (newAlign: AlignType) => {
-      props.updateAttributes({
-        textAlign: newAlign,
-      });
+      props.updateAttributes({ textAlign: newAlign });
       setAlign(newAlign);
     },
     [props]
@@ -79,7 +84,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
         className={cn(
           'we:group we:relative we:inline-block',
           caption && 'we:mb-2',
-          isResizing ? 'we:resizing' : '',
+          resizeState.isResizing ? 'we:resizing' : '',
           props.selected && props.editor.isEditable
             ? 'we:selected we:ring-primary/40 we:rounded-xs we:ring-2 we:ring-offset-2'
             : ''
@@ -87,9 +92,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
         onMouseEnter={hoverHandlers.handleMouseEnter}
         onMouseLeave={hoverHandlers.handleMouseLeave}
         onClick={() => {
-          if (!props.editor.isEditable) {
-            setIsViewerImageDialogOpen(true);
-          }
+          if (!props.editor.isEditable) setIsViewerImageDialogOpen(true);
         }}
       >
         <img
@@ -125,20 +128,20 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           onSave={handleImageSave}
         />
       )}
+
       {isViewerImageDialogOpen && (
         <Dialog open={isViewerImageDialogOpen} onOpenChange={setIsViewerImageDialogOpen}>
           <DialogTitle className='we:sr-only'>View Image</DialogTitle>
           <DialogContent className='we:mx-auto we:justify-center'>
             <img
-              style={{
-                width: 'auto',
-                height: '300px',
-              }}
-              ref={imageRef}
               src={src}
               alt={alt}
               title={title}
               className='we:mb-0 we:inline-block we:h-auto we:max-w-full we:rounded we:text-center'
+              style={{
+                width: currentWidth !== 'auto' ? currentWidth : 'auto',
+                height: currentHeight !== 'auto' ? currentHeight : '300px',
+              }}
               draggable={false}
             />
             {caption && <ImageCaption caption={caption} className='we:mt-0 we:text-center' />}
