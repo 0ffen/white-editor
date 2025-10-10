@@ -25,7 +25,7 @@ export const MathPopover = React.forwardRef<HTMLButtonElement, MathPopoverProps>
     const { editor } = useTiptapEditor(providedEditor);
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
-    const { isVisible, isActive, mathString, setMathString, setMath, removeMath } = useMathematics({
+    const { isVisible, isActive, mathString, canSet, setMathString, setMath, removeMath } = useMathematics({
       editor,
       hideWhenUnavailable,
       onSetMath,
@@ -88,7 +88,7 @@ export const MathPopover = React.forwardRef<HTMLButtonElement, MathPopoverProps>
             aria-label={'math'}
             aria-pressed={isActive}
             isActive={isActive}
-            disabled={!isVisible}
+            disabled={!canSet}
             onClick={handleClick}
             {...buttonProps}
             ref={ref}

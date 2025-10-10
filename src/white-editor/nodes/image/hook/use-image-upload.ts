@@ -12,7 +12,7 @@ export interface UseImageUploadConfig {
 
 export function canInsertImage(editor: Editor | null): boolean {
   if (!editor || !editor.isEditable) return false;
-  return isExtensionAvailable(editor, 'image') && !isNodeTypeSelected(editor, ['codeBlock']);
+  return isExtensionAvailable(editor, 'image') && !isNodeTypeSelected(editor, ['codeBlock', 'image']);
 }
 
 export function isImageActive(editor: Editor | null): boolean {

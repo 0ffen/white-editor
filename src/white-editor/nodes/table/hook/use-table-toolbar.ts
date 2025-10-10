@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { useTiptapEditor } from '@/shared/hooks';
+import { isNodeTypeSelected } from '@/shared/utils';
 import { isTableActive, shouldShowTableButton, type TableActionItem } from '@/white-editor';
 import type { Editor } from '@tiptap/react';
 
@@ -77,9 +78,9 @@ const executeTableAction = (editor: Editor, action: string) => {
   }
 };
 
-// 액션 사용 가능 여부 체크
 const canExecuteAction = (editor: Editor | null, action: string): boolean => {
   if (!editor || !editor.isEditable) return false;
+  if (isNodeTypeSelected(editor, ['image'])) return false;
 
   switch (action) {
     case 'insertTable':

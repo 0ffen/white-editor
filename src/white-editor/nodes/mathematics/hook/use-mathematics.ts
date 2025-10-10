@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTiptapEditor } from '@/shared/hooks';
-import { isNodeInSchema } from '@/shared/utils';
+import { isNodeInSchema, isNodeTypeSelected } from '@/shared/utils';
 import type { MathematicsConfig, MathHandlerProps, MathType } from '@/white-editor';
 import { type Editor } from '@tiptap/react';
 
@@ -8,10 +8,23 @@ export function canSetMath(editor: Editor | null): boolean {
   if (!editor || !editor.isEditable) {
     return false;
   }
-  const canInsertBlock = editor.can().insertBlockMath({ latex: '' });
-  const canInsertInline = editor.can().insertInlineMath({ latex: '' });
-  const result = canInsertBlock || canInsertInline;
-  return result;
+
+  if (isNodeTypeSelected(editor, ['image'])) {
+    return false;
+  }
+
+  const inlineMathInSchema = isNodeInSchema('inlineMath', editor);
+  const blockMathInSchema = isNodeInSchema('blockMath', editor);
+
+  if (!inlineMathInSchema || !blockMathInSchema) {
+    return false;
+  }
+
+  if (editor.isActive('codeBlock') || editor.isActive('code')) {
+    return false;
+  }
+
+  return true;
 }
 
 const isMathActive = (editor: Editor | null, type?: MathType): boolean => {
@@ -28,18 +41,20 @@ const isMathActive = (editor: Editor | null, type?: MathType): boolean => {
 
 const shouldShowMathButton = (props: MathematicsConfig): boolean => {
   const { editor, hideWhenUnavailable } = props;
-  if (!editor) return false;
+  if (!editor || !editor.isEditable) return false;
+
   const inlineMathInSchema = isNodeInSchema('inlineMath', editor);
   const blockMathInSchema = isNodeInSchema('blockMath', editor);
 
-  if (!editor || !editor.isEditable) return false;
   if (!inlineMathInSchema || !blockMathInSchema) {
     return false;
   }
-  if (hideWhenUnavailable && !editor.isActive('code') && !editor.isActive('image')) {
+
+  if (hideWhenUnavailable) {
     const canSet = canSetMath(editor);
     return canSet;
   }
+
   return true;
 };
 
@@ -48,25 +63,40 @@ const onInsertInlineMath = (editor: Editor | null, latex = '') => {
   if (!editor) {
     return;
   }
-  const hasSelection = !editor.state.selection.empty;
-  if (hasSelection) {
+
+  try {
     return editor.chain().insertInlineMath({ latex }).focus().run();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to insert inline math:', error);
+    return false;
   }
-  return editor.chain().insertInlineMath({ latex }).focus().run();
 };
 
 const onRemoveInlineMath = (editor: Editor | null) => {
   if (!editor) {
     return;
   }
-  editor.chain().deleteInlineMath().focus().run();
+
+  try {
+    editor.chain().deleteInlineMath().focus().run();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to remove inline math:', error);
+  }
 };
 
 const onUpdateInlineMath = (editor: Editor | null, latex: string) => {
   if (!editor) {
     return;
   }
-  editor.chain().updateInlineMath({ latex }).focus().run();
+
+  try {
+    editor.chain().updateInlineMath({ latex }).focus().run();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to update inline math:', error);
+  }
 };
 
 //------ block math ------
@@ -74,25 +104,40 @@ const onInsertBlockMath = (editor: Editor | null, latex = '') => {
   if (!editor) {
     return;
   }
-  const hasSelection = !editor.state.selection.empty;
-  if (hasSelection) {
+
+  try {
     return editor.chain().insertBlockMath({ latex }).focus().run();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to insert block math:', error);
+    return false;
   }
-  return editor.chain().insertBlockMath({ latex }).focus().run();
 };
 
 const onRemoveBlockMath = (editor: Editor | null) => {
   if (!editor) {
     return;
   }
-  editor.chain().deleteBlockMath().focus().run();
+
+  try {
+    editor.chain().deleteBlockMath().focus().run();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to remove block math:', error);
+  }
 };
 
 const onUpdateBlockMath = (editor: Editor | null, latex: string) => {
   if (!editor) {
     return;
   }
-  editor.chain().updateBlockMath({ latex }).focus().run();
+
+  try {
+    editor.chain().updateBlockMath({ latex }).focus().run();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to update block math:', error);
+  }
 };
 
 const useMathematicsHandler = (props: MathHandlerProps) => {
