@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { cn, Dialog, DialogContent, DialogTitle } from '@/shared';
 import { useImageEdit, useImageHover, useImageResize, ImageEditDialog } from '@/white-editor';
 import { NodeViewWrapper } from '@tiptap/react';
@@ -17,6 +17,12 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [_align, setAlign] = useState<AlignType>(textAlign || 'center');
   const [isViewerImageDialogOpen, setIsViewerImageDialogOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (textAlign && textAlign !== _align) {
+      setAlign(textAlign as AlignType);
+    }
+  }, [textAlign, _align]);
 
   const { imageRef, resizeState, resizeHandlers } = useImageResize({
     initialWidth: width || '300px',
@@ -66,7 +72,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
       data-type='image'
       draggable='true'
       data-drag-handle
-      style={{ textAlign: _align }}
+      style={{ textAlign: textAlign || _align }}
     >
       <section
         ref={containerRef}
