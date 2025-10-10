@@ -82,7 +82,6 @@ export function createViewerExtensions() {
     Highlight.configure({ multicolor: true }),
     Superscript,
     Subscript,
-    Selection,
     CodeBlockLowlight.extend({
       addNodeView() {
         if (typeof window === 'undefined') {

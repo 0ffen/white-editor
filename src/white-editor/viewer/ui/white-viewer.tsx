@@ -22,6 +22,7 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
     editorProps: {
       attributes: {
         spellcheck: 'false',
+        contenteditable: 'false',
       },
     },
   });
@@ -32,17 +33,11 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
     }
   }, [editor, content]);
 
-  useEffect(() => {
-    if (editor) {
-      editor.view.updateState(editor.state);
-    }
-  }, [editor, content]);
-
   return (
-    <div className={cn('white-editor readonly', className)}>
+    <div className={cn('white-editor', className)}>
       <EditorContent
         editor={editor}
-        className={cn('markdown we:prose we:dark:prose-invert we:max-w-full we:h-full', className)}
+        className={cn('readonly we:prose we:dark:prose-invert we:max-w-full we:h-full markdown', className)}
       />
     </div>
   );
