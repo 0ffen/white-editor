@@ -1,9 +1,9 @@
 .white-editor {
+  border: 1px solid var(--we-border);
+  border-radius: var(--we-radius-md);
   min-height: 100px;
   height: 100%;
   background-color: var(--we-background);
-  border: 1px solid var(--we-border);
-  border-radius: var(--we-radius-md);
   display: flex;
   flex-direction: column;
   justify-content: stretch;
@@ -148,4 +148,9 @@
       }
     }
   }
+}
+
+.white-editor.viewer {
+  border: none !important;
+  background-color: transparent !important;
 }
