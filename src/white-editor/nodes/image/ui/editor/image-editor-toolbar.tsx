@@ -12,8 +12,8 @@ export function ImageEditorToolbar(props: ImageEditorToolbarProps) {
   const { editorRef, activeMode, handleModeChange } = props;
 
   return (
-    <div className='h-[44px] flex-shrink-0'>
-      <Toolbar className='border-none'>
+    <div className='we:h-[44px] we:flex-shrink-0'>
+      <Toolbar className='we:border-none'>
         <ToolbarButton
           onClick={() => {
             if (editorRef.current) {

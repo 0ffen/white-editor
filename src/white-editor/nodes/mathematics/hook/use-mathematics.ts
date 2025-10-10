@@ -143,6 +143,22 @@ const useMathematicsHandler = (props: MathHandlerProps) => {
         } else {
           onInsertInlineMath(editor, mathString);
         }
+
+        // inline math 삽입/업데이트 후 커서를 다음 위치로 이동
+        setTimeout(() => {
+          const { state } = editor;
+          const { selection } = state;
+          const { $to } = selection;
+
+          // math 노드의 끝 위치를 찾아서 그 다음으로 이동
+          const mathEnd = $to.after();
+          if (mathEnd < state.doc.content.size) {
+            editor.commands.setTextSelection(mathEnd);
+          } else {
+            // 문서 끝에 있으면 공백 추가하고 커서 이동
+            editor.commands.insertContent(' ');
+          }
+        }, 50);
       }
       onSetMath?.();
     },

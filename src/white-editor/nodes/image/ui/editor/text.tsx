@@ -94,17 +94,17 @@ export function TextEditor(props: TextEditorProps) {
   );
 
   return (
-    <div className='flex flex-col space-y-4 p-2'>
-      <div className='flex flex-col space-y-2'>
-        <h3 className='text-muted-foreground text-xs font-medium'>Text</h3>
-        <div className='flex space-x-2'>
+    <div className='we:flex we:flex-col we:space-y-4 we:p-2'>
+      <div className='we:flex we:flex-col we:space-y-2'>
+        <h3 className='we:text-muted-foreground we:text-xs we:font-medium'>Text</h3>
+        <div className='we:flex we:space-x-2'>
           <Input
             type='text'
             value={textInput}
             onChange={handleTextChange}
             onKeyDown={(e) => e.key === 'Enter' && handleAddButton()}
           />
-          <Button type='button' variant={'default'} onClick={handleAddButton} className='w-10'>
+          <Button type='button' variant={'default'} onClick={handleAddButton} className='we:w-10'>
             {isEditing ? <Check /> : <Plus />}
           </Button>
           <Button
@@ -112,28 +112,30 @@ export function TextEditor(props: TextEditorProps) {
             variant={'secondary'}
             onClick={handleDeleteText}
             disabled={!isEditing && !activeTextId}
-            className='w-10'
+            className='we:w-10'
           >
-            <Trash2 className='text-muted-foreground' />
+            <Trash2 className='we:text-muted-foreground' />
           </Button>
         </div>
       </div>
 
       {/* Color Picker */}
-      <div className='flex flex-col space-y-2'>
-        <h3 className='text-muted-foreground text-xs font-medium'>Text Color</h3>
-        <div className='flex flex-wrap items-center gap-3'>
+      <div className='we:flex we:flex-col we:space-y-2'>
+        <h3 className='we:text-muted-foreground we:text-xs we:font-medium'>Text Color</h3>
+        <div className='we:flex we:flex-wrap we:items-center we:gap-3'>
           {EDITOR_COLORS.map((color) => (
-            <button
+            <Button
+              isActive={textColor === color.hex}
               key={color.value}
               type='button'
               className={cn(
-                'h-6 w-6 cursor-pointer rounded-full border transition-all',
-                textColor === color.hex && 'ring-2 ring-blue-500 ring-offset-2'
+                'we:h-6 we:w-6 we:cursor-pointer we:rounded-full we:border we:transition-all',
+                textColor === color.hex && 'we:ring-2 we:ring-blue-500 we:ring-offset-0'
               )}
               style={{ backgroundColor: color.value, borderColor: color.border }}
               onClick={() => handleColorChange(color.hex)}
               title={color.label}
+              aria-label={`${color.label} color`}
             />
           ))}
         </div>

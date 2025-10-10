@@ -24,9 +24,9 @@ export const ImageControls: React.FC<ImageControlsProps> = (props: ImageControls
     <>
       <Toolbar
         variant='floating'
-        className='absolute top-2 right-1/2 h-[40px] w-fit translate-x-1/2 border-none p-2'
+        className='we:absolute we:top-2 we:right-1/2 we:h-[40px] we:w-fit we:translate-x-1/2 we:border-none we:p-2'
         style={{
-          boxShadow: 'var(--popover-shadow)',
+          boxShadow: 'var(--we-popover-shadow)',
         }}
       >
         {alignButtons.map(({ type, icon: Icon, title }) => (
@@ -35,19 +35,19 @@ export const ImageControls: React.FC<ImageControlsProps> = (props: ImageControls
             onClick={() => onAlignChange(type as 'left' | 'center' | 'right')}
             title={title}
             type='button'
-            className={cn(align === type && 'bg-primary/20')}
+            className={cn(align === type && 'we:bg-primary/20')}
             isActive={align === type}
           >
-            <Icon size={16} className={cn(align === type && 'text-primary')} />
+            <Icon size={16} className={cn(align === type && 'we:text-primary')} />
           </Button>
         ))}
-        <Separator orientation='vertical' className='mx-0.5 h-2' />
+        <Separator orientation='vertical' className='we:mx-0.5 we:h-2' />
         <Button onClick={onEditClick} title='Edit image' type='button'>
           <Edit3 />
         </Button>
       </Toolbar>
       <div
-        className='resize-handle bg-primary absolute -right-2 -bottom-2 h-4 w-4 cursor-se-resize rounded-full'
+        className='we:resize-handle we:bg-primary we:absolute we:-right-2 we:-bottom-2 we:h-4 we:w-4 we:cursor-se-resize we:rounded-full'
         onMouseDown={onResizeStart}
         title='Resize image'
       />
@@ -71,7 +71,10 @@ export const ImageCaption: React.FC<ImageCaptionProps> = ({ caption, imageWidth,
 
   return (
     <div
-      className={cn('text-foreground/80 word-break-keep mt-2 text-center text-xs whitespace-pre', className)}
+      className={cn(
+        'we:text-foreground/80 we:word-break-keep we:mt-2 we:text-center we:text-xs we:whitespace-pre',
+        className
+      )}
       style={captionStyle}
     >
       {caption}

@@ -5,17 +5,18 @@ import { cn } from '@/shared/utils/utils';
 import * as TogglePrimitive from '@radix-ui/react-toggle';
 
 const toggleVariants = cva(
-  'inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  'we:inline-flex we:items-center we:justify-center we:gap-2 we:rounded-md we:text-sm we:font-medium we:transition-colors we:hover:bg-muted we:focus-visible:outline-none we:focus-visible:ring-1 we:focus-visible:ring-ring we:disabled:pointer-events-none we:disabled:opacity-50 we:data-[state=on]:bg-accent we:data-[state=on]:text-accent-foreground we:[&_svg]:pointer-events-none we:[&_svg]:size-4 we:[&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        default: 'bg-transparent',
-        outline: 'border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground',
+        default: 'we:bg-transparent',
+        outline:
+          'we:border we:border-input we:bg-transparent we:shadow-sm hover:we:bg-accent hover:we:text-accent-foreground',
       },
       size: {
-        default: 'h-9 px-2 min-w-9',
-        sm: 'h-8 px-1.5 min-w-8',
-        lg: 'h-10 px-2.5 min-w-10',
+        default: 'we:h-9 we:px-2 we:min-w-9',
+        sm: 'we:h-8 we:px-1.5 we:min-w-8',
+        lg: 'we:h-10 we:px-2.5 we:min-w-10',
       },
     },
     defaultVariants: {

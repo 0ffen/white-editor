@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect } from 'react';
-import { cn } from '@/shared/utils';
-import { createViewerExtensions } from '@/shared/utils';
+import { cn, createViewerExtensions } from '@/shared/utils';
 import { useEditor, EditorContent, type JSONContent } from '@tiptap/react';
+
 import './viewer.css';
 
 export interface WhiteViewerProps {
@@ -19,7 +19,11 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
     editable: false,
     extensions,
     content,
-    shouldRerenderOnTransaction: false,
+    editorProps: {
+      attributes: {
+        spellcheck: 'false',
+      },
+    },
   });
 
   useEffect(() => {
@@ -28,9 +32,18 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
     }
   }, [editor, content]);
 
+  useEffect(() => {
+    if (editor) {
+      editor.view.updateState(editor.state);
+    }
+  }, [editor, content]);
+
   return (
-    <div className={cn('white-editor markdown prose dark:prose-invert readonly max-w-full', className)}>
-      <EditorContent editor={editor} />
+    <div className={cn('white-editor readonly', className)}>
+      <EditorContent
+        editor={editor}
+        className={cn('markdown we:prose we:dark:prose-invert we:max-w-full we:h-full', className)}
+      />
     </div>
   );
 });

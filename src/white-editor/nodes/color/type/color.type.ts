@@ -14,33 +14,33 @@ interface UseTextColorConfig {
 const TEXT_COLORS = [
   {
     label: 'Gray background',
-    value: 'var(--tt-color-text-gray)',
-    border: 'var(--tt-color-text-gray-contrast)',
+    value: 'var(--we-color-text-gray)',
+    border: 'var(--we-color-text-gray-contrast)',
   },
   {
     label: 'Yellow background',
-    value: 'var(--tt-color-text-yellow)',
-    border: 'var(--tt-color-text-yellow-contrast)',
+    value: 'var(--we-color-text-yellow)',
+    border: 'var(--we-color-text-yellow-contrast)',
   },
   {
     label: 'Green background',
-    value: 'var(--tt-color-text-green)',
-    border: 'var(--tt-color-text-green-contrast)',
+    value: 'var(--we-color-text-green)',
+    border: 'var(--we-color-text-green-contrast)',
   },
   {
     label: 'Blue background',
-    value: 'var(--tt-color-text-blue)',
-    border: 'var(--tt-color-text-blue-contrast)',
+    value: 'var(--we-color-text-blue)',
+    border: 'var(--we-color-text-blue-contrast)',
   },
   {
     label: 'Purple background',
-    value: 'var(--tt-color-text-purple)',
-    border: 'var(--tt-color-text-purple-contrast)',
+    value: 'var(--we-color-text-purple)',
+    border: 'var(--we-color-text-purple-contrast)',
   },
   {
     label: 'Red background',
-    value: 'var(--tt-color-text-red)',
-    border: 'var(--tt-color-text-red-contrast)',
+    value: 'var(--we-color-text-red)',
+    border: 'var(--we-color-text-red-contrast)',
   },
 ];
 

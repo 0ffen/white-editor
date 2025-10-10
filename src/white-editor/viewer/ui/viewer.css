@@ -8,8 +8,8 @@
 }
 
 .white-editor .readonly {
-  user-select: text;
-  pointer-events: auto;
+  user-select: text !important;
+  pointer-events: auto !important;
 }
 
 .white-editor .readonly [data-type='inline-math'],

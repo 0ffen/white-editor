@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/components';
-import { Toggle } from '@/shared/components/toggle';
-import { cn } from '@/shared/utils/utils';
+import { Tooltip, TooltipContent, TooltipTrigger, Toggle } from '@/shared/components';
+import { cn } from '@/shared/utils';
 import type { TooltipContentProps } from '@radix-ui/react-tooltip';
 
 interface ToolbarButtonProps extends React.ComponentProps<typeof Toggle> {
@@ -19,7 +18,7 @@ export const ToolbarButton = ({
   ...props
 }: ToolbarButtonProps) => {
   const toggleButton = (
-    <Toggle className={cn({ 'bg-accent': isActive }, className)} {...props}>
+    <Toggle className={cn({ 'we:bg-accent': isActive }, className)} {...props}>
       {children}
     </Toggle>
   );
@@ -32,7 +31,7 @@ export const ToolbarButton = ({
     <Tooltip>
       <TooltipTrigger asChild>{toggleButton}</TooltipTrigger>
       <TooltipContent {...tooltipOptions}>
-        <div className='flex flex-col items-center text-center'>{tooltip}</div>
+        <div className='we:flex we:flex-col we:items-center we:text-center'>{tooltip}</div>
       </TooltipContent>
     </Tooltip>
   );

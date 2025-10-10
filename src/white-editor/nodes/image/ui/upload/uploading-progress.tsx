@@ -25,27 +25,29 @@ export const ImageUploadingProgress: React.FC<ImageUploadingProgressProps> = (pr
   };
 
   return (
-    <div className='border-border bg-background relative flex w-full items-center justify-between overflow-hidden rounded-lg border p-3'>
+    <div className='we:border-border we:bg-background we:relative we:flex we:w-full we:items-center we:justify-between we:overflow-hidden we:rounded-lg we:border we:p-3'>
       {fileItem.status === 'uploading' && (
         <div
-          className='bg-primary/10 absolute top-0 left-0 h-full transition-all'
+          className='we:bg-primary/10 we:absolute we:top-0 we:left-0 we:h-full we:transition-all'
           style={{ width: `${fileItem.progress}%` }}
         />
       )}
 
-      <div className='relative flex items-center gap-3'>
-        <div className='bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-md'>
-          <CloudUploadIcon className='h-5 w-5' />
+      <div className='we:relative we:flex we:items-center we:gap-3'>
+        <div className='we:bg-primary/10 we:text-primary we:flex we:h-10 we:w-10 we:items-center we:justify-center we:rounded-md'>
+          <CloudUploadIcon className='we:h-5 we:w-5' />
         </div>
-        <div className='flex flex-col'>
-          <span className='text-foreground max-w-[220px] truncate text-sm font-medium'>{fileItem.file.name}</span>
-          <span className='text-muted-foreground text-xs'>{formatFileSize(fileItem.file.size)}</span>
+        <div className='we:flex we:flex-col'>
+          <span className='we:text-foreground we:max-w-[220px] we:truncate we:text-sm we:font-medium'>
+            {fileItem.file.name}
+          </span>
+          <span className='we:text-muted-foreground we:text-xs'>{formatFileSize(fileItem.file.size)}</span>
         </div>
       </div>
 
-      <div className='relative flex items-center gap-3'>
+      <div className='we:relative we:flex we:items-center we:gap-3'>
         {fileItem.status === 'uploading' && (
-          <span className='text-primary text-sm font-medium'>{fileItem.progress}%</span>
+          <span className='we:text-primary we:text-sm we:font-medium'>{fileItem.progress}%</span>
         )}
         <Button
           type='button'
@@ -55,7 +57,7 @@ export const ImageUploadingProgress: React.FC<ImageUploadingProgressProps> = (pr
             onRemove();
           }}
         >
-          <XIcon className='h-5 w-5' />
+          <XIcon className='we:h-5 we:w-5' />
         </Button>
       </div>
     </div>

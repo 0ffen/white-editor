@@ -17,7 +17,7 @@ export function ShapeEditor(props: ShapeEditorProps) {
   const [shapeFillColor, setShapeFillColor] = useState<string>(defaultColor);
   const [shapeStrokeColor, setShapeStrokeColor] = useState<string>(defaultColor);
   const [shapeStroke, setShapeStroke] = useState<number>(10);
-  const [shapeType, setShapeType] = useState<string | null>(null);
+  const [shapeType, setShapeType] = useState<string | null>('rect');
   const [activeObjectId, setActiveObjectId] = useState<number | null>(null);
 
   const handleCreateShape = useCallback(
@@ -110,17 +110,17 @@ export function ShapeEditor(props: ShapeEditorProps) {
   };
 
   return (
-    <div className='flex w-full flex-col gap-4 space-y-2 p-2'>
-      <div className='flex w-full flex-col gap-2'>
-        <h3 className='text-muted-foreground w-fit text-xs font-medium'>Shape</h3>
-        <div className='flex items-center justify-center gap-2'>
+    <div className='we:flex we:w-full we:flex-col we:gap-4 we:space-y-2 we:p-2'>
+      <div className='we:flex we:w-full we:flex-col we:gap-2'>
+        <h3 className='we:text-muted-foreground we:w-fit we:text-xs we:font-medium'>Shape</h3>
+        <div className='we:flex we:items-center we:justify-center we:gap-2'>
           <Button
             type='button'
             size='default'
             variant='outline'
             onClick={() => handleCreateShape('rect')}
             isActive={shapeType === 'rect'}
-            className='shadow-none'
+            className='we:shadow-none'
           >
             <Square className='size-6' />
           </Button>
@@ -130,7 +130,7 @@ export function ShapeEditor(props: ShapeEditorProps) {
             variant='outline'
             onClick={() => handleCreateShape('triangle')}
             isActive={shapeType === 'triangle'}
-            className='shadow-none'
+            className='we:shadow-none'
           >
             <Triangle />
           </Button>
@@ -140,23 +140,23 @@ export function ShapeEditor(props: ShapeEditorProps) {
             variant='outline'
             onClick={() => handleCreateShape('circle')}
             isActive={shapeType === 'circle'}
-            className='shadow-none'
+            className='we:shadow-none'
           >
             <Circle />
           </Button>
         </div>
       </div>
 
-      <div className='flex w-full flex-col gap-2'>
-        <h3 className='text-muted-foreground text-xs font-medium'>Fill Color</h3>
-        <div className='flex flex-wrap items-center gap-3'>
+      <div className='we:flex we:w-full we:flex-col we:gap-2'>
+        <h3 className='we:text-muted-foreground we:text-xs we:font-medium'>Fill Color</h3>
+        <div className='we:flex we:flex-wrap we:items-center we:gap-3'>
           {EDITOR_COLORS.map((color) => (
             <Button
               type='button'
               key={color.value}
               className={cn(
-                'h-6 w-6 cursor-pointer rounded-4xl border transition-all',
-                shapeFillColor === color.hex && 'outline-primary outline-2'
+                'we:h-6 we:w-6 we:cursor-pointer we:rounded-4xl we:border we:transition-all',
+                shapeFillColor === color.hex && 'we:ring-2 we:ring-blue-500 we:ring-offset-0'
               )}
               style={{ backgroundColor: color.value, borderColor: color.border }}
               onClick={() => handleShapeFillColorChange(color.hex)}
@@ -169,25 +169,25 @@ export function ShapeEditor(props: ShapeEditorProps) {
             type='button'
             onClick={() => handleShapeFillColorChange(transparentColor)}
             className={cn(
-              'h-6 w-6 cursor-pointer rounded-4xl border border-none transition-all',
-              shapeFillColor === transparentColor && 'outline-primary outline-2'
+              'we:h-6 we:w-6 we:cursor-pointer we:rounded-4xl we:border we:border-none we:transition-all',
+              shapeFillColor === transparentColor && 'we:ring-2 we:ring-blue-500 we:ring-offset-0'
             )}
           >
-            <Ban size={24} className='text-muted-foreground' />
+            <Ban size={24} className='we:text-muted-foreground' />
           </button>
         </div>
       </div>
 
-      <div className='space-y-2'>
-        <h3 className='text-muted-foreground text-xs font-medium'>Stroke Color</h3>
-        <div className='flex flex-wrap items-center gap-3'>
+      <div className='we:space-y-2'>
+        <h3 className='we:text-muted-foreground we:text-xs we:font-medium'>Stroke Color</h3>
+        <div className='we:flex we:flex-wrap we:items-center we:gap-3'>
           {EDITOR_COLORS.map((color) => (
             <Button
               type='button'
               key={color.value}
               className={cn(
-                'h-6 w-6 cursor-pointer rounded-4xl border transition-all',
-                shapeStrokeColor === color.hex && 'outline-primary outline-2'
+                'we:h-6 we:w-6 we:cursor-pointer we:rounded-4xl we:border we:transition-all',
+                shapeStrokeColor === color.hex && 'we:ring-2 we:ring-blue-500 we:ring-offset-0'
               )}
               style={{ backgroundColor: color.value, borderColor: color.border }}
               onClick={() => handleShapeStrokeColorChange(color.hex)}
@@ -200,18 +200,18 @@ export function ShapeEditor(props: ShapeEditorProps) {
             type='button'
             onClick={() => handleShapeStrokeColorChange(transparentColor)}
             className={cn(
-              'h-6 w-6 cursor-pointer rounded-4xl border border-none transition-all',
-              shapeStrokeColor === transparentColor && 'outline-primary outline-2'
+              'we:h-6 we:w-6 we:cursor-pointer we:rounded-4xl we:border we:border-none we:transition-all',
+              shapeStrokeColor === transparentColor && 'we:ring-2 we:ring-blue-500 we:ring-offset-0'
             )}
           >
-            <Ban size={24} className='text-muted-foreground' />
+            <Ban size={24} className='we:text-muted-foreground' />
           </button>
         </div>
       </div>
 
-      <div className='space-y-2'>
-        <h3 className='text-muted-foreground text-xs font-medium'>Stroke Width</h3>
-        <div className='flex items-center gap-3'>
+      <div className='we:space-y-2'>
+        <h3 className='we:text-muted-foreground we:text-xs we:font-medium'>Stroke Width</h3>
+        <div className='we:flex we:items-center we:gap-3'>
           <Slider
             max={50}
             step={10}
@@ -221,7 +221,7 @@ export function ShapeEditor(props: ShapeEditorProps) {
               handleShapeStrokeChange(value[0]);
             }}
           />
-          <span className='text-muted-foreground w-8 text-center text-xs'>{shapeStroke}</span>
+          <span className='we:text-muted-foreground we:w-8 we:text-center we:text-xs'>{shapeStroke}</span>
         </div>
       </div>
     </div>

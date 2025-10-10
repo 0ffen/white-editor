@@ -3,18 +3,20 @@ import { cva, type VariantProps } from 'class-variance-authority';
 
 import { Separator } from '@/shared/components';
 import { useComposedRef, useMenuNavigation } from '@/shared/hooks';
+import { cn } from '@/shared/utils';
 
-import { cn } from '@/shared/utils/utils';
-
-const toolbarVariants = cva('flex items-center gap-1', {
+const toolbarVariants = cva('we:flex we:items-center we:gap-1', {
   variants: {
     variant: {
       fixed: [
-        'sticky top-0 z-10 w-full min-h-[2.75rem]',
-        'bg-background border-b border-border rounded-t-md',
-        'px-2 overflow-x-auto overscroll-x-contain',
+        'we:sticky we:top-0 we:z-10 we:w-full we:min-h-[2.75rem]',
+        'we:bg-background we:border-b we:border-border we:rounded-t-md',
+        'we:px-2 we:overflow-x-auto we:overscroll-x-contain',
       ],
-      floating: ['p-0.5 rounded-lg border border-border', 'bg-background shadow-xs outline-none overflow-hidden'],
+      floating: [
+        'we:p-0.5 we:rounded-lg we:border we:border-border',
+        'we:bg-background we:shadow-xs we:outline-none we:overflow-hidden',
+      ],
     },
   },
   defaultVariants: {
@@ -106,7 +108,7 @@ export const Toolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
         data-plain={plain}
         className={cn(
           toolbarVariants({ variant }),
-          variant === 'floating' && plain && 'rounded-none border-none bg-transparent p-0 shadow-none',
+          variant === 'floating' && plain && 'we:rounded-none we:border-none we:bg-transparent we:p-0 we:shadow-none',
           className
         )}
         {...props}
@@ -132,7 +134,12 @@ export const ToolbarGroup = React.forwardRef<HTMLDivElement, BaseProps>(({ child
   }
 
   return (
-    <div ref={ref} role='group' className={cn('flex items-center gap-0.5 max-sm:flex-shrink-0', className)} {...props}>
+    <div
+      ref={ref}
+      role='group'
+      className={cn('we:flex we:items-center we:gap-0.5 we:max-sm:flex-shrink-0', className)}
+      {...props}
+    >
       {children}
     </div>
   );
@@ -140,6 +147,6 @@ export const ToolbarGroup = React.forwardRef<HTMLDivElement, BaseProps>(({ child
 ToolbarGroup.displayName = 'ToolbarGroup';
 
 export const ToolbarSeparator = React.forwardRef<HTMLDivElement, BaseProps>(({ ...props }, ref) => (
-  <Separator ref={ref} orientation='vertical' decorative className='h-5!' {...props} />
+  <Separator ref={ref} orientation='vertical' decorative className='we:h-5!' {...props} />
 ));
 ToolbarSeparator.displayName = 'ToolbarSeparator';

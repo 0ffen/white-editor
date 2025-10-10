@@ -67,7 +67,7 @@ export const CodeBlock = ({
   return (
     <NodeViewWrapper>
       <pre className='hljs'>
-        <div className={cn('relative w-full', editor.isEditable ? 'flex justify-between' : '')}>
+        <div className={cn('we:relative we:w-full', editor.isEditable ? 'we:flex we:justify-between' : '')}>
           {editor.isEditable && (
             <Popover>
               <PopoverTrigger asChild>
@@ -75,16 +75,16 @@ export const CodeBlock = ({
                   variant='ghost'
                   role='combobox'
                   className={cn(
-                    'text-muted-foreground/50 hover:text-muted-foreground/80 w-fit justify-between hover:bg-transparent'
+                    'we:text-muted-foreground/50 we:hover:text-muted-foreground/80 we:w-fit we:justify-between we:hover:bg-transparent'
                   )}
                 >
                   {defaultLanguage || 'Select language'}
-                  <ChevronsUpDown className='opacity-50' />
+                  <ChevronsUpDown className='we:opacity-50' />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className='w-[180px] p-0' align='start'>
+              <PopoverContent className='we:w-[180px] we:p-0' align='start'>
                 <Command>
-                  <CommandInput placeholder='Search language' className='h-9' />
+                  <CommandInput placeholder='Search language' className='we:h-9' />
                   <CommandList>
                     <CommandEmpty>No language found</CommandEmpty>
                     <CommandGroup>
@@ -98,7 +98,10 @@ export const CodeBlock = ({
                         >
                           {language.label}
                           <Check
-                            className={cn('ml-auto', language.value === defaultLanguage ? 'opacity-100' : 'opacity-0')}
+                            className={cn(
+                              'we:ml-auto',
+                              language.value === defaultLanguage ? 'we:opacity-100' : 'we:opacity-0'
+                            )}
                           />
                         </CommandItem>
                       ))}
@@ -111,16 +114,16 @@ export const CodeBlock = ({
           <Button
             onClick={handleCopy}
             variant='ghost'
-            className='absolute -top-1 -right-1 w-fit hover:cursor-pointer hover:bg-stone-800'
+            className='we:absolute we:-top-1 we:-right-1 we:w-fit we:hover:cursor-pointer we:hover:bg-stone-800'
           >
             {isCopied ? (
-              <Check className='text-muted-foreground/50 size-4' />
+              <Check className='we:text-muted-foreground/50 we:size-4' />
             ) : (
-              <Copy className='text-muted-foreground/50 size-4' />
+              <Copy className='we:text-muted-foreground/50 we:size-4' />
             )}
           </Button>
         </div>
-        <code ref={preRef} className='block pr-10'>
+        <code ref={preRef} className='we:block we:pr-10'>
           <NodeViewContent as='div' />
         </code>
       </pre>

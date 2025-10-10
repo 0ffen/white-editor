@@ -32,6 +32,7 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
         autocomplete: 'off',
         autocorrect: 'off',
         autocapitalize: 'off',
+        spellcheck: 'false',
         'aria-label': 'Editor Content',
         class: contentClassName || '',
         ...(editorProps?.attributes || {}),

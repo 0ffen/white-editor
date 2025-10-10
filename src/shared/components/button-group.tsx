@@ -11,10 +11,10 @@ export const ButtonGroup = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        'relative flex align-middle',
+        'we:relative we:flex we:align-middle',
         orientation === 'vertical'
-          ? 'min-w-max flex-col items-start justify-center [&>*]:w-full'
-          : 'flex-row items-center gap-0.5',
+          ? 'we:min-w-max we:flex-col we:items-start we:justify-center we:[&>*]:w-full'
+          : 'we:flex-row we:items-center we:gap-0.5',
         className
       )}
       data-orientation={orientation}

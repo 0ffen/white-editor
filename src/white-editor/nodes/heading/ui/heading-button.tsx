@@ -67,7 +67,7 @@ export const HeadingButton = React.forwardRef<HTMLButtonElement, HeadingButtonPr
         ref={ref}
       >
         {children ?? (
-          <>{text && <span className={cn('text-foreground/80 font-medium', itemTextClassName)}>{text}</span>}</>
+          <>{text && <span className={cn('we:text-foreground/80 font-medium', itemTextClassName)}>{text}</span>}</>
         )}
       </Button>
     );

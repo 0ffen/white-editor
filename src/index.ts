@@ -1,7 +1,4 @@
 import './shared/styles/index.css';
-import './shared/styles/editor.css';
-import './shared/styles/markdown.css';
-import './shared/styles/github-dark.css';
 
 //editor, viewer
 export { WhiteEditor, useWhiteEditor, WhiteViewer } from './white-editor';

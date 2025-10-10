@@ -180,13 +180,16 @@ export function ImageDialog(props: ImageDialogProps) {
       <DialogTrigger asChild>
         <ImageUploadButton icon={icon} />
       </DialogTrigger>
-      <DialogContent className='max-h-[90vh] w-full min-w-[400px]' onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent
+        className='we:max-h-[90vh] we:w-full we:min-w-[400px]'
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Upload Image</DialogTitle>
         </DialogHeader>
 
         {previewUrl && (
-          <div className='relative flex w-full items-center justify-center overflow-y-auto'>
+          <div className='we:relative we:flex we:w-full we:items-center we:justify-center we:overflow-y-auto'>
             <ImageEditor
               ref={imageEditorRef}
               imageUrl={previewUrl || ''}
@@ -197,14 +200,14 @@ export function ImageDialog(props: ImageDialogProps) {
               type='button'
               variant='ghost'
               onClick={handleRemovePreview}
-              className='absolute top-12 right-2 z-10 h-8 w-8 cursor-pointer bg-white/10 hover:bg-white/20'
+              className='we:absolute we:top-12 we:right-2 we:z-10 we:h-8 we:w-8 we:cursor-pointer we:bg-white/10 we:hover:bg-white/20'
             >
-              <XIcon className='text-border' />
+              <XIcon className='we:text-border' />
             </Button>
           </div>
         )}
 
-        <div className='flex flex-col gap-2' onClick={handleClick}>
+        <div className='we:flex we:flex-col we:gap-2' onClick={handleClick}>
           {hasFiles && !previewUrl && (
             <div>
               {fileItems.map((fileItem) => (
@@ -243,8 +246,8 @@ export function ImageDialog(props: ImageDialogProps) {
               {cancelText || 'Cancel'}
             </Button>
 
-            <Button type='button' variant='default' onClick={handleSave} className='min-w-20' disabled={isSaving}>
-              {isSaving ? <Loader2 className='h-4 w-4 animate-spin' /> : saveText || 'Save'}
+            <Button type='button' variant='default' onClick={handleSave} className='we:min-w-20' disabled={isSaving}>
+              {isSaving ? <Loader2 className='we:h-4 we:w-4 we:animate-spin' /> : saveText || 'Save'}
             </Button>
           </DialogFooter>
         )}

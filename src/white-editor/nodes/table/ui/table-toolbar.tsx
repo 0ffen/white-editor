@@ -22,13 +22,15 @@ const TableActionButton = React.forwardRef<
 
   return (
     <ToolbarButton
-      className={cn('[&_svg]:text-foreground/80')}
+      className={cn('we:[&_svg]:text-foreground/80')}
       onClick={handleClick}
       disabled={!canExecute}
       ref={ref}
       tooltip={action.label}
     >
-      <div className='flex h-5 w-5 items-center justify-center'>{action.icon && React.createElement(action.icon)}</div>
+      <div className='we:flex we:h-5 we:w-5 we:items-center we:justify-center'>
+        {action.icon && React.createElement(action.icon)}
+      </div>
     </ToolbarButton>
   );
 });
@@ -57,7 +59,7 @@ export const TableToolbar = ({
   }
 
   return (
-    <div className='grid grid-cols-3 gap-1 overflow-auto md:w-full md:grid-rows-3'>
+    <div className='we:grid we:grid-cols-3 we:gap-1 we:overflow-auto we:md:w-full we:md:grid-rows-3'>
       {options.map((option) => (
         <TableActionButton key={option.action} editor={editor} action={option} />
       ))}

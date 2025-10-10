@@ -30,7 +30,7 @@ const HighlightPickerButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, children, activeClassName, ...props }, ref) => (
     <Button
       type='button'
-      className={cn('data-[active=true]:[&_svg]:text-foreground', className)}
+      className={cn('we:data-[active=true]:[&_svg]:text-foreground', className)}
       data-style='ghost'
       data-appearance='default'
       role='button'
@@ -87,8 +87,8 @@ export function HighlightPopover({
         </HighlightPickerButton>
       </PopoverTrigger>
 
-      <PopoverContent aria-label='Highlight picker' className='h-10 w-fit p-2' side='bottom' align='start'>
-        <div ref={containerRef} tabIndex={0} className='flex h-full flex-1 items-center gap-1'>
+      <PopoverContent aria-label='Highlight picker' className='we:h-10 we:w-fit we:p-2' side='bottom' align='start'>
+        <div ref={containerRef} tabIndex={0} className='we:flex we:h-full we:flex-1 we:items-center we:gap-1'>
           {highlightColors?.map((color) => (
             <HighlightColorButton
               key={color.value}
@@ -102,11 +102,11 @@ export function HighlightPopover({
           <Button
             type='button'
             size='icon'
-            className='h-6 w-6'
+            className='we:h-6 we:w-6'
             onClick={handleRemoveHighlight}
             aria-label='Remove highlight'
           >
-            <Ban className='text-foreground/80' size={4} />
+            <Ban className='we:text-foreground/80' size={4} />
           </Button>
         </div>
       </PopoverContent>

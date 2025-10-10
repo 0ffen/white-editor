@@ -66,15 +66,15 @@ export const MentionList = (props: MentionListProps) => {
   return (
     <div
       style={{
-        boxShadow: 'var(--popover-shadow)',
+        boxShadow: 'var(--we-popover-shadow)',
       }}
-      className='bg-popover border-border relative flex max-h-52 min-w-26 flex-col gap-1 overflow-y-auto rounded-md p-1.5'
+      className='we:bg-popover we:border-border we:relative we:flex we:max-h-52 we:min-w-26 we:flex-col we:gap-1 we:overflow-y-auto we:rounded-md we:p-1.5'
     >
       {mentionList.length > 0 ? (
         mentionList.map((item: MentionItem, index) => (
           <Button
             type='button'
-            className={cn(index === selectedIndex ? 'bg-accent' : '')}
+            className={cn(index === selectedIndex ? 'we:bg-accent' : '')}
             key={item.id}
             justify='start'
             onClick={() => selectItem(index)}

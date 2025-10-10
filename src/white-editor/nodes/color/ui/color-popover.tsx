@@ -32,7 +32,7 @@ const ColorPickerButton = React.forwardRef<HTMLButtonElement, ButtonProps & { cu
   ({ className, currentTextColor, children, ...props }, ref) => (
     <Button
       type='button'
-      className={cn(className, 'data-[active=true]:[&_svg]:text-[var(--current-text-color)]')}
+      className={cn(className, 'we:data-[active=true]:[&_svg]:text-[var(--current-text-color)]')}
       data-style='ghost'
       data-appearance='default'
       role='button'
@@ -89,8 +89,8 @@ export function ColorPopover({
         </ColorPickerButton>
       </PopoverTrigger>
 
-      <PopoverContent aria-label='Color picker' className='h-10 w-fit p-2' side='bottom' align='start'>
-        <div ref={containerRef} tabIndex={0} className='flex h-full flex-1 items-center gap-1'>
+      <PopoverContent aria-label='Color picker' className='we:h-10 we:w-fit we:p-2' side='bottom' align='start'>
+        <div ref={containerRef} tabIndex={0} className='we:flex we:h-full we:flex-1 we:items-center we:gap-1'>
           {textColors?.map((color) => (
             <TextColorButton key={color.value} editor={editor} textColor={color} aria-label={`${color.label} color`} />
           ))}
@@ -98,11 +98,11 @@ export function ColorPopover({
           <Button
             type='button'
             size='icon'
-            className='h-6 w-6'
+            className='we:h-6 we:w-6'
             onClick={handleRemoveTextColor}
             aria-label='Remove text color'
           >
-            <Ban className='text-foreground/80' size={4} />
+            <Ban className='we:text-foreground/80' size={4} />
           </Button>
         </div>
       </PopoverContent>

@@ -41,12 +41,15 @@ export function ImageEditDialog(props: ImageEditDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className='max-h-[90vh] w-full min-w-[400px]' onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent
+        className='we:max-h-[90vh] we:w-full we:min-w-[400px]'
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Edit Image</DialogTitle>
         </DialogHeader>
 
-        <div className='relative flex w-full items-center justify-center overflow-y-auto'>
+        <div className='we:relative we:flex we:w-full we:items-center we:justify-center we:overflow-y-auto'>
           <ImageEditor
             ref={imageRef}
             imageUrl={imageUrl}
@@ -59,8 +62,8 @@ export function ImageEditDialog(props: ImageEditDialogProps) {
           <Button type='button' variant='secondary' onClick={() => onOpenChange(false)} disabled={isSaving}>
             {cancelText || 'Cancel'}
           </Button>
-          <Button type='button' variant='default' onClick={handleSaveClick} className='min-w-20' disabled={isSaving}>
-            {isSaving ? <Loader2 className='h-4 w-4 animate-spin' /> : saveText || 'Save'}
+          <Button type='button' variant='default' onClick={handleSaveClick} className='we:min-w-20' disabled={isSaving}>
+            {isSaving ? <Loader2 className='we:h-4 we:w-4 we:animate-spin' /> : saveText || 'Save'}
           </Button>
         </DialogFooter>
       </DialogContent>

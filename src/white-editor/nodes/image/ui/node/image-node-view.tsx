@@ -62,7 +62,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
 
   return (
     <NodeViewWrapper
-      className={cn('my-2 w-full')}
+      className={cn('we:my-2 we:w-full')}
       data-type='image'
       draggable='true'
       data-drag-handle
@@ -71,10 +71,12 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
       <section
         ref={containerRef}
         className={cn(
-          'group relative inline-block',
-          caption && 'mb-2',
-          isResizing ? 'resizing' : '',
-          props.selected && props.editor.isEditable ? 'selected ring-primary/40 rounded-xs ring-2 ring-offset-2' : ''
+          'we:group we:relative we:inline-block',
+          caption && 'we:mb-2',
+          isResizing ? 'we:resizing' : '',
+          props.selected && props.editor.isEditable
+            ? 'we:selected we:ring-primary/40 we:rounded-xs we:ring-2 we:ring-offset-2'
+            : ''
         )}
         onMouseEnter={hoverHandlers.handleMouseEnter}
         onMouseLeave={hoverHandlers.handleMouseLeave}
@@ -89,7 +91,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           src={src}
           alt={alt}
           title={title}
-          className='mb-0 inline-block h-auto max-w-full rounded shadow-md'
+          className='we:mb-0 we:inline-block we:h-auto we:max-w-full we:rounded we:shadow-md'
           style={{
             width: currentWidth !== 'auto' ? currentWidth : undefined,
             height: currentHeight !== 'auto' ? currentHeight : undefined,
@@ -119,8 +121,8 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
       )}
       {isViewerImageDialogOpen && (
         <Dialog open={isViewerImageDialogOpen} onOpenChange={setIsViewerImageDialogOpen}>
-          <DialogTitle className='sr-only'>View Image</DialogTitle>
-          <DialogContent className='mx-auto justify-center'>
+          <DialogTitle className='we:sr-only'>View Image</DialogTitle>
+          <DialogContent className='we:mx-auto we:justify-center'>
             <img
               style={{
                 width: 'auto',
@@ -130,10 +132,10 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
               src={src}
               alt={alt}
               title={title}
-              className='mb-0 inline-block h-auto max-w-full rounded text-center'
+              className='we:mb-0 we:inline-block we:h-auto we:max-w-full we:rounded we:text-center'
               draggable={false}
             />
-            {caption && <ImageCaption caption={caption} className='mt-0 text-center' />}
+            {caption && <ImageCaption caption={caption} className='we:mt-0 we:text-center' />}
           </DialogContent>
         </Dialog>
       )}
