@@ -54,6 +54,11 @@
     background-color: var(--we-primary-background) !important;
   }
 
+  .ProseMirror .node-image {
+    display: block;
+    margin-block: 1.5rem;
+  }
+
   .ProseMirror td:not([data-colwidth]):not(.column-resize-dragging),
   .ProseMirror th:not([data-colwidth]):not(.column-resize-dragging) {
     min-width: 200px;
