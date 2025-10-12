@@ -204,10 +204,6 @@
   text-decoration-skip-ink: none;
 }
 
-.white-editor .markdown [contenteditable] {
-  -webkit-user-modify: read-write-plaintext-only;
-}
-
 .white-editor .markdown [spellcheck='false'] {
   -webkit-text-decoration-skip-ink: none;
   text-decoration-skip-ink: none;

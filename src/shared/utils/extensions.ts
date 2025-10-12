@@ -68,25 +68,30 @@ export function createViewerExtensions() {
       codeBlock: false,
       link: {
         openOnClick: true,
-        enableClickSelection: true,
+        enableClickSelection: false,
       },
     }),
     TableKit.configure({
-      table: { resizable: false },
+      table: { resizable: false, allowTableNodeSelection: false },
     }),
     TextAlign.configure({ types: ['heading', 'paragraph', 'image'] }),
     TaskList,
-    TaskItem.configure({ nested: true }),
-    ResizableImage,
+    TaskItem.configure({
+      nested: true,
+      onReadOnlyChecked: () => false,
+    }),
+    ResizableImage.configure({
+      allowBase64: true,
+      inline: false,
+    }),
     TextStyleKit,
     Highlight.configure({ multicolor: true }),
     Superscript,
     Subscript,
     CodeBlockLowlight.extend({
+      readonly: true,
       addNodeView() {
-        if (typeof window === 'undefined') {
-          return null;
-        }
+        if (typeof window === 'undefined') return null;
         return ReactNodeViewRenderer(CodeBlock as React.FC);
       },
     }).configure({ lowlight }),
@@ -94,7 +99,11 @@ export function createViewerExtensions() {
       blockOptions: {},
       inlineOptions: {},
     }),
-    Mention.configure({}),
+    Mention.configure({
+      HTMLAttributes: {
+        contenteditable: 'false',
+      },
+    }),
   ];
 }
 

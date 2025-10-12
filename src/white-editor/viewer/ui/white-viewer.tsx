@@ -1,8 +1,8 @@
 import React, { useMemo, useEffect } from 'react';
 import { cn, createViewerExtensions } from '@/shared/utils';
-import { useEditor, EditorContent, type JSONContent } from '@tiptap/react';
+import { EditorContent, useEditor, type JSONContent } from '@tiptap/react';
 
-import './viewer.css';
+import '@/shared/styles/viewer.css';
 
 export interface WhiteViewerProps {
   content: JSONContent;

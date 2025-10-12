@@ -9,7 +9,7 @@
 
 .white-editor .readonly {
   user-select: text !important;
-  pointer-events: none !important;
+  pointer-events: auto !important;
 }
 
 .white-editor .readonly [data-type='inline-math'],
