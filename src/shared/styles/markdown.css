@@ -107,6 +107,7 @@
   width: 100%;
   max-width: 1440px;
   border: 1px solid var(--we-border);
+  table-layout: fixed;
 }
 
 .white-editor .markdown tr {
@@ -116,8 +117,8 @@
   }
 }
 
-.white-editor .markdown tr > .selectedCell,
-.white-editor .markdown tr > .selectedCell.tableSelection {
+.white-editor .markdown .selectedCell,
+.white-editor .markdown .selectedCell.tableSelection {
   background-color: hsl(var(--we-primary) / 0.1);
 }
 

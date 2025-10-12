@@ -1,6 +1,6 @@
 import { all, createLowlight } from 'lowlight';
 import { type ListItemConfig } from '@/shared/utils';
-import { MentionNode, CodeBlock, ResizableImage } from '@/white-editor';
+import { MentionNode, CodeBlock, ResizableImage, CustomTableHeader } from '@/white-editor';
 
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
@@ -9,7 +9,7 @@ import Mathematics, { migrateMathStrings } from '@tiptap/extension-mathematics';
 import Mention from '@tiptap/extension-mention';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
-import { TableKit } from '@tiptap/extension-table';
+import { Table, TableCell, TableRow } from '@tiptap/extension-table';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyleKit } from '@tiptap/extension-text-style';
 import { Selection, CharacterCount } from '@tiptap/extensions';
@@ -31,9 +31,12 @@ export function createEditorExtensions<T>(mentionItems?: ListItemConfig<T>, maxC
     CharacterCount.configure({
       limit: maxCharacters || null,
     }),
-    TableKit.configure({
-      table: { resizable: true },
+    Table.configure({
+      resizable: true,
     }),
+    TableRow,
+    CustomTableHeader,
+    TableCell,
     TextAlign.configure({ types: ['heading', 'paragraph', 'image'] }),
     TaskList,
     TaskItem.configure({ nested: true }),
@@ -71,9 +74,13 @@ export function createViewerExtensions() {
         enableClickSelection: false,
       },
     }),
-    TableKit.configure({
-      table: { resizable: false, allowTableNodeSelection: false },
+    Table.configure({
+      resizable: false,
+      allowTableNodeSelection: false,
     }),
+    TableRow,
+    CustomTableHeader,
+    TableCell,
     TextAlign.configure({ types: ['heading', 'paragraph', 'image'] }),
     TaskList,
     TaskItem.configure({
