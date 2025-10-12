@@ -19,6 +19,7 @@ export function ImageEditDialog(props: ImageEditDialogProps) {
   const imageRef = useRef<ImageEditorRef>(null);
   const [caption, setCaption] = useState<string>(currentCaption);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [activeMode, setActiveMode] = useState<string | null>(null);
 
   const handleCaptionChange = (newCaption: string) => {
     setCaption(newCaption);
@@ -55,17 +56,27 @@ export function ImageEditDialog(props: ImageEditDialogProps) {
             imageUrl={imageUrl}
             onCaptionChange={handleCaptionChange}
             defaultCaption={caption}
+            activeMode={activeMode}
+            setActiveMode={setActiveMode}
           />
         </div>
 
-        <DialogFooter>
-          <Button type='button' variant='secondary' onClick={() => onOpenChange(false)} disabled={isSaving}>
-            {cancelText || 'Cancel'}
-          </Button>
-          <Button type='button' variant='default' onClick={handleSaveClick} className='we:min-w-20' disabled={isSaving}>
-            {isSaving ? <Loader2 className='we:h-4 we:w-4 we:animate-spin' /> : saveText || 'Save'}
-          </Button>
-        </DialogFooter>
+        {!activeMode && (
+          <DialogFooter>
+            <Button type='button' variant='secondary' onClick={() => onOpenChange(false)} disabled={isSaving}>
+              {cancelText || 'Cancel'}
+            </Button>
+            <Button
+              type='button'
+              variant='default'
+              onClick={handleSaveClick}
+              className='we:min-w-20'
+              disabled={isSaving}
+            >
+              {isSaving ? <Loader2 className='we:h-4 we:w-4 we:animate-spin' /> : saveText || 'Edit'}
+            </Button>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -79,6 +79,7 @@ export function ImageDialog(props: ImageDialogProps) {
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
   const [caption, setCaption] = React.useState<string>('');
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
+  const [activeMode, setActiveMode] = React.useState<string | null>(null);
 
   const imageEditorRef = React.useRef<ImageEditorRef>(null);
 
@@ -195,6 +196,8 @@ export function ImageDialog(props: ImageDialogProps) {
               imageUrl={previewUrl || ''}
               onCaptionChange={setCaption}
               defaultCaption={caption}
+              activeMode={activeMode}
+              setActiveMode={setActiveMode}
             />
             <Button
               type='button'
@@ -240,14 +243,14 @@ export function ImageDialog(props: ImageDialogProps) {
           )}
         </div>
 
-        {hasFiles && previewUrl && (
+        {hasFiles && previewUrl && !activeMode && (
           <DialogFooter className=''>
             <Button type='button' variant='secondary' onClick={handleCancel} disabled={isSaving}>
               {cancelText || 'Cancel'}
             </Button>
 
             <Button type='button' variant='default' onClick={handleSave} className='we:min-w-20' disabled={isSaving}>
-              {isSaving ? <Loader2 className='we:h-4 we:w-4 we:animate-spin' /> : saveText || 'Save'}
+              {isSaving ? <Loader2 className='we:h-4 we:w-4 we:animate-spin' /> : saveText || 'Upload'}
             </Button>
           </DialogFooter>
         )}

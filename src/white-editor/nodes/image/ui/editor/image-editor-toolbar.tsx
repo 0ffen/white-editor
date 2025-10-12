@@ -1,5 +1,5 @@
 import { CropIcon, PencilIcon, Redo2, Square, TypeIcon, Undo2 } from 'lucide-react';
-import { Toolbar, ToolbarButton } from '@/shared';
+import { Button, Toolbar } from '@/shared';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
 interface ImageEditorToolbarProps {
@@ -14,51 +14,61 @@ export function ImageEditorToolbar(props: ImageEditorToolbarProps) {
   return (
     <div className='we:h-[44px] we:flex-shrink-0'>
       <Toolbar className='we:border-none'>
-        <ToolbarButton
+        <Button
+          type='button'
+          className='we:h-fit we:w-fit'
+          variant='ghost'
           onClick={() => {
             if (editorRef.current) {
               editorRef.current?.undo();
             }
           }}
-          tooltip='Undo'
         >
           <Undo2 />
-        </ToolbarButton>
-        <ToolbarButton onClick={() => editorRef.current?.redo()} tooltip='Redo'>
+        </Button>
+        <Button type='button' className='we:h-fit we:w-fit' variant='ghost' onClick={() => editorRef.current?.redo()}>
           <Redo2 />
-        </ToolbarButton>
+        </Button>
 
-        <ToolbarButton
+        <Button
+          type='button'
+          className='we:h-fit we:w-fit'
+          variant='ghost'
           isActive={activeMode === 'crop'}
-          tooltip='Crop'
           onClick={() => handleModeChange(activeMode === 'crop' ? null : 'crop')}
         >
           <CropIcon />
-        </ToolbarButton>
+        </Button>
 
-        <ToolbarButton
+        <Button
+          type='button'
+          className='we:h-fit we:w-fit'
+          variant='ghost'
           isActive={activeMode === 'text'}
-          tooltip='Text'
           onClick={() => handleModeChange(activeMode === 'text' ? null : 'text')}
         >
           <TypeIcon />
-        </ToolbarButton>
+        </Button>
 
-        <ToolbarButton
+        <Button
+          type='button'
+          className='we:h-fit we:w-fit'
+          variant='ghost'
           isActive={activeMode === 'draw'}
-          tooltip='Draw'
           onClick={() => handleModeChange(activeMode === 'draw' ? null : 'draw')}
         >
           <PencilIcon />
-        </ToolbarButton>
+        </Button>
 
-        <ToolbarButton
+        <Button
+          type='button'
+          className='we:h-fit we:w-fit'
+          variant='ghost'
           isActive={activeMode === 'shape'}
-          tooltip='Shape'
           onClick={() => handleModeChange(activeMode === 'shape' ? null : 'shape')}
         >
           <Square />
-        </ToolbarButton>
+        </Button>
       </Toolbar>
     </div>
   );

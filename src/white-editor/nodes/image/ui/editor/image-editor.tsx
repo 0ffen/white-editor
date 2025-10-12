@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
+import { Check } from 'lucide-react';
 import TuiImageEditor from 'tui-image-editor';
-import { Textarea } from '@/shared';
+import { Button, Textarea } from '@/shared';
 import { ImageEditorToolbar, CropEditor, DrawEditor, ShapeEditor, TextEditor } from '@/white-editor';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
@@ -12,15 +13,16 @@ interface ImageEditorProps {
   imageUrl: string;
   onCaptionChange?: (caption: string) => void;
   defaultCaption?: string;
+  activeMode: string | null;
+  setActiveMode: (mode: string | null) => void;
 }
 
 export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, ref) => {
-  const { imageUrl, onCaptionChange, defaultCaption = '' } = props;
+  const { imageUrl, onCaptionChange, defaultCaption = '', activeMode, setActiveMode } = props;
 
   const rootEl = useRef<HTMLDivElement | null>(null);
   const editorRef = useRef<TuiImageEditorType | null>(null);
 
-  const [activeMode, setActiveMode] = useState<string | null>(null);
   const [drawingColor, setDrawingColor] = useState<string>('#000000');
   const [drawingRange, setDrawingRange] = useState<number>(10);
   const [caption, setCaption] = useState<string>(defaultCaption);
@@ -82,7 +84,7 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
 
   const handleModeChange = useCallback(
     (mode: string | null) => {
-      setActiveMode(mode);
+      setActiveMode?.(mode);
       editorRef.current?.stopDrawingMode();
 
       if (mode === 'draw') {
@@ -95,7 +97,7 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
         startCropMode();
       }
     },
-    [startCropMode, startDrawMode, startShapeMode]
+    [startCropMode, startDrawMode, startShapeMode, setActiveMode]
   );
 
   const handleCaptionChange = useCallback(
@@ -177,6 +179,18 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
             />
           )}
           {activeMode === 'shape' && <ShapeEditor editorRef={editorRef} />}
+          {activeMode !== 'crop' && (
+            <div className='we:mt-4 we:flex we:justify-center we:items-center'>
+              <Button
+                className='we:w-fit we:pl-4 we:pr-6 we:rounded-4xl'
+                type='button'
+                variant='default'
+                onClick={() => setActiveMode(null)}
+              >
+                <Check /> Done
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </div>
