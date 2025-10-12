@@ -51,7 +51,7 @@ export default function App() {
 
         <section className='we:space-y-3 we:h-fit'>
           <h2 className='we:mb-8 we:text-3xl we:font-bold we:text-center'>Viewer</h2>
-          <WhiteViewer className='we:h-[500px] we:overflow-y-auto we:border we:rounded-md' content={content} />
+          <WhiteViewer className='we:h-[400px] we:overflow-y-auto we:border we:rounded-md' content={content} />
         </section>
       </div>
     </main>
