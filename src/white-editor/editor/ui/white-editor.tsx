@@ -7,7 +7,7 @@ import { EditorContent, EditorContext } from '@tiptap/react';
 import '@/shared/styles/index.css';
 
 export function WhiteEditor<T>(props: WhiteEditorProps<T>) {
-  const { extension, toolbarItems, toolbarProps, contentClassName, editorClassName, footer, theme } = props;
+  const { extension, toolbarItems, toolbarProps, contentClassName, editorClassName, footer, theme, disabled } = props;
 
   const toolbarRef = React.useRef<HTMLDivElement>(null);
   const { editor, charactersCount } = useWhiteEditor<T>({
@@ -34,7 +34,7 @@ export function WhiteEditor<T>(props: WhiteEditorProps<T>) {
 
   return (
     <TooltipProvider>
-      <div className={cn('white-editor', editorClassName)}>
+      <div className={cn('white-editor', editorClassName, disabled && 'we:opacity-60 we:pointer-events-none')}>
         <EditorContext.Provider value={{ editor }}>
           <Toolbar ref={toolbarRef} role='toolbar'>
             <div className={cn('toolbar-wrapper')}>{renderToolbar()}</div>

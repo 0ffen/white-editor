@@ -19,6 +19,7 @@ interface WhiteEditorUIProps {
   toolbarProps?: ToolbarItemProps;
   theme?: 'light' | 'dark';
   footer?: React.ReactNode;
+  disabled?: boolean;
 }
 
 interface WhiteEditorExtensions<T> {

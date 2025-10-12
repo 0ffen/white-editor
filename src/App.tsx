@@ -22,6 +22,7 @@ export default function App() {
         <section className='we:space-y-3'>
           <h2 className='we:mb-8 we:text-3xl we:font-bold we:text-center'>Editor</h2>
           <WhiteEditor
+            disabled={false}
             editorClassName='we:h-[500px]!'
             contentClassName='we:h-full'
             onChange={setContent}
