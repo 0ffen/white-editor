@@ -50,6 +50,10 @@
     position: relative;
   }
 
+  .selectedCell {
+    background-color: var(--we-primary-background) !important;
+  }
+
   .ProseMirror td:not([data-colwidth]):not(.column-resize-dragging),
   .ProseMirror th:not([data-colwidth]):not(.column-resize-dragging) {
     min-width: 200px;
@@ -72,11 +76,11 @@
   }
 
   .ProseMirror .selection {
-    background-color: hsl(var(--we-primary) / 0.05);
+    background-color: var(--we-primary-background);
   }
 
   .dark .ProseMirror .selection {
-    background-color: hsl(var(--we-primary) / 0.5);
+    background-color: var(--we-primary-background);
   }
 
   .block-math-inner {
@@ -88,6 +92,7 @@
     padding: 1rem;
     transition: all 0.2s ease-in-out;
     cursor: pointer;
+    margin-block: 0.5rem;
 
     &:hover {
       background-color: var(--we-accent);

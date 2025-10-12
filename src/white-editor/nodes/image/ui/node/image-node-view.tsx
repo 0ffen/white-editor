@@ -1,9 +1,15 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { cn, Dialog, DialogContent, DialogTitle } from '@/shared';
-import { useImageEdit, useImageHover, useImageResize, ImageEditDialog } from '@/white-editor';
+import {
+  useImageEdit,
+  useImageHover,
+  useImageResize,
+  ImageEditDialog,
+  ImageCaption,
+  ImageFloatingControls,
+} from '@/white-editor';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
-import { ImageControls, ImageCaption } from './image-components';
 
 type AlignType = 'left' | 'center' | 'right';
 
@@ -109,7 +115,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
         />
         {caption && <ImageCaption caption={caption} imageWidth={currentWidth} />}
         {props.editor.isEditable && props.selected && (
-          <ImageControls
+          <ImageFloatingControls
             onEditClick={handleEditClick}
             onResizeStart={resizeHandlers.handleResizeStart}
             showControls={showControls}
@@ -137,11 +143,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
               src={src}
               alt={alt}
               title={title}
-              className='we:mb-0 we:inline-block we:h-auto we:max-w-full we:rounded we:text-center'
-              style={{
-                width: currentWidth !== 'auto' ? currentWidth : 'auto',
-                height: currentHeight !== 'auto' ? currentHeight : '300px',
-              }}
+              className='we:mb-0 we:inline-block we:max-w-full we:rounded we:text-center we:w-[400px] we:h-auto we:object-contain'
               draggable={false}
             />
             {caption && <ImageCaption caption={caption} className='we:mt-0 we:text-center' />}

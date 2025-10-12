@@ -2,7 +2,7 @@ import React from 'react';
 import { AlignCenter, AlignLeft, AlignRight, Edit3 } from 'lucide-react';
 import { Button, cn, Separator, Toolbar } from '@/shared';
 
-interface ImageControlsProps {
+interface ImageFloatingControlsProps {
   onEditClick: (e: React.MouseEvent) => void;
   onResizeStart: (e: React.MouseEvent) => void;
   showControls: boolean;
@@ -16,7 +16,10 @@ const alignButtons = [
   { type: 'right', icon: AlignRight, title: 'Align right' },
 ];
 
-export const ImageControls: React.FC<ImageControlsProps> = (props: ImageControlsProps) => {
+/**
+ * 이미지 클릭시 노출되는 플로팅 메뉴
+ */
+export const ImageFloatingControls: React.FC<ImageFloatingControlsProps> = (props: ImageFloatingControlsProps) => {
   const { onEditClick, onResizeStart, showControls, align, onAlignChange } = props;
   if (!showControls) return null;
 
@@ -52,32 +55,5 @@ export const ImageControls: React.FC<ImageControlsProps> = (props: ImageControls
         title='Resize image'
       />
     </>
-  );
-};
-
-interface ImageCaptionProps {
-  caption?: string;
-  imageWidth?: string | number;
-  className?: string;
-}
-
-/**
- * 이미지 캡션 컴포넌트
- */
-export const ImageCaption: React.FC<ImageCaptionProps> = ({ caption, imageWidth, className }) => {
-  if (!caption) return null;
-
-  const captionStyle = imageWidth ? { maxWidth: typeof imageWidth === 'string' ? imageWidth : `${imageWidth}px` } : {};
-
-  return (
-    <div
-      className={cn(
-        'we:text-foreground/80 we:word-break-keep we:mt-2 we:text-center we:text-xs we:whitespace-pre',
-        className
-      )}
-      style={captionStyle}
-    >
-      {caption}
-    </div>
   );
 };
