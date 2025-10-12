@@ -143,7 +143,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
               src={src}
               alt={alt}
               title={title}
-              className='we:mb-0 we:inline-block we:max-w-full we:rounded we:text-center we:w-[400px] we:h-auto we:object-contain'
+              className='we:mb-0 we:inline-block we:max-w-full we:rounded we:text-center we:h-auto we:max-h-[400px] we:w-auto we:object-contain'
               draggable={false}
             />
             {caption && <ImageCaption caption={caption} className='we:mt-0 we:text-center' />}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useCallback } from 'react';
 import { Loader2, XIcon } from 'lucide-react';
-import { handleImageUpload } from '@/shared';
+import { cn, handleImageUpload } from '@/shared';
 import {
   Button,
   Dialog,
@@ -190,7 +190,12 @@ export function ImageDialog(props: ImageDialogProps) {
         </DialogHeader>
 
         {previewUrl && (
-          <div className='we:relative we:flex we:w-full we:items-center we:justify-center we:overflow-y-auto'>
+          <div
+            className={cn(
+              'we:relative we:flex we:w-full we:items-center we:justify-center we:overflow-y-auto',
+              isSaving ? 'we:pointer-events-none we:opacity-60' : ''
+            )}
+          >
             <ImageEditor
               ref={imageEditorRef}
               imageUrl={previewUrl || ''}

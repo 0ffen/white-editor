@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import { Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/shared';
+import { Button, cn, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/shared';
 import { ImageEditor, type ImageEditorRef } from '@/white-editor';
 
 interface ImageEditDialogProps {
@@ -50,7 +50,12 @@ export function ImageEditDialog(props: ImageEditDialogProps) {
           <DialogTitle>Edit Image</DialogTitle>
         </DialogHeader>
 
-        <div className='we:relative we:flex we:w-full we:items-center we:justify-center we:overflow-y-auto'>
+        <div
+          className={cn(
+            'we:relative we:flex we:w-full we:items-center we:justify-center we:overflow-y-auto',
+            isSaving ? 'we:pointer-events-none we:opacity-60' : ''
+          )}
+        >
           <ImageEditor
             ref={imageRef}
             imageUrl={imageUrl}
