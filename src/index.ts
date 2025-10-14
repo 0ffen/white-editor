@@ -39,4 +39,10 @@ export type { JSONContent } from '@tiptap/react';
 export type { Editor } from '@tiptap/react';
 
 //utils
-export { getHtmlContent, getGeneratedText, createEmptyContent, setCSSVariables } from './shared/utils';
+export {
+  getHtmlContent,
+  convertHtmlToJson,
+  getGeneratedText,
+  createEmptyContent,
+  setCSSVariables,
+} from './shared/utils';
