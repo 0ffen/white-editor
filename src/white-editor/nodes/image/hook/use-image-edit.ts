@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import type { ImageServerAPI } from '@/white-editor';
+
 import type { Editor } from '@tiptap/react';
 
 export interface ImageEditContext {
@@ -10,11 +10,10 @@ export interface ImageEditContext {
 
 export interface UseImageEditOptions {
   editor?: Editor;
-  serverAPI?: ImageServerAPI;
 }
 
 export function useImageEdit(options: UseImageEditOptions = {}) {
-  const { editor, serverAPI: _serverAPI } = options;
+  const { editor } = options;
   const [editingImage, setEditingImage] = useState<ImageEditContext | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 

@@ -1,11 +1,9 @@
 import { useCallback } from 'react';
 import { handleImageUpload } from '@/shared/utils';
-import type { ImageServerAPI } from '@/white-editor';
 import type { Editor } from '@tiptap/react';
 
 export interface ImageSaveOptions {
   editor?: Editor;
-  serverAPI?: ImageServerAPI;
   upload?: (file: File) => Promise<string>;
   onSuccess?: (imageUrl: string, caption?: string) => void;
   onError?: (error: Error) => void;
@@ -24,7 +22,7 @@ export interface ImageSaveParams {
  * @description 이미지 저장을 위한 통합 훅 서버 업로드 또는 로컬 URL 생성
  */
 export function useImageSave(options: ImageSaveOptions = {}) {
-  const { editor, serverAPI, upload, onSuccess, onError } = options;
+  const { editor, upload, onSuccess, onError } = options;
 
   const saveImage = useCallback(
     async (params: ImageSaveParams) => {
@@ -47,11 +45,7 @@ export function useImageSave(options: ImageSaveOptions = {}) {
         // 3. 업로드 처리
         let imageUrl: string;
 
-        if (serverAPI) {
-          // 서버 API 사용
-          const uploadResponse = await serverAPI.upload(file);
-          imageUrl = uploadResponse.url;
-        } else if (upload) {
+        if (upload) {
           imageUrl = await upload(file);
         } else {
           // 기본 업로드 함수 사용 (development 환경에서는 로컬 URL)
@@ -93,7 +87,7 @@ export function useImageSave(options: ImageSaveOptions = {}) {
         };
       }
     },
-    [editor, serverAPI, upload, onSuccess, onError]
+    [editor, upload, onSuccess, onError]
   );
 
   return {

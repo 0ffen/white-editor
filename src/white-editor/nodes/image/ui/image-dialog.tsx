@@ -16,12 +16,11 @@ import {
   type UploadOptions,
   ImageUploadButton,
   ImageUploadDragArea,
-  ImageUploadingProgress,
   useFileUpload,
   ImageEditor,
   useImageSave,
-  type ImageServerAPI,
   type ImageEditorRef,
+  ImageUploadingProgress,
 } from '@/white-editor';
 import type { Editor } from '@tiptap/react';
 
@@ -45,7 +44,6 @@ export interface ImageDialogProps extends Partial<ImageUploadConfig> {
   icon?: React.ReactNode;
   imageConfig?: ImageUploadConfig;
   editor?: Editor | null;
-  serverAPI?: ImageServerAPI;
   onImageInserted?: (url: string, caption?: string) => void;
 }
 
@@ -61,7 +59,6 @@ export function ImageDialog(props: ImageDialogProps) {
     onSuccess,
     icon,
     editor: providedEditor,
-    serverAPI,
     onImageInserted,
   } = props;
 
@@ -69,7 +66,6 @@ export function ImageDialog(props: ImageDialogProps) {
   // 이미지 저장 훅 사용
   const { saveImage } = useImageSave({
     editor: editor ?? undefined,
-    serverAPI,
     upload,
     onSuccess,
     onError,

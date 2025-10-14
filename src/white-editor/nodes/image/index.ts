@@ -26,7 +26,6 @@ export * from './hook/use-image-save';
 
 export * from './extension/resizable-image';
 
-export * from './type/image-server-api.type';
 export * from './type/file-upload.type';
 
 export * from './content/editor-colors';
