@@ -40,7 +40,7 @@ export const LinkMain: React.FC<LinkMainProps> = ({
   };
 
   return (
-    <div className={cn('flex w-full gap-1 rounded-4xl', linkPopoverClassName)}>
+    <div className={cn('we:flex we:w-full we:gap-1 we:rounded-4xl', linkPopoverClassName)}>
       <Input
         type='url'
         placeholder={placeholder || 'Paste a Link'}
@@ -50,7 +50,7 @@ export const LinkMain: React.FC<LinkMainProps> = ({
         autoComplete='off'
         autoCorrect='off'
         autoCapitalize='off'
-        className='w-full border-none'
+        className='we:w-full we:border-none'
         ref={inputRef}
       />
       <ButtonGroup orientation='horizontal'>
@@ -59,7 +59,7 @@ export const LinkMain: React.FC<LinkMainProps> = ({
           onClick={setLink}
           disabled={!url && !isActive}
           title='Apply Link'
-          className='text-foreground/80'
+          className='we:text-foreground/80'
           size={'icon'}
         >
           <CornerDownLeft />
@@ -70,7 +70,7 @@ export const LinkMain: React.FC<LinkMainProps> = ({
           title='Remove link'
           disabled={!url && !isActive}
           variant='ghost'
-          className='text-foreground/80'
+          className='we:text-foreground/80'
           size={'icon'}
         >
           <Trash2Icon />

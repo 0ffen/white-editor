@@ -1,0 +1,68 @@
+.white-editor .readonly {
+  .ProseMirror {
+    padding: 0.5rem;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 10px;
+  }
+}
+
+.white-editor .readonly {
+  user-select: text !important;
+  pointer-events: auto !important;
+}
+
+.white-editor .readonly [data-type='inline-math'],
+.white-editor .readonly [data-type='block-math'] {
+  cursor: default !important;
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+.white-editor .readonly .viewer-task-item input[type='checkbox'],
+.white-editor .readonly input[type='checkbox'] {
+  pointer-events: none !important;
+  cursor: default !important;
+}
+
+.white-editor .readonly .hljs {
+  cursor: default !important;
+  user-select: text !important;
+}
+
+.white-editor .readonly .ProseMirror-selectednode {
+  outline: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  pointer-events: none !important;
+}
+
+.white-editor .readonly * {
+  -webkit-user-drag: none !important;
+  -khtml-user-drag: none !important;
+  -moz-user-drag: none !important;
+  -o-user-drag: none !important;
+  user-drag: none !important;
+}
+
+.white-editor .readonly a {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.white-editor .readonly p,
+.white-editor .readonly h1,
+.white-editor .readonly h2,
+.white-editor .readonly h3,
+.white-editor .readonly h4,
+.white-editor .readonly h5,
+.white-editor .readonly h6,
+.white-editor .readonly li,
+.white-editor .readonly span {
+  user-select: text !important;
+}
+
+.white-editor .readonly .tiptap-mathematics-render {
+  pointer-events: none !important;
+}

@@ -1,9 +1,9 @@
-import type { ToolbarItem, ToolbarItemProps, MentionConfig } from '@/white-editor';
+import type { MentionConfig, ToolbarItem, ToolbarItemProps } from '@/white-editor';
 import type { EditorProps } from '@tiptap/pm/view';
 import type { JSONContent, Content } from '@tiptap/react';
 import type { Editor } from '@tiptap/react';
 
-interface EditorExtensions<T> {
+interface EditorExtensions<T = Record<string, unknown>> {
   mention?: MentionConfig<T>;
   character?: {
     show?: boolean;
@@ -19,9 +19,10 @@ interface WhiteEditorUIProps {
   toolbarProps?: ToolbarItemProps;
   theme?: 'light' | 'dark';
   footer?: React.ReactNode;
+  disabled?: boolean;
 }
 
-interface WhiteEditorExtensions<T> {
+interface WhiteEditorExtensions<T = Record<string, unknown>> {
   extension?: EditorExtensions<T>;
 }
 
@@ -39,6 +40,19 @@ interface TipTapEditorOptions {
   shouldRerenderOnTransaction?: boolean;
 }
 
+interface UseWhiteEditorReturn {
+  editor: Editor | null;
+  charactersCount: number;
+  getHTML: () => string;
+  getJSON: () => JSONContent;
+  getText: () => string;
+  setContent: (content: string | JSONContent) => void;
+  focus: () => void;
+  blur: () => void;
+  isEmpty: boolean;
+  clear: () => void;
+}
+
 interface WhiteEditorProps<T> extends WhiteEditorUIProps, WhiteEditorExtensions<T>, TipTapEditorOptions {
   onChange?: (jsonContent: JSONContent) => void;
   onUpdate?: (jsonContent: JSONContent) => void;
@@ -50,4 +64,11 @@ interface WhiteEditorProps<T> extends WhiteEditorUIProps, WhiteEditorExtensions<
   editorProps?: EditorProps;
 }
 
-export type { WhiteEditorProps, WhiteEditorUIProps, WhiteEditorExtensions, TipTapEditorOptions, EditorExtensions };
+export type {
+  WhiteEditorProps,
+  WhiteEditorUIProps,
+  WhiteEditorExtensions,
+  UseWhiteEditorReturn,
+  TipTapEditorOptions,
+  EditorExtensions,
+};

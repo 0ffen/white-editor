@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MoonStarIcon, SunIcon } from 'lucide-react';
-import { Button } from '@/shared/components/button';
+import { Button } from '@/shared/components';
 
 export function ThemeToggle() {
   const [isDarkMode, setIsDarkMode] = React.useState<boolean>(false);
@@ -20,7 +20,7 @@ export function ThemeToggle() {
 
   return (
     <Button onClick={toggleDarkMode} aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`} data-style='ghost'>
-      {isDarkMode ? <MoonStarIcon className='tiptap-button-icon' /> : <SunIcon className='tiptap-button-icon' />}
+      {isDarkMode ? <MoonStarIcon /> : <SunIcon />}
     </Button>
   );
 }

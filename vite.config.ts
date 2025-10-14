@@ -7,25 +7,19 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 
-const isLibBuild = process.env.BUILD_MODE === 'lib';
-
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     svgr(),
     tsconfigPaths(),
-    ...(isLibBuild
-      ? [
-          dts({
-            rollupTypes: true,
-            outDir: 'dist',
-            tsconfigPath: path.resolve(__dirname, './tsconfig.app.json'),
-            insertTypesEntry: true,
-          }),
-          cssInjectedByJsPlugin(),
-        ]
-      : []),
+    dts({
+      rollupTypes: true,
+      outDir: 'dist',
+      tsconfigPath: path.resolve(__dirname, './tsconfig.app.json'),
+      insertTypesEntry: true,
+    }),
+    cssInjectedByJsPlugin(),
     tailwindcss(),
   ],
   resolve: {
@@ -37,43 +31,32 @@ export default defineConfig({
     target: 'es2020',
     minify: 'terser',
     sourcemap: false,
-    cssCodeSplit: false,
-    ...(isLibBuild
-      ? {
-          lib: {
-            entry: path.resolve(__dirname, './src/index.ts'),
-            name: 'white-editor',
-            fileName: (format) => `index.${format}.js`,
-            formats: ['es'],
-          },
-          rollupOptions: {
-            external: ['react', 'react-dom', 'react/jsx-runtime'],
-            output: {
-              entryFileNames: '[name].js',
-              globals: {
-                react: 'React',
-                'react-dom': 'ReactDOM',
-                'react/jsx-runtime': 'react/jsx-runtime',
-              },
-            },
-          },
-          commonjsOptions: {
-            esmExternals: ['react'],
-          },
-        }
-      : {
-          // Web app build configuration
-          outDir: 'dist',
-          rollupOptions: {
-            input: {
-              main: path.resolve(__dirname, 'index.html'),
-            },
-          },
-        }),
+    cssCodeSplit: true,
+    lib: {
+      entry: path.resolve(__dirname, './src/index.ts'),
+      name: 'white-editor',
+      fileName: (format) => `index.${format}.js`,
+      formats: ['es'],
+    },
     terserOptions: {
       compress: {
         drop_console: true,
         drop_debugger: true,
+      },
+    },
+    rollupOptions: {
+      external: ['react', 'react-dom', 'react/jsx-runtime'],
+      output: {
+        entryFileNames: '[name].js',
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM',
+          'react/jsx-runtime': 'react/jsx-runtime',
+          '@tiptap/core': 'TipTapCore',
+          '@tiptap/react': 'TipTapReact',
+          '@tiptap/pm': 'TipTapPM',
+          '@tiptap/extensions': 'TipTapExtensions',
+        },
       },
     },
   },

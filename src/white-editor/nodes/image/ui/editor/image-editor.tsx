@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
+import { Check } from 'lucide-react';
 import TuiImageEditor from 'tui-image-editor';
-import { Textarea } from '@/shared';
+import { Button, Textarea } from '@/shared';
 import { ImageEditorToolbar, CropEditor, DrawEditor, ShapeEditor, TextEditor } from '@/white-editor';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
@@ -12,15 +13,16 @@ interface ImageEditorProps {
   imageUrl: string;
   onCaptionChange?: (caption: string) => void;
   defaultCaption?: string;
+  activeMode: string | null;
+  setActiveMode: (mode: string | null) => void;
 }
 
 export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, ref) => {
-  const { imageUrl, onCaptionChange, defaultCaption = '' } = props;
+  const { imageUrl, onCaptionChange, defaultCaption = '', activeMode, setActiveMode } = props;
 
   const rootEl = useRef<HTMLDivElement | null>(null);
   const editorRef = useRef<TuiImageEditorType | null>(null);
 
-  const [activeMode, setActiveMode] = useState<string | null>(null);
   const [drawingColor, setDrawingColor] = useState<string>('#000000');
   const [drawingRange, setDrawingRange] = useState<number>(10);
   const [caption, setCaption] = useState<string>(defaultCaption);
@@ -70,19 +72,32 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
     });
   }, [editorRef, drawingRange, drawingColor]);
 
+  const startShapeMode = useCallback(() => {
+    if (!editorRef.current) return;
+    editorRef.current.startDrawingMode('SHAPE');
+    editorRef.current.setDrawingShape('rect', {
+      fill: '#000000',
+      stroke: '#000000',
+      strokeWidth: 10,
+    });
+  }, [editorRef]);
+
   const handleModeChange = useCallback(
     (mode: string | null) => {
-      setActiveMode(mode);
+      setActiveMode?.(mode);
       editorRef.current?.stopDrawingMode();
 
       if (mode === 'draw') {
         startDrawMode();
       }
+      if (mode === 'shape') {
+        startShapeMode();
+      }
       if (mode === 'crop') {
         startCropMode();
       }
     },
-    [startCropMode, startDrawMode]
+    [startCropMode, startDrawMode, startShapeMode, setActiveMode]
   );
 
   const handleCaptionChange = useCallback(
@@ -126,22 +141,31 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
   );
 
   return (
-    <div className='flex w-full flex-col'>
+    <div className='we:flex we:w-full we:flex-col'>
       {/* Toolbar */}
       <ImageEditorToolbar editorRef={editorRef} activeMode={activeMode} handleModeChange={handleModeChange} />
       {/* Image */}
-      <div ref={rootEl} className='bg-border flex h-[300px] w-full items-center justify-center rounded' />
+      <div
+        ref={rootEl}
+        className='we:bg-border we:flex we:h-[300px] we:w-full we:items-center we:justify-center we:rounded'
+      />
       {!activeMode && (
-        <div className='mx-auto mt-4 flex w-full flex-col space-y-4 p-2'>
-          <div className='flex w-full flex-col space-y-2'>
-            <h3 className='text-muted-foreground text-xs font-medium'>Caption</h3>
-            <Textarea name='caption' value={caption} onChange={handleCaptionChange} rows={3} className='resize-none' />
+        <div className='we:mx-auto we:mt-4 we:flex we:w-full we:flex-col we:space-y-4 we:p-2'>
+          <div className='we:flex we:w-full we:flex-col we:space-y-2'>
+            <h3 className='we:text-muted-foreground we:text-xs we:font-medium'>Caption</h3>
+            <Textarea
+              name='caption'
+              value={caption}
+              onChange={handleCaptionChange}
+              rows={3}
+              className='we:resize-none'
+            />
           </div>
         </div>
       )}
       {/* Editor Options */}
       {activeMode && (
-        <div className='mx-auto mt-4 w-full'>
+        <div className='we:mx-auto we:mt-4 we:w-full'>
           {activeMode === 'crop' && <CropEditor editorRef={editorRef} setActiveMode={setActiveMode} />}
           {activeMode === 'text' && <TextEditor editorRef={editorRef} />}
           {activeMode === 'draw' && (
@@ -155,6 +179,18 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
             />
           )}
           {activeMode === 'shape' && <ShapeEditor editorRef={editorRef} />}
+          {activeMode !== 'crop' && (
+            <div className='we:mt-4 we:flex we:justify-center we:items-center'>
+              <Button
+                className='we:w-fit we:pl-4 we:pr-6 we:rounded-4xl'
+                type='button'
+                variant='default'
+                onClick={() => setActiveMode(null)}
+              >
+                <Check /> Done
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </div>

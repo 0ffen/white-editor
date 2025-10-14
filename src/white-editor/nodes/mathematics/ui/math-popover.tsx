@@ -25,7 +25,7 @@ export const MathPopover = React.forwardRef<HTMLButtonElement, MathPopoverProps>
     const { editor } = useTiptapEditor(providedEditor);
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
-    const { isVisible, isActive, mathString, setMathString, setMath, removeMath } = useMathematics({
+    const { isVisible, isActive, mathString, canSet, setMathString, setMath, removeMath } = useMathematics({
       editor,
       hideWhenUnavailable,
       onSetMath,
@@ -88,7 +88,7 @@ export const MathPopover = React.forwardRef<HTMLButtonElement, MathPopoverProps>
             aria-label={'math'}
             aria-pressed={isActive}
             isActive={isActive}
-            disabled={!isVisible}
+            disabled={!canSet}
             onClick={handleClick}
             {...buttonProps}
             ref={ref}
@@ -96,7 +96,10 @@ export const MathPopover = React.forwardRef<HTMLButtonElement, MathPopoverProps>
             {type === 'block' ? icon || <BlockMathIcon /> : icon || <InlineMathIcon />}
           </Button>
         </PopoverTrigger>
-        <PopoverContent align='start' className={cn('w-[300px] rounded-2xl px-2 py-2', mathPopoverClassName)}>
+        <PopoverContent
+          align='start'
+          className={cn('we:w-[300px] we:rounded-2xl we:px-2 we:py-2', mathPopoverClassName)}
+        >
           <MathPopoverContent
             mathString={mathString}
             setMathString={setMathString}

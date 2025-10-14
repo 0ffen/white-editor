@@ -1,9 +1,15 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { cn, Dialog, DialogContent, DialogTitle } from '@/shared';
-import { useImageEdit, useImageHover, useImageResize, ImageEditDialog } from '@/white-editor';
+import {
+  useImageEdit,
+  useImageHover,
+  useImageResize,
+  ImageEditDialog,
+  ImageCaption,
+  ImageFloatingControls,
+} from '@/white-editor';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
-import { ImageControls, ImageCaption } from './image-components';
 
 type AlignType = 'left' | 'center' | 'right';
 
@@ -15,19 +21,33 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const { getPos } = props;
   const { src, alt, title, width, height, caption, textAlign } = props.node.attrs;
   const containerRef = useRef<HTMLDivElement>(null);
+
   const [_align, setAlign] = useState<AlignType>(textAlign || 'center');
+
+  const [currentWidth, setCurrentWidth] = useState<string>(width || '300px');
+  const [currentHeight, setCurrentHeight] = useState<string>(height || 'auto');
   const [isViewerImageDialogOpen, setIsViewerImageDialogOpen] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (textAlign && textAlign !== _align) setAlign(textAlign as AlignType);
+    if (width && width !== currentWidth) setCurrentWidth(width);
+    if (height && height !== currentHeight) setCurrentHeight(height);
+  }, [textAlign, width, height, _align, currentWidth, currentHeight]);
+
   const { imageRef, resizeState, resizeHandlers } = useImageResize({
-    initialWidth: width || '300px',
-    initialHeight: height || 'auto',
+    initialWidth: currentWidth,
+    initialHeight: currentHeight,
     onResize: (newWidth, newHeight) => {
+      setCurrentWidth(newWidth);
+      setCurrentHeight(newHeight);
+
       props.updateAttributes({
         width: newWidth,
         height: newHeight,
       });
     },
   });
+
   const { hoverState, hoverHandlers } = useImageHover();
   const { editingImage, isDialogOpen, openImageEdit, handleImageSave, setIsDialogOpen } = useImageEdit({
     editor: props.editor,
@@ -48,13 +68,10 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   );
 
   const showControls = hoverState.isHovered || props.selected;
-  const { currentWidth, currentHeight, isResizing } = resizeState;
 
   const handleAlignChange = useCallback(
     (newAlign: AlignType) => {
-      props.updateAttributes({
-        textAlign: newAlign,
-      });
+      props.updateAttributes({ textAlign: newAlign });
       setAlign(newAlign);
     },
     [props]
@@ -62,26 +79,26 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
 
   return (
     <NodeViewWrapper
-      className={cn('my-2 w-full')}
+      className={cn('we:my-2 we:w-full')}
       data-type='image'
       draggable='true'
       data-drag-handle
-      style={{ textAlign: _align }}
+      style={{ textAlign: textAlign || _align }}
     >
       <section
         ref={containerRef}
         className={cn(
-          'group relative inline-block',
-          caption && 'mb-2',
-          isResizing ? 'resizing' : '',
-          props.selected && props.editor.isEditable ? 'selected ring-primary/40 rounded-xs ring-2 ring-offset-2' : ''
+          'we:group we:relative we:inline-block',
+          caption && 'we:mb-2',
+          resizeState.isResizing ? 'we:resizing' : '',
+          props.selected && props.editor.isEditable
+            ? 'we:selected we:ring-primary/40 we:rounded-xs we:ring-2 we:ring-offset-2'
+            : ''
         )}
         onMouseEnter={hoverHandlers.handleMouseEnter}
         onMouseLeave={hoverHandlers.handleMouseLeave}
         onClick={() => {
-          if (!props.editor.isEditable) {
-            setIsViewerImageDialogOpen(true);
-          }
+          if (!props.editor.isEditable) setIsViewerImageDialogOpen(true);
         }}
       >
         <img
@@ -89,7 +106,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           src={src}
           alt={alt}
           title={title}
-          className='mb-0 inline-block h-auto max-w-full rounded shadow-md'
+          className='we:mb-0 we:inline-block we:h-auto we:max-w-full we:rounded we:shadow-md'
           style={{
             width: currentWidth !== 'auto' ? currentWidth : undefined,
             height: currentHeight !== 'auto' ? currentHeight : undefined,
@@ -98,7 +115,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
         />
         {caption && <ImageCaption caption={caption} imageWidth={currentWidth} />}
         {props.editor.isEditable && props.selected && (
-          <ImageControls
+          <ImageFloatingControls
             onEditClick={handleEditClick}
             onResizeStart={resizeHandlers.handleResizeStart}
             showControls={showControls}
@@ -117,23 +134,19 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           onSave={handleImageSave}
         />
       )}
+
       {isViewerImageDialogOpen && (
         <Dialog open={isViewerImageDialogOpen} onOpenChange={setIsViewerImageDialogOpen}>
-          <DialogTitle className='sr-only'>View Image</DialogTitle>
-          <DialogContent className='mx-auto justify-center'>
+          <DialogTitle className='we:sr-only'>View Image</DialogTitle>
+          <DialogContent className='we:mx-auto we:justify-center'>
             <img
-              style={{
-                width: 'auto',
-                height: '300px',
-              }}
-              ref={imageRef}
               src={src}
               alt={alt}
               title={title}
-              className='mb-0 inline-block h-auto max-w-full rounded text-center'
+              className='we:mb-0 we:inline-block we:max-w-full we:rounded we:text-center we:h-auto we:max-h-[400px] we:w-auto we:object-contain'
               draggable={false}
             />
-            {caption && <ImageCaption caption={caption} className='mt-0 text-center' />}
+            {caption && <ImageCaption caption={caption} className='we:mt-0 we:text-center' />}
           </DialogContent>
         </Dialog>
       )}

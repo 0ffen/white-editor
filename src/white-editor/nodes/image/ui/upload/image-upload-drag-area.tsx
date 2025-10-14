@@ -45,17 +45,17 @@ export const ImageUploadDragArea: React.FC<ImageUploadDragAreaProps> = (props: I
   return (
     <div
       className={cn(
-        'border-border/70 hover:border-border bg-background flex cursor-pointer flex-col items-center justify-center gap-4 rounded-md border border-dashed p-8 transition-colors',
-        isDragActive ? 'border-border bg-border/5' : ''
+        'we:border-border/70 we:hover:border-border we:bg-background we:flex we:cursor-pointer we:flex-col we:items-center we:justify-center we:gap-4 we:rounded-md we:border we:border-dashed we:p-8 we:transition-colors',
+        isDragActive ? 'we:border-border we:bg-border/5' : ''
       )}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      <CloudUploadIcon className={cn('text-primary/95 h-10 w-10', isDragActive ? 'text-primary' : '')} />
-      <div className='text-muted-foreground/80 flex flex-col items-center gap-1'>
-        <span className='text-sm'>Click to upload or drag and drop</span>
-        <span className='text-xs'>
+      <CloudUploadIcon className={cn('we:text-primary/95 we:h-10 we:w-10', isDragActive ? 'we:text-primary' : '')} />
+      <div className='we:text-muted-foreground/80 we:flex we:flex-col we:items-center we:gap-1'>
+        <span className='we:text-sm'>Click to upload or drag and drop</span>
+        <span className='we:text-xs'>
           Maximum {limit} file{limit === 1 ? '' : 's'}, {maxSize / 1024 / 1024}MB
         </span>
       </div>

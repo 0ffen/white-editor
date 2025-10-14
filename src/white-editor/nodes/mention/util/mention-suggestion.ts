@@ -1,9 +1,36 @@
+import type { RefObject } from 'react';
 import { transformToLabeledItems, updatePosition, type ListItemConfig } from '@/shared/utils';
-import { MentionList, type KeyDownProps, type MentionSuggestionConfig, type SuggestionProps } from '@/white-editor';
+import {
+  MentionList,
+  type KeyDownProps,
+  type MentionConfig,
+  type MentionSuggestionConfig,
+  type SuggestionProps,
+} from '@/white-editor';
 import { ReactRenderer } from '@tiptap/react';
 
-const mentionSuggestion = <T>({ mentionList }: { mentionList: ListItemConfig<T> }): MentionSuggestionConfig => ({
-  items: () => transformToLabeledItems(mentionList),
+interface MentionSuggestionProps<T> {
+  mentionDataRef: RefObject<MentionConfig<T> | undefined>;
+}
+const mentionSuggestion = <T>({ mentionDataRef }: MentionSuggestionProps<T>): MentionSuggestionConfig => ({
+  items: ({ query }) => {
+    const mentionConfig = mentionDataRef.current;
+    if (!mentionConfig || !mentionConfig.data || !mentionConfig.id || !mentionConfig.label) {
+      return [];
+    }
+
+    const configForUtility: ListItemConfig<T> = {
+      data: mentionConfig.data,
+      mapping: {
+        id: mentionConfig.id as keyof T,
+        label: mentionConfig.label as keyof T,
+      },
+    };
+
+    const items = transformToLabeledItems(configForUtility);
+
+    return items.filter((item) => item.label.toLowerCase().startsWith(query.toLowerCase()));
+  },
   render: () => {
     let component: ReactRenderer | null = null;
 

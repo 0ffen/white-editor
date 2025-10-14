@@ -97,11 +97,11 @@ export const FloatingToolbar = React.forwardRef<HTMLDivElement, FloatingToolbarP
           }
         }}
         variant='floating'
-        className={cn('bg-popover text-popover-foreground fixed z-50 border-0', className)}
+        className={cn('we:bg-popover we:text-popover-foreground we:fixed we:z-50 we:border-0', className)}
         style={{
           top: `${position.top}px`,
           left: `${position.left}px`,
-          boxShadow: 'var(--popover-shadow)',
+          boxShadow: 'var(--we-popover-shadow)',
         }}
         onClick={(e) => e.stopPropagation()}
       >

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table } from 'lucide-react';
 import { useTiptapEditor } from '@/shared/hooks';
-import { isExtensionAvailable } from '@/shared/utils';
+import { isExtensionAvailable, isNodeTypeSelected } from '@/shared/utils';
 import type { TableActions } from '@/white-editor';
 import type { Editor } from '@tiptap/react';
 
@@ -13,6 +13,7 @@ export interface UseTableConfig {
 
 const canAddTable = (editor: Editor | null): boolean => {
   if (!editor || !editor.isEditable) return false;
+  if (isNodeTypeSelected(editor, ['image'])) return false;
 
   return editor.can().insertTable();
 };

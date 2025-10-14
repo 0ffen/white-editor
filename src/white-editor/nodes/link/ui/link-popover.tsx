@@ -89,7 +89,7 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
           </LinkButton>
         </PopoverTrigger>
 
-        <PopoverContent className={cn('w-[300px] rounded-2xl px-2 py-2 pr-3', linkPopoverClassName)}>
+        <PopoverContent className={cn('we:w-[300px] we:rounded-2xl we:px-2 we:py-2 we:pr-3', linkPopoverClassName)}>
           <LinkMain
             url={url}
             setUrl={setUrl}

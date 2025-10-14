@@ -61,11 +61,11 @@ export const HighlightColorButton = React.forwardRef<HTMLButtonElement, Highligh
         onClick={handleClick}
         {...buttonProps}
         ref={ref}
-        className='h-6 w-6'
+        className='we:h-6 we:w-6'
       >
         {children ?? (
           <span
-            className={cn('h-full w-full rounded-4xl border')}
+            className={cn('we:h-full we:w-full we:rounded-4xl we:border')}
             style={
               { backgroundColor: highlightColor?.value, borderColor: highlightColor?.border } as React.CSSProperties
             }

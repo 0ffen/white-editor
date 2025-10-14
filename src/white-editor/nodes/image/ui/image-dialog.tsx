@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useCallback } from 'react';
 import { Loader2, XIcon } from 'lucide-react';
-import { handleImageUpload } from '@/shared';
+import { cn, handleImageUpload } from '@/shared';
 import {
   Button,
   Dialog,
@@ -16,12 +16,11 @@ import {
   type UploadOptions,
   ImageUploadButton,
   ImageUploadDragArea,
-  ImageUploadingProgress,
   useFileUpload,
   ImageEditor,
   useImageSave,
-  type ImageServerAPI,
   type ImageEditorRef,
+  ImageUploadingProgress,
 } from '@/white-editor';
 import type { Editor } from '@tiptap/react';
 
@@ -45,7 +44,6 @@ export interface ImageDialogProps extends Partial<ImageUploadConfig> {
   icon?: React.ReactNode;
   imageConfig?: ImageUploadConfig;
   editor?: Editor | null;
-  serverAPI?: ImageServerAPI;
   onImageInserted?: (url: string, caption?: string) => void;
 }
 
@@ -61,7 +59,6 @@ export function ImageDialog(props: ImageDialogProps) {
     onSuccess,
     icon,
     editor: providedEditor,
-    serverAPI,
     onImageInserted,
   } = props;
 
@@ -69,7 +66,6 @@ export function ImageDialog(props: ImageDialogProps) {
   // 이미지 저장 훅 사용
   const { saveImage } = useImageSave({
     editor: editor ?? undefined,
-    serverAPI,
     upload,
     onSuccess,
     onError,
@@ -79,6 +75,7 @@ export function ImageDialog(props: ImageDialogProps) {
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
   const [caption, setCaption] = React.useState<string>('');
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
+  const [activeMode, setActiveMode] = React.useState<string | null>(null);
 
   const imageEditorRef = React.useRef<ImageEditorRef>(null);
 
@@ -180,31 +177,41 @@ export function ImageDialog(props: ImageDialogProps) {
       <DialogTrigger asChild>
         <ImageUploadButton icon={icon} />
       </DialogTrigger>
-      <DialogContent className='max-h-[90vh] w-full min-w-[400px]' onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent
+        className='we:max-h-[90vh] we:w-full we:min-w-[400px]'
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Upload Image</DialogTitle>
         </DialogHeader>
 
         {previewUrl && (
-          <div className='relative flex w-full items-center justify-center overflow-y-auto'>
+          <div
+            className={cn(
+              'we:relative we:flex we:w-full we:items-center we:justify-center we:overflow-y-auto',
+              isSaving ? 'we:pointer-events-none we:opacity-60' : ''
+            )}
+          >
             <ImageEditor
               ref={imageEditorRef}
               imageUrl={previewUrl || ''}
               onCaptionChange={setCaption}
               defaultCaption={caption}
+              activeMode={activeMode}
+              setActiveMode={setActiveMode}
             />
             <Button
               type='button'
               variant='ghost'
               onClick={handleRemovePreview}
-              className='absolute top-12 right-2 z-10 h-8 w-8 cursor-pointer bg-white/10 hover:bg-white/20'
+              className='we:absolute we:top-12 we:right-2 we:z-10 we:h-8 we:w-8 we:cursor-pointer we:bg-white/10 we:hover:bg-white/20'
             >
-              <XIcon className='text-border' />
+              <XIcon className='we:text-border' />
             </Button>
           </div>
         )}
 
-        <div className='flex flex-col gap-2' onClick={handleClick}>
+        <div className='we:flex we:flex-col we:gap-2' onClick={handleClick}>
           {hasFiles && !previewUrl && (
             <div>
               {fileItems.map((fileItem) => (
@@ -237,14 +244,14 @@ export function ImageDialog(props: ImageDialogProps) {
           )}
         </div>
 
-        {hasFiles && previewUrl && (
+        {hasFiles && previewUrl && !activeMode && (
           <DialogFooter className=''>
             <Button type='button' variant='secondary' onClick={handleCancel} disabled={isSaving}>
               {cancelText || 'Cancel'}
             </Button>
 
-            <Button type='button' variant='default' onClick={handleSave} className='min-w-20' disabled={isSaving}>
-              {isSaving ? <Loader2 className='h-4 w-4 animate-spin' /> : saveText || 'Save'}
+            <Button type='button' variant='default' onClick={handleSave} className='we:min-w-20' disabled={isSaving}>
+              {isSaving ? <Loader2 className='we:h-4 we:w-4 we:animate-spin' /> : saveText || 'Upload'}
             </Button>
           </DialogFooter>
         )}

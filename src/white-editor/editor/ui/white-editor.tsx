@@ -1,20 +1,31 @@
 import * as React from 'react';
+import { useImperativeHandle, forwardRef } from 'react';
 
 import { Toolbar, TooltipProvider } from '@/shared/components';
-import { applyTheme } from '@/shared/utils';
-import { cn } from '@/shared/utils';
-import { useWhiteEditor, type WhiteEditorProps, defaultToolbarItems, EditorToolbar } from '@/white-editor';
+import { applyTheme, cn } from '@/shared/utils';
+import {
+  useWhiteEditor,
+  type WhiteEditorProps,
+  type UseWhiteEditorReturn,
+  defaultToolbarItems,
+  EditorToolbar,
+} from '@/white-editor';
 import { EditorContent, EditorContext } from '@tiptap/react';
+import '@/shared/styles/index.css';
 
-export function WhiteEditor<T>(props: WhiteEditorProps<T>) {
-  const { extension, toolbarItems, toolbarProps, contentClassName, editorClassName, footer, theme } = props;
+export type WhiteEditorRef = UseWhiteEditorReturn;
+
+export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>(function WhiteEditor<T = unknown>(
+  props: WhiteEditorProps<T>,
+  ref: React.Ref<WhiteEditorRef>
+) {
+  const { toolbarItems, toolbarProps, contentClassName, editorClassName, footer, theme, disabled, extension } = props;
 
   const toolbarRef = React.useRef<HTMLDivElement>(null);
-  const { editor, charactersCount } = useWhiteEditor<T>({
-    extension,
-    contentClassName,
-    ...props,
-  });
+  const editorHook = useWhiteEditor<T>(props);
+  const { editor, charactersCount } = editorHook;
+
+  useImperativeHandle(ref, () => editorHook, [editorHook]);
 
   /** 테마 적용 */
   React.useEffect(() => {
@@ -34,18 +45,26 @@ export function WhiteEditor<T>(props: WhiteEditorProps<T>) {
 
   return (
     <TooltipProvider>
-      <div className={cn('editor-wrapper', editorClassName)}>
+      <div className={cn('white-editor', editorClassName, disabled && 'we:opacity-60 we:pointer-events-none')}>
         <EditorContext.Provider value={{ editor }}>
           <Toolbar ref={toolbarRef} role='toolbar'>
             <div className={cn('toolbar-wrapper')}>{renderToolbar()}</div>
           </Toolbar>
           <EditorContent
             editor={editor}
-            className={cn('markdown prose dark:prose-invert max-w-full flex-1 overflow-y-auto', contentClassName)}
+            className={cn(
+              'markdown we:prose we:dark:prose-invert we:max-w-full we:flex-1 we:overflow-y-auto',
+              contentClassName
+            )}
           />
-          <div className='mt-auto flex flex-col justify-end gap-2 p-2'>
+          <div className='we:mt-auto we:flex we:flex-col we:justify-end we:gap-2 we:p-2'>
             {extension?.character?.show && (
-              <span className={cn('text-border flex justify-end text-sm select-none', extension?.character?.className)}>
+              <span
+                className={cn(
+                  'we:text-border we:text-sm we:flex we:justify-end we:select-none',
+                  extension?.character?.className
+                )}
+              >
                 {charactersCount}
                 {extension?.character?.limit && `/${extension.character.limit}`}
               </span>
@@ -56,4 +75,4 @@ export function WhiteEditor<T>(props: WhiteEditorProps<T>) {
       </div>
     </TooltipProvider>
   );
-}
+});

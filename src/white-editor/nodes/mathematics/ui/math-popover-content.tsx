@@ -47,8 +47,8 @@ export const MathPopoverContent = (props: Props) => {
   }, []);
 
   return (
-    <div className={cn('flex w-full flex-col gap-2', mathPopoverClassName)}>
-      <div className='flex w-full gap-1'>
+    <div className={cn('we:flex we:w-full we:flex-col we:gap-2', mathPopoverClassName)}>
+      <div className='we:flex we:w-full we:gap-1'>
         <Input
           type='text'
           placeholder={placeholder || 'Enter LaTeX expression'}
@@ -58,7 +58,7 @@ export const MathPopoverContent = (props: Props) => {
           autoComplete='off'
           autoCorrect='off'
           autoCapitalize='off'
-          className='w-full border-none'
+          className='we:w-full we:border-none'
           ref={inputRef}
         />
         <ButtonGroup orientation='horizontal'>
@@ -67,7 +67,7 @@ export const MathPopoverContent = (props: Props) => {
             onClick={setMath}
             disabled={!mathString && !isActive}
             title='Apply Math'
-            className='text-foreground/80'
+            className='we:text-foreground/80'
             size={'icon'}
           >
             <CornerDownLeft />
@@ -78,7 +78,7 @@ export const MathPopoverContent = (props: Props) => {
             title='Remove math'
             disabled={!mathString && !isActive}
             variant='ghost'
-            className='text-foreground/80'
+            className='we:text-foreground/80'
             size={'icon'}
           >
             <Trash2Icon />
@@ -87,8 +87,8 @@ export const MathPopoverContent = (props: Props) => {
       </div>
 
       {previewHtml && (
-        <div className='bg-muted/50 flex min-h-8 items-center justify-center rounded-md px-2 py-3'>
-          <div className='text-foreground text-sm' dangerouslySetInnerHTML={{ __html: previewHtml }} />
+        <div className='we:bg-muted/50 we:flex we:min-h-8 we:items-center we:justify-center we:rounded-md we:px-2 we:py-3'>
+          <div className='we:text-foreground we:text-sm' dangerouslySetInnerHTML={{ __html: previewHtml }} />
         </div>
       )}
     </div>

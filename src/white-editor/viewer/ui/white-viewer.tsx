@@ -1,15 +1,18 @@
 import React, { useMemo, useEffect } from 'react';
-import { cn } from '@/shared/utils';
-import { createViewerExtensions } from '@/shared/utils';
-import { useEditor, EditorContent, type JSONContent } from '@tiptap/react';
-import './viewer.css';
+import { cn, createViewerExtensions } from '@/shared/utils';
+import { EditorContent, useEditor, type JSONContent } from '@tiptap/react';
 
-interface WhiteViewerProps {
+import '@/shared/styles/viewer.css';
+
+export interface WhiteViewerProps {
   content: JSONContent;
   className?: string;
+  footer?: React.ReactNode;
 }
 
-export const WhiteViewer = React.memo(function WhiteViewer({ content, className }: WhiteViewerProps) {
+export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerProps) {
+  const { content, className, footer } = props;
+
   const extensions = useMemo(() => createViewerExtensions(), []);
 
   const editor = useEditor({
@@ -17,7 +20,12 @@ export const WhiteViewer = React.memo(function WhiteViewer({ content, className 
     editable: false,
     extensions,
     content,
-    shouldRerenderOnTransaction: false,
+    editorProps: {
+      attributes: {
+        spellcheck: 'false',
+        contenteditable: 'false',
+      },
+    },
   });
 
   useEffect(() => {
@@ -27,8 +35,12 @@ export const WhiteViewer = React.memo(function WhiteViewer({ content, className 
   }, [editor, content]);
 
   return (
-    <div className={cn('markdown prose dark:prose-invert readonly max-w-full', className)}>
-      <EditorContent editor={editor} />
+    <div className={cn('white-editor viewer', className)}>
+      <EditorContent
+        editor={editor}
+        className={cn('readonly we:prose we:dark:prose-invert we:max-w-full we:h-full markdown', className)}
+      />
+      {footer && <>{footer}</>}
     </div>
   );
 });

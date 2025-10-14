@@ -1,13 +1,14 @@
-import { createListConfig, createEditorExtensions, migrateMathStrings } from '@/shared/utils';
-import type { WhiteEditorProps } from '@/white-editor';
-import { useEditor, useEditorState } from '@tiptap/react';
+import { useCallback, useEffect, useRef } from 'react';
+import { createEditorExtensions } from '@/shared/utils';
+import type { MentionConfig, UseWhiteEditorReturn, WhiteEditorProps } from '@/white-editor';
+import { useEditor, useEditorState, type JSONContent, Editor } from '@tiptap/react';
 
-export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
+export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorReturn => {
   const {
     extension,
     contentClassName,
-    onChange,
     editorProps,
+    onChange,
     onUpdate,
     onBlur,
     onFocus,
@@ -17,12 +18,10 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
   } = props;
 
   // for mention
-  const mentionItems = extension?.mention?.data
-    ? createListConfig(extension.mention.data, {
-        id: extension.mention.id,
-        label: extension.mention.label,
-      })
-    : undefined;
+  const mentionDataRef = useRef<MentionConfig<T>>(extension?.mention);
+  useEffect(() => {
+    mentionDataRef.current = extension?.mention;
+  }, [extension?.mention]);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -32,42 +31,29 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
         autocomplete: 'off',
         autocorrect: 'off',
         autocapitalize: 'off',
+        spellcheck: 'false',
         'aria-label': 'Editor Content',
         class: contentClassName || '',
         ...(editorProps?.attributes || {}),
       },
       handleKeyDown: (view, event) => {
-        // 스페이스바 키 이벤트 처리
         if (event.key === ' ') {
-          //불필요한 paragraph 생성 방지
           return false;
         }
         return editorProps?.handleKeyDown?.(view, event);
       },
       ...(editorProps || {}),
     },
-    extensions: createEditorExtensions(mentionItems, extension?.character?.limit),
-    onCreate: ({ editor: currentEditor }) => {
-      migrateMathStrings(currentEditor);
-      onCreate?.(currentEditor);
-    },
+    extensions: createEditorExtensions(mentionDataRef, extension?.character?.limit),
+    onCreate: ({ editor: currentEditor }) => onCreate?.(currentEditor),
     onUpdate: ({ editor: currentEditor }) => {
-      const jsonContent = currentEditor.getJSON();
-      onUpdate?.(jsonContent);
-      onChange?.(jsonContent);
+      onUpdate?.(currentEditor);
+      onChange?.(currentEditor as Editor);
     },
-    onBlur: ({ editor: currentEditor }) => {
-      onBlur?.(currentEditor.getJSON());
-    },
-    onFocus: ({ editor: currentEditor }) => {
-      onFocus?.(currentEditor.getJSON());
-    },
-    onDestroy: () => {
-      onDestroy?.();
-    },
-    onSelectionUpdate: ({ editor: currentEditor }) => {
-      onSelectionUpdate?.(currentEditor);
-    },
+    onBlur: ({ editor: currentEditor }) => onBlur?.(currentEditor),
+    onFocus: ({ editor: currentEditor }) => onFocus?.(currentEditor),
+    onDestroy: () => onDestroy?.(),
+    onSelectionUpdate: ({ editor: currentEditor }) => onSelectionUpdate?.(currentEditor),
   });
 
   const editorState = useEditorState({
@@ -79,5 +65,31 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>) => {
 
   const charactersCount = editorState?.charactersCount || 0;
 
-  return { editor, charactersCount };
+  const getHTML = useCallback(() => editor?.getHTML() || '', [editor]);
+  const getJSON = useCallback((): JSONContent => editor?.getJSON() || {}, [editor]);
+  const getText = useCallback(() => editor?.getText() || '', [editor]);
+  const setContent = useCallback(
+    (content: string | JSONContent) => {
+      editor?.commands.setContent(content);
+    },
+    [editor]
+  );
+
+  const focus = useCallback(() => editor?.commands.focus(), [editor]);
+  const blur = useCallback(() => editor?.commands.blur(), [editor]);
+  const clear = useCallback(() => editor?.commands.clearContent(true), [editor]);
+  const isEmpty = editor?.isEmpty ?? true;
+
+  return {
+    editor,
+    charactersCount,
+    getHTML,
+    getJSON,
+    getText,
+    setContent,
+    focus,
+    blur,
+    isEmpty,
+    clear,
+  };
 };

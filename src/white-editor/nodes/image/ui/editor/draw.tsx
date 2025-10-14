@@ -43,17 +43,17 @@ export function DrawEditor(props: DrawEditorProps) {
   );
 
   return (
-    <div className='flex flex-col items-center justify-center gap-4 space-y-4 p-2'>
-      <div className='flex w-full flex-col space-y-2'>
-        <h3 className='text-muted-foreground text-xs font-medium'>Brush Color</h3>
-        <div className='flex flex-wrap items-center gap-3'>
+    <div className='we:flex we:flex-col we:items-center we:justify-center we:gap-4 we:space-y-4 we:p-2'>
+      <div className='we:flex we:w-full we:flex-col we:space-y-2'>
+        <h3 className='we:text-muted-foreground we:text-xs we:font-medium'>Brush Color</h3>
+        <div className='we:flex we:flex-wrap we:items-center we:gap-3'>
           {EDITOR_COLORS.map((color) => (
             <Button
               type='button'
               key={color.value}
               className={cn(
-                'h-6 w-6 cursor-pointer rounded-4xl border transition-all',
-                drawingColor === color.hex && 'outline-primary outline-2'
+                'we:h-6 we:w-6 we:cursor-pointer we:rounded-4xl we:border we:transition-all',
+                drawingColor === color.hex && 'we:ring-2 we:ring-blue-500 we:ring-offset-0'
               )}
               style={{ backgroundColor: color.value, borderColor: color.border }}
               onClick={() => handleDrawingColorChange(color.hex)}
@@ -64,9 +64,9 @@ export function DrawEditor(props: DrawEditorProps) {
           ))}
         </div>
       </div>
-      <div className='flex w-full flex-col space-y-2'>
-        <h3 className='text-muted-foreground text-xs font-medium'>Brush Size</h3>
-        <div className='flex items-center gap-3'>
+      <div className='we:flex we:w-full we:flex-col we:space-y-2'>
+        <h3 className='we:text-muted-foreground we:text-xs we:font-medium'>Brush Size</h3>
+        <div className='we:flex we:items-center we:gap-3'>
           <Slider
             max={50}
             step={10}
@@ -76,7 +76,7 @@ export function DrawEditor(props: DrawEditorProps) {
               handleDrawingRangeChange(value);
             }}
           />
-          <span className='text-muted-foreground w-8 text-center text-xs'>{drawingRange}</span>
+          <span className='we:text-muted-foreground we:w-8 we:text-center we:text-xs'>{drawingRange}</span>
         </div>
       </div>
     </div>

@@ -1,7 +1,4 @@
 import './shared/styles/index.css';
-import './shared/styles/editor.css';
-import './shared/styles/markdown.css';
-import './shared/styles/github-dark.css';
 
 //editor, viewer
 export { WhiteEditor, useWhiteEditor, WhiteViewer } from './white-editor';
@@ -33,6 +30,8 @@ export type {
   WhiteEditorExtensions,
   TipTapEditorOptions,
   EditorExtensions,
+  WhiteEditorRef,
+  UseWhiteEditorReturn,
 } from './white-editor';
 
 //tiptap
@@ -40,4 +39,10 @@ export type { JSONContent } from '@tiptap/react';
 export type { Editor } from '@tiptap/react';
 
 //utils
-export { getHtmlContent, createEmptyContent, setCSSVariables } from './shared/utils';
+export {
+  getHtmlContent,
+  convertHtmlToJson,
+  getGeneratedText,
+  createEmptyContent,
+  setCSSVariables,
+} from './shared/utils';

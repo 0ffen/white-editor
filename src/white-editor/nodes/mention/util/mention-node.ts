@@ -1,8 +1,13 @@
-import type { ListItemConfig } from '@/shared/utils';
+import type { RefObject } from 'react';
 import Mention, { type MentionOptions } from '@tiptap/extension-mention';
 import mentionSuggestion from './mention-suggestion';
+import type { MentionConfig } from '../type/mention.type';
 
-export const MentionNode = <T>(mentionList: ListItemConfig<T>) =>
+interface MentionNodeProps<T> {
+  mentionDataRef: RefObject<MentionConfig<T> | undefined>;
+}
+
+export const MentionNode = <T>({ mentionDataRef }: MentionNodeProps<T>) =>
   Mention.configure({
-    suggestion: mentionSuggestion({ mentionList }) as MentionOptions['suggestion'],
+    suggestion: mentionSuggestion({ mentionDataRef }) as MentionOptions['suggestion'],
   });

@@ -8,6 +8,10 @@ import { createViewerExtensions } from './extensions';
  * @returns HTML
  */
 export const getHtmlContent = (content: JSONContent) => {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+
   if (!content) return '';
   const extensions = createViewerExtensions();
   return generateHTML(content, extensions);
