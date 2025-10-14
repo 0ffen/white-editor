@@ -5,3 +5,4 @@ export * from './theme';
 export * from './extensions';
 export * from './get-html-content';
 export * from './create-empty-content';
+export * from './generate-text';
