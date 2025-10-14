@@ -8,19 +8,13 @@ export default function App() {
   const [content, setContent] = useState<JSONContent>(createEmptyContent());
   const editorRef = useRef<WhiteEditorRef>(null);
 
-  const handleSave = () => {
-    // 버튼 클릭 시 ref.current를 통해 에디터의 메서드를 직접 호출합니다.
+  const handleClear = () => {
     if (editorRef.current) {
-      const jsonData = editorRef.current.getJSON();
-      console.log('에디터 JSON 데이터:', jsonData);
-
-      // 에디터 내용 비우기
       editorRef.current.clear();
     }
   };
 
   const handleInsertText = () => {
-    // TipTap Editor 인스턴스를 통한 직접 제어
     editorRef.current?.editor?.commands.insertContent('Hello World!');
   };
 
@@ -45,7 +39,6 @@ export default function App() {
             contentClassName='we:h-full'
             onChange={() => {
               if (editorRef.current) {
-                console.log(editorRef.current.getHTML());
                 setContent(editorRef.current.getJSON());
               }
             }}
@@ -68,12 +61,16 @@ export default function App() {
               },
               character: {
                 show: true,
+                limit: 1000,
               },
             }}
             footer={
-              <div className='we:flex we:justify-end'>
-                <Button variant='default' className='we:w-fit' onClick={handleInsertText}>
-                  저장
+              <div className='we:flex we:justify-end we:gap-2'>
+                <Button variant='secondary' className='we:w-fit' onClick={handleInsertText}>
+                  텍스트 삽입
+                </Button>
+                <Button variant='secondary' className='we:w-fit' onClick={handleClear}>
+                  초기화
                 </Button>
               </div>
             }
