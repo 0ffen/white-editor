@@ -1,6 +1,6 @@
+import type { RefObject } from 'react';
 import { all, createLowlight } from 'lowlight';
-import { type ListItemConfig } from '@/shared/utils';
-import { MentionNode, CodeBlock, ResizableImage, CustomTableHeader } from '@/white-editor';
+import { MentionNode, CodeBlock, ResizableImage, CustomTableHeader, type MentionConfig } from '@/white-editor';
 
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
@@ -17,7 +17,10 @@ import { ReactNodeViewRenderer } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
 // 에디터 전용 extensions
-export function createEditorExtensions<T>(mentionItems?: ListItemConfig<T>, maxCharacters?: number) {
+export function createEditorExtensions<T>(
+  mentionDataRef?: RefObject<MentionConfig<T> | undefined>,
+  maxCharacters?: number
+) {
   const lowlight = createLowlight(all);
 
   return [
@@ -58,7 +61,7 @@ export function createEditorExtensions<T>(mentionItems?: ListItemConfig<T>, maxC
       blockOptions: {},
       inlineOptions: {},
     }),
-    ...(mentionItems ? [MentionNode(mentionItems)] : []),
+    ...(mentionDataRef ? [MentionNode({ mentionDataRef })] : []),
   ];
 }
 

@@ -25,8 +25,8 @@ interface MentionSuggestionConfig {
 
 interface MentionConfig<T> {
   data: T[] | null;
-  id: keyof T;
-  label: keyof T;
+  id: string;
+  label: string;
 }
 
 export type { SuggestionProps, KeyDownProps, MentionSuggestionConfig, MentionConfig };
