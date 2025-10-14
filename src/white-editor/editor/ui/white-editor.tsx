@@ -1,20 +1,31 @@
 import * as React from 'react';
+import { useImperativeHandle, forwardRef } from 'react';
 
 import { Toolbar, TooltipProvider } from '@/shared/components';
 import { applyTheme, cn } from '@/shared/utils';
-import { useWhiteEditor, type WhiteEditorProps, defaultToolbarItems, EditorToolbar } from '@/white-editor';
+import {
+  useWhiteEditor,
+  type WhiteEditorProps,
+  type UseWhiteEditorReturn,
+  defaultToolbarItems,
+  EditorToolbar,
+} from '@/white-editor';
 import { EditorContent, EditorContext } from '@tiptap/react';
 import '@/shared/styles/index.css';
 
-export function WhiteEditor<T>(props: WhiteEditorProps<T>) {
-  const { extension, toolbarItems, toolbarProps, contentClassName, editorClassName, footer, theme, disabled } = props;
+export type WhiteEditorRef = UseWhiteEditorReturn;
+
+export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>(function WhiteEditor<T = unknown>(
+  props: WhiteEditorProps<T>,
+  ref: React.Ref<WhiteEditorRef>
+) {
+  const { toolbarItems, toolbarProps, contentClassName, editorClassName, footer, theme, disabled, extension } = props;
 
   const toolbarRef = React.useRef<HTMLDivElement>(null);
-  const { editor, charactersCount } = useWhiteEditor<T>({
-    extension,
-    contentClassName,
-    ...props,
-  });
+  const editorHook = useWhiteEditor<T>(props);
+  const { editor, charactersCount } = editorHook;
+
+  useImperativeHandle(ref, () => editorHook, [editorHook]);
 
   /** 테마 적용 */
   React.useEffect(() => {
@@ -64,4 +75,4 @@ export function WhiteEditor<T>(props: WhiteEditorProps<T>) {
       </div>
     </TooltipProvider>
   );
-}
+});
