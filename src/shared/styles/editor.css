@@ -1,7 +1,8 @@
 .white-editor {
   border: 1px solid var(--we-border);
   border-radius: var(--we-radius-md);
-  min-height: 100px;
+  min-height: 0px;
+  wid1th: 100%;
   height: 100%;
   background-color: var(--we-background);
   display: flex;
@@ -20,7 +21,7 @@
     padding: 2rem 2rem;
     flex: 1;
     overflow-y: auto;
-    min-height: 200px;
+    min-height: 0px;
   }
 
   .ProseMirror:focus {

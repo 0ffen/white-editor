@@ -7,10 +7,11 @@ import '@/shared/styles/viewer.css';
 export interface WhiteViewerProps {
   content: JSONContent;
   className?: string;
+  footer?: React.ReactNode;
 }
 
 export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerProps) {
-  const { content, className } = props;
+  const { content, className, footer } = props;
 
   const extensions = useMemo(() => createViewerExtensions(), []);
 
@@ -39,6 +40,7 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
         editor={editor}
         className={cn('readonly we:prose we:dark:prose-invert we:max-w-full we:h-full markdown', className)}
       />
+      {footer && <>{footer}</>}
     </div>
   );
 });
