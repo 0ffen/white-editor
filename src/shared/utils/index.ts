@@ -7,3 +7,4 @@ export * from './get-html-content';
 export * from './create-empty-content';
 export * from './generate-text';
 export * from './convert-html-to-json';
+export * from './markdown-to-html';
