@@ -45,4 +45,5 @@ export {
   getGeneratedText,
   createEmptyContent,
   setCSSVariables,
+  markdownToHtml,
 } from './shared/utils';
