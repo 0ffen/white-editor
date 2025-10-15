@@ -1,13 +1,4 @@
 .white-editor .readonly {
-  .ProseMirror {
-    padding: 0.5rem;
-    flex: 1;
-    overflow-y: auto;
-    min-height: 10px;
-  }
-}
-
-.white-editor .readonly {
   user-select: text !important;
   pointer-events: auto !important;
 }
