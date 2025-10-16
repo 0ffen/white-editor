@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useImperativeHandle, forwardRef } from 'react';
+import { useImperativeHandle, forwardRef, useMemo } from 'react';
 
 import { Toolbar, TooltipProvider } from '@/shared/components';
 import { applyTheme, cn } from '@/shared/utils';
@@ -48,13 +48,25 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
     }
   }, [theme]);
 
+  /** toolbarProps에 extension.imageUpload 병합 */
+  const mergedToolbarProps = useMemo(
+    () => ({
+      ...toolbarProps,
+      image: {
+        ...toolbarProps?.image,
+        ...extension?.imageUpload,
+      },
+    }),
+    [toolbarProps, extension?.imageUpload]
+  );
+
   /** 툴바 렌더링 */
   const renderToolbar = () => {
     if (toolbarItems) {
-      return <EditorToolbar toolbarItems={toolbarItems} toolbarProps={toolbarProps} />;
+      return <EditorToolbar toolbarItems={toolbarItems} toolbarProps={mergedToolbarProps} />;
     }
     /** 기본 툴바 */
-    return <EditorToolbar toolbarItems={defaultToolbarItems} toolbarProps={toolbarProps} />;
+    return <EditorToolbar toolbarItems={defaultToolbarItems} toolbarProps={mergedToolbarProps} />;
   };
 
   return (

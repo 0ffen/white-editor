@@ -42,7 +42,6 @@ export interface ImageDialogProps extends Partial<ImageUploadConfig> {
   cancelText?: string;
   saveText?: string;
   icon?: React.ReactNode;
-  imageConfig?: ImageUploadConfig;
   editor?: Editor | null;
   onImageInserted?: (url: string, caption?: string) => void;
 }

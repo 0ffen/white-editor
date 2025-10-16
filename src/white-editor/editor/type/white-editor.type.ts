@@ -11,6 +11,11 @@ interface EditorExtensions<T = Record<string, unknown>> {
     limit?: number;
     className?: string;
   };
+  imageUpload?: {
+    upload?: (file: File) => Promise<string>;
+    onError?: (error: Error) => void;
+    onSuccess?: (url: string) => void;
+  };
 }
 
 interface WhiteEditorUIProps {

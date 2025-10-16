@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Check, Minus, Plus, RefreshCcw } from 'lucide-react';
+
 import TuiImageEditor from 'tui-image-editor';
 import { Button, Textarea } from '@/shared';
 import { base64ToBlob } from '@/shared/utils/base64-to-blob';
-import { ImageEditorToolbar, CropEditor, DrawEditor, ShapeEditor, TextEditor } from '@/white-editor';
+import { CropEditor, DrawEditor, ImageEditorToolbar, ShapeEditor, TextEditor } from '@/white-editor';
 import { useImageZoom } from '@/white-editor/nodes/image/hook';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
@@ -30,7 +31,7 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
   const [caption, setCaption] = useState<string>(defaultCaption);
 
   const { zoomLevel, handleZoomIn, handleZoomOut, handleZoomReset } = useImageZoom();
-  const BASE_WIDTH = 750;
+  const BASE_WIDTH = 720;
   const BASE_HEIGHT = 400;
   const scale = zoomLevel / 100;
 
