@@ -1,25 +1,12 @@
 import * as React from 'react';
-import { useCallback } from 'react';
-import { Loader2, XIcon } from 'lucide-react';
 import { cn, handleImageUpload } from '@/shared';
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/shared/components';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import {
   type UploadOptions,
   ImageUploadButton,
   ImageUploadDragArea,
   useFileUpload,
-  ImageEditor,
-  useImageSave,
-  type ImageEditorRef,
   ImageUploadingProgress,
 } from '@/white-editor';
 import type { Editor } from '@tiptap/react';
@@ -48,8 +35,6 @@ export interface ImageDialogProps extends Partial<ImageUploadConfig> {
 
 export function ImageDialog(props: ImageDialogProps) {
   const {
-    cancelText,
-    saveText,
     accept = 'image/*',
     maxSize,
     limit = 1,
@@ -63,43 +48,82 @@ export function ImageDialog(props: ImageDialogProps) {
 
   const { editor } = useTiptapEditor(providedEditor);
 
-  // 이미지 저장 훅 사용
-  const { saveImage } = useImageSave({
-    editor: editor ?? undefined,
-    upload,
-    onSuccess,
-    onError,
-  });
-
   const [isOpen, setIsOpen] = React.useState(false);
-  const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
-  const [caption, setCaption] = React.useState<string>('');
-  const [isSaving, setIsSaving] = React.useState<boolean>(false);
-  const [activeMode, setActiveMode] = React.useState<string | null>(null);
-
-  const imageEditorRef = React.useRef<ImageEditorRef>(null);
-
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const insertedFileIds = React.useRef<Set<string>>(new Set());
+
+  const wrappedUpload = React.useCallback(
+    async (file: File, onProgress: (event: { progress: number }) => void, signal: AbortSignal) => {
+      if (upload) {
+        let currentProgress = 0;
+        const progressInterval = setInterval(() => {
+          currentProgress += 10;
+          if (currentProgress <= 90) {
+            onProgress({ progress: currentProgress });
+          }
+        }, 100);
+
+        try {
+          const url = await upload(file);
+          clearInterval(progressInterval);
+          onProgress({ progress: 100 });
+          return url;
+        } catch (error) {
+          clearInterval(progressInterval);
+          throw error;
+        }
+      } else {
+        return handleImageUpload(file, onProgress, signal);
+      }
+    },
+    [upload]
+  );
 
   const uploadOptions: UploadOptions = {
     maxSize: maxSize || 50 * 1024 * 1024,
     limit,
     accept,
-    upload: upload || handleImageUpload,
+    upload: wrappedUpload,
     onSuccess,
     onError,
   };
 
-  const { fileItems, uploadFiles, removeFileItem, clearAllFiles } = useFileUpload(uploadOptions);
+  const { fileItems, uploadFiles, removeFileItem, clearFileItemsOnly } = useFileUpload(uploadOptions);
+
+  // 업로드 완료 시 자동으로 에디터에 삽입
+  React.useEffect(() => {
+    const successfulItems = fileItems.filter(
+      (item) => item.status === 'success' && item.url && !insertedFileIds.current.has(item.id)
+    );
+
+    if (successfulItems.length > 0 && editor) {
+      successfulItems.forEach((item) => {
+        if (item.url) {
+          (editor as Editor).commands.setResizableImage({
+            src: item.url,
+            alt: 'Image',
+            caption: '',
+            width: '500px',
+            height: 'auto',
+          });
+          onImageInserted?.(item.url, '');
+          insertedFileIds.current.add(item.id);
+        }
+      });
+
+      setTimeout(() => {
+        setIsOpen(false);
+        // URL을 revoke하지 않고 파일 목록만 비움 (이미지를 나중에 편집할 수 있도록)
+        clearFileItemsOnly();
+        insertedFileIds.current.clear();
+      }, 300);
+    }
+  }, [fileItems, editor, onImageInserted, clearFileItemsOnly]);
 
   const handleUpload = async (files: File[]) => {
     try {
-      const urls = await uploadFiles(files);
-
-      if (urls.length > 0) {
-        setPreviewUrl(urls[0]);
-        onSuccess?.(urls[0]);
-      }
+      await uploadFiles(files);
+      // 업로드는 useFileUpload에서 처리되며, 완료되면 에디터에 삽입됨
     } catch (error) {
       onError?.(error as Error);
     }
@@ -121,57 +145,13 @@ export function ImageDialog(props: ImageDialogProps) {
     }
   };
 
-  const handleRemovePreview = useCallback(() => {
-    clearAllFiles();
-    setPreviewUrl(null);
-    setCaption('');
-  }, [clearAllFiles]);
-
-  const handleCancel = () => {
-    handleRemovePreview();
-    setIsOpen(false);
-  };
-
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     if (!open) {
-      handleRemovePreview();
-      setCaption('');
+      // 다이얼로그가 닫힐 때는 업로드 중인 것만 취소하고 URL은 revoke하지 않음
+      clearFileItemsOnly();
     }
   };
-
-  const handleSave = useCallback(async () => {
-    if (!editor || !previewUrl || fileItems.length === 0) {
-      return;
-    }
-    setIsSaving(true);
-    try {
-      const editedImageBlob = await imageEditorRef.current?.getEditedImageAsBlob();
-      if (editedImageBlob) {
-        const file = new File([editedImageBlob], 'edited-image.png', { type: editedImageBlob.type });
-
-        const filename = `${file.name}.png`;
-        const currentCaption = caption;
-
-        const result = await saveImage({
-          imageData: file,
-          caption: currentCaption,
-          filename,
-          insertToEditor: true,
-          onImageInserted,
-        });
-
-        if (result.success) {
-          setIsOpen(false);
-          handleRemovePreview();
-        }
-      }
-    } catch (error) {
-      onError?.(error instanceof Error ? error : new Error('Failed to save image'));
-    } finally {
-      setIsSaving(false);
-    }
-  }, [editor, previewUrl, fileItems, caption, saveImage, onImageInserted, handleRemovePreview, onError]);
 
   const hasFiles = fileItems.length > 0;
 
@@ -181,41 +161,15 @@ export function ImageDialog(props: ImageDialogProps) {
         <ImageUploadButton icon={icon} />
       </DialogTrigger>
       <DialogContent
-        className={cn('we:max-h-[95vh]', previewUrl ? 'we:max-w-[800px]' : 'we:max-w-[500px] we:min-w-[400px]')}
+        className={cn('we:max-h-[95vh] we:max-w-[500px] we:min-w-[400px]')}
         onInteractOutside={(e) => e.preventDefault()}
       >
         <DialogHeader>
           <DialogTitle>Upload Image</DialogTitle>
         </DialogHeader>
 
-        {previewUrl && (
-          <div
-            className={cn(
-              'we:relative we:flex we:w-full we:items-center we:justify-center we:overflow-auto',
-              isSaving ? 'we:pointer-events-none we:opacity-60' : ''
-            )}
-          >
-            <ImageEditor
-              ref={imageEditorRef}
-              imageUrl={previewUrl || ''}
-              onCaptionChange={setCaption}
-              defaultCaption={caption}
-              activeMode={activeMode}
-              setActiveMode={setActiveMode}
-            />
-            <Button
-              type='button'
-              variant='ghost'
-              onClick={handleRemovePreview}
-              className='we:absolute we:top-12 we:right-2 we:z-10 we:h-8 we:w-8 we:cursor-pointer we:bg-white/10 we:hover:bg-white/20'
-            >
-              <XIcon className='we:text-border' />
-            </Button>
-          </div>
-        )}
-
         <div className='we:flex we:flex-col we:gap-2' onClick={handleClick}>
-          {hasFiles && !previewUrl && (
+          {hasFiles && (
             <div>
               {fileItems.map((fileItem) => (
                 <ImageUploadingProgress
@@ -223,7 +177,6 @@ export function ImageDialog(props: ImageDialogProps) {
                   fileItem={fileItem}
                   onRemove={() => {
                     removeFileItem(fileItem.id);
-                    setPreviewUrl(null);
                   }}
                 />
               ))}
@@ -246,18 +199,6 @@ export function ImageDialog(props: ImageDialogProps) {
             </>
           )}
         </div>
-
-        {hasFiles && previewUrl && !activeMode && (
-          <DialogFooter className=''>
-            <Button type='button' variant='secondary' onClick={handleCancel} disabled={isSaving}>
-              {cancelText || 'Cancel'}
-            </Button>
-
-            <Button type='button' variant='default' onClick={handleSave} className='we:min-w-20' disabled={isSaving}>
-              {isSaving ? <Loader2 className='we:h-4 we:w-4 we:animate-spin' /> : saveText || 'Upload'}
-            </Button>
-          </DialogFooter>
-        )}
       </DialogContent>
     </Dialog>
   );
