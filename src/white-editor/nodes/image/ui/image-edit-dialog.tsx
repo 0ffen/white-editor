@@ -42,10 +42,7 @@ export function ImageEditDialog(props: ImageEditDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent
-        className='we:max-h-[90vh] we:w-full we:min-w-[600px]'
-        onInteractOutside={(e) => e.preventDefault()}
-      >
+      <DialogContent className='we:max-h-[90vh] we:min-w-[600px]' onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Edit Image</DialogTitle>
         </DialogHeader>

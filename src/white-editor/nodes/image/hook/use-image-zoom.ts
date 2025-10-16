@@ -17,6 +17,7 @@ export interface UseImageZoomOptions {
   maxZoom?: number;
   zoomStep?: number;
   onZoomChange?: (zoomLevel: number) => void;
+  onZoomReset?: () => void;
 }
 
 /**
@@ -24,7 +25,7 @@ export interface UseImageZoomOptions {
  * @description 이미지 확대/축소 기능을 제공하는 훅
  */
 export function useImageZoom(options: UseImageZoomOptions = {}): ImageZoomState & ImageZoomHandlers {
-  const { initialZoom = 100, minZoom = 25, maxZoom = 500, zoomStep = 25, onZoomChange } = options;
+  const { initialZoom = 100, minZoom = 25, maxZoom = 500, zoomStep = 25, onZoomChange, onZoomReset } = options;
 
   const [zoomLevel, setZoomLevelState] = useState<number>(initialZoom);
 
@@ -47,7 +48,8 @@ export function useImageZoom(options: UseImageZoomOptions = {}): ImageZoomState 
 
   const handleZoomReset = useCallback(() => {
     setZoomLevel(initialZoom);
-  }, [initialZoom, setZoomLevel]);
+    onZoomReset?.();
+  }, [initialZoom, setZoomLevel, onZoomReset]);
 
   return {
     zoomLevel,
