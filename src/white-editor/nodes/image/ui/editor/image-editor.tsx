@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
-import { Check } from 'lucide-react';
+import { Check, Minus, Plus, RefreshCcw } from 'lucide-react';
 import TuiImageEditor from 'tui-image-editor';
 import { Button, Textarea } from '@/shared';
 import { ImageEditorToolbar, CropEditor, DrawEditor, ShapeEditor, TextEditor } from '@/white-editor';
+import { useImageZoom, useImageDrag } from '@/white-editor/nodes/image/hook';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
 export interface ImageEditorRef {
@@ -26,6 +27,34 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
   const [drawingColor, setDrawingColor] = useState<string>('#000000');
   const [drawingRange, setDrawingRange] = useState<number>(10);
   const [caption, setCaption] = useState<string>(defaultCaption);
+
+  // 확대/축소 훅 사용
+  const { zoomLevel, handleZoomIn, handleZoomOut, handleZoomReset } = useImageZoom({
+    onZoomChange: (newZoom: number) => {
+      if (newZoom <= 100) {
+        resetDragOffset();
+      }
+    },
+  });
+
+  // 드래그 훅 사용 (더 제한적인 드래그 범위)
+  const { isDragging, dragOffset, handleMouseDown, resetDragOffset } = useImageDrag({
+    zoomLevel,
+    maxOffset: 200, // 드래그 범위를 더 제한적으로 설정
+  });
+
+  // 확대/축소 및 드래그 레벨 변경 시 TuiImageEditor 컨테이너에 CSS transform 적용
+  useEffect(() => {
+    if (rootEl.current) {
+      const container = rootEl.current;
+      const scale = zoomLevel / 100;
+
+      // TuiImageEditor 컨테이너에 직접 transform 적용
+      container.style.transform = `scale(${scale}) translate(${dragOffset.x}px, ${dragOffset.y}px)`;
+      container.style.transformOrigin = 'center center';
+      container.style.transition = isDragging ? 'none' : 'transform 0.2s ease-in-out';
+    }
+  }, [zoomLevel, dragOffset, isDragging]);
 
   useEffect(() => {
     if (rootEl.current) {
@@ -146,9 +175,33 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
       <ImageEditorToolbar editorRef={editorRef} activeMode={activeMode} handleModeChange={handleModeChange} />
       {/* Image */}
       <div
-        ref={rootEl}
-        className='we:bg-border we:flex we:h-[300px] we:w-full we:items-center we:justify-center we:rounded'
-      />
+        className='we:overflow-auto we:max-h-[400px] we:rounded we:border we:bg-border we:relative'
+        onMouseDown={handleMouseDown}
+        style={{
+          cursor: zoomLevel > 100 ? (isDragging ? 'grabbing' : 'grab') : 'default',
+          userSelect: 'none',
+        }}
+      >
+        <div ref={rootEl} className='we:flex we:h-[300px] we:w-full we:items-center we:justify-center we:rounded' />
+
+        {/* 확대/축소 컨트롤 */}
+        <div
+          className='we:flex we:items-center we:gap-2 we:mt-2 we:absolute we:top-0 we:left-2 we:bg-accent we:border we:rounded-lg we:z-10'
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <Button type='button' onClick={handleZoomOut} disabled={zoomLevel <= 25} size='sm'>
+            <Minus />
+          </Button>
+          <span className='we:text-sm we:min-w-[50px] we:text-center'>{zoomLevel}%</span>
+          <Button type='button' onClick={handleZoomIn} disabled={zoomLevel >= 500} size='sm'>
+            <Plus />
+          </Button>
+          <Button type='button' onClick={handleZoomReset} className='we:h-fit we:w-fit'>
+            <RefreshCcw />
+          </Button>
+        </div>
+      </div>
+
       {!activeMode && (
         <div className='we:mx-auto we:mt-4 we:flex we:w-full we:flex-col we:space-y-4 we:p-2'>
           <div className='we:flex we:w-full we:flex-col we:space-y-2'>
