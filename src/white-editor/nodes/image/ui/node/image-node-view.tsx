@@ -108,6 +108,15 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
     setDragOffset({ x: 0, y: 0 });
   }, []);
 
+  const handleImageDoubleClick = useCallback(() => {
+    if (zoomLevel === 100) {
+      setZoomLevel(200);
+    } else {
+      setZoomLevel(100);
+      setDragOffset({ x: 0, y: 0 });
+    }
+  }, [zoomLevel]);
+
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (zoomLevel > 100) {
@@ -235,14 +244,14 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           }}
         >
           <DialogTitle className='we:sr-only'>View Image</DialogTitle>
-          <DialogContent className='we:mx-auto we:justify-center we:max-w-[90vw] we:max-h-[90vh] we:w-fit we:h-fit we:overflow-hidden'>
+          <DialogContent className='we:mx-auto we:justify-center we:max-w-[90vw] we:w-max we:max-h-[90vh] we:h-fit we:overflow-hidden'>
             <div className='we:flex we:flex-col we:items-center we:gap-4'>
               <div
                 className='we:relative we:overflow-auto we:max-h-[70vh] we:w-fit we:rounded we:border we:bg-border/20 we:border-none'
                 onMouseDown={handleMouseDown}
                 style={{ cursor: zoomLevel > 100 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
               >
-                <div className='we:p-4 we:min-h-[400px] we:flex we:items-center we:justify-center'>
+                <div className='we:p-0 we:flex we:items-center we:justify-center'>
                   <img
                     src={src}
                     alt={alt}
@@ -253,6 +262,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
                       transformOrigin: 'center center',
                     }}
                     draggable={false}
+                    onDoubleClick={handleImageDoubleClick}
                   />
                 </div>
               </div>
