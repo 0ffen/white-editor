@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
-import { cn, Dialog, DialogContent, DialogTitle } from '@/shared';
+import { Minus, Plus, RefreshCcw } from 'lucide-react';
+import { Button, cn, Dialog, DialogContent, DialogTitle } from '@/shared';
 import {
   useImageEdit,
   useImageHover,
@@ -24,9 +25,13 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
 
   const [_align, setAlign] = useState<AlignType>(textAlign || 'center');
 
-  const [currentWidth, setCurrentWidth] = useState<string>(width || '300px');
+  const [currentWidth, setCurrentWidth] = useState<string>(width || '500px');
   const [currentHeight, setCurrentHeight] = useState<string>(height || 'auto');
   const [isViewerImageDialogOpen, setIsViewerImageDialogOpen] = useState<boolean>(false);
+  const [zoomLevel, setZoomLevel] = useState<number>(100);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
+  const [dragOffset, setDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   useEffect(() => {
     if (textAlign && textAlign !== _align) setAlign(textAlign as AlignType);
@@ -76,6 +81,90 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
     },
     [props]
   );
+
+  const handleZoomIn = useCallback(() => {
+    setZoomLevel((prev) => {
+      const newZoom = Math.min(prev + 25, 500);
+      // 확대 시 드래그 오프셋을 조정하여 이미지가 중앙에 유지되도록
+      if (newZoom > 100 && prev <= 100) {
+        setDragOffset({ x: 0, y: 0 });
+      }
+      return newZoom;
+    });
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setZoomLevel((prev) => {
+      const newZoom = Math.max(prev - 25, 25);
+      if (newZoom <= 100) {
+        setDragOffset({ x: 0, y: 0 });
+      }
+      return newZoom;
+    });
+  }, []);
+
+  const handleZoomReset = useCallback(() => {
+    setZoomLevel(100);
+    setDragOffset({ x: 0, y: 0 });
+  }, []);
+
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (zoomLevel > 100) {
+        e.preventDefault();
+        setIsDragging(true);
+        setDragStart({ x: e.clientX, y: e.clientY });
+      }
+    },
+    [zoomLevel]
+  );
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (isDragging && dragStart) {
+        e.preventDefault();
+        const deltaX = e.clientX - dragStart.x;
+        const deltaY = e.clientY - dragStart.y;
+
+        setDragOffset((prev) => {
+          const newX = prev.x + deltaX;
+          const newY = prev.y + deltaY;
+
+          const maxOffset = 400;
+          const constrainedX = Math.max(-maxOffset, Math.min(maxOffset, newX));
+          const constrainedY = Math.max(-maxOffset, Math.min(maxOffset, newY));
+
+          return {
+            x: constrainedX,
+            y: constrainedY,
+          };
+        });
+
+        setDragStart({ x: e.clientX, y: e.clientY });
+      }
+    },
+    [isDragging, dragStart]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+    setDragStart(null);
+  }, []);
+
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    } else {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
     <NodeViewWrapper
@@ -135,17 +224,56 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
       )}
 
       {isViewerImageDialogOpen && (
-        <Dialog open={isViewerImageDialogOpen} onOpenChange={setIsViewerImageDialogOpen}>
+        <Dialog
+          open={isViewerImageDialogOpen}
+          onOpenChange={(open) => {
+            setIsViewerImageDialogOpen(open);
+            if (!open) {
+              setZoomLevel(100);
+              setDragOffset({ x: 0, y: 0 });
+            }
+          }}
+        >
           <DialogTitle className='we:sr-only'>View Image</DialogTitle>
-          <DialogContent className='we:mx-auto we:justify-center'>
-            <img
-              src={src}
-              alt={alt}
-              title={title}
-              className='we:mb-0 we:inline-block we:max-w-full we:rounded we:text-center we:h-auto we:max-h-[400px] we:w-auto we:object-contain'
-              draggable={false}
-            />
-            {caption && <ImageCaption caption={caption} className='we:mt-0 we:text-center' />}
+          <DialogContent className='we:mx-auto we:justify-center we:max-w-[90vw] we:max-h-[90vh] we:w-fit we:h-fit we:overflow-hidden'>
+            <div className='we:flex we:flex-col we:items-center we:gap-4'>
+              <div
+                className='we:relative we:overflow-auto we:max-h-[70vh] we:w-fit we:rounded we:border we:bg-border/20 we:border-none'
+                onMouseDown={handleMouseDown}
+                style={{ cursor: zoomLevel > 100 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
+              >
+                <div className='we:p-4 we:min-h-[400px] we:flex we:items-center we:justify-center'>
+                  <img
+                    src={src}
+                    alt={alt}
+                    title={title}
+                    className='we:mb-0 we:inline-block we:max-w-full we:rounded we:text-center we:h-auto we:w-auto we:object-contain we:transition-transform we:duration-200 we:select-none'
+                    style={{
+                      transform: `scale(${zoomLevel / 100}) translate(${dragOffset.x}px, ${dragOffset.y}px)`,
+                      transformOrigin: 'center center',
+                    }}
+                    draggable={false}
+                  />
+                </div>
+              </div>
+              {caption && <ImageCaption caption={caption} className='we:mt-0 we:text-center' />}
+
+              {/* 확대/축소 컨트롤 */}
+              <div className='we:flex we:items-center we:justify-center we:gap-2 we:mt-4'>
+                <div className='we:flex we:items-center we:gap-3 we:px-2 we:py-1 we:border we:rounded-lg'>
+                  <Button type='button' onClick={handleZoomOut} disabled={zoomLevel <= 25}>
+                    <Minus />
+                  </Button>
+                  <span className='we:text-sm'>{zoomLevel}%</span>
+                  <Button type='button' onClick={handleZoomIn} disabled={zoomLevel >= 500}>
+                    <Plus />
+                  </Button>
+                </div>
+                <Button type='button' onClick={handleZoomReset}>
+                  <RefreshCcw className='we:h-4 we:w-4' />
+                </Button>
+              </div>
+            </div>
           </DialogContent>
         </Dialog>
       )}
