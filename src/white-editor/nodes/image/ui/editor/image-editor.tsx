@@ -129,6 +129,12 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
     [startCropMode, startDrawMode, startShapeMode, setActiveMode]
   );
 
+  useEffect(() => {
+    if (!activeMode) {
+      editorRef.current?.stopDrawingMode();
+    }
+  }, [activeMode]);
+
   const handleCaptionChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const newCaption = e.target.value;
