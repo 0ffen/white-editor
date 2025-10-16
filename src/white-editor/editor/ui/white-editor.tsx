@@ -23,9 +23,23 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
 
   const toolbarRef = React.useRef<HTMLDivElement>(null);
   const editorHook = useWhiteEditor<T>(props);
-  const { editor, charactersCount } = editorHook;
+  const { editor, charactersCount, focus } = editorHook;
 
   useImperativeHandle(ref, () => editorHook, [editorHook]);
+
+  /** 에디터 영역 클릭 시 포커스 처리 */
+  const handleEditorClick = React.useCallback(
+    (event: React.MouseEvent) => {
+      if (toolbarRef.current?.contains(event.target as Node)) {
+        return;
+      }
+
+      if (editor && !disabled) {
+        focus();
+      }
+    },
+    [editor, focus, disabled]
+  );
 
   /** 테마 적용 */
   React.useEffect(() => {
@@ -45,7 +59,10 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
 
   return (
     <TooltipProvider>
-      <div className={cn('white-editor', editorClassName, disabled && 'we:opacity-60 we:pointer-events-none')}>
+      <div
+        className={cn('white-editor', editorClassName, disabled && 'we:opacity-60 we:pointer-events-none')}
+        onClick={handleEditorClick}
+      >
         <EditorContext.Provider value={{ editor }}>
           <Toolbar ref={toolbarRef} role='toolbar'>
             <div className={cn('toolbar-wrapper')}>{renderToolbar()}</div>
