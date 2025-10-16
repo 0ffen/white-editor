@@ -22,6 +22,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const { getPos } = props;
   const { src, alt, title, width, height, caption, textAlign } = props.node.attrs;
   const containerRef = useRef<HTMLDivElement>(null);
+  const dialogImageRef = useRef<HTMLImageElement>(null);
 
   const [_align, setAlign] = useState<AlignType>(textAlign || 'center');
 
@@ -244,19 +245,20 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           }}
         >
           <DialogTitle className='we:sr-only'>View Image</DialogTitle>
-          <DialogContent className='we:mx-auto we:justify-center we:max-w-[90vw] we:w-max we:max-h-[90vh] we:h-fit we:overflow-hidden'>
+          <DialogContent className='we:p-2 we:mx-auto we:justify-center we:max-w-[90vw] we:w-max we:h-fit we:overflow-auto'>
             <div className='we:flex we:flex-col we:items-center we:gap-4'>
               <div
-                className='we:relative we:overflow-auto we:max-h-[70vh] we:w-fit we:rounded we:border we:bg-border/20 we:border-none'
+                className='we:relative we:overflow-clip we:rounded we:border we:bg-border/20 we:border-none we:grid we:place-items-center'
                 onMouseDown={handleMouseDown}
                 style={{ cursor: zoomLevel > 100 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
               >
                 <div className='we:p-0 we:flex we:items-center we:justify-center'>
                   <img
+                    ref={dialogImageRef}
                     src={src}
                     alt={alt}
                     title={title}
-                    className='we:mb-0 we:inline-block we:max-w-full we:rounded we:text-center we:h-auto we:w-auto we:object-contain we:transition-transform we:duration-200 we:select-none'
+                    className='we:mb-0 we:inline-block we:w-full we:h-[80vh] we:rounded we:text-center we:object-contain we:transition-transform we:duration-200 we:select-none'
                     style={{
                       transform: `scale(${zoomLevel / 100}) translate(${dragOffset.x}px, ${dragOffset.y}px)`,
                       transformOrigin: 'center center',
@@ -269,13 +271,13 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
               {caption && <ImageCaption caption={caption} className='we:mt-0 we:text-center' />}
 
               {/* 확대/축소 컨트롤 */}
-              <div className='we:flex we:items-center we:justify-center we:gap-2 we:mt-4'>
+              <div className='we:flex we:items-center we:justify-center we:gap-2 we:mt-2 we:mb-2'>
                 <div className='we:flex we:items-center we:gap-3 we:px-2 we:py-1 we:border we:rounded-lg'>
-                  <Button type='button' onClick={handleZoomOut} disabled={zoomLevel <= 25}>
+                  <Button type='button' onClick={handleZoomOut} disabled={zoomLevel <= 50}>
                     <Minus />
                   </Button>
                   <span className='we:text-sm'>{zoomLevel}%</span>
-                  <Button type='button' onClick={handleZoomIn} disabled={zoomLevel >= 500}>
+                  <Button type='button' onClick={handleZoomIn} disabled={zoomLevel >= 200}>
                     <Plus />
                   </Button>
                 </div>
