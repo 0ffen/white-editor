@@ -133,8 +133,8 @@
 
     [data-type='mention'] {
       color: var(--we-primary);
-      border-radius: var(--we-radius-md);
-      padding: 0.5rem;
+      border-radius: var(--we-radius-sm);
+      padding: 0.25rem 0.5rem;
       background-color: var(--we-primary-background);
       box-decoration-break: clone;
     }
