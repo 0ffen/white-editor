@@ -45,12 +45,10 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
   useEffect(() => {
     if (rootEl.current) {
       const container = rootEl.current;
-      const containerWidth = container.clientWidth || 800;
-      const containerHeight = container.clientHeight || 400;
 
       const instance = new TuiImageEditor(container, {
-        cssMaxWidth: containerWidth,
-        cssMaxHeight: containerHeight,
+        cssMaxWidth: 768,
+        cssMaxHeight: 400,
         usageStatistics: false,
         selectionStyle: {
           cornerSize: 20,
@@ -163,21 +161,21 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
       <ImageEditorToolbar editorRef={editorRef} activeMode={activeMode} handleModeChange={handleModeChange} />
       {/* Image */}
       <div
-        className='we:overflow-auto we:max-h-[400px] we:rounded we:bg-border/50 we:relative'
+        className='we:overflow-auto we:rounded we:bg-border/50 we:relative'
         style={{
           userSelect: 'none',
         }}
       >
         {/* 확대/축소 컨트롤 */}
         <div
-          className='we:flex we:items-center we:gap-2 we:sticky we:top-2 we:left-2 we:bg-accent we:border we:rounded-lg we:z-10 we:w-fit'
+          className='we:flex we:items-center we:gap-2 we:fixed we:top-30 we:left-10 we:bg-accent we:border we:rounded-lg we:z-10 we:w-fit'
           onMouseDown={(e) => e.stopPropagation()}
         >
-          <Button type='button' onClick={handleZoomOut} disabled={zoomLevel <= 25} size='sm'>
+          <Button type='button' onClick={handleZoomOut} disabled={zoomLevel <= 50} size='sm'>
             <Minus />
           </Button>
           <span className='we:text-sm we:min-w-[50px] we:text-center'>{zoomLevel}%</span>
-          <Button type='button' onClick={handleZoomIn} disabled={zoomLevel >= 500} size='sm'>
+          <Button type='button' onClick={handleZoomIn} disabled={zoomLevel >= 200} size='sm'>
             <Plus />
           </Button>
           <Button type='button' onClick={handleZoomReset} className='we:h-fit we:w-fit'>
@@ -187,7 +185,10 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
 
         <div
           ref={rootEl}
-          className='we:flex we:min-h-[300px] we:h-[300px] we:w-full we:items-center we:justify-center we:rounded'
+          className='we:flex we:h-[400px] we:w-full we:items-center we:justify-center we:rounded'
+          style={{
+            height: `${400 * (zoomLevel / 100)}px`,
+          }}
         />
       </div>
 
