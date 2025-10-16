@@ -178,7 +178,10 @@ export function ImageDialog(props: ImageDialogProps) {
         <ImageUploadButton icon={icon} />
       </DialogTrigger>
       <DialogContent
-        className='we:max-h-[90vh] we:w-full we:min-w-[400px]'
+        className={cn(
+          'we:max-h-[95vh] we:max-w-[800px] we:min-w-[600px]',
+          previewUrl ? 'we:max-w-[800px] we:min-w-[600px]' : 'we:max-w-[500px] we:min-w-[400px]'
+        )}
         onInteractOutside={(e) => e.preventDefault()}
       >
         <DialogHeader>
@@ -188,7 +191,7 @@ export function ImageDialog(props: ImageDialogProps) {
         {previewUrl && (
           <div
             className={cn(
-              'we:relative we:flex we:w-full we:items-center we:justify-center we:overflow-y-auto',
+              'we:relative we:flex we:w-full we:items-center we:justify-center we:overflow-auto',
               isSaving ? 'we:pointer-events-none we:opacity-60' : ''
             )}
           >

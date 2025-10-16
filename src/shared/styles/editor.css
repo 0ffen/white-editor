@@ -8,6 +8,7 @@
   display: flex;
   flex-direction: column;
   justify-content: stretch;
+  cursor: text;
 
   .toolbar-wrapper {
     display: flex;
@@ -15,6 +16,7 @@
     gap: 0.5rem;
     padding-block: 0.25rem;
     height: 40px;
+    cursor: default;
   }
 
   .ProseMirror {
@@ -22,6 +24,7 @@
     flex: 1;
     overflow-y: auto;
     min-height: 0px;
+    cursor: text;
   }
 
   .ProseMirror:focus {
@@ -133,8 +136,8 @@
 
     [data-type='mention'] {
       color: var(--we-primary);
-      border-radius: var(--we-radius-md);
-      padding: 0.5rem;
+      border-radius: var(--we-radius-sm);
+      padding: 0.25rem 0.5rem;
       background-color: var(--we-primary-background);
       box-decoration-break: clone;
     }

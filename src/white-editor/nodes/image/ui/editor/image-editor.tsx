@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
-import { Check } from 'lucide-react';
+import { Check, Minus, Plus, RefreshCcw } from 'lucide-react';
 import TuiImageEditor from 'tui-image-editor';
 import { Button, Textarea } from '@/shared';
 import { ImageEditorToolbar, CropEditor, DrawEditor, ShapeEditor, TextEditor } from '@/white-editor';
+import { useImageZoom } from '@/white-editor/nodes/image/hook';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
 export interface ImageEditorRef {
@@ -27,15 +28,27 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
   const [drawingRange, setDrawingRange] = useState<number>(10);
   const [caption, setCaption] = useState<string>(defaultCaption);
 
+  const { zoomLevel, handleZoomIn, handleZoomOut, handleZoomReset } = useImageZoom();
+
+  // 확대/축소 시 TuiImageEditor 컨테이너에 CSS transform 적용
   useEffect(() => {
     if (rootEl.current) {
       const container = rootEl.current;
-      const containerWidth = container.clientWidth || 800;
-      const containerHeight = container.clientHeight || 350;
+      const scale = zoomLevel / 100;
+
+      container.style.transform = `scale(${scale})`;
+      container.style.transformOrigin = 'center center';
+      container.style.transition = 'transform 0.2s ease-in-out';
+    }
+  }, [zoomLevel]);
+
+  useEffect(() => {
+    if (rootEl.current) {
+      const container = rootEl.current;
 
       const instance = new TuiImageEditor(container, {
-        cssMaxWidth: containerWidth,
-        cssMaxHeight: containerHeight,
+        cssMaxWidth: 768,
+        cssMaxHeight: 400,
         usageStatistics: false,
         selectionStyle: {
           cornerSize: 20,
@@ -48,7 +61,9 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
       instance.loadImageFromURL(imageUrl, 'UploadedImage').then(() => {
         // 초기 이미지 로드 후 undo 스택을 클리어하여 초기 상태가 undo되지 않도록 함
         setTimeout(() => {
-          instance.clearUndoStack();
+          if (instance) {
+            instance.clearUndoStack();
+          }
         }, 100);
       });
 
@@ -146,9 +161,37 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
       <ImageEditorToolbar editorRef={editorRef} activeMode={activeMode} handleModeChange={handleModeChange} />
       {/* Image */}
       <div
-        ref={rootEl}
-        className='we:bg-border we:flex we:h-[300px] we:w-full we:items-center we:justify-center we:rounded'
-      />
+        className='we:overflow-auto we:rounded we:bg-border/50 we:relative'
+        style={{
+          userSelect: 'none',
+        }}
+      >
+        {/* 확대/축소 컨트롤 */}
+        <div
+          className='we:flex we:items-center we:gap-2 we:fixed we:top-30 we:left-10 we:bg-accent we:border we:rounded-lg we:z-10 we:w-fit'
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <Button type='button' onClick={handleZoomOut} disabled={zoomLevel <= 50} size='sm'>
+            <Minus />
+          </Button>
+          <span className='we:text-sm we:min-w-[50px] we:text-center'>{zoomLevel}%</span>
+          <Button type='button' onClick={handleZoomIn} disabled={zoomLevel >= 200} size='sm'>
+            <Plus />
+          </Button>
+          <Button type='button' onClick={handleZoomReset} className='we:h-fit we:w-fit'>
+            <RefreshCcw />
+          </Button>
+        </div>
+
+        <div
+          ref={rootEl}
+          className='we:flex we:h-[400px] we:w-full we:items-center we:justify-center we:rounded'
+          style={{
+            height: `${400 * (zoomLevel / 100)}px`,
+          }}
+        />
+      </div>
+
       {!activeMode && (
         <div className='we:mx-auto we:mt-4 we:flex we:w-full we:flex-col we:space-y-4 we:p-2'>
           <div className='we:flex we:w-full we:flex-col we:space-y-2'>
@@ -185,7 +228,10 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
                 className='we:w-fit we:pl-4 we:pr-6 we:rounded-4xl'
                 type='button'
                 variant='default'
-                onClick={() => setActiveMode(null)}
+                onClick={() => {
+                  editorRef.current?.stopDrawingMode();
+                  setActiveMode(null);
+                }}
               >
                 <Check /> Done
               </Button>
