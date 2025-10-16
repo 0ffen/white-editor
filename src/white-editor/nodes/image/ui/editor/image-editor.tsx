@@ -29,26 +29,17 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
   const [caption, setCaption] = useState<string>(defaultCaption);
 
   const { zoomLevel, handleZoomIn, handleZoomOut, handleZoomReset } = useImageZoom();
-
-  // 확대/축소 시 TuiImageEditor 컨테이너에 CSS transform 적용
-  useEffect(() => {
-    if (rootEl.current) {
-      const container = rootEl.current;
-      const scale = zoomLevel / 100;
-
-      container.style.transform = `scale(${scale})`;
-      container.style.transformOrigin = 'center center';
-      container.style.transition = 'transform 0.2s ease-in-out';
-    }
-  }, [zoomLevel]);
+  const BASE_WIDTH = 750;
+  const BASE_HEIGHT = 400;
+  const scale = zoomLevel / 100;
 
   useEffect(() => {
     if (rootEl.current) {
       const container = rootEl.current;
 
       const instance = new TuiImageEditor(container, {
-        cssMaxWidth: 768,
-        cssMaxHeight: 400,
+        cssMaxWidth: BASE_WIDTH,
+        cssMaxHeight: BASE_HEIGHT,
         usageStatistics: false,
         selectionStyle: {
           cornerSize: 20,
@@ -161,21 +152,24 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
       <ImageEditorToolbar editorRef={editorRef} activeMode={activeMode} handleModeChange={handleModeChange} />
       {/* Image */}
       <div
-        className='we:overflow-auto we:rounded we:bg-border/50 we:relative'
+        className='we:overflow-auto we:rounded we:bg-border/50 we:relative we:h-[420px] we:w-full we:grid we:place-items-center'
         style={{
           userSelect: 'none',
         }}
       >
         {/* 확대/축소 컨트롤 */}
         <div
-          className='we:flex we:items-center we:gap-2 we:fixed we:top-30 we:left-10 we:bg-accent we:border we:rounded-lg we:z-10 we:w-fit'
+          className='we:flex we:items-center we:gap-2 we:fixed we:top-30 we:left-10 we:bg-background we:border we:rounded-lg we:z-10 we:w-fit'
           onMouseDown={(e) => e.stopPropagation()}
+          style={{
+            boxShadow: 'var(--we-popover-shadow)',
+          }}
         >
           <Button type='button' onClick={handleZoomOut} disabled={zoomLevel <= 50} size='sm'>
             <Minus />
           </Button>
           <span className='we:text-sm we:min-w-[50px] we:text-center'>{zoomLevel}%</span>
-          <Button type='button' onClick={handleZoomIn} disabled={zoomLevel >= 200} size='sm'>
+          <Button type='button' onClick={handleZoomIn} disabled={zoomLevel >= 500} size='sm'>
             <Plus />
           </Button>
           <Button type='button' onClick={handleZoomReset} className='we:h-fit we:w-fit'>
@@ -184,12 +178,24 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
         </div>
 
         <div
-          ref={rootEl}
-          className='we:flex we:h-[400px] we:w-full we:items-center we:justify-center we:rounded'
+          className='we:flex we:items-center we:justify-center'
           style={{
-            height: `${400 * (zoomLevel / 100)}px`,
+            width: `${BASE_WIDTH * scale}px`,
+            height: `${BASE_HEIGHT * scale}px`,
+            transition: 'width 0.2s ease-in-out, height 0.2s ease-in-out',
           }}
-        />
+        >
+          <div
+            ref={rootEl}
+            className='we:flex we:items-center we:justify-center we:rounded'
+            style={{
+              width: `${BASE_WIDTH}px`,
+              height: `${BASE_HEIGHT}px`,
+              transform: `scale(${scale})`,
+              transformOrigin: 'center center',
+            }}
+          />
+        </div>
       </div>
 
       {!activeMode && (

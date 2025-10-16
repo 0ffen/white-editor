@@ -25,7 +25,7 @@ export interface UseImageZoomOptions {
  * @description 이미지 확대/축소 기능을 제공하는 훅
  */
 export function useImageZoom(options: UseImageZoomOptions = {}): ImageZoomState & ImageZoomHandlers {
-  const { initialZoom = 100, minZoom = 25, maxZoom = 500, zoomStep = 25, onZoomChange, onZoomReset } = options;
+  const { initialZoom = 100, minZoom = 50, maxZoom = 500, zoomStep = 25, onZoomChange, onZoomReset } = options;
 
   const [zoomLevel, setZoomLevelState] = useState<number>(initialZoom);
 
