@@ -18,6 +18,14 @@ export default function App() {
     editorRef.current?.editor?.commands.insertContent('Hello World!');
   };
 
+  const handleInsertFailedImage = () => {
+    editorRef.current?.editor?.commands.setResizableImage({
+      src: 'https://invalid-url-that-will-fail.example.com/image.jpg',
+      alt: 'Failed Image',
+      caption: '이미지 로드 실패 예시',
+    });
+  };
+
   return (
     <main className='we:p-6'>
       <div
@@ -68,6 +76,9 @@ export default function App() {
               <div className='we:flex we:justify-end we:gap-2'>
                 <Button variant='secondary' className='we:w-fit' onClick={handleInsertText}>
                   텍스트 삽입
+                </Button>
+                <Button variant='secondary' className='we:w-fit' onClick={handleInsertFailedImage}>
+                  실패 이미지 삽입
                 </Button>
                 <Button variant='secondary' className='we:w-fit' onClick={handleClear}>
                   초기화

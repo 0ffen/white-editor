@@ -30,6 +30,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const [currentWidth, setCurrentWidth] = useState<string>(width || '500px');
   const [currentHeight, setCurrentHeight] = useState<string>(height || 'auto');
   const [isViewerImageDialogOpen, setIsViewerImageDialogOpen] = useState<boolean>(false);
+  const [imageLoadError, setImageLoadError] = useState<boolean>(false);
   const [zoomLevel, setZoomLevel] = useState<number>(100);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
@@ -219,6 +220,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
             width: currentWidth !== 'auto' ? currentWidth : undefined,
           }}
           draggable={false}
+          onError={() => setImageLoadError(true)}
         />
         {caption && <ImageCaption caption={caption} imageWidth={currentWidth} />}
         {props.editor.isEditable && props.selected && (
@@ -242,7 +244,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
         />
       )}
 
-      {isViewerImageDialogOpen && (
+      {!imageLoadError && isViewerImageDialogOpen && (
         <Dialog
           open={isViewerImageDialogOpen}
           onOpenChange={(open) => {
