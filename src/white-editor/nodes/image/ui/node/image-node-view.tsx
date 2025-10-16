@@ -109,7 +109,6 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           className='we:mb-0 we:inline-block we:h-auto we:max-w-full we:rounded we:shadow-md'
           style={{
             width: currentWidth !== 'auto' ? currentWidth : undefined,
-            height: currentHeight !== 'auto' ? currentHeight : undefined,
           }}
           draggable={false}
         />
