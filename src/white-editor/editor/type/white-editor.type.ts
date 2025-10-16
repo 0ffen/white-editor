@@ -1,6 +1,7 @@
 import type { MentionConfig, ToolbarItem, ToolbarItemProps } from '@/white-editor';
 import type { EditorProps } from '@tiptap/pm/view';
-import type { JSONContent, Content } from '@tiptap/react';
+import type { Content, JSONContent } from '@tiptap/react';
+
 import type { Editor } from '@tiptap/react';
 
 interface EditorExtensions<T = Record<string, unknown>> {

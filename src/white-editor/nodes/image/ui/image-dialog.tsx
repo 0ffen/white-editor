@@ -63,6 +63,7 @@ export function ImageDialog(props: ImageDialogProps) {
   } = props;
 
   const { editor } = useTiptapEditor(providedEditor);
+
   // 이미지 저장 훅 사용
   const { saveImage } = useImageSave({
     editor: editor ?? undefined,
@@ -146,22 +147,25 @@ export function ImageDialog(props: ImageDialogProps) {
     }
     setIsSaving(true);
     try {
-      const editedImageBlob = imageEditorRef.current?.toDataURL();
-      const imageDataToUse = editedImageBlob || previewUrl;
-      const filename = `${fileItems[0].file.name}.png`;
-      const currentCaption = caption;
+      const editedImageBlob = await imageEditorRef.current?.getEditedImageAsBlob();
+      if (editedImageBlob) {
+        const file = new File([editedImageBlob], 'edited-image.png', { type: editedImageBlob.type });
 
-      const result = await saveImage({
-        imageData: imageDataToUse,
-        caption: currentCaption,
-        filename,
-        insertToEditor: true,
-        onImageInserted,
-      });
+        const filename = `${file.name}.png`;
+        const currentCaption = caption;
 
-      if (result.success) {
-        setIsOpen(false);
-        handleRemovePreview();
+        const result = await saveImage({
+          imageData: file,
+          caption: currentCaption,
+          filename,
+          insertToEditor: true,
+          onImageInserted,
+        });
+
+        if (result.success) {
+          setIsOpen(false);
+          handleRemovePreview();
+        }
       }
     } catch (error) {
       onError?.(error instanceof Error ? error : new Error('Failed to save image'));

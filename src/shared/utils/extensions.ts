@@ -90,10 +90,7 @@ export function createViewerExtensions() {
       nested: true,
       onReadOnlyChecked: () => false,
     }),
-    ResizableImage.configure({
-      allowBase64: true,
-      inline: false,
-    }),
+    ResizableImage,
     TextStyleKit,
     Highlight.configure({ multicolor: true }),
     Superscript,

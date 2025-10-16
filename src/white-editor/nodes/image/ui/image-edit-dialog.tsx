@@ -8,7 +8,7 @@ interface ImageEditDialogProps {
   onOpenChange: (open: boolean) => void;
   imageUrl: string;
   currentCaption: string;
-  onSave: (imageUrl: string, caption: string) => void;
+  onSave: (file: File, caption: string) => void;
   cancelText?: string;
   saveText?: string;
 }
@@ -25,16 +25,18 @@ export function ImageEditDialog(props: ImageEditDialogProps) {
     setCaption(newCaption);
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async () => {
     setIsSaving(true);
     try {
-      const editedDataURL = imageRef.current?.toDataURL();
-      const srcToSave = editedDataURL || imageUrl;
-      onSave(srcToSave, caption);
+      const editedDataBlob = await imageRef.current?.getEditedImageAsBlob();
+
+      if (editedDataBlob) {
+        const file = new File([editedDataBlob], 'edited-image.png', { type: editedDataBlob.type });
+        onSave(file, caption);
+      }
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err);
-      onSave(imageUrl, caption);
     } finally {
       setIsSaving(false);
     }

@@ -1,16 +1,17 @@
-import React, { useCallback, useRef, useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Minus, Plus, RefreshCcw } from 'lucide-react';
-import { Button, cn, Dialog, DialogContent, DialogTitle } from '@/shared';
+import { Button, Dialog, DialogContent, DialogTitle, cn } from '@/shared';
 import {
+  ImageCaption,
+  ImageEditDialog,
+  ImageFloatingControls,
   useImageEdit,
   useImageHover,
   useImageResize,
-  ImageEditDialog,
-  ImageCaption,
-  ImageFloatingControls,
 } from '@/white-editor';
-import { NodeViewWrapper } from '@tiptap/react';
+
 import type { NodeViewProps } from '@tiptap/react';
+import { NodeViewWrapper } from '@tiptap/react';
 
 type AlignType = 'left' | 'center' | 'right';
 
@@ -55,8 +56,16 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   });
 
   const { hoverState, hoverHandlers } = useImageHover();
+
+  // editor storage에서 upload 콜백 가져오기 (toolbarProps.image.upload)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const imageUpload = (props.editor?.extensionStorage as any)?.image?.onImageUpload as
+    | ((file: File) => Promise<string>)
+    | undefined;
+
   const { editingImage, isDialogOpen, openImageEdit, handleImageSave, setIsDialogOpen } = useImageEdit({
     editor: props.editor,
+    upload: imageUpload,
   });
 
   const handleEditClick = useCallback(

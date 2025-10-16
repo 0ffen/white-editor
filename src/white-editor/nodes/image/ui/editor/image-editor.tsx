@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState, forwardRef, useImperat
 import { Check, Minus, Plus, RefreshCcw } from 'lucide-react';
 import TuiImageEditor from 'tui-image-editor';
 import { Button, Textarea } from '@/shared';
+import { base64ToBlob } from '@/shared/utils/base64-to-blob';
 import { ImageEditorToolbar, CropEditor, DrawEditor, ShapeEditor, TextEditor } from '@/white-editor';
 import { useImageZoom } from '@/white-editor/nodes/image/hook';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
@@ -123,24 +124,15 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
 
         try {
           const dataURL = editorRef.current.toDataURL();
-          const response = await fetch(dataURL);
-          return await response.blob();
+          const blobData = base64ToBlob(dataURL);
+          return blobData;
         } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error('Failed to get edited image as blob:', error);
           return null;
         }
       },
       toDataURL: (): string | null => {
         if (!editorRef.current) return null;
-
-        try {
-          return editorRef.current.toDataURL();
-        } catch (error) {
-          // eslint-disable-next-line no-console
-          console.error('Failed to get data URL:', error);
-          return null;
-        }
+        return editorRef.current.toDataURL();
       },
     }),
     []
