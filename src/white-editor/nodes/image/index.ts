@@ -23,6 +23,7 @@ export * from './hook/use-file-upload';
 export * from './hook/use-image-resize';
 export * from './hook/use-image-hover';
 export * from './hook/use-image-save';
+export * from './hook/use-image-drag-paste';
 
 export * from './extension/resizable-image';
 

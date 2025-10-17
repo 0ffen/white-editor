@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { createEditorExtensions } from '@/shared/utils';
-import type { MentionConfig, UseWhiteEditorReturn, WhiteEditorProps } from '@/white-editor';
+import {
+  useImageDragPaste,
+  type EditorExtensions,
+  type MentionConfig,
+  type UseWhiteEditorReturn,
+  type WhiteEditorProps,
+} from '@/white-editor';
 import { useEditor, useEditorState, type JSONContent, Editor } from '@tiptap/react';
 
 export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorReturn => {
@@ -23,10 +29,14 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
     mentionDataRef.current = extension?.mention;
   }, [extension?.mention]);
 
+  const editorInstanceRef = useRef<Editor | null>(null);
+  const { handleDrop, handlePaste } = useImageDragPaste(extension as EditorExtensions<Record<string, unknown>>);
+
   const editor = useEditor({
     immediatelyRender: false,
     shouldRerenderOnTransaction: false,
     editorProps: {
+      ...editorProps,
       attributes: {
         autocomplete: 'off',
         autocorrect: 'off',
@@ -40,12 +50,16 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
         if (event.key === ' ') {
           return false;
         }
-        return editorProps?.handleKeyDown?.(view, event);
+        return editorProps?.handleKeyDown?.(view, event) ?? false;
       },
-      ...(editorProps || {}),
+      handleDrop,
+      handlePaste,
     },
-    extensions: createEditorExtensions(mentionDataRef, extension?.character?.limit),
-    onCreate: ({ editor: currentEditor }) => onCreate?.(currentEditor),
+    extensions: createEditorExtensions(mentionDataRef, extension?.character?.limit, extension),
+    onCreate: ({ editor: currentEditor }) => {
+      editorInstanceRef.current = currentEditor;
+      onCreate?.(currentEditor);
+    },
     onUpdate: ({ editor: currentEditor }) => {
       onUpdate?.(currentEditor);
       onChange?.(currentEditor as Editor);
@@ -55,6 +69,11 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
     onDestroy: () => onDestroy?.(),
     onSelectionUpdate: ({ editor: currentEditor }) => onSelectionUpdate?.(currentEditor),
   });
+
+  // Update editor instance ref when editor changes
+  useEffect(() => {
+    editorInstanceRef.current = editor;
+  }, [editor]);
 
   const editorState = useEditorState({
     editor,

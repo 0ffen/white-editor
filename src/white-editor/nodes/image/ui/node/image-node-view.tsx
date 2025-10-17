@@ -1,16 +1,17 @@
-import React, { useCallback, useRef, useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Minus, Plus, RefreshCcw } from 'lucide-react';
-import { Button, cn, Dialog, DialogContent, DialogTitle } from '@/shared';
+import { Button, Dialog, DialogContent, DialogTitle, cn } from '@/shared';
 import {
+  ImageCaption,
+  ImageEditDialog,
+  ImageFloatingControls,
   useImageEdit,
   useImageHover,
   useImageResize,
-  ImageEditDialog,
-  ImageCaption,
-  ImageFloatingControls,
 } from '@/white-editor';
-import { NodeViewWrapper } from '@tiptap/react';
+
 import type { NodeViewProps } from '@tiptap/react';
+import { NodeViewWrapper } from '@tiptap/react';
 
 type AlignType = 'left' | 'center' | 'right';
 
@@ -29,6 +30,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const [currentWidth, setCurrentWidth] = useState<string>(width || '500px');
   const [currentHeight, setCurrentHeight] = useState<string>(height || 'auto');
   const [isViewerImageDialogOpen, setIsViewerImageDialogOpen] = useState<boolean>(false);
+  const [imageLoadError, setImageLoadError] = useState<boolean>(false);
   const [zoomLevel, setZoomLevel] = useState<number>(100);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
@@ -55,8 +57,21 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   });
 
   const { hoverState, hoverHandlers } = useImageHover();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const extension = (props.editor?.extensionStorage as any)?.image?.extension as
+    | {
+        imageUpload?: {
+          upload?: (file: File) => Promise<string>;
+          onError?: (error: Error) => void;
+          onSuccess?: (url: string) => void;
+        };
+      }
+    | undefined;
+
   const { editingImage, isDialogOpen, openImageEdit, handleImageSave, setIsDialogOpen } = useImageEdit({
     editor: props.editor,
+    extension: extension,
   });
 
   const handleEditClick = useCallback(
@@ -210,6 +225,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
             width: currentWidth !== 'auto' ? currentWidth : undefined,
           }}
           draggable={false}
+          onError={() => setImageLoadError(true)}
         />
         {caption && <ImageCaption caption={caption} imageWidth={currentWidth} />}
         {props.editor.isEditable && props.selected && (
@@ -233,7 +249,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
         />
       )}
 
-      {isViewerImageDialogOpen && (
+      {!imageLoadError && isViewerImageDialogOpen && (
         <Dialog
           open={isViewerImageDialogOpen}
           onOpenChange={(open) => {

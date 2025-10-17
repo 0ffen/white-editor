@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { handleImageUpload } from '@/shared/utils';
 import type { Editor } from '@tiptap/react';
 
 export interface ImageSaveOptions {
@@ -10,7 +9,7 @@ export interface ImageSaveOptions {
 }
 
 export interface ImageSaveParams {
-  imageData: Blob | string; //이미지 blob 또는 data URL
+  imageData: File; //이미지 File
   caption?: string;
   filename?: string; // 파일명 (기본: 'image.png')
   insertToEditor?: boolean; // 에디터에 삽입할지 여부 (기본: true)
@@ -26,34 +25,14 @@ export function useImageSave(options: ImageSaveOptions = {}) {
 
   const saveImage = useCallback(
     async (params: ImageSaveParams) => {
-      const { imageData, caption = '', filename = 'image.png', insertToEditor = true, onImageInserted } = params;
+      const { imageData, caption = '', insertToEditor = true, onImageInserted } = params;
 
       try {
-        // 1. Blob 준비
-        let blob: Blob;
-        if (imageData instanceof Blob) {
-          blob = imageData;
-        } else {
-          // Data URL인 경우 Blob으로 변환
-          const response = await fetch(imageData);
-          blob = await response.blob();
-        }
-
-        // 2. File 객체 생성
-        const file = new File([blob], filename, { type: blob.type || 'image/png' });
-
-        // 3. 업로드 처리
-        let imageUrl: string;
-
+        let imageUrl = '';
         if (upload) {
-          imageUrl = await upload(file);
+          imageUrl = await upload(imageData);
         } else {
-          // 기본 업로드 함수 사용 (development 환경에서는 로컬 URL)
-          try {
-            imageUrl = await handleImageUpload(file);
-          } catch {
-            imageUrl = URL.createObjectURL(blob);
-          }
+          imageUrl = 'https://placehold.co/600x400';
         }
 
         if (insertToEditor && editor) {

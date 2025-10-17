@@ -31,6 +31,11 @@ export const ImageUploadDragArea: React.FC<ImageUploadDragAreaProps> = (props: I
     }
   };
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -50,6 +55,7 @@ export const ImageUploadDragArea: React.FC<ImageUploadDragAreaProps> = (props: I
       )}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
       <CloudUploadIcon className={cn('we:text-primary/95 we:h-10 we:w-10', isDragActive ? 'we:text-primary' : '')} />

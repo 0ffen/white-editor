@@ -1,6 +1,8 @@
+import type { ResizableImageOptions } from '@/shared/utils/extensions';
 import { ImageNodeView } from '@/white-editor';
 import Image from '@tiptap/extension-image';
 import { ReactNodeViewRenderer } from '@tiptap/react';
+import type { EditorExtensions } from '../../../editor/type/white-editor.type';
 
 declare module '@tiptap/react' {
   interface Commands<ReturnType> {
@@ -18,8 +20,26 @@ declare module '@tiptap/react' {
   }
 }
 
-export const ResizableImage = Image.extend({
+export const ResizableImage = Image.extend<ResizableImageOptions>({
   name: 'image',
+
+  addOptions() {
+    return {
+      ...this.parent?.(),
+      extension: null as EditorExtensions<Record<string, unknown>> | null,
+    };
+  },
+
+  addStorage() {
+    return {
+      extension: null as EditorExtensions<Record<string, unknown>> | null,
+    };
+  },
+
+  onCreate() {
+    // Extension 정보를 storage에 저장
+    this.storage.extension = this.options.extension || null;
+  },
 
   addAttributes() {
     return {

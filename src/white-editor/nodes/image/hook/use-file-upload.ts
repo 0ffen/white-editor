@@ -110,10 +110,21 @@ export function useFileUpload(options: UploadOptions) {
     setFileItems([]);
   };
 
+  // URL을 revoke하지 않고 파일 목록만 비우기 (업로드된 이미지를 나중에 사용할 수 있도록)
+  const clearFileItemsOnly = () => {
+    fileItems.forEach((item) => {
+      if (item.abortController && item.status === 'uploading') {
+        item.abortController.abort();
+      }
+    });
+    setFileItems([]);
+  };
+
   return {
     fileItems,
     uploadFiles,
     removeFileItem,
     clearAllFiles,
+    clearFileItemsOnly,
   };
 }

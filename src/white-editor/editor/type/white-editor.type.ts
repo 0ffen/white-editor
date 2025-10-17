@@ -1,6 +1,7 @@
 import type { MentionConfig, ToolbarItem, ToolbarItemProps } from '@/white-editor';
 import type { EditorProps } from '@tiptap/pm/view';
-import type { JSONContent, Content } from '@tiptap/react';
+import type { Content, JSONContent } from '@tiptap/react';
+
 import type { Editor } from '@tiptap/react';
 
 interface EditorExtensions<T = Record<string, unknown>> {
@@ -9,6 +10,11 @@ interface EditorExtensions<T = Record<string, unknown>> {
     show?: boolean;
     limit?: number;
     className?: string;
+  };
+  imageUpload?: {
+    upload?: (file: File) => Promise<string>;
+    onError?: (error: Error) => void;
+    onSuccess?: (url: string) => void;
   };
 }
 
