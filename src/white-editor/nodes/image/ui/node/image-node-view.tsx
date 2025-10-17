@@ -59,13 +59,19 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const { hoverState, hoverHandlers } = useImageHover();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const imageUpload = (props.editor?.extensionStorage as any)?.image?.onImageUpload as
-    | ((file: File) => Promise<string>)
+  const extension = (props.editor?.extensionStorage as any)?.image?.extension as
+    | {
+        imageUpload?: {
+          upload?: (file: File) => Promise<string>;
+          onError?: (error: Error) => void;
+          onSuccess?: (url: string) => void;
+        };
+      }
     | undefined;
 
   const { editingImage, isDialogOpen, openImageEdit, handleImageSave, setIsDialogOpen } = useImageEdit({
     editor: props.editor,
-    upload: imageUpload,
+    extension: extension,
   });
 
   const handleEditClick = useCallback(

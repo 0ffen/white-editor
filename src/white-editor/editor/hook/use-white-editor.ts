@@ -55,7 +55,7 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
       handleDrop,
       handlePaste,
     },
-    extensions: createEditorExtensions(mentionDataRef, extension?.character?.limit),
+    extensions: createEditorExtensions(mentionDataRef, extension?.character?.limit, extension),
     onCreate: ({ editor: currentEditor }) => {
       editorInstanceRef.current = currentEditor;
       onCreate?.(currentEditor);

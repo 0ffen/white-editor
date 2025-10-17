@@ -2,6 +2,10 @@ import type { RefObject } from 'react';
 import { all, createLowlight } from 'lowlight';
 import { MentionNode, CodeBlock, ResizableImage, CustomTableHeader, type MentionConfig } from '@/white-editor';
 
+export interface ResizableImageOptions {
+  extension?: EditorExtensions<Record<string, unknown>> | null;
+}
+
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
@@ -15,11 +19,19 @@ import { TextStyleKit } from '@tiptap/extension-text-style';
 import { Selection, CharacterCount } from '@tiptap/extensions';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import type { EditorExtensions } from '../../white-editor/editor/type/white-editor.type';
 
 // 에디터 전용 extensions
 export function createEditorExtensions<T>(
   mentionDataRef?: RefObject<MentionConfig<T> | undefined>,
-  maxCharacters?: number
+  maxCharacters?: number,
+  extension?: {
+    imageUpload?: {
+      upload?: (file: File) => Promise<string>;
+      onError?: (error: Error) => void;
+      onSuccess?: (url: string) => void;
+    };
+  }
 ) {
   const lowlight = createLowlight(all);
 
@@ -43,7 +55,10 @@ export function createEditorExtensions<T>(
     TextAlign.configure({ types: ['heading', 'paragraph', 'image'] }),
     TaskList,
     TaskItem.configure({ nested: true }),
-    ResizableImage,
+    ResizableImage.configure({
+      extension: extension,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any),
     TextStyleKit,
     Highlight.configure({ multicolor: true }),
     Superscript,

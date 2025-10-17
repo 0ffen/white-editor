@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import type { Editor } from '@tiptap/react';
+import type { EditorExtensions } from '../../../editor/type/white-editor.type';
 
 export interface ImageEditContext {
   src: string;
@@ -10,11 +11,11 @@ export interface ImageEditContext {
 
 export interface UseImageEditOptions {
   editor?: Editor;
-  upload?: (file: File) => Promise<string>;
+  extension?: EditorExtensions<Record<string, unknown>>;
 }
 
 export function useImageEdit(options: UseImageEditOptions = {}) {
-  const { editor, upload } = options;
+  const { editor, extension } = options;
   const [editingImage, setEditingImage] = useState<ImageEditContext | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -35,11 +36,13 @@ export function useImageEdit(options: UseImageEditOptions = {}) {
       try {
         let uploadedUrl = '';
 
-        // upload 콜백이 제공되면 서버에 업로드
-        if (upload) {
-          uploadedUrl = await upload(newImageFile);
+        // extension의 upload 함수가 제공되면 서버에 업로드
+        const uploadFn = extension?.imageUpload?.upload;
+        if (uploadFn) {
+          uploadedUrl = await uploadFn(newImageFile);
+          extension?.imageUpload?.onSuccess?.(uploadedUrl);
         } else {
-          // 콜백이 없으면 로컬 URL 사용 (개발용)
+          // extension의 upload 함수가 없으면 로컬 URL 사용 (개발용)
           uploadedUrl = URL.createObjectURL(newImageFile);
           // eslint-disable-next-line no-console
           console.warn('Image upload callback not provided. Using local URL for development.');
@@ -64,9 +67,10 @@ export function useImageEdit(options: UseImageEditOptions = {}) {
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('Failed to update image:', error);
+        extension?.imageUpload?.onError?.(error instanceof Error ? error : new Error('Failed to upload image'));
       }
     },
-    [editingImage, editor, closeImageEdit, upload]
+    [editingImage, editor, closeImageEdit, extension]
   );
 
   return {
