@@ -58,7 +58,6 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
 
   const { hoverState, hoverHandlers } = useImageHover();
 
-  // editor storage에서 upload 콜백 가져오기 (toolbarProps.image.upload)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const imageUpload = (props.editor?.extensionStorage as any)?.image?.onImageUpload as
     | ((file: File) => Promise<string>)

@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { createEditorExtensions, handleImageUpload } from '@/shared/utils';
-import type { MentionConfig, UseWhiteEditorReturn, WhiteEditorProps } from '@/white-editor';
+import { createEditorExtensions } from '@/shared/utils';
+import {
+  useImageDragPaste,
+  type EditorExtensions,
+  type MentionConfig,
+  type UseWhiteEditorReturn,
+  type WhiteEditorProps,
+} from '@/white-editor';
 import { useEditor, useEditorState, type JSONContent, Editor } from '@tiptap/react';
 
 export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorReturn => {
@@ -23,48 +29,8 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
     mentionDataRef.current = extension?.mention;
   }, [extension?.mention]);
 
-  // Handle image drop and paste
-  const handleImageFiles = useCallback(
-    async (files: File[], editor: Editor, pos?: number) => {
-      const imageFiles = files.filter((file) => file.type.startsWith('image/'));
-
-      if (imageFiles.length === 0) return false;
-
-      const uploadFn = extension?.imageUpload?.upload || handleImageUpload;
-      const onError = extension?.imageUpload?.onError;
-      const onSuccess = extension?.imageUpload?.onSuccess;
-
-      for (const file of imageFiles) {
-        try {
-          const url = await uploadFn(file);
-
-          if (url) {
-            // Insert image at the drop position or current cursor position
-            if (pos !== undefined) {
-              editor
-                .chain()
-                .focus()
-                .insertContentAt(pos, {
-                  type: 'image',
-                  attrs: { src: url },
-                })
-                .run();
-            } else {
-              editor.chain().focus().setResizableImage({ src: url }).run();
-            }
-            onSuccess?.(url);
-          }
-        } catch (error) {
-          onError?.(error instanceof Error ? error : new Error('Failed to upload image'));
-        }
-      }
-
-      return true;
-    },
-    [extension?.imageUpload]
-  );
-
   const editorInstanceRef = useRef<Editor | null>(null);
+  const { handleDrop, handlePaste } = useImageDragPaste(extension as EditorExtensions<Record<string, unknown>>);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -86,47 +52,8 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
         }
         return editorProps?.handleKeyDown?.(view, event) ?? false;
       },
-      handleDrop: (view, event, slice, moved) => {
-        // Call custom handleDrop if provided
-        const customResult = editorProps?.handleDrop?.(view, event, slice, moved);
-        if (customResult) {
-          return customResult;
-        }
-
-        // Handle image files dropped
-        if (!moved && event.dataTransfer?.files?.length && editorInstanceRef.current) {
-          const files = Array.from(event.dataTransfer.files);
-          const pos = view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos;
-
-          if (files.some((file) => file.type.startsWith('image/'))) {
-            event.preventDefault();
-            handleImageFiles(files, editorInstanceRef.current, pos);
-            return true;
-          }
-        }
-
-        return false;
-      },
-      handlePaste: (view, event, slice) => {
-        // Call custom handlePaste if provided
-        const customResult = editorProps?.handlePaste?.(view, event, slice);
-        if (customResult) {
-          return customResult;
-        }
-
-        // Handle pasted image files
-        const files = event.clipboardData?.files;
-        if (files && files.length > 0 && editorInstanceRef.current) {
-          const fileArray = Array.from(files);
-          if (fileArray.some((file) => file.type.startsWith('image/'))) {
-            event.preventDefault();
-            handleImageFiles(fileArray, editorInstanceRef.current);
-            return true;
-          }
-        }
-
-        return false;
-      },
+      handleDrop,
+      handlePaste,
     },
     extensions: createEditorExtensions(mentionDataRef, extension?.character?.limit),
     onCreate: ({ editor: currentEditor }) => {
