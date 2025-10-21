@@ -86,7 +86,7 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
               contentClassName
             )}
           />
-          <div className='we:mt-auto we:flex we:flex-col we:justify-end we:gap-2 we:p-2'>
+          <div className='we:mt-auto we:flex we:flex-col we:justify-end we:px-2'>
             {extension?.character?.show && (
               <span
                 className={cn(
