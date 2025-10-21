@@ -1,3 +1,9 @@
+.white-editor.viewer {
+  .ProseMirror {
+    padding: 0px;
+  }
+}
+
 .white-editor .readonly {
   user-select: text !important;
   pointer-events: auto !important;

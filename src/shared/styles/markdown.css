@@ -87,6 +87,40 @@
     width: 100%;
   }
 
+  /* Unordered list styles - 노션 스타일 */
+  ul {
+    list-style-type: disc; /* 1st level: solid circle */
+
+    ul {
+      list-style-type: circle; /* 2nd level: open circle */
+
+      ul {
+        list-style-type: square; /* 3rd level: square */
+
+        ul {
+          list-style-type: disc; /* 4th level: back to solid circle */
+        }
+      }
+    }
+  }
+
+  /* Ordered list styles - 노션 스타일 */
+  ol {
+    list-style-type: decimal; /* 1st level: 1, 2, 3... */
+
+    ol {
+      list-style-type: lower-alpha; /* 2nd level: a, b, c... */
+
+      ol {
+        list-style-type: lower-roman; /* 3rd level: i, ii, iii... */
+
+        ol {
+          list-style-type: decimal; /* 4th level: back to 1, 2, 3... */
+        }
+      }
+    }
+  }
+
   li {
     margin-block: 0;
     padding-block: 0;
