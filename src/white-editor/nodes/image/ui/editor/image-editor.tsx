@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Check, Minus, Plus, RefreshCcw } from 'lucide-react';
+import { Check, Minus, Plus } from 'lucide-react';
 
 import TuiImageEditor from 'tui-image-editor';
 import { Button, Textarea } from '@/shared';
@@ -143,6 +143,23 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
     <div className='we:flex we:w-full we:flex-col'>
       {/* Toolbar */}
       <ImageEditorToolbar editorRef={editorRef} activeMode={activeMode} handleModeChange={handleModeChange} />
+
+      {/* 확대/축소 컨트롤 */}
+      <div
+        className='we:flex we:items-center we:gap-1 we:fixed we:top-15 we:right-6 we:bg-background we:rounded-lg we:z-10 we:w-fit'
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <Button type='button' onClick={handleZoomOut} disabled={zoomLevel <= 50}>
+          <Minus />
+        </Button>
+        <Button type='button' onClick={handleZoomReset} className='we:min-w-[50px]'>
+          {zoomLevel}%
+        </Button>
+        <Button type='button' onClick={handleZoomIn} disabled={zoomLevel >= 500}>
+          <Plus />
+        </Button>
+      </div>
+
       {/* Image */}
       <div
         className='we:overflow-auto we:rounded we:bg-border/50 we:relative we:h-[420px] we:w-full we:grid we:place-items-center'
@@ -150,26 +167,6 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
           userSelect: 'none',
         }}
       >
-        {/* 확대/축소 컨트롤 */}
-        <div
-          className='we:flex we:items-center we:gap-2 we:fixed we:top-30 we:left-10 we:bg-background we:border we:rounded-lg we:z-10 we:w-fit'
-          onMouseDown={(e) => e.stopPropagation()}
-          style={{
-            boxShadow: 'var(--we-popover-shadow)',
-          }}
-        >
-          <Button type='button' onClick={handleZoomOut} disabled={zoomLevel <= 50} size='sm'>
-            <Minus />
-          </Button>
-          <span className='we:text-sm we:min-w-[50px] we:text-center'>{zoomLevel}%</span>
-          <Button type='button' onClick={handleZoomIn} disabled={zoomLevel >= 500} size='sm'>
-            <Plus />
-          </Button>
-          <Button type='button' onClick={handleZoomReset} className='we:h-fit we:w-fit'>
-            <RefreshCcw />
-          </Button>
-        </div>
-
         <div
           className='we:flex we:items-center we:justify-center'
           style={{
