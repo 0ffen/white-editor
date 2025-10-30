@@ -23,6 +23,7 @@ export interface ImageUploadConfig {
   onSave?: (url: string, caption: string) => void;
   imageUrl?: string;
   currentCaption?: string;
+  closeOnError?: boolean; // 에러 발생 시 모달 자동 닫기 옵션
 }
 
 export interface ImageDialogProps extends Partial<ImageUploadConfig> {
@@ -44,6 +45,7 @@ export function ImageDialog(props: ImageDialogProps) {
     icon,
     editor: providedEditor,
     onImageInserted,
+    closeOnError = true, // 기본값을 true로 설정
   } = props;
 
   const { editor } = useTiptapEditor(providedEditor);
@@ -85,7 +87,12 @@ export function ImageDialog(props: ImageDialogProps) {
     accept,
     upload: wrappedUpload,
     onSuccess,
-    onError,
+    onError: (error) => {
+      onError?.(error);
+      if (closeOnError) {
+        setIsOpen(false);
+      }
+    },
   };
 
   const { fileItems, uploadFiles, removeFileItem, clearFileItemsOnly } = useFileUpload(uploadOptions);
