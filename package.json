@@ -13,7 +13,7 @@
   },
   "private": false,
   "license": "MIT",
-  "version": "1.1.8",
+  "version": "1.1.8-alpha",
   "description": "A WYSIWYG editor and viewer built with TipTap and Tui Image Editor",
   "keywords": [
     "editor",
@@ -83,6 +83,7 @@
     "@tiptap/extension-list": "^3.4.3",
     "@tiptap/extension-mathematics": "^3.4.4",
     "@tiptap/extension-mention": "^3.4.6",
+    "@tiptap/extension-placeholder": "^3.10.0",
     "@tiptap/extension-subscript": "^3.4.3",
     "@tiptap/extension-superscript": "^3.4.3",
     "@tiptap/extension-table": "^3.4.4",

@@ -26,6 +26,7 @@ interface WhiteEditorUIProps {
   theme?: 'light' | 'dark';
   footer?: React.ReactNode;
   disabled?: boolean;
+  placeholder?: string;
 }
 
 interface WhiteEditorExtensions<T = Record<string, unknown>> {
