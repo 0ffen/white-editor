@@ -11,6 +11,7 @@ import Highlight from '@tiptap/extension-highlight';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
 import Mathematics, { migrateMathStrings } from '@tiptap/extension-mathematics';
 import Mention from '@tiptap/extension-mention';
+import Placeholder from '@tiptap/extension-placeholder';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
 import { Table, TableCell, TableRow } from '@tiptap/extension-table';
@@ -31,7 +32,8 @@ export function createEditorExtensions<T>(
       onError?: (error: Error) => void;
       onSuccess?: (url: string) => void;
     };
-  }
+  },
+  placeholder?: string
 ) {
   const lowlight = createLowlight(all);
 
@@ -76,6 +78,15 @@ export function createEditorExtensions<T>(
       blockOptions: {},
       inlineOptions: {},
     }),
+    ...(placeholder
+      ? [
+          Placeholder.configure({
+            placeholder,
+            showOnlyWhenEditable: false,
+            showOnlyCurrent: true,
+          }),
+        ]
+      : []),
     ...(mentionDataRef ? [MentionNode({ mentionDataRef })] : []),
   ];
 }

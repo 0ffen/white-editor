@@ -14,6 +14,7 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
     extension,
     contentClassName,
     editorProps,
+    placeholder,
     onChange,
     onUpdate,
     onBlur,
@@ -55,7 +56,7 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
       handleDrop,
       handlePaste,
     },
-    extensions: createEditorExtensions(mentionDataRef, extension?.character?.limit, extension),
+    extensions: createEditorExtensions(mentionDataRef, extension?.character?.limit, extension, placeholder),
     onCreate: ({ editor: currentEditor }) => {
       editorInstanceRef.current = currentEditor;
       onCreate?.(currentEditor);

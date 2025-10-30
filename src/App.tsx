@@ -102,6 +102,7 @@ export default function App() {
             disabled={false}
             editorClassName='we:h-[500px]!'
             contentClassName='we:h-full'
+            placeholder='여기에 텍스트를 입력하세요...'
             onChange={() => {
               if (editorRef.current) {
                 setContent(editorRef.current.getJSON());

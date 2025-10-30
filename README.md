@@ -83,6 +83,7 @@ function MyComponent() {
       disabled={false}
       editorClassName={'white-editor-class'}
       contentClassName={'content-class'}
+      placeholder='여기에 텍스트를 입력하세요...'
       toolbarItems={[
         ['undo', 'redo'],
         ['heading', 'bold', 'italic', 'color'],
@@ -142,6 +143,7 @@ interface WhiteEditorUIProps {
   toolbarItems?: ToolbarItem[][]; // 툴바 버튼 그룹 설정
   toolbarProps?: ToolbarItemProps; // 각 툴바 버튼의 상세 옵션
   footer?: React.ReactNode; // 에디터 하단 커스텀 영역
+  placeholder?: string; // 에디터가 비어있을 때 표시할 텍스트
 }
 ```
 
@@ -247,6 +249,7 @@ toolbarProps: {
     upload: async (file) => imageUrl,
     onSuccess: (url) => console.log(url),
     onError: (error) => console.error(error),
+    closeOnError: true,              // 에러 발생 시 모달 자동 닫기 (기본값: true)
   },
 }
 ```
