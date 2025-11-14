@@ -1,5 +1,5 @@
-import React, { useMemo, useEffect } from 'react';
-import { cn, createViewerExtensions } from '@/shared/utils';
+import React, { useMemo, useEffect, useRef } from 'react';
+import { cn, createViewerExtensions, normalizeContent } from '@/shared/utils';
 import { EditorContent, useEditor, type JSONContent } from '@tiptap/react';
 
 import '@/shared/styles/viewer.css';
@@ -15,11 +15,15 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
 
   const extensions = useMemo(() => createViewerExtensions(), []);
 
+  // content를 정규화 (text 필드가 숫자인 경우 문자열로 변환)
+  const normalizedContent = useMemo(() => normalizeContent(content), [content]);
+  const contentRef = useRef<JSONContent>(normalizedContent);
+
   const editor = useEditor({
-    immediatelyRender: false,
+    immediatelyRender: true,
     editable: false,
     extensions,
-    content,
+    content: normalizedContent || { type: 'doc', content: [] },
     editorProps: {
       attributes: {
         spellcheck: 'false',
@@ -29,10 +33,18 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
   });
 
   useEffect(() => {
-    if (editor && content) {
-      editor.commands.setContent(content, { emitUpdate: false });
+    if (editor && normalizedContent) {
+      // content가 실제로 변경되었는지 확인
+      const currentContent = editor.getJSON();
+      const contentString = JSON.stringify(normalizedContent);
+      const currentContentString = JSON.stringify(currentContent);
+
+      if (contentString !== currentContentString) {
+        contentRef.current = normalizedContent;
+        editor.commands.setContent(normalizedContent, { emitUpdate: false });
+      }
     }
-  }, [editor, content]);
+  }, [editor, normalizedContent]);
 
   return (
     <div className={cn('white-editor viewer', className)}>
