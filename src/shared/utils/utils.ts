@@ -31,6 +31,9 @@ export function cn(...inputs: ClassValue[]) {
  * @returns Mac 플랫폼 여부를 나타내는 boolean
  */
 export function isMac(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
   return typeof navigator !== 'undefined' && navigator.platform.toLowerCase().includes('mac');
 }
 
@@ -267,6 +270,10 @@ export const handleImageUpload = async (
   abortSignal?: AbortSignal,
   maxFileSize?: number
 ): Promise<string> => {
+  if (typeof window === 'undefined') {
+    throw new Error('handleImageUpload can only be used in the browser');
+  }
+
   // 파일 유효성 검사
   if (!file) {
     throw new Error('No file provided');
