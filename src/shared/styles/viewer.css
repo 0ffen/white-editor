@@ -2,6 +2,15 @@
   .ProseMirror {
     padding: 0px;
     white-space: pre-wrap;
+    background-color: transparent !important;
+    color: inherit !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    font-family: inherit !important;
+    line-height: inherit !important;
+    text-align: inherit !important;
+    text-decoration: inherit !important;
+    text-transform: inherit !important;
   }
 }
 

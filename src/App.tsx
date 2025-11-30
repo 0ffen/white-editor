@@ -91,6 +91,24 @@ export default function App() {
                 setContent(editorRef.current.getJSON());
               }
             }}
+            theme={{
+              colors: {
+                background: 'var(--we-color-highlight-yellow)',
+                foreground: 'var(--we-color-text-black)',
+                popover: 'var(--we-color-highlight-gray)',
+                popoverForeground: 'var(--we-color-text-black)',
+                card: 'var(--we-color-highlight-yellow-contrast)',
+                cardForeground: 'var(--we-color-text-black)',
+                primary: 'var(--we-color-text-purple)',
+                primaryForeground: 'var(--we-color-text-white)',
+                secondary: 'var(--we-color-highlight-green)',
+                secondaryForeground: 'var(--we-color-text-black)',
+                muted: 'var(--we-color-highlight-blue)',
+                mutedForeground: 'var(--we-color-text-gray)',
+                accent: 'var(--we-color-text-yellow)',
+                accentForeground: 'var(--we-color-text-white)',
+              },
+            }}
             extension={{
               mention: {
                 data: [

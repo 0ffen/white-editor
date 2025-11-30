@@ -30,12 +30,32 @@ interface EditorExtensions<T = Record<string, unknown>, P = Record<string, unkno
   };
 }
 
+interface WhiteEditorTheme {
+  mode?: 'light' | 'dark';
+  colors?: {
+    background?: string;
+    foreground?: string;
+    card?: string;
+    cardForeground?: string;
+    popover?: string;
+    popoverForeground?: string;
+    primary?: string;
+    primaryForeground?: string;
+    secondary?: string;
+    secondaryForeground?: string;
+    muted?: string;
+    mutedForeground?: string;
+    accent?: string;
+    accentForeground?: string;
+  };
+}
+
 interface WhiteEditorUIProps {
   editorClassName?: string;
   contentClassName?: string;
   toolbarItems?: ToolbarItem[][];
   toolbarProps?: ToolbarItemProps;
-  theme?: 'light' | 'dark';
+  theme?: 'light' | 'dark' | WhiteEditorTheme;
   footer?: React.ReactNode;
   disabled?: boolean;
   placeholder?: string;
@@ -121,6 +141,7 @@ interface WhiteEditorProps<T>
 export type {
   WhiteEditorProps,
   WhiteEditorUIProps,
+  WhiteEditorTheme,
   WhiteEditorExtensions,
   UseWhiteEditorReturn,
   TipTapEditorOptions,
