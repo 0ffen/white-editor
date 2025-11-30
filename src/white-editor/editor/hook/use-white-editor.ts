@@ -22,6 +22,10 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
     onCreate,
     onDestroy,
     onSelectionUpdate,
+    addExtensions,
+    customNodes,
+    overrideExtensions,
+    customNodeViews,
   } = props;
 
   // for mention
@@ -29,6 +33,14 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
   useEffect(() => {
     mentionDataRef.current = extension?.mention;
   }, [extension?.mention]);
+
+  // for pageMention
+  const pageMentionConfigRef = useRef<EditorExtensions<T, Record<string, unknown>>['pageMention']>(
+    extension?.pageMention
+  );
+  useEffect(() => {
+    pageMentionConfigRef.current = extension?.pageMention;
+  }, [extension?.pageMention]);
 
   const editorInstanceRef = useRef<Editor | null>(null);
   const { handleDrop, handlePaste } = useImageDragPaste(extension as EditorExtensions<Record<string, unknown>>);
@@ -45,7 +57,7 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
         spellcheck: 'false',
         'aria-label': 'Editor Content',
         class: contentClassName || '',
-        ...(editorProps?.attributes || {}),
+        ...editorProps?.attributes,
       },
       handleKeyDown: (view, event) => {
         if (event.key === ' ') {
@@ -56,7 +68,17 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
       handleDrop,
       handlePaste,
     },
-    extensions: createEditorExtensions(mentionDataRef, extension?.character?.limit, extension, placeholder),
+    extensions: createEditorExtensions(
+      mentionDataRef,
+      pageMentionConfigRef,
+      extension?.character?.limit,
+      extension,
+      placeholder,
+      addExtensions,
+      customNodes,
+      overrideExtensions,
+      customNodeViews
+    ),
     onCreate: ({ editor: currentEditor }) => {
       editorInstanceRef.current = currentEditor;
       onCreate?.(currentEditor);
