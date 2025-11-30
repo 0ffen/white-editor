@@ -119,7 +119,7 @@ export const UnifiedMentionList = (props: UnifiedMentionListProps) => {
       {mentionItems.length > 0 && (
         <>
           <div className='we:sticky we:top-0 we:z-10 we:bg-popover we:px-2 we:py-1.5 we:text-xs we:font-medium we:text-muted-foreground we:uppercase'>
-            사람
+            Peoples
           </div>
           <div className='we:flex we:flex-col we:gap-0.5 we:px-1.5 we:pb-1.5'>
             {mentionItems.map((item, index) => {
@@ -155,7 +155,7 @@ export const UnifiedMentionList = (props: UnifiedMentionListProps) => {
         <>
           {mentionItems.length > 0 && <div className='we:border-t we:border-border we:my-1' />}
           <div className='we:sticky we:top-0 we:z-10 we:bg-popover we:px-2 we:py-1.5 we:text-xs we:font-medium we:text-muted-foreground we:uppercase'>
-            페이지 링크
+            Pages
           </div>
           <div className='we:flex we:flex-col we:gap-0.5 we:px-1.5 we:pb-1.5'>
             {pageMentionItems.map((item, index) => {
