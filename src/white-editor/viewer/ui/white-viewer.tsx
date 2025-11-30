@@ -1,19 +1,23 @@
 import React, { useMemo, useEffect, useRef } from 'react';
 import { cn, createViewerExtensions, normalizeContent } from '@/shared/utils';
+import type { ExtensibleEditorConfig } from '@/white-editor';
 import { EditorContent, useEditor, type JSONContent } from '@tiptap/react';
 
 import '@/shared/styles/viewer.css';
 
-export interface WhiteViewerProps {
+export interface WhiteViewerProps extends ExtensibleEditorConfig {
   content: JSONContent;
   className?: string;
   footer?: React.ReactNode;
 }
 
 export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerProps) {
-  const { content, className, footer } = props;
+  const { content, className, footer, addExtensions, customNodes, overrideExtensions, customNodeViews } = props;
 
-  const extensions = useMemo(() => createViewerExtensions(), []);
+  const extensions = useMemo(
+    () => createViewerExtensions(addExtensions, customNodes, overrideExtensions, customNodeViews),
+    [addExtensions, customNodes, overrideExtensions, customNodeViews]
+  );
 
   // content를 정규화 (text 필드가 숫자인 경우 문자열로 변환)
   const normalizedContent = useMemo(() => normalizeContent(content), [content]);
@@ -41,7 +45,10 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
 
       if (contentString !== currentContentString) {
         contentRef.current = normalizedContent;
-        editor.commands.setContent(normalizedContent, { emitUpdate: false });
+        // flushSync 경고를 피하기 위해 비동기로 처리
+        queueMicrotask(() => {
+          editor.commands.setContent(normalizedContent, { emitUpdate: false });
+        });
       }
     }
   }, [editor, normalizedContent]);

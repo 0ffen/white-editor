@@ -10,17 +10,13 @@
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
-  * {
-    @apply we:border-border we:outline-ring/50;
-  }
-  body {
-    /* @apply we:text-foreground we:bg-background we:antialiased we:scroll-smooth we:h-full we:w-full we:p-0 we:m-0; */
-
+  /* 에디터와 뷰어에만 적용되는 스타일 */
+  .white-editor {
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
   }
 
-  .font-pretendard {
+  .white-editor .font-pretendard {
     font-family:
       'Pretendard Variable',
       Pretendard,
@@ -38,34 +34,34 @@
     font-display: swap;
   }
 
-  ::-webkit-scrollbar {
+  .white-editor ::-webkit-scrollbar {
     width: 14px;
     height: 14px;
   }
 
-  ::-webkit-scrollbar-thumb {
+  .white-editor ::-webkit-scrollbar-thumb {
     outline: none;
     border-radius: 10px;
     border: 4px solid transparent;
-    box-shadow: inset 8px 8px 0 rgba(81, 81, 81, 0.15);
+    box-shadow: inset 8px 8px 0 rgba(79, 76, 76, 0.574);
   }
 
-  ::-webkit-scrollbar-thumb:hover {
+  .white-editor ::-webkit-scrollbar-thumb:hover {
     border: 4px solid transparent;
-    box-shadow: inset 8px 8px 0 rgba(81, 81, 81, 0.25);
+    box-shadow: inset 8px 8px 0 rgba(79, 76, 76, 0.574);
   }
 
-  ::-webkit-scrollbar-thumb:active {
+  .white-editor ::-webkit-scrollbar-thumb:active {
     border: 4px solid transparent;
-    box-shadow: inset 8px 8px 0 rgba(81, 81, 81, 0.35);
+    box-shadow: inset 8px 8px 0 rgba(79, 76, 76, 0.574);
   }
 
-  ::-webkit-scrollbar-track {
+  .white-editor ::-webkit-scrollbar-track {
     box-shadow: none;
     background-color: transparent;
   }
 
-  ::-webkit-scrollbar-corner {
+  .white-editor ::-webkit-scrollbar-corner {
     background-color: transparent;
   }
 }

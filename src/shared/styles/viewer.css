@@ -1,6 +1,7 @@
 .white-editor.viewer {
   .ProseMirror {
     padding: 0px;
+    white-space: pre-wrap;
   }
 }
 

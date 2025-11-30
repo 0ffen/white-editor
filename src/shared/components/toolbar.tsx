@@ -10,7 +10,7 @@ const toolbarVariants = cva('we:flex we:items-center we:gap-1', {
     variant: {
       fixed: [
         'we:z-10 we:w-full we:min-h-[2.75rem]',
-        'we:bg-background we:border-b we:border-border we:rounded-t-md',
+        'we:bg-transparent we:border-b we:border-border we:rounded-t-md',
         'we:px-2 we:overflow-x-auto we:overscroll-x-contain',
       ],
       floating: [

@@ -18,7 +18,6 @@ export const MentionList = (props: MentionListProps) => {
   const { mentionList, command, ref } = props;
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  // ✨ 2. 스크롤을 제어할 div에 대한 ref를 생성합니다.
   const containerRef = useRef<HTMLDivElement>(null);
 
   const selectItem = (index: number) => {

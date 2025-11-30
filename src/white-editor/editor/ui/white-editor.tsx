@@ -19,7 +19,17 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
   props: WhiteEditorProps<T>,
   ref: React.Ref<WhiteEditorRef>
 ) {
-  const { toolbarItems, toolbarProps, contentClassName, editorClassName, footer, theme, disabled, extension } = props;
+  const {
+    toolbarItems,
+    toolbarProps,
+    contentClassName,
+    editorClassName,
+    footer,
+    theme,
+    disabled,
+    extension,
+    showToolbar,
+  } = props;
 
   const toolbarRef = React.useRef<HTMLDivElement>(null);
   const editorHook = useWhiteEditor<T>(props);
@@ -76,9 +86,11 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
         onClick={handleEditorClick}
       >
         <EditorContext.Provider value={{ editor }}>
-          <Toolbar ref={toolbarRef} role='toolbar'>
-            <div className={cn('toolbar-wrapper')}>{renderToolbar()}</div>
-          </Toolbar>
+          {showToolbar && (
+            <Toolbar ref={toolbarRef} role='toolbar'>
+              <div className={cn('toolbar-wrapper')}>{renderToolbar()}</div>
+            </Toolbar>
+          )}
           <EditorContent
             editor={editor}
             className={cn(
