@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useImperativeHandle, forwardRef, useMemo } from 'react';
 
 import { Toolbar, TooltipProvider } from '@/shared/components';
-import { applyTheme, cn } from '@/shared/utils';
+import { applyTheme, cn, normalizeContent } from '@/shared/utils';
 import {
   useWhiteEditor,
   type WhiteEditorProps,
@@ -10,7 +10,7 @@ import {
   defaultToolbarItems,
   EditorToolbar,
 } from '@/white-editor';
-import { EditorContent, EditorContext } from '@tiptap/react';
+import { EditorContent, EditorContext, type JSONContent } from '@tiptap/react';
 import '@/shared/styles/index.css';
 
 export type WhiteEditorRef = UseWhiteEditorReturn;
@@ -32,7 +32,24 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
   } = props;
 
   const toolbarRef = React.useRef<HTMLDivElement>(null);
-  const editorHook = useWhiteEditor<T>(props);
+
+  // content를 정규화 (text 필드가 숫자인 경우 문자열로 변환)
+  const normalizedContent = useMemo(() => {
+    if (
+      props.content &&
+      typeof props.content === 'object' &&
+      !Array.isArray(props.content) &&
+      'type' in props.content
+    ) {
+      return normalizeContent(props.content as JSONContent);
+    }
+    return props.content;
+  }, [props.content]);
+
+  const editorHook = useWhiteEditor<T>({
+    ...props,
+    content: normalizedContent,
+  });
   const { editor, charactersCount, focus } = editorHook;
 
   useImperativeHandle(ref, () => editorHook, [editorHook]);
