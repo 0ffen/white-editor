@@ -26,6 +26,7 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
     customNodes,
     overrideExtensions,
     customNodeViews,
+    content,
   } = props;
 
   // for mention
@@ -48,6 +49,7 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
   const editor = useEditor({
     immediatelyRender: false,
     shouldRerenderOnTransaction: false,
+    content,
     editorProps: {
       ...editorProps,
       attributes: {
