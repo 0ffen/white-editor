@@ -28,7 +28,7 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
     theme,
     disabled,
     extension,
-    showToolbar,
+    showToolbar = true,
   } = props;
 
   const toolbarRef = React.useRef<HTMLDivElement>(null);

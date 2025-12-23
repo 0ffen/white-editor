@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { createEditorExtensions } from '@/shared/utils';
+import { createEditorExtensions, normalizeContent } from '@/shared/utils';
 import {
   useImageDragPaste,
   type EditorExtensions,
@@ -86,11 +86,30 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
       onCreate?.(currentEditor);
     },
     onUpdate: ({ editor: currentEditor }) => {
-      onUpdate?.(currentEditor);
-      onChange?.(currentEditor as Editor);
+      // 정규화된 JSONContent를 가져옴
+      const originalJSON = currentEditor.getJSON();
+      const normalizedJSON = normalizeContent(originalJSON);
+
+      // 숫자가 문자열로 변환되었거나 빈 텍스트 노드가 제거된 경우, 에디터에 정규화된 content 설정
+      const originalStr = JSON.stringify(originalJSON);
+      const normalizedStr = JSON.stringify(normalizedJSON);
+
+      if (originalStr !== normalizedStr) {
+        // emitUpdate: false로 설정하여 무한 루프 방지
+        currentEditor.commands.setContent(normalizedJSON, { emitUpdate: false });
+      }
+
+      onUpdate?.(normalizedJSON);
+      onChange?.(normalizedJSON);
     },
-    onBlur: ({ editor: currentEditor }) => onBlur?.(currentEditor),
-    onFocus: ({ editor: currentEditor }) => onFocus?.(currentEditor),
+    onBlur: ({ editor: currentEditor }) => {
+      const normalizedJSON = normalizeContent(currentEditor.getJSON());
+      onBlur?.(normalizedJSON);
+    },
+    onFocus: ({ editor: currentEditor }) => {
+      const normalizedJSON = normalizeContent(currentEditor.getJSON());
+      onFocus?.(normalizedJSON);
+    },
     onDestroy: () => onDestroy?.(),
     onSelectionUpdate: ({ editor: currentEditor }) => onSelectionUpdate?.(currentEditor),
   });
@@ -110,11 +129,20 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
   const charactersCount = editorState?.charactersCount || 0;
 
   const getHTML = useCallback(() => editor?.getHTML() || '', [editor]);
-  const getJSON = useCallback((): JSONContent => editor?.getJSON() || {}, [editor]);
+  const getJSON = useCallback((): JSONContent => {
+    const json = editor?.getJSON() || {};
+    return normalizeContent(json);
+  }, [editor]);
   const getText = useCallback(() => editor?.getText() || '', [editor]);
   const setContent = useCallback(
     (content: string | JSONContent) => {
-      editor?.commands.setContent(content);
+      if (typeof content === 'string') {
+        editor?.commands.setContent(content);
+      } else {
+        // JSONContent인 경우 정규화하여 설정
+        const normalizedContent = normalizeContent(content);
+        editor?.commands.setContent(normalizedContent);
+      }
     },
     [editor]
   );

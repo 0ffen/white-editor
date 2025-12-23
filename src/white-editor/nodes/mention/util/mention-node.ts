@@ -1,15 +1,19 @@
 import type { RefObject } from 'react';
+import { normalizeContent } from '@/shared/utils';
 import type { MentionConfig, EditorExtensions } from '@/white-editor';
 import Mention, { type MentionOptions } from '@tiptap/extension-mention';
 import unifiedMentionSuggestion from './unified-mention-suggestion';
 import type { UnifiedMentionItem } from '../type/mention.type';
 
-interface MentionNodeProps<T, P> {
+interface MentionNodeProps<T, P extends Record<string, unknown> = Record<string, unknown>> {
   mentionDataRef: RefObject<MentionConfig<T> | undefined>;
   pageLinkConfigRef?: RefObject<EditorExtensions<T, P>['pageMention']>;
 }
 
-export const MentionNode = <T, P>({ mentionDataRef, pageLinkConfigRef }: MentionNodeProps<T, P>) => {
+export const MentionNode = <T, P extends Record<string, unknown> = Record<string, unknown>>({
+  mentionDataRef,
+  pageLinkConfigRef,
+}: MentionNodeProps<T, P>) => {
   const suggestion = unifiedMentionSuggestion<T, P>({
     mentionDataRef,
     pageLinkConfigRef,
@@ -81,11 +85,37 @@ export const MentionNode = <T, P>({ mentionDataRef, pageLinkConfigRef }: Mention
                       })
                       .run();
                   }
+
+                  // pageMention 삽입 후 빈 텍스트 노드 제거를 위해 정규화
+                  setTimeout(() => {
+                    const currentJSON = props.editor.getJSON();
+                    const normalizedJSON = normalizeContent(currentJSON);
+                    const currentStr = JSON.stringify(currentJSON);
+                    const normalizedStr = JSON.stringify(normalizedJSON);
+
+                    if (currentStr !== normalizedStr) {
+                      props.editor.commands.setContent(normalizedJSON, { emitUpdate: false });
+                    }
+                  }, 0);
+
                   return;
                 }
               }
               // mention 노드 생성 (기본 동작)
               originalCommand(item);
+
+              // 멘션 삽입 후 빈 텍스트 노드 제거를 위해 정규화
+              // TipTap이 멘션 삽입 시 자동으로 빈 텍스트 노드를 생성할 수 있으므로 정규화 필요
+              setTimeout(() => {
+                const currentJSON = props.editor.getJSON();
+                const normalizedJSON = normalizeContent(currentJSON);
+                const currentStr = JSON.stringify(currentJSON);
+                const normalizedStr = JSON.stringify(normalizedJSON);
+
+                if (currentStr !== normalizedStr) {
+                  props.editor.commands.setContent(normalizedJSON, { emitUpdate: false });
+                }
+              }, 0);
             };
 
             renderConfig.onStart({

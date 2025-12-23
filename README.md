@@ -84,6 +84,7 @@ function MyComponent() {
       editorClassName={'white-editor-class'}
       contentClassName={'content-class'}
       placeholder='여기에 텍스트를 입력하세요...'
+      showToolbar={true}
       toolbarItems={[
         ['undo', 'redo'],
         ['heading', 'bold', 'italic', 'color'],
@@ -108,6 +109,57 @@ function MyComponent() {
     />
   );
 }
+```
+
+#### 커스텀 테마 설정
+
+테마를 객체로 설정하여 색상을 커스터마이징할 수 있습니다.
+
+```tsx
+import { useRef } from 'react';
+import { WhiteEditor, type WhiteEditorRef } from '@0ffen/white-editor';
+
+function MyComponent() {
+  const editorRef = useRef<WhiteEditorRef | null>(null);
+
+  return (
+    <WhiteEditor
+      ref={editorRef}
+      theme={{
+        mode: 'dark',
+        colors: {
+          background: 'var(--color-elevation-background)',
+          foreground: 'var(--color-text-normal)',
+          popover: 'var(--color-elevation-dropdown)',
+          popoverForeground: 'var(--color-text-normal)',
+          card: 'var(--color-elevation-level1)',
+          cardForeground: 'var(--color-text-normal)',
+          primary: 'var(--color-brand-default)',
+          primaryForeground: 'var(--color-white)',
+          secondary: 'var(--color-elevation-level2)',
+          secondaryForeground: 'var(--color-text-sub)',
+          muted: 'var(--color-elevation-level2)',
+          mutedForeground: 'var(--color-text-normal)',
+          accent: 'var(--color-brand-weak)',
+          accentForeground: 'var(--color-text-normal)',
+        },
+      }}
+      placeholder='내용을 입력해주세요.'
+      showToolbar={true}
+    />
+  );
+}
+```
+
+#### 툴바 숨기기
+
+`showToolbar={false}`로 설정하면 툴바를 숨길 수 있습니다.
+
+```tsx
+<WhiteEditor
+  showToolbar={false}
+  placeholder='툴바 없이 간단한 입력만 가능합니다.'
+/>
 ```
 
 ### 1-1. Editor Types
@@ -136,7 +188,7 @@ interface WhiteEditorProps<T> extends WhiteEditorUIProps, WhiteEditorExtensions<
 
 ```ts
 interface WhiteEditorUIProps {
-  theme?: 'light' | 'dark'; // 테마 설정
+  theme?: 'light' | 'dark' | WhiteEditorTheme; // 테마 설정
   disabled?: boolean; // 에디터 비활성화 여부
   editorClassName?: string; // 에디터 전체 스타일
   contentClassName?: string; // 에디터 내용 영역 스타일
@@ -144,6 +196,27 @@ interface WhiteEditorUIProps {
   toolbarProps?: ToolbarItemProps; // 각 툴바 버튼의 상세 옵션
   footer?: React.ReactNode; // 에디터 하단 커스텀 영역
   placeholder?: string; // 에디터가 비어있을 때 표시할 텍스트
+  showToolbar?: boolean; // 툴바 표시 여부 (기본값: true)
+}
+
+interface WhiteEditorTheme {
+  mode?: 'light' | 'dark';
+  colors?: {
+    background?: string;
+    foreground?: string;
+    card?: string;
+    cardForeground?: string;
+    popover?: string;
+    popoverForeground?: string;
+    primary?: string;
+    primaryForeground?: string;
+    secondary?: string;
+    secondaryForeground?: string;
+    muted?: string;
+    mutedForeground?: string;
+    accent?: string;
+    accentForeground?: string;
+  };
 }
 ```
 
@@ -155,11 +228,27 @@ interface WhiteEditorUIProps {
 interface WhiteEditorExtensions<T> {
   extension?: {
     mention?: MentionConfig<T>; // @멘션 기능을 위한 멘션 옵션 설정
+    pageMention?: {
+      // 페이지 링크 멘션 설정
+      data: P[];
+      id: keyof P;
+      title: keyof P;
+      href: keyof P;
+      path?: keyof P; // 경로 정보 (optional)
+      icon?: keyof P; // 아이콘 (optional)
+      renderLabel?: (item: P) => React.ReactNode; // 커스텀 제목 렌더링 (optional)
+    };
     character?: {
       //글자수 카운트를 위한 옵션 설정
       show?: boolean;
       limit?: number; //limit을 작성하지 않으면 count만 노출
       className?: string;
+    };
+    imageUpload?: {
+      // 이미지 업로드 설정
+      upload?: (file: File) => Promise<string>;
+      onError?: (error: Error) => void;
+      onSuccess?: (url: string) => void;
     };
   };
 }
@@ -254,6 +343,126 @@ toolbarProps: {
 }
 ```
 
+### 1-3. 확장 기능 (Extensions)
+
+#### 멘션 (Mention)
+
+`@` 기호를 입력하면 사용자를 태그할 수 있는 멘션 기능입니다.
+
+```tsx
+<WhiteEditor
+  extension={{
+    mention: {
+      data: [
+        { uuid: 1, name: 'White Lee', nickname: 'white' },
+        { uuid: 2, name: 'Black Kim', nickname: 'black' },
+      ],
+      id: 'uuid',
+      label: 'nickname',
+    },
+  }}
+/>
+```
+
+#### 페이지 링크 멘션 (Page Link Mention)
+
+페이지 링크를 멘션으로 추가할 수 있는 기능입니다. 일반 멘션과 함께 사용할 수 있으며, `@` 입력 시 사용자와 페이지 링크가 함께 표시됩니다.
+
+```tsx
+interface Page {
+  pageId: string;
+  title: string;
+  url: string;
+  path?: string;
+  icon?: string;
+}
+
+const pages: Page[] = [
+  { pageId: '1', title: '프로젝트 개요', url: '/pages/1', path: '/docs/project' },
+  { pageId: '2', title: 'API 문서', url: '/pages/2', path: '/docs/api' },
+];
+
+<WhiteEditor
+  extension={{
+    mention: {
+      data: users,
+      id: 'userId',
+      label: 'username',
+    },
+    pageMention: {
+      data: pages,
+      id: 'pageId',
+      title: 'title',
+      href: 'url',
+      path: 'path', // optional
+      icon: 'icon', // optional
+      renderLabel: (item) => (
+        <div className="flex items-center gap-2">
+          {item.icon && <img src={item.icon} alt="" />}
+          <span>{item.title}</span>
+        </div>
+      ), // optional
+    },
+  }}
+/>
+```
+
+#### 이미지 업로드 확장 (Image Upload Extension)
+
+이미지 업로드를 extension으로 설정할 수 있습니다. 이 방법은 toolbarProps의 image 설정과 함께 사용할 수 있습니다.
+
+```tsx
+const handleImageUpload = async (file: File): Promise<string> => {
+  // 이미지 업로드 로직
+  const formData = new FormData();
+  formData.append('image', file);
+  
+  const response = await fetch('/api/upload', {
+    method: 'POST',
+    body: formData,
+  });
+  
+  const data = await response.json();
+  return data.url;
+};
+
+<WhiteEditor
+  extension={{
+    imageUpload: {
+      upload: handleImageUpload,
+      onSuccess: (url) => {
+        console.log('이미지 업로드 성공:', url);
+      },
+      onError: (error) => {
+        console.error('이미지 업로드 실패:', error);
+      },
+    },
+  }}
+  toolbarProps={{
+    image: {
+      maxSize: 1024 * 1024 * 10,
+      accept: 'image/*',
+    },
+  }}
+/>
+```
+
+#### 글자수 카운트 (Character Count)
+
+에디터에 입력된 글자수를 표시하고 제한할 수 있습니다.
+
+```tsx
+<WhiteEditor
+  extension={{
+    character: {
+      show: true,
+      limit: 1000, // optional: limit을 설정하지 않으면 count만 표시
+      className: 'text-gray-600', // optional: 스타일 커스터마이징
+    },
+  }}
+/>
+```
+
 ## 2. White Viewer
 
 읽기 전용 뷰어 컴포넌트
@@ -279,7 +488,128 @@ const sampleContent: JSONContent = {
 <WhiteViewer content={sampleContent} className='w-full' />;
 ```
 
-## 3. 에디터 제어
+## 3. 에디터 확장 (Node/Extension)
+
+White Editor는 TipTap의 확장 가능한 아키텍처를 활용하여 커스텀 노드와 확장 기능을 추가할 수 있습니다.
+
+### 3-1. 외부 Extension 추가 (addExtensions)
+
+프로젝트에 없는 TipTap extension을 추가할 때 사용합니다.
+
+```tsx
+import { Extension } from '@tiptap/core';
+import { WhiteEditor } from '@0ffen/white-editor';
+import CustomExtension from '@tiptap/extension-custom';
+
+<WhiteEditor
+  addExtensions={[
+    CustomExtension.configure({
+      // extension 설정
+    }),
+  ]}
+/>
+```
+
+### 3-2. 커스텀 노드 추가 (customNodes)
+
+`Node.create()`로 만든 커스텀 노드를 추가할 때 사용합니다.
+
+```tsx
+import { Node } from '@tiptap/core';
+import { WhiteEditor } from '@0ffen/white-editor';
+
+const CustomNode = Node.create({
+  name: 'customNode',
+  // 노드 설정
+});
+
+<WhiteEditor
+  customNodes={[CustomNode]}
+/>
+```
+
+### 3-3. Extension 설정 오버라이드 (overrideExtensions)
+
+기본 extension의 설정을 오버라이드할 때 사용합니다.
+
+```tsx
+<WhiteEditor
+  overrideExtensions={{
+    heading: {
+      levels: [1, 2, 3], // heading extension의 levels 설정 변경
+    },
+    link: {
+      openOnClick: false, // link extension의 openOnClick 설정 변경
+    },
+  }}
+/>
+```
+
+### 3-4. 커스텀 노드 뷰 (customNodeViews)
+
+노드 타입별로 커스텀 React 컴포넌트를 매핑할 수 있습니다.
+
+```tsx
+import { WhiteEditor } from '@0ffen/white-editor';
+import CustomCodeBlock from './CustomCodeBlock';
+
+<WhiteEditor
+  customNodeViews={{
+    codeBlock: CustomCodeBlock, // codeBlock 노드에 커스텀 컴포넌트 사용
+  }}
+/>
+```
+
+커스텀 노드 뷰 컴포넌트 예제:
+
+```tsx
+import React from 'react';
+import { NodeViewWrapper } from '@tiptap/react';
+import type { NodeViewProps } from '@tiptap/react';
+
+const CustomCodeBlock: React.FC<NodeViewProps> = ({ node }) => {
+  return (
+    <NodeViewWrapper className="custom-code-block">
+      <pre>
+        <code>{node.textContent}</code>
+      </pre>
+    </NodeViewWrapper>
+  );
+};
+
+export default CustomCodeBlock;
+```
+
+### 3-5. 복합 확장 예제
+
+여러 확장 기능을 함께 사용하는 예제입니다.
+
+```tsx
+import { Extension } from '@tiptap/core';
+import { Node } from '@tiptap/core';
+import { WhiteEditor } from '@0ffen/white-editor';
+import CustomExtension from '@tiptap/extension-custom';
+
+const CustomNode = Node.create({
+  name: 'customNode',
+  // 노드 설정
+});
+
+<WhiteEditor
+  addExtensions={[CustomExtension]}
+  customNodes={[CustomNode]}
+  overrideExtensions={{
+    heading: {
+      levels: [1, 2],
+    },
+  }}
+  customNodeViews={{
+    codeBlock: CustomCodeBlock,
+  }}
+/>
+```
+
+## 4. 에디터 제어
 
 ### Ref를 통한 에디터 제어
 
@@ -342,7 +672,7 @@ function MyComponent() {
 }
 ```
 
-## 4. Utilities
+## 5. Utilities
 
 ### getHtmlContent - HTML 변환
 
@@ -427,25 +757,186 @@ const emptyContent = createEmptyContent();
 // }
 ```
 
-### setCSSVariables - CSS 변수 커스텀
+### markdownToHtml - Markdown 변환
 
-스타일 변수를 커스터마이징할 수 있게 해주는 유틸 함수입니다.
-변경하고 싶은 컬러의 변수를 수정해주세요.
-에디터의 컬러는 [shadcn ui](https://ui.shadcn.com/themes)의 variable을 따릅니다.
+Markdown 문자열을 HTML 문자열로 변환합니다.
 
 ```tsx
-import { useEffect } from 'react';
-import { WhiteEditor, setCSSVariables } from '@0ffen/white-editor';
+import { markdownToHtml, convertHtmlToJson, createEmptyContent } from '@0ffen/white-editor';
 
-function MyComponent() {
-  useEffect(() => {
-    setCSSVariables({
-      '--primary': '#000000',
-      '--secondary': '#000000',
-      '--background': '#000000',
-      '--border': '#000000',
+const markdown = '# 제목\n\n본문 내용입니다.';
+const html = markdownToHtml(markdown);
+const jsonContent = html ? convertHtmlToJson(html) : createEmptyContent();
+```
+
+## 6. 예제
+
+버전 1.1.10의 모든 새 기능을 포함한 종합 예제입니다.
+
+```tsx
+import { useRef, lazy, Suspense } from 'react';
+import { WhiteEditor, type WhiteEditorRef } from '@0ffen/white-editor';
+import type { JSONContent } from '@0ffen/white-editor';
+
+// 동적 임포트 (SSR 비활성화)
+const BaseWhiteEditor = lazy(() =>
+  import('@0ffen/white-editor').then((mod) => ({ default: mod.WhiteEditor }))
+);
+
+interface User {
+  userId: string;
+  username: string;
+  displayName: string;
+}
+
+interface Page {
+  pageId: string;
+  title: string;
+  url: string;
+  path?: string;
+}
+
+function CompleteExample() {
+  const editorRef = useRef<WhiteEditorRef>(null);
+
+  const users: User[] = [
+    { userId: '1', username: 'white', displayName: 'White Lee' },
+    { userId: '2', username: 'black', displayName: 'Black Kim' },
+  ];
+
+  const pages: Page[] = [
+    { pageId: '1', title: '프로젝트 개요', url: '/pages/1', path: '/docs/project' },
+    { pageId: '2', title: 'API 문서', url: '/pages/2', path: '/docs/api' },
+  ];
+
+  const handleImageUpload = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
     });
-  }, []);
 
-<WhiteEditor />;
+    const data = await response.json();
+    return data.url;
+  };
+
+  return (
+    <Suspense fallback={<div>로딩 중...</div>}>
+      <BaseWhiteEditor
+        ref={editorRef}
+        // 테마 설정 (객체로 커스터마이징)
+        theme={{
+          mode: 'dark',
+          colors: {
+            background: 'var(--color-elevation-background)',
+            foreground: 'var(--color-text-normal)',
+            popover: 'var(--color-elevation-dropdown)',
+            popoverForeground: 'var(--color-text-normal)',
+            card: 'var(--color-elevation-level1)',
+            cardForeground: 'var(--color-text-normal)',
+            primary: 'var(--color-brand-default)',
+            primaryForeground: 'var(--color-white)',
+            secondary: 'var(--color-elevation-level2)',
+            secondaryForeground: 'var(--color-text-sub)',
+            muted: 'var(--color-elevation-level2)',
+            mutedForeground: 'var(--color-text-normal)',
+            accent: 'var(--color-brand-weak)',
+            accentForeground: 'var(--color-text-normal)',
+          },
+        }}
+        // UI 설정
+        showToolbar={true}
+        placeholder="내용을 입력해주세요."
+        editorClassName={'!rounded-xs !border'}
+        contentClassName="min-h-[500px] p-4"
+        // 툴바 설정
+        toolbarItems={[
+          ['undo', 'redo'],
+          ['heading', 'bold', 'italic', 'underline'],
+          ['link', 'image'],
+        ]}
+        toolbarProps={{
+          heading: {
+            options: [
+              { label: '본문', level: null },
+              { label: '제목 1', level: 1 },
+              { label: '제목 2', level: 2 },
+            ],
+          },
+          image: {
+            maxSize: 1024 * 1024 * 10,
+            accept: 'image/*',
+          },
+        }}
+        // 확장 기능
+        extension={{
+          mention: {
+            data: users,
+            id: 'userId',
+            label: 'username',
+          },
+          pageMention: {
+            data: pages,
+            id: 'pageId',
+            title: 'title',
+            href: 'url',
+            path: 'path',
+          },
+          character: {
+            show: true,
+            limit: 2000,
+            className: 'text-gray-600',
+          },
+          imageUpload: {
+            upload: handleImageUpload,
+            onSuccess: (url) => {
+              console.log('이미지 업로드 성공:', url);
+            },
+            onError: (error) => {
+              console.error('이미지 업로드 실패:', error);
+            },
+          },
+        }}
+        // 이벤트 핸들러
+        onChange={(content: JSONContent) => {
+          console.log('콘텐츠 변경:', content);
+        }}
+        onFocus={() => {
+          console.log('에디터 포커스');
+        }}
+        onBlur={() => {
+          console.log('에디터 블러');
+        }}
+        onCreate={(editor) => {
+          editorRef.current.setContent({});
+        }}
+        // Footer
+        footer={
+            <button onClick={() => console.log(editorRef.current?.getJSON())}>
+              저장
+            </button>
+        }
+      />
+    </Suspense>
+  );
+}
+```
+
+### 간단한 예제 (툴바 없이)
+
+툴바를 숨기고 간단한 입력만 가능한 에디터입니다.
+
+```tsx
+<WhiteEditor
+  showToolbar={false}
+  placeholder="내용을 입력해주세요."
+  extension={{
+    character: {
+      show: true,
+      limit: 500,
+    },
+  }}
+/>
 ```

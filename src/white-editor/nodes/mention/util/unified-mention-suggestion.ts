@@ -11,12 +11,12 @@ import {
 } from '@/white-editor';
 import { ReactRenderer } from '@tiptap/react';
 
-interface UnifiedMentionSuggestionProps<T, P> {
+interface UnifiedMentionSuggestionProps<T, P extends Record<string, unknown> = Record<string, unknown>> {
   mentionDataRef: RefObject<MentionConfig<T> | undefined>;
   pageLinkConfigRef?: RefObject<EditorExtensions<T, P>['pageMention']>;
 }
 
-const unifiedMentionSuggestion = <T, P>({
+const unifiedMentionSuggestion = <T, P extends Record<string, unknown>>({
   mentionDataRef,
   pageLinkConfigRef,
 }: UnifiedMentionSuggestionProps<T, P>): MentionSuggestionConfig => ({
@@ -94,10 +94,26 @@ const unifiedMentionSuggestion = <T, P>({
 
     return {
       onStart: (props: SuggestionProps) => {
+        const mentionConfig = mentionDataRef.current;
+        const pageLinkConfig = pageLinkConfigRef?.current;
+
+        // 섹션 라벨 설정 가져오기
+        const peopleLabel = mentionConfig?.sectionLabel || 'People';
+        const pagesLabel = pageLinkConfig?.sectionLabel || 'Page Link';
+
+        // 섹션 라벨 표시 여부 결정 (기본값: true, 명시적으로 false로 설정된 경우에만 false)
+        const showPeopleLabel = mentionConfig?.showSectionLabel !== false;
+        const showPagesLabel = pageLinkConfig?.showSectionLabel !== false;
+
         component = new ReactRenderer(UnifiedMentionList, {
           props: {
             items: props.items as UnifiedMentionItem[],
             command: props.command as (item: UnifiedMentionItem) => void,
+            peopleLabel,
+            pagesLabel,
+            showLabels: showPeopleLabel || showPagesLabel, // 하나라도 true면 전체적으로 라벨 표시
+            showPeopleLabel,
+            showPagesLabel,
           },
           editor: props.editor,
         });
@@ -117,9 +133,25 @@ const unifiedMentionSuggestion = <T, P>({
       onUpdate: (props: SuggestionProps) => {
         if (!component) return;
 
+        const mentionConfig = mentionDataRef.current;
+        const pageLinkConfig = pageLinkConfigRef?.current;
+
+        // 섹션 라벨 설정 가져오기
+        const peopleLabel = mentionConfig?.sectionLabel || 'People';
+        const pagesLabel = pageLinkConfig?.sectionLabel || 'Page Link';
+
+        // 섹션 라벨 표시 여부 결정 (기본값: true, 명시적으로 false로 설정된 경우에만 false)
+        const showPeopleLabel = mentionConfig?.showSectionLabel !== false;
+        const showPagesLabel = pageLinkConfig?.showSectionLabel !== false;
+
         component.updateProps({
           items: props.items as UnifiedMentionItem[],
           command: props.command as (item: UnifiedMentionItem) => void,
+          peopleLabel,
+          pagesLabel,
+          showLabels: showPeopleLabel || showPagesLabel, // 하나라도 true면 전체적으로 라벨 표시
+          showPeopleLabel,
+          showPagesLabel,
         });
 
         if (!props.clientRect) {

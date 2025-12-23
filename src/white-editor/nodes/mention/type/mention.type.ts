@@ -29,6 +29,8 @@ interface MentionConfig<T> {
   id: string;
   label: string;
   renderLabel?: (item: T) => React.ReactNode; // 커스텀 이름 렌더링 (optional)
+  sectionLabel?: string; // 섹션 라벨 (기본값: 'People')
+  showSectionLabel?: boolean; // 섹션 라벨 표시 여부 (기본값: true)
 }
 
 interface UnifiedMentionItem {

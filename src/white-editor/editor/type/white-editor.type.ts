@@ -17,6 +17,8 @@ interface EditorExtensions<T = Record<string, unknown>, P = Record<string, unkno
     path?: keyof P; // 경로 정보 (optional)
     icon?: keyof P; // 아이콘 (optional)
     renderLabel?: (item: P) => React.ReactNode; // 커스텀 제목 렌더링 (optional)
+    sectionLabel?: string; // 섹션 라벨 (기본값: 'Pages')
+    showSectionLabel?: boolean; // 섹션 라벨 표시 여부 (기본값: true)
   };
   character?: {
     show?: boolean;
