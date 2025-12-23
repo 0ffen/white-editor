@@ -216,6 +216,7 @@ interface WhiteEditorTheme {
     mutedForeground?: string;
     accent?: string;
     accentForeground?: string;
+    codeBlockBackground?: string; // 코드 블록 배경색
   };
 }
 ```

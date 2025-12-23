@@ -77,6 +77,7 @@
   --color-background: var(--we-background);
   --color-foreground: var(--we-foreground);
   --color-card: var(--we-card);
+  --color-codeblock-background: var(--we-codeblock-background);
   --color-card-foreground: var(--we-card-foreground);
   --color-popover: var(--we-popover);
   --color-popover-foreground: var(--we-popover-foreground);
@@ -112,6 +113,7 @@
   --we-radius: 0.65rem;
   --we-background: oklch(1 0 0);
   --we-foreground: oklch(0.32 0.01 0);
+  --we-codeblock-background: oklch(0.17 0 0);
   --we-card: oklch(1 0 0);
   --we-card-foreground: oklch(0.141 0.005 285.823);
   --we-popover: oklch(1 0 0);
@@ -182,6 +184,7 @@
 .dark {
   --we-background: oklch(0.17 0 0);
   --we-foreground: oklch(0.93 0.01 0);
+  --we-codeblock-background: oklch(0.2 0 0);
   --we-card: oklch(0.2 0 0);
   --we-card-foreground: oklch(0.985 0 0);
   --we-popover: oklch(0.2 0 0);

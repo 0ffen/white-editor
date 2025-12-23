@@ -13,6 +13,7 @@ interface CustomThemeColors {
   mutedForeground?: string;
   accent?: string;
   accentForeground?: string;
+  codeBlockBackground?: string;
 }
 
 interface ThemeConfig {
@@ -114,6 +115,9 @@ export function applyTheme(theme: 'light' | 'dark' | ThemeConfig) {
     }
     if (themeConfig.colors.accentForeground) {
       cssVariables['--we-accent-foreground'] = themeConfig.colors.accentForeground;
+    }
+    if (themeConfig.colors.codeBlockBackground) {
+      cssVariables['--we-codeblock-background'] = themeConfig.colors.codeBlockBackground;
     }
 
     if (Object.keys(cssVariables).length > 0) {

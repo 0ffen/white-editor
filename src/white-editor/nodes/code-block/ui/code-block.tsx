@@ -50,7 +50,10 @@ export const CodeBlock = ({
     value: lang,
   }));
 
-  const handleCopy = React.useCallback(() => {
+  const handleCopy = React.useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
     // CSR 환경에서만 clipboard API 사용
     if (typeof window === 'undefined' || !navigator.clipboard) {
       return;
@@ -112,6 +115,7 @@ export const CodeBlock = ({
             </Popover>
           )}
           <Button
+            type='button'
             onClick={handleCopy}
             variant='ghost'
             className='we:absolute we:-top-1 we:-right-1 we:w-fit we:hover:cursor-pointer we:hover:bg-stone-800'
