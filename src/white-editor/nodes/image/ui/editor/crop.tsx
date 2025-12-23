@@ -24,10 +24,10 @@ export function CropEditor(props: CropEditorProps) {
 
   return (
     <div className='we:flex we:items-start we:justify-center we:gap-3 we:space-y-2 we:p-2'>
-      <Button className='we:h-6 we:w-6 we:rounded-4xl' variant='secondary' onClick={stopCropMode}>
+      <Button type='button' className='we:h-6 we:w-6 we:rounded-4xl' variant='secondary' onClick={stopCropMode}>
         <XIcon />
       </Button>
-      <Button className='we:h-6 we:w-6 we:rounded-4xl' type='button' variant='default' onClick={applyCrop}>
+      <Button type='button' className='we:h-6 we:w-6 we:rounded-4xl' variant='default' onClick={applyCrop}>
         <Check />
       </Button>
     </div>

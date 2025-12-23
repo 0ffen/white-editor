@@ -49,6 +49,7 @@ interface WhiteEditorTheme {
     mutedForeground?: string;
     accent?: string;
     accentForeground?: string;
+    codeBlockBackground?: string;
   };
 }
 
