@@ -3,7 +3,6 @@ import type { JSONContent } from '@tiptap/react';
 import { Button, createEmptyContent, ThemeToggle } from './shared';
 import { cn } from './shared/utils';
 import { WhiteEditor, WhiteViewer, type WhiteEditorRef } from './white-editor';
-import { createPageLinkExtension } from './white-editor/nodes/page-link';
 
 export default function App() {
   const [content, setContent] = useState<JSONContent>(createEmptyContent());
@@ -23,9 +22,6 @@ export default function App() {
       path: '/pages/v2-project-detail',
     },
   ];
-
-  // pageLink extension은 여전히 노드 정의를 위해 필요
-  const PageLinkExtension = createPageLinkExtension({ pageLinksData });
 
   const handleClear = () => {
     if (editorRef.current) {
@@ -84,30 +80,11 @@ export default function App() {
             editorClassName='we:h-[500px]!'
             contentClassName='we:h-full'
             placeholder='여기에 텍스트를 입력하세요...'
-            addExtensions={[PageLinkExtension]}
             showToolbar={true}
             onChange={() => {
               if (editorRef.current) {
                 setContent(editorRef.current.getJSON());
               }
-            }}
-            theme={{
-              colors: {
-                background: 'var(--we-color-highlight-yellow)',
-                foreground: 'var(--we-color-text-black)',
-                popover: 'var(--we-color-highlight-gray)',
-                popoverForeground: 'var(--we-color-text-black)',
-                card: 'var(--we-color-highlight-yellow-contrast)',
-                cardForeground: 'var(--we-color-text-black)',
-                primary: 'var(--we-color-text-purple)',
-                primaryForeground: 'var(--we-color-text-white)',
-                secondary: 'var(--we-color-highlight-green)',
-                secondaryForeground: 'var(--we-color-text-black)',
-                muted: 'var(--we-color-highlight-blue)',
-                mutedForeground: 'var(--we-color-text-gray)',
-                accent: 'var(--we-color-text-yellow)',
-                accentForeground: 'var(--we-color-text-white)',
-              },
             }}
             extension={{
               mention: {
@@ -143,13 +120,13 @@ export default function App() {
             footer={
               <div className='we:flex we:flex-col we:gap-2'>
                 <div className='we:flex we:justify-end we:gap-2'>
-                  <Button variant='secondary' className='we:w-fit' onClick={handleInsertText}>
+                  <Button type='button' variant='secondary' className='we:w-fit' onClick={handleInsertText}>
                     텍스트 삽입
                   </Button>
-                  <Button variant='secondary' className='we:w-fit' onClick={handleInsertFailedImage}>
+                  <Button type='button' variant='secondary' className='we:w-fit' onClick={handleInsertFailedImage}>
                     실패 이미지 삽입
                   </Button>
-                  <Button variant='secondary' className='we:w-fit' onClick={handleClear}>
+                  <Button type='button' variant='secondary' className='we:w-fit' onClick={handleClear}>
                     초기화
                   </Button>
                 </div>
@@ -165,11 +142,7 @@ export default function App() {
 
         <section className='we:space-y-3 we:h-fit'>
           <h2 className='we:mb-8 we:text-3xl we:font-bold we:text-center'>Viewer</h2>
-          <WhiteViewer
-            className='we:h-[400px] we:overflow-y-auto we:border we:rounded-md'
-            content={content}
-            addExtensions={[PageLinkExtension]}
-          />
+          <WhiteViewer className='we:h-[400px] we:overflow-y-auto we:border we:rounded-md' content={content} />
         </section>
       </div>
     </main>
