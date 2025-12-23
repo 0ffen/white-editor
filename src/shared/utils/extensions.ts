@@ -1,7 +1,14 @@
 import type { RefObject } from 'react';
 import React from 'react';
 import { all, createLowlight } from 'lowlight';
-import { MentionNode, CodeBlock, ResizableImage, CustomTableHeader, type MentionConfig } from '@/white-editor';
+import {
+  MentionNode,
+  CodeBlock,
+  ResizableImage,
+  CustomTableHeader,
+  type MentionConfig,
+  createPageLinkExtension,
+} from '@/white-editor';
 
 export interface ResizableImageOptions {
   extension?: EditorExtensions<Record<string, unknown>> | null;
@@ -155,8 +162,7 @@ function processExtensions(
 }
 
 // 에디터 전용 extensions
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function createEditorExtensions<T, P = any>(
+export function createEditorExtensions<T, P extends Record<string, unknown> = Record<string, unknown>>(
   mentionDataRef?: RefObject<MentionConfig<T> | undefined>,
   pageMentionConfigRef?: RefObject<
     | {
@@ -250,7 +256,23 @@ export function createEditorExtensions<T, P = any>(
           }),
         ]
       : []),
-    ...(mentionDataRef ? [MentionNode({ mentionDataRef, pageLinkConfigRef: pageMentionConfigRef })] : []),
+    ...(mentionDataRef
+      ? [
+          MentionNode<T, P>({
+            mentionDataRef,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            pageLinkConfigRef: pageMentionConfigRef as any,
+          }),
+        ]
+      : []),
+    // pageMention extension 자동 추가 (mention처럼 바로 사용 가능)
+    ...(pageMentionConfigRef?.current?.data
+      ? [
+          createPageLinkExtension<P>({
+            pageLinksData: pageMentionConfigRef.current.data,
+          }),
+        ]
+      : []),
   ];
 
   // Extension 설정 오버라이드 및 노드 뷰 적용
@@ -322,6 +344,11 @@ export function createViewerExtensions(
       HTMLAttributes: {
         contenteditable: 'false',
       },
+    }),
+    // Viewer에서도 pageMention 노드를 렌더링할 수 있도록 extension 추가 (읽기 전용이므로 빈 배열)
+    createPageLinkExtension({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      pageLinksData: [] as any,
     }),
   ];
 
