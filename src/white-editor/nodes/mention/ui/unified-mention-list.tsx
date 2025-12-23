@@ -8,10 +8,24 @@ interface UnifiedMentionListProps {
   items: UnifiedMentionItem[];
   command: (item: UnifiedMentionItem) => void;
   ref: React.RefObject<{ onKeyDown: (event: KeyboardEvent) => boolean }>;
+  peopleLabel?: string;
+  pagesLabel?: string;
+  showLabels?: boolean; // 전체 라벨 표시 여부 (하위 옵션보다 우선)
+  showPeopleLabel?: boolean; // People 섹션 라벨 표시 여부
+  showPagesLabel?: boolean; // Pages 섹션 라벨 표시 여부
 }
 
 export const UnifiedMentionList = (props: UnifiedMentionListProps) => {
-  const { items, command, ref } = props;
+  const {
+    items,
+    command,
+    ref,
+    peopleLabel = 'People',
+    pagesLabel = 'Page Link',
+    showLabels = true,
+    showPeopleLabel = true,
+    showPagesLabel = true,
+  } = props;
   const [selectedIndex, setSelectedIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -118,9 +132,11 @@ export const UnifiedMentionList = (props: UnifiedMentionListProps) => {
       {/* 사람 섹션 */}
       {mentionItems.length > 0 && (
         <>
-          <div className='we:sticky we:top-0 we:z-10 we:bg-popover we:px-2 we:py-1.5 we:text-xs we:font-medium we:text-muted-foreground we:uppercase'>
-            Peoples
-          </div>
+          {showLabels && showPeopleLabel && (
+            <div className='we:sticky we:top-0 we:z-10 we:bg-popover we:px-2 we:py-4 we:text-xs we:font-medium we:text-muted-foreground we:uppercase'>
+              {peopleLabel}
+            </div>
+          )}
           <div className='we:flex we:flex-col we:gap-0.5 we:px-1.5 we:pb-1.5'>
             {mentionItems.map((item, index) => {
               const globalIndex = index;
@@ -154,9 +170,11 @@ export const UnifiedMentionList = (props: UnifiedMentionListProps) => {
       {pageMentionItems.length > 0 && (
         <>
           {mentionItems.length > 0 && <div className='we:border-t we:border-border we:my-1' />}
-          <div className='we:sticky we:top-0 we:z-10 we:bg-popover we:px-2 we:py-1.5 we:text-xs we:font-medium we:text-muted-foreground we:uppercase'>
-            Pages
-          </div>
+          {showLabels && showPagesLabel && (
+            <div className='we:sticky we:top-0 we:z-10 we:bg-popover we:px-2 we:py-1.5 we:text-xs we:font-medium we:text-muted-foreground we:uppercase'>
+              {pagesLabel}
+            </div>
+          )}
           <div className='we:flex we:flex-col we:gap-0.5 we:px-1.5 we:pb-1.5'>
             {pageMentionItems.map((item, index) => {
               const globalIndex = mentionItems.length + index;
