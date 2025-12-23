@@ -84,6 +84,7 @@ export const MathPopover = React.forwardRef<HTMLButtonElement, MathPopoverProps>
       <Popover open={isOpen} onOpenChange={handleOnOpenChange} modal>
         <PopoverTrigger asChild>
           <Button
+            type='button'
             data-active-state={isActive ? 'on' : 'off'}
             aria-label={'math'}
             aria-pressed={isActive}
