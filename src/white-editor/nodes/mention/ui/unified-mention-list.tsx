@@ -137,7 +137,7 @@ export const UnifiedMentionList = (props: UnifiedMentionListProps) => {
               {peopleLabel}
             </div>
           )}
-          <div className='we:flex we:flex-col we:gap-0.5 we:px-1.5 we:pb-1.5'>
+          <div className='we:flex we:flex-col we:gap-0.5 we:px-1.5 we:py-1.5'>
             {mentionItems.map((item, index) => {
               const globalIndex = index;
               const isSelected = selectedIndex === globalIndex;
