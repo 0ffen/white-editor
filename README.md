@@ -113,7 +113,7 @@ function MyComponent() {
 
 #### 커스텀 테마 설정
 
-테마를 객체로 설정하여 색상을 커스터마이징할 수 있습니다.
+테마를 객체로 설정하여 색상을 커스터마이징할 수 있습니다. 루트 레이아웃에서 설정하는 것을 권장합니다.
 
 ```tsx
 import { useRef } from 'react';
@@ -123,8 +123,7 @@ function MyComponent() {
   const editorRef = useRef<WhiteEditorRef | null>(null);
 
   return (
-    <WhiteEditor
-      ref={editorRef}
+    <WhiteEditorThemeProvider
       theme={{
         mode: 'dark',
         colors: {
@@ -144,9 +143,9 @@ function MyComponent() {
           accentForeground: 'var(--color-text-normal)',
         },
       }}
-      placeholder='내용을 입력해주세요.'
-      showToolbar={true}
-    />
+    >
+      <WhiteEditor ref={editorRef} placeholder='내용을 입력해주세요.' showToolbar={true} />
+    </WhiteEditorThemeProvider>
   );
 }
 ```
@@ -156,10 +155,7 @@ function MyComponent() {
 `showToolbar={false}`로 설정하면 툴바를 숨길 수 있습니다.
 
 ```tsx
-<WhiteEditor
-  showToolbar={false}
-  placeholder='툴바 없이 간단한 입력만 가능합니다.'
-/>
+<WhiteEditor showToolbar={false} placeholder='툴바 없이 간단한 입력만 가능합니다.' />
 ```
 
 ### 1-1. Editor Types
@@ -398,14 +394,14 @@ const pages: Page[] = [
       path: 'path', // optional
       icon: 'icon', // optional
       renderLabel: (item) => (
-        <div className="flex items-center gap-2">
-          {item.icon && <img src={item.icon} alt="" />}
+        <div className='flex items-center gap-2'>
+          {item.icon && <img src={item.icon} alt='' />}
           <span>{item.title}</span>
         </div>
       ), // optional
     },
   }}
-/>
+/>;
 ```
 
 #### 이미지 업로드 확장 (Image Upload Extension)
@@ -417,12 +413,12 @@ const handleImageUpload = async (file: File): Promise<string> => {
   // 이미지 업로드 로직
   const formData = new FormData();
   formData.append('image', file);
-  
+
   const response = await fetch('/api/upload', {
     method: 'POST',
     body: formData,
   });
-  
+
   const data = await response.json();
   return data.url;
 };
@@ -445,7 +441,7 @@ const handleImageUpload = async (file: File): Promise<string> => {
       accept: 'image/*',
     },
   }}
-/>
+/>;
 ```
 
 #### 글자수 카운트 (Character Count)
@@ -508,7 +504,7 @@ import CustomExtension from '@tiptap/extension-custom';
       // extension 설정
     }),
   ]}
-/>
+/>;
 ```
 
 ### 3-2. 커스텀 노드 추가 (customNodes)
@@ -524,9 +520,7 @@ const CustomNode = Node.create({
   // 노드 설정
 });
 
-<WhiteEditor
-  customNodes={[CustomNode]}
-/>
+<WhiteEditor customNodes={[CustomNode]} />;
 ```
 
 ### 3-3. Extension 설정 오버라이드 (overrideExtensions)
@@ -558,7 +552,7 @@ import CustomCodeBlock from './CustomCodeBlock';
   customNodeViews={{
     codeBlock: CustomCodeBlock, // codeBlock 노드에 커스텀 컴포넌트 사용
   }}
-/>
+/>;
 ```
 
 커스텀 노드 뷰 컴포넌트 예제:
@@ -570,7 +564,7 @@ import type { NodeViewProps } from '@tiptap/react';
 
 const CustomCodeBlock: React.FC<NodeViewProps> = ({ node }) => {
   return (
-    <NodeViewWrapper className="custom-code-block">
+    <NodeViewWrapper className='custom-code-block'>
       <pre>
         <code>{node.textContent}</code>
       </pre>
@@ -607,7 +601,7 @@ const CustomNode = Node.create({
   customNodeViews={{
     codeBlock: CustomCodeBlock,
   }}
-/>
+/>;
 ```
 
 ## 4. 에디터 제어
@@ -780,9 +774,7 @@ import { WhiteEditor, type WhiteEditorRef } from '@0ffen/white-editor';
 import type { JSONContent } from '@0ffen/white-editor';
 
 // 동적 임포트 (SSR 비활성화)
-const BaseWhiteEditor = lazy(() =>
-  import('@0ffen/white-editor').then((mod) => ({ default: mod.WhiteEditor }))
-);
+const BaseWhiteEditor = lazy(() => import('@0ffen/white-editor').then((mod) => ({ default: mod.WhiteEditor })));
 
 interface User {
   userId: string;
@@ -849,9 +841,9 @@ function CompleteExample() {
         }}
         // UI 설정
         showToolbar={true}
-        placeholder="내용을 입력해주세요."
+        placeholder='내용을 입력해주세요.'
         editorClassName={'!rounded-xs !border'}
-        contentClassName="min-h-[500px] p-4"
+        contentClassName='min-h-[500px] p-4'
         // 툴바 설정
         toolbarItems={[
           ['undo', 'redo'],
@@ -914,11 +906,7 @@ function CompleteExample() {
           editorRef.current.setContent({});
         }}
         // Footer
-        footer={
-            <button onClick={() => console.log(editorRef.current?.getJSON())}>
-              저장
-            </button>
-        }
+        footer={<button onClick={() => console.log(editorRef.current?.getJSON())}>저장</button>}
       />
     </Suspense>
   );
@@ -932,7 +920,7 @@ function CompleteExample() {
 ```tsx
 <WhiteEditor
   showToolbar={false}
-  placeholder="내용을 입력해주세요."
+  placeholder='내용을 입력해주세요.'
   extension={{
     character: {
       show: true,
