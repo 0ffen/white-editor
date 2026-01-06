@@ -1,7 +1,7 @@
 import './shared/styles/index.css';
 
 //editor, viewer
-export { WhiteEditor, useWhiteEditor, WhiteViewer } from './white-editor';
+export { WhiteEditor, useWhiteEditor, WhiteViewer, WhiteEditorThemeProvider } from './white-editor';
 
 //toolbar types
 export type {
