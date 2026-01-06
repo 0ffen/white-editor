@@ -58,6 +58,7 @@ interface WhiteEditorUIProps {
   contentClassName?: string;
   toolbarItems?: ToolbarItem[][];
   toolbarProps?: ToolbarItemProps;
+  /** @deprecated 다음 마이너 버전에서 제거 필요 */
   theme?: 'light' | 'dark' | WhiteEditorTheme;
   footer?: React.ReactNode;
   disabled?: boolean;

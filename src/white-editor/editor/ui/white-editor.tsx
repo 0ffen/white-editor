@@ -68,7 +68,9 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
     [editor, focus, disabled]
   );
 
-  /** 테마 적용 */
+  /** 테마 적용
+   * @deprecated 다음 마이너 버전에서 제거 필요, WhiteThemeProvider와 충돌 가능성 있돌
+   */
   React.useEffect(() => {
     if (theme) {
       applyTheme(theme);
