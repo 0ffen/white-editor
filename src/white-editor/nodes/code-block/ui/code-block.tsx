@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, ChevronsUpDown, Copy } from 'lucide-react';
+import { CheckIcon, ChevronDownIcon, Copy } from 'lucide-react';
 import {
   Button,
   Command,
@@ -43,12 +43,27 @@ export const CodeBlock = ({
   editor,
 }: Props) => {
   const [isCopied, setIsCopied] = React.useState<boolean>(false);
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const preRef = React.useRef<HTMLPreElement>(null);
 
-  const languageOptions = extension.options.lowlight.listLanguages().map((lang) => ({
-    label: lang,
-    value: lang,
-  }));
+  // 선택된 언어를 맨 위로 정렬
+  const languageOptions = React.useMemo(() => {
+    const languages = extension.options.lowlight.listLanguages().map((lang) => ({
+      label: lang,
+      value: lang,
+    }));
+
+    if (!defaultLanguage) return languages;
+
+    // 선택된 언어를 맨 위로
+    const selectedIndex = languages.findIndex((lang) => lang.value === defaultLanguage);
+    if (selectedIndex > 0) {
+      const [selected] = languages.splice(selectedIndex, 1);
+      languages.unshift(selected);
+    }
+
+    return languages;
+  }, [extension.options.lowlight, defaultLanguage]);
 
   const handleCopy = React.useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -69,26 +84,36 @@ export const CodeBlock = ({
 
   return (
     <NodeViewWrapper>
-      <pre className='hljs'>
+      <pre className='hljs we:mt-5 we:mb-0'>
         <div className={cn('we:relative we:w-full', editor.isEditable ? 'we:flex we:justify-between' : '')}>
           {editor.isEditable && (
-            <Popover>
+            <Popover open={isOpen} onOpenChange={setIsOpen}>
               <PopoverTrigger asChild>
                 <Button
+                  type='button'
                   variant='ghost'
                   role='combobox'
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsOpen((prev) => !prev);
+                  }}
                   className={cn(
-                    'we:text-muted-foreground/50 we:hover:text-muted-foreground/80 we:w-fit we:justify-between we:hover:bg-transparent'
+                    'we:text-text-light we:w-fit we:gap-1 we:justify-between we:cursor-pointer we:hover:bg-interaction-hover'
                   )}
                 >
-                  {defaultLanguage || 'Select language'}
-                  <ChevronsUpDown className='we:opacity-50' />
+                  {defaultLanguage || 'Plain text'}
+                  <ChevronDownIcon className='we:size-3 we:text-text-light' />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className='we:w-[180px] we:p-0' align='start'>
+              <PopoverContent
+                className='we:w-[160px] we:p-0 we:bg-elevation-dropdown we:rounded-sm we:overflow-hidden'
+                align='start'
+                style={{ boxShadow: 'var(--we-popover-shadow)' }}
+              >
                 <Command>
-                  <CommandInput placeholder='Search language' className='we:h-9' />
-                  <CommandList>
+                  <CommandInput placeholder='Search' iconPosition='right' />
+                  <CommandList className='we:p-[6px]'>
                     <CommandEmpty>No language found</CommandEmpty>
                     <CommandGroup>
                       {languageOptions.map((language) => (
@@ -97,15 +122,14 @@ export const CodeBlock = ({
                           key={language.value}
                           onSelect={() => {
                             updateAttributes({ language: language.value });
+                            setIsOpen(false);
                           }}
+                          className='we:pr-8 we:relative'
                         >
                           {language.label}
-                          <Check
-                            className={cn(
-                              'we:ml-auto',
-                              language.value === defaultLanguage ? 'we:opacity-100' : 'we:opacity-0'
-                            )}
-                          />
+                          {language.value === defaultLanguage && (
+                            <CheckIcon className='we:absolute we:right-2 we:size-5 we:text-brand-default' />
+                          )}
                         </CommandItem>
                       ))}
                     </CommandGroup>
@@ -118,16 +142,16 @@ export const CodeBlock = ({
             type='button'
             onClick={handleCopy}
             variant='ghost'
-            className='we:absolute we:-top-1 we:-right-1 we:w-fit we:hover:cursor-pointer we:hover:bg-stone-800'
+            className='we:absolute we:top-0 we:right-0 we:w-fit we:hover:cursor-pointer we:hover:bg-interaction-hover'
           >
             {isCopied ? (
-              <Check className='we:text-muted-foreground/50 we:size-4' />
+              <CheckIcon className='we:text-text-light we:size-4' />
             ) : (
-              <Copy className='we:text-muted-foreground/50 we:size-4' />
+              <Copy className='we:text-text-light we:size-4' />
             )}
           </Button>
         </div>
-        <code ref={preRef} className='we:block we:pr-10'>
+        <code ref={preRef} className='we:block we:pr-10 we:py-3 we:px-4'>
           <NodeViewContent as='div' />
         </code>
       </pre>

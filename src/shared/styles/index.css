@@ -1,8 +1,16 @@
 @import url('https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css');
 
+@font-face {
+  font-family: 'D2Coding';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_three@1.0/D2Coding.woff') format('woff');
+  font-weight: normal;
+  font-display: swap;
+}
+
 @import 'tailwindcss' prefix(we);
 @plugin '@tailwindcss/typography';
 
+@import './design-tokens.css';
 @import './github-dark.css';
 @import './editor.css';
 @import './markdown.css';
@@ -14,6 +22,8 @@
   .white-editor {
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-display: swap;
   }
 
   .white-editor .font-pretendard {
@@ -64,6 +74,27 @@
   ::-webkit-scrollbar-corner {
     background-color: transparent;
   }
+
+  /* Command List / Dropdown 스크롤바 스타일 (Portal 사용 시) */
+  [data-slot='command-list']::-webkit-scrollbar,
+  [data-slot='dropdown-menu-content']::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+  }
+
+  [data-slot='command-list']::-webkit-scrollbar-thumb,
+  [data-slot='dropdown-menu-content']::-webkit-scrollbar-thumb {
+    outline: none;
+    border-radius: 10px;
+    border: 4px solid transparent;
+    box-shadow: inset 8px 8px 0 rgba(79, 76, 76, 0.574);
+  }
+
+  [data-slot='command-list']::-webkit-scrollbar-track,
+  [data-slot='dropdown-menu-content']::-webkit-scrollbar-track {
+    box-shadow: none;
+    background-color: transparent;
+  }
 }
 
 @theme {
@@ -107,6 +138,35 @@
   --color-sidebar-border: var(--we-sidebar-border);
   --color-sidebar-ring: var(--we-sidebar-ring);
   --color-primary-background: var(--we-primary-background);
+
+  /* Design Tokens - Semantic Colors */
+  --color-text-strong: var(--we-text-strong);
+  --color-text-normal: var(--we-text-normal);
+  --color-text-sub: var(--we-text-sub);
+  --color-text-light: var(--we-text-light);
+  --color-text-placeholder: var(--we-text-placeholder);
+  --color-text-error: var(--we-text-error);
+  --color-text-inverse: var(--we-text-inverse);
+
+  --color-elevation-background: var(--we-elevation-background);
+  --color-elevation-level1: var(--we-elevation-level1);
+  --color-elevation-level2: var(--we-elevation-level2);
+  --color-elevation-dropdown: var(--we-elevation-dropdown);
+
+  --color-border-default: var(--we-border-default);
+  --color-border-light: var(--we-border-light);
+  --color-border-error: var(--we-border-error);
+  --color-border-interactive: var(--we-border-interactive);
+  --color-border-success: var(--we-border-success);
+
+  --color-interaction-hover: var(--we-interaction-hover);
+
+  --color-brand-weak: var(--we-brand-weak);
+  --color-brand-weak2: var(--we-brand-weak2);
+  --color-brand-light: var(--we-brand-light);
+  --color-brand-default: var(--we-brand-default);
+  --color-brand-strong: var(--we-brand-strong);
+  --color-brand-vs: var(--we-brand-vs);
 }
 
 :root {

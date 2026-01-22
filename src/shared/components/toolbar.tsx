@@ -137,7 +137,7 @@ export const ToolbarGroup = React.forwardRef<HTMLDivElement, BaseProps>(({ child
     <div
       ref={ref}
       role='group'
-      className={cn('we:flex we:items-center we:gap-0.5 we:max-sm:flex-shrink-0', className)}
+      className={cn('we:flex we:items-center we:gap-1 we:max-sm:flex-shrink-0', className)}
       {...props}
     >
       {children}

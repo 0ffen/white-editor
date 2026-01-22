@@ -6,11 +6,12 @@ import { Slot } from '@radix-ui/react-slot';
 
 const buttonVariants = cva(
   cn(
-    'we:inline-flex we:items-center we:cursor-pointer we:data-[active=true]:bg-primary/10 dark:we:data-[active=true]:bg-secondary',
-    'we:data-[active=true]:[&_svg]:text-primary we:w-full we:justify-center we:gap-2 we:whitespace-nowrap we:rounded-md we:text-sm we:font-normal',
-    'we:transition-colors we:focus-visible:outline-none we:disabled:pointer-events-none we:disabled:opacity-50',
-    'we:[&_svg]:pointer-events-none we:[&_svg]:h-4 we:[&_svg]:w-4 we:[&_svg]:shrink-0',
-    'we:data-[active=true]:text-primary'
+    'we:inline-flex we:items-center we:cursor-pointer we:text-text-normal',
+    'we:data-[active=true]:bg-brand-weak we:data-[active=true]:text-brand-default we:data-[active=true]:[&_svg]:text-brand-default',
+    'we:w-full we:justify-center we:gap-2 we:whitespace-nowrap we:rounded we:text-sm we:font-normal',
+    'we:transition-colors we:outline-none we:focus:outline-none we:focus-visible:outline-none we:active:outline-none',
+    'we:disabled:pointer-events-none we:disabled:text-text-light',
+    'we:[&_svg]:pointer-events-none we:[&_svg]:size-5 we:[&_svg]:shrink-0'
   ),
   {
     variants: {
@@ -18,15 +19,15 @@ const buttonVariants = cva(
         default: 'we:bg-primary we:text-primary-foreground hover:we:bg-primary/90',
         destructive: 'we:bg-destructive we:text-destructive-foreground we:hover:bg-destructive/90',
         outline: 'we:border we:border-input we:bg-background we:shadow-sm we:hover:bg-accent',
-        secondary: 'we:bg-secondary we:text-secondary-foreground we:hover:bg-secondary/80',
-        ghost: 'we:text-foreground we:hover:bg-accent',
+        secondary: 'we:bg-elevation-level2 we:text-text-sub we:hover:bg-elevation-level2/80',
+        ghost: 'we:text-text-sub we:hover:bg-interaction-hover',
         link: 'we:text-primary we:underline-offset-4 we:hover:underline',
       },
       size: {
-        default: 'we:h-8 we:p-2',
-        sm: 'we:h-6 we:rounded-md we:px-3 we:text-xs',
-        lg: 'we:h-10 we:rounded-md we:px-8',
-        icon: 'we:p-1 we:justify-center',
+        default: 'we:h-9 we:py-[9px] we:px-2',
+        sm: 'we:h-6 we:rounded we:px-3 we:text-xs',
+        lg: 'we:h-10 we:rounded we:px-4',
+        icon: 'we:h-7 we:p-1 we:justify-center',
       },
       justify: {
         center: 'we:justify-center',

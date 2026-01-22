@@ -2,13 +2,14 @@ import * as React from 'react';
 
 import { useTiptapEditor } from '@/shared/hooks';
 import { findNodePosition, isNodeInSchema, isNodeTypeSelected, isValidPosition } from '@/shared/utils';
-import type { Level } from '@/white-editor';
+import type { Level, ParagraphVariant } from '@/white-editor';
 import { NodeSelection, TextSelection } from '@tiptap/pm/state';
 import { type Editor } from '@tiptap/react';
 
 export interface UseHeadingConfig {
   editor?: Editor | null;
   level: Level | null;
+  paragraphVariant?: ParagraphVariant;
   hideWhenUnavailable?: boolean;
   onToggled?: () => void;
   label?: string;
@@ -126,44 +127,82 @@ export function shouldShowHeadingButton(props: {
   return true;
 }
 
+// Helper function to check if paragraph with specific variant is active
+function isParagraphVariantActive(editor: Editor | null, variant: ParagraphVariant): boolean {
+  if (!editor) return false;
+  if (!editor.isActive('paragraph')) return false;
+  const currentVariant = editor.getAttributes('paragraph').variant;
+  // Default variant is 1 if not set
+  return (currentVariant ?? 1) === variant;
+}
+
 export function useHeading(config: UseHeadingConfig) {
-  const { editor: providedEditor, level, hideWhenUnavailable = false, onToggled, label } = config;
+  const { editor: providedEditor, level, paragraphVariant, hideWhenUnavailable = false, onToggled, label } = config;
 
   const { editor } = useTiptapEditor(providedEditor);
 
-  const isActive = level ? isHeadingActive(editor, level) : (editor?.isActive('paragraph') ?? false);
-  const canToggleState = level ? canToggleHeading(editor, level) : (editor?.can().setParagraph() ?? false);
+  // Track active state with state variable that updates on editor changes
+  const [isActive, setIsActive] = React.useState<boolean>(false);
 
-  const [isVisible, setIsVisible] = React.useState<boolean>(() =>
-    shouldShowHeadingButton({ editor, level: level ?? undefined, hideWhenUnavailable })
-  );
+  // For headings, use canToggleHeading; for paragraphs, check setParagraph
+  const canToggleState = React.useMemo(() => {
+    if (!editor || !editor.isEditable) return false;
+    if (level !== null) {
+      return canToggleHeading(editor, level);
+    }
+    // For paragraphs, always allow if editor is editable and not in code block
+    return !editor.isActive('codeBlock');
+  }, [editor, level]);
+
+  const [isVisible, setIsVisible] = React.useState<boolean>(() => {
+    if (!editor || !editor.isEditable) return false;
+    // For paragraphs, always visible if editor is editable
+    if (level === null) return true;
+    return shouldShowHeadingButton({ editor, level, hideWhenUnavailable });
+  });
 
   React.useEffect(() => {
     if (!editor) return;
 
-    const handleSelectionUpdate = () => {
-      setIsVisible(shouldShowHeadingButton({ editor, level: level ?? undefined, hideWhenUnavailable }));
+    const handleUpdate = () => {
+      // For paragraphs, always visible
+      if (level === null) {
+        setIsVisible(editor.isEditable);
+      } else {
+        setIsVisible(shouldShowHeadingButton({ editor, level, hideWhenUnavailable }));
+      }
+
+      // Update isActive state
+      if (level !== null) {
+        setIsActive(isHeadingActive(editor, level));
+      } else {
+        setIsActive(isParagraphVariantActive(editor, paragraphVariant ?? 1));
+      }
     };
 
-    handleSelectionUpdate();
-    editor.on('selectionUpdate', handleSelectionUpdate);
+    handleUpdate();
+    editor.on('selectionUpdate', handleUpdate);
+    editor.on('transaction', handleUpdate);
     return () => {
-      editor.off('selectionUpdate', handleSelectionUpdate);
+      editor.off('selectionUpdate', handleUpdate);
+      editor.off('transaction', handleUpdate);
     };
-  }, [editor, level, hideWhenUnavailable]);
+  }, [editor, level, paragraphVariant, hideWhenUnavailable]);
 
   const handleToggle = React.useCallback(() => {
     if (!editor) return false;
 
     if (level === null) {
-      editor.chain().focus().setParagraph().run();
+      // Set paragraph with variant attribute using setNode
+      const variant = paragraphVariant ?? 1;
+      editor.chain().focus().setNode('paragraph', { variant }).run();
     } else {
       toggleHeading(editor, level);
     }
 
     onToggled?.();
     return true;
-  }, [editor, level, onToggled]);
+  }, [editor, level, paragraphVariant, onToggled]);
 
   return {
     isVisible,

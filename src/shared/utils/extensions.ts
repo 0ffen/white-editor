@@ -20,6 +20,7 @@ import Highlight from '@tiptap/extension-highlight';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
 import Mathematics, { migrateMathStrings } from '@tiptap/extension-mathematics';
 import Mention from '@tiptap/extension-mention';
+import Paragraph from '@tiptap/extension-paragraph';
 import Placeholder from '@tiptap/extension-placeholder';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
@@ -29,6 +30,24 @@ import { TextStyleKit } from '@tiptap/extension-text-style';
 import { Selection, CharacterCount } from '@tiptap/extensions';
 import { ReactNodeViewRenderer, type Extension } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+
+// Custom Paragraph extension with variant attribute for 본문 1, 본문 2
+const CustomParagraph = Paragraph.extend({
+  addAttributes() {
+    return {
+      variant: {
+        default: 1,
+        parseHTML: (element) => {
+          const variant = element.getAttribute('data-variant');
+          return variant ? parseInt(variant, 10) : 1;
+        },
+        renderHTML: (attributes) => {
+          return { 'data-variant': attributes.variant };
+        },
+      },
+    };
+  },
+});
 import type {
   EditorExtensions,
   OverrideExtensionsConfig,
@@ -204,12 +223,14 @@ export function createEditorExtensions<T, P extends Record<string, unknown> = Re
   const baseExtensions: any[] = [
     StarterKit.configure({
       codeBlock: false,
+      paragraph: false, // Use CustomParagraph instead
       link: {
         openOnClick: false,
         enableClickSelection: true,
         autolink: true,
       },
     }),
+    CustomParagraph,
     CharacterCount.configure({
       limit: maxCharacters || null,
     }),
@@ -303,11 +324,13 @@ export function createViewerExtensions(
   const baseExtensions: any[] = [
     StarterKit.configure({
       codeBlock: false,
+      paragraph: false, // Use CustomParagraph instead
       link: {
         openOnClick: true,
         enableClickSelection: false,
       },
     }),
+    CustomParagraph,
     Table.configure({
       resizable: false,
       allowTableNodeSelection: false,
