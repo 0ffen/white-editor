@@ -1,5 +1,6 @@
 import React from 'react';
 import { CheckIcon, ChevronDownIcon, Copy } from 'lucide-react';
+import { getTranslate } from '@/shared';
 import {
   Button,
   Command,
@@ -112,7 +113,7 @@ export const CodeBlock = ({
                 style={{ boxShadow: 'var(--we-popover-shadow)' }}
               >
                 <Command>
-                  <CommandInput placeholder='Search' iconPosition='right' />
+                  <CommandInput placeholder={getTranslate('검색')} iconPosition='right' />
                   <CommandList className='we:p-[6px]'>
                     <CommandEmpty>No language found</CommandEmpty>
                     <CommandGroup>

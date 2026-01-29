@@ -1,4 +1,5 @@
 export * from './utils';
+export * from './i18n';
 export * from './update-position';
 export * from './list-config';
 export * from './theme';

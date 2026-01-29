@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { ChevronDownIcon } from 'lucide-react';
+import { getTranslate } from '@/shared';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -175,13 +176,14 @@ export const HeadingDropdownMenu = React.forwardRef<HTMLButtonElement, HeadingDr
             data-disabled={!canToggle}
             aria-label='heading dropdown menu'
             aria-pressed={isActive}
+            tooltip={getTranslate('heading')}
             isActive={isActive}
-            className={cn('gap-1', triggerClassName)}
+            className={cn('we:h-[28px] we:gap-1 we:px-2 we:select-none', triggerClassName)}
             {...buttonProps}
             ref={ref}
           >
             {icon}
-            <span className='text-sm'>{currentLabel}</span>
+            <span className='we:text-sm'>{currentLabel}</span>
             <ChevronDownIcon className='we:text-text-light we:size-3' />
           </Button>
         </DropdownMenuTrigger>

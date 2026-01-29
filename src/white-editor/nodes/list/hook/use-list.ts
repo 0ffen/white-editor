@@ -2,44 +2,44 @@ import * as React from 'react';
 
 import { useTiptapEditor } from '@/shared/hooks';
 
-import { findNodePosition, isNodeInSchema, isNodeTypeSelected, isValidPosition } from '@/shared/utils';
+import { isNodeInSchema, isNodeTypeSelected } from '@/shared/utils';
 import { listIcons, listLabels, type ListType, type UseListConfig } from '@/white-editor';
-import { NodeSelection, TextSelection } from '@tiptap/pm/state';
 import { type Editor } from '@tiptap/react';
 
-export function canToggleList(editor: Editor | null, type: ListType, turnInto: boolean = true): boolean {
+/** Block types that can be converted to list (paragraph, blockquote, any list). */
+function isInConvertibleBlock(editor: Editor | null): boolean {
+  if (!editor) return false;
+  return (
+    editor.isActive('paragraph') ||
+    editor.isActive('blockquote') ||
+    editor.isActive('bulletList') ||
+    editor.isActive('orderedList') ||
+    editor.isActive('taskList')
+  );
+}
+
+export function canToggleList(editor: Editor | null, type: ListType): boolean {
   if (!editor || !editor.isEditable) return false;
   if (!isNodeInSchema(type, editor) || isNodeTypeSelected(editor, ['image'])) return false;
+  if (editor.isActive('code')) return false;
 
-  if (!turnInto) {
-    switch (type) {
-      case 'bulletList':
-        return editor.can().toggleBulletList();
-      case 'orderedList':
-        return editor.can().toggleOrderedList();
-      case 'taskList':
-        return editor.can().toggleList('taskList', 'taskItem');
-      default:
-        return false;
-    }
-  }
+  // Enable when in any block that can be converted to list (so user can switch between list/blockquote).
+  if (!isInConvertibleBlock(editor)) return false;
 
-  try {
-    const view = editor.view;
-    const state = view.state;
-    const selection = state.selection;
-
-    if (selection.empty || selection instanceof TextSelection) {
-      const pos = findNodePosition({
-        editor,
-        node: state.selection.$anchor.node(1),
-      })?.pos;
-      if (!isValidPosition(pos)) return false;
-    }
-
-    return true;
-  } catch {
-    return false;
+  switch (type) {
+    case 'bulletList':
+      return editor.can().toggleBulletList() || editor.isActive('orderedList') || editor.isActive('blockquote');
+    case 'orderedList':
+      return editor.can().toggleOrderedList() || editor.isActive('bulletList') || editor.isActive('blockquote');
+    case 'taskList':
+      return (
+        editor.can().toggleList('taskList', 'taskItem') ||
+        editor.isActive('bulletList') ||
+        editor.isActive('orderedList') ||
+        editor.isActive('blockquote')
+      );
+    default:
+      return false;
   }
 }
 
@@ -58,64 +58,24 @@ export function isListActive(editor: Editor | null, type: ListType): boolean {
   }
 }
 
+/**
+ * Toggle list on/off using only Tiptap's native toggle commands.
+ * Custom NodeSelection + clearNodes + lift caused duplicate empty paragraph nodes.
+ */
 export function toggleList(editor: Editor | null, type: ListType): boolean {
   if (!editor || !editor.isEditable) return false;
   if (!canToggleList(editor, type)) return false;
 
-  try {
-    const view = editor.view;
-    let state = view.state;
-    let tr = state.tr;
+  const toggleMap: Record<ListType, () => ReturnType<Editor['chain']>> = {
+    bulletList: () => editor.chain().focus().toggleBulletList(),
+    orderedList: () => editor.chain().focus().toggleOrderedList(),
+    taskList: () => editor.chain().focus().toggleList('taskList', 'taskItem'),
+  };
+  const toggle = toggleMap[type];
+  if (!toggle) return false;
 
-    if (state.selection.empty || state.selection instanceof TextSelection) {
-      const pos = findNodePosition({
-        editor,
-        node: state.selection.$anchor.node(1),
-      })?.pos;
-      if (!isValidPosition(pos)) return false;
-
-      tr = tr.setSelection(NodeSelection.create(state.doc, pos));
-      view.dispatch(tr);
-      state = view.state;
-    }
-
-    const selection = state.selection;
-
-    let chain = editor.chain().focus();
-
-    // Handle NodeSelection
-    if (selection instanceof NodeSelection) {
-      const firstChild = selection.node.firstChild?.firstChild;
-      const lastChild = selection.node.lastChild?.lastChild;
-
-      const from = firstChild ? selection.from + firstChild.nodeSize : selection.from + 1;
-
-      const to = lastChild ? selection.to - lastChild.nodeSize : selection.to - 1;
-
-      chain = chain.setTextSelection({ from, to }).clearNodes();
-    }
-
-    if (editor.isActive(type)) {
-      chain.liftListItem('listItem').lift('bulletList').lift('orderedList').lift('taskList').run();
-    } else {
-      const toggleMap: Record<ListType, () => typeof chain> = {
-        bulletList: () => chain.toggleBulletList(),
-        orderedList: () => chain.toggleOrderedList(),
-        taskList: () => chain.toggleList('taskList', 'taskItem'),
-      };
-
-      const toggle = toggleMap[type];
-      if (!toggle) return false;
-
-      toggle().run();
-    }
-
-    editor.chain().focus().selectTextblockEnd().run();
-
-    return true;
-  } catch {
-    return false;
-  }
+  const success = toggle().run();
+  return success;
 }
 
 export function shouldShowListButton(props: {

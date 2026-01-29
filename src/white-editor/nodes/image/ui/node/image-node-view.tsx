@@ -196,7 +196,6 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
       className={cn('we:my-2 we:w-full')}
       data-type='image'
       draggable='true'
-      data-drag-handle
       style={{ textAlign: textAlign || _align }}
     >
       <section

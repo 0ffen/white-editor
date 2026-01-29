@@ -14,8 +14,8 @@ const toolbarVariants = cva('we:flex we:items-center we:gap-1', {
         'we:px-2 we:overflow-x-auto we:overscroll-x-contain',
       ],
       floating: [
-        'we:p-0.5 we:rounded-lg we:border we:border-border',
-        'we:bg-background we:shadow-xs we:outline-none we:overflow-hidden',
+        'we:p-1.5 we:rounded-[5px] we:border we:border-none we:z-50',
+        'we:bg-elevation-dropdown we:shadow-md we:outline-none we:overflow-hidden we:fixed',
       ],
     },
   },
@@ -147,6 +147,6 @@ export const ToolbarGroup = React.forwardRef<HTMLDivElement, BaseProps>(({ child
 ToolbarGroup.displayName = 'ToolbarGroup';
 
 export const ToolbarSeparator = React.forwardRef<HTMLDivElement, BaseProps>(({ ...props }, ref) => (
-  <Separator ref={ref} orientation='vertical' decorative className='we:h-5!' {...props} />
+  <Separator ref={ref} orientation='vertical' decorative className='we:h-4! we:p-0! we:mx-1!' {...props} />
 ));
 ToolbarSeparator.displayName = 'ToolbarSeparator';

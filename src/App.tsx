@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 import type { JSONContent } from '@tiptap/react';
-import { Button, createEmptyContent, ThemeToggle } from './shared';
+import { Button, createEmptyContent, ThemeToggle, TooltipProvider } from './shared';
 import { cn } from './shared/utils';
-import { WhiteEditor, WhiteViewer, type WhiteEditorRef } from './white-editor';
+import { offenDefaultToolbarItems, WhiteEditor, WhiteViewer, type WhiteEditorRef } from './white-editor';
 
 export default function App() {
   const [content, setContent] = useState<JSONContent>(createEmptyContent());
@@ -61,90 +61,96 @@ export default function App() {
   };
 
   return (
-    <main className='we:p-6'>
-      <div
-        className={cn('we:w-full we:relative we:border-b we:flex we:items-center we:justify-center we:mb-8 we:pb-6')}
-      >
-        <h1 className='we:font-bold we:text-4xl'>White Editor</h1>
-        <div className='we:w-fit we:right-0 we:absolute'>
-          <ThemeToggle />
+    <TooltipProvider>
+      <main className='we:p-6'>
+        <div
+          className={cn('we:w-full we:relative we:border-b we:flex we:items-center we:justify-center we:mb-8 we:pb-6')}
+        >
+          <h1 className='we:font-bold we:text-4xl'>White Editor</h1>
+          <div className='we:w-fit we:right-0 we:absolute'>
+            <ThemeToggle />
+          </div>
         </div>
-      </div>
 
-      <div className='we:grid we:grid-cols-1 we:gap-8 lg:we:grid-cols-2'>
-        <section className='we:space-y-3'>
-          <h2 className='we:mb-8 we:text-3xl we:font-bold we:text-center'>Editor</h2>
-          <WhiteEditor
-            ref={editorRef}
-            disabled={false}
-            editorClassName='we:h-[500px]!'
-            contentClassName='we:h-full'
-            placeholder='여기에 텍스트를 입력하세요...'
-            showToolbar={true}
-            onChange={() => {
-              if (editorRef.current) {
-                setContent(editorRef.current.getJSON());
+        <div className='we:grid we:grid-cols-1 we:gap-8 lg:we:grid-cols-2'>
+          <section className='we:space-y-3'>
+            <h2 className='we:mb-8 we:text-3xl we:font-bold we:text-center'>Editor</h2>
+
+            <WhiteEditor
+              locale={'en'}
+              ref={editorRef}
+              disabled={false}
+              editorClassName='we:h-[500px]! we:rounded-md!'
+              contentClassName='we:h-full we:px-2'
+              toolbarItems={offenDefaultToolbarItems}
+              onChange={() => {
+                if (editorRef.current) {
+                  setContent(editorRef.current.getJSON());
+                }
+              }}
+              extension={{
+                mention: {
+                  data: [
+                    { uuid: 1, name: 'White Lee', nickname: 'white' },
+                    { uuid: 2, name: 'Black Kim', nickname: 'black' },
+                  ],
+                  id: 'uuid',
+                  label: 'nickname',
+                },
+                pageMention: {
+                  data: pageLinksData,
+                  id: 'id',
+                  title: 'title',
+                  href: 'href',
+                  path: 'path',
+                },
+                character: {
+                  show: true,
+                },
+                imageUpload: {
+                  upload: handleImageUpload,
+                  onSuccess: (url) => {
+                    // eslint-disable-next-line no-console
+                    console.log('✅ 이미지 업로드 성공:', url);
+                  },
+                  onError: (error) => {
+                    // eslint-disable-next-line no-console
+                    console.error('❌ 이미지 업로드 실패:', error.message);
+                  },
+                },
+              }}
+              footer={
+                <div className='we:flex we:flex-col we:gap-2'>
+                  <div className='we:flex we:justify-end we:gap-2'>
+                    <Button
+                      type='button'
+                      variant='secondary'
+                      className='we:w-fit we:bg-brand-weak we:text-brand-default'
+                      onClick={handleInsertText}
+                    >
+                      텍스트 삽입
+                    </Button>
+                    <Button type='button' variant='secondary' className='we:w-fit' onClick={handleInsertFailedImage}>
+                      실패 이미지 삽입
+                    </Button>
+                    <Button type='button' variant='secondary' className='we:w-fit' onClick={handleClear}>
+                      초기화
+                    </Button>
+                  </div>
+                </div>
               }
-            }}
-            extension={{
-              mention: {
-                data: [
-                  { uuid: 1, name: 'White Lee', nickname: 'white' },
-                  { uuid: 2, name: 'Black Kim', nickname: 'black' },
-                ],
-                id: 'uuid',
-                label: 'nickname',
-              },
-              pageMention: {
-                data: pageLinksData,
-                id: 'id',
-                title: 'title',
-                href: 'href',
-                path: 'path',
-              },
-              character: {
-                show: true,
-              },
-              imageUpload: {
-                upload: handleImageUpload,
-                onSuccess: (url) => {
-                  // eslint-disable-next-line no-console
-                  console.log('✅ 이미지 업로드 성공:', url);
-                },
-                onError: (error) => {
-                  // eslint-disable-next-line no-console
-                  console.error('❌ 이미지 업로드 실패:', error.message);
-                },
-              },
-            }}
-            footer={
-              <div className='we:flex we:flex-col we:gap-2'>
-                <div className='we:flex we:justify-end we:gap-2'>
-                  <Button type='button' variant='secondary' className='we:w-fit' onClick={handleInsertText}>
-                    텍스트 삽입
-                  </Button>
-                  <Button type='button' variant='secondary' className='we:w-fit' onClick={handleInsertFailedImage}>
-                    실패 이미지 삽입
-                  </Button>
-                  <Button type='button' variant='secondary' className='we:w-fit' onClick={handleClear}>
-                    초기화
-                  </Button>
-                </div>
-                <div className='we:flex we:justify-end we:gap-2 we:border-t we:pt-2 we:my-2'>
-                  <span className='we:text-sm we:text-muted-foreground we:mr-2'>
-                    @ 입력하여 사람 및 페이지 링크 검색
-                  </span>
-                </div>
-              </div>
-            }
-          />
-        </section>
+            />
+          </section>
 
-        <section className='we:space-y-3 we:h-fit'>
-          <h2 className='we:mb-8 we:text-3xl we:font-bold we:text-center'>Viewer</h2>
-          <WhiteViewer className='we:h-[400px] we:overflow-y-auto we:border we:rounded-md' content={content} />
-        </section>
-      </div>
-    </main>
+          <section className='we:space-y-3 we:h-fit'>
+            <h2 className='we:mb-8 we:text-3xl we:font-bold we:text-center'>Viewer</h2>
+            <WhiteViewer
+              className='we:h-[400px] we:bg-elevation-background we:overflow-y-auto we:border we:rounded-md'
+              content={content}
+            />
+          </section>
+        </div>
+      </main>
+    </TooltipProvider>
   );
 }

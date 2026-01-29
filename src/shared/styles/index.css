@@ -22,7 +22,20 @@
   .white-editor {
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
-    font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-family:
+      'Pretendard Variable',
+      Pretendard,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      'Roboto',
+      'Oxygen',
+      'Ubuntu',
+      'Cantarell',
+      'Fira Sans',
+      'Droid Sans',
+      'Helvetica Neue',
+      sans-serif;
     font-display: swap;
   }
 
@@ -218,6 +231,7 @@
   --we-color-text-blue: hsl(221, 100%, 63%);
   --we-color-text-purple: hsl(270, 100%, 67%);
   --we-color-text-red: hsl(1, 100%, 66%);
+  --we-color-text-pink: hsl(330, 90%, 60%);
   --we-color-text-black-contrast: hsl(0, 0%, 20%);
   --we-color-text-gray-contrast: hsla(37, 8%, 33%, 0.15);
   --we-color-text-yellow-contrast: hsla(44, 82%, 59%, 0.39);
@@ -225,6 +239,7 @@
   --we-color-text-blue-contrast: hsla(202, 54%, 59%, 0.27);
   --we-color-text-purple-contrast: hsla(274, 37%, 64%, 0.27);
   --we-color-text-red-contrast: hsla(8, 79%, 79%, 0.4);
+  --we-color-text-pink-contrast: hsla(330, 90%, 60%, 0.3);
 
   /* Highlight colors */
   --we-color-highlight-yellow: #fef9c3;

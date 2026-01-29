@@ -20,29 +20,29 @@ const COLOR_HIGHLIGHT_SHORTCUT_KEY = 'mod+shift+h';
 
 const HIGHLIGHT_COLORS = [
   {
-    label: 'Yellow background',
-    value: 'var(--we-color-highlight-yellow)',
-    border: 'var(--we-color-highlight-yellow-contrast)',
+    label: 'Blue background',
+    value: 'var(--we-brand-weak)',
+    border: 'var(--we-brand-light)',
   },
   {
     label: 'Green background',
-    value: 'var(--we-color-highlight-green)',
-    border: 'var(--we-color-highlight-green-contrast)',
-  },
-  {
-    label: 'Blue background',
-    value: 'var(--we-color-highlight-blue)',
-    border: 'var(--we-color-highlight-blue-contrast)',
-  },
-  {
-    label: 'Purple background',
-    value: 'var(--we-color-highlight-purple)',
-    border: 'var(--we-color-highlight-purple-contrast)',
+    value: 'var(--we-green-weak)',
+    border: 'var(--we-green-light)',
   },
   {
     label: 'Red background',
-    value: 'var(--we-color-highlight-red)',
-    border: 'var(--we-color-highlight-red-contrast)',
+    value: 'var(--we-red-weak)',
+    border: 'var(--we-red-light)',
+  },
+  {
+    label: 'Purple background',
+    value: 'var(--we-purple-weak)',
+    border: 'var(--we-purple-light)',
+  },
+  {
+    label: 'Yellow background',
+    value: 'var(--we-yellow-weak)',
+    border: 'var(--we-yellow-light)',
   },
 ];
 

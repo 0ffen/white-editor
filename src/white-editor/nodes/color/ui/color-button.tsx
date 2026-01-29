@@ -56,17 +56,21 @@ export const TextColorButton = React.forwardRef<HTMLButtonElement, TextColorButt
         data-disabled={!canTextColor}
         aria-label={label}
         aria-pressed={isActive}
-        tooltip={label}
         isActive={isActive}
         onClick={handleClick}
         {...buttonProps}
         ref={ref}
-        className='we:h-6 we:w-6'
+        className='we:h-7 we:w-7 we:p-0'
       >
         {children ?? (
           <span
-            className={cn('we:h-full we:w-full we:rounded-4xl we:border')}
-            style={{ backgroundColor: textColor?.value, borderColor: textColor?.border } as React.CSSProperties}
+            className={cn('we:h-5 we:w-5 we:rounded-full we:border')}
+            style={
+              {
+                backgroundColor: textColor?.value,
+                borderColor: textColor?.border,
+              } as React.CSSProperties
+            }
           />
         )}
       </Button>

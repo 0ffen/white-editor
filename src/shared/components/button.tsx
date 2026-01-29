@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/components';
 import { cn } from '@/shared/utils/utils';
 import { Slot } from '@radix-ui/react-slot';
 
@@ -27,7 +28,7 @@ const buttonVariants = cva(
         default: 'we:h-9 we:py-[9px] we:px-2',
         sm: 'we:h-6 we:rounded we:px-3 we:text-xs',
         lg: 'we:h-10 we:rounded we:px-4',
-        icon: 'we:h-7 we:p-1 we:justify-center',
+        icon: 'we:h-[28px] we:w-[28px] we:p-1 we:justify-center',
       },
       justify: {
         center: 'we:justify-center',
@@ -54,9 +55,9 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, justify, asChild = false, isActive = false, ...props }, ref) => {
+  ({ className, variant, size, justify, asChild = false, isActive = false, tooltip, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
-    return (
+    const button = (
       <Comp
         className={cn(buttonVariants({ className, variant, size, justify }))}
         data-active={isActive}
@@ -64,6 +65,19 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       />
     );
+
+    if (tooltip) {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>{button}</TooltipTrigger>
+          <TooltipContent side='bottom'>
+            <div className='we:flex we:flex-col we:items-center we:text-center'>{tooltip}</div>
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+
+    return button;
   }
 );
 Button.displayName = 'Button';

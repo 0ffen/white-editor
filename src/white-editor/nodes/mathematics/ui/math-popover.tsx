@@ -1,6 +1,7 @@
 import React from 'react';
 import BlockMathIcon from '@/assets/icons/math-block.svg?react';
 import InlineMathIcon from '@/assets/icons/math-inline.svg?react';
+import { getTranslate } from '@/shared';
 import { Button, Popover, PopoverContent, PopoverTrigger } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
@@ -85,9 +86,11 @@ export const MathPopover = React.forwardRef<HTMLButtonElement, MathPopoverProps>
         <PopoverTrigger asChild>
           <Button
             type='button'
+            size='icon'
             data-active-state={isActive ? 'on' : 'off'}
-            aria-label={'math'}
+            aria-label={type === 'block' ? 'Block Math' : 'Inline Math'}
             aria-pressed={isActive}
+            tooltip={type === 'block' ? getTranslate('blockMath') : getTranslate('inlineMath')}
             isActive={isActive}
             disabled={!canSet}
             onClick={handleClick}

@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { Ban, TypeIcon } from 'lucide-react';
+import { Ban, ChevronDown } from 'lucide-react';
 
-import { cn } from '@/shared';
+import { cn, getTranslate } from '@/shared';
 import { Button, PopoverContent, PopoverTrigger, Separator, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import {
@@ -25,24 +25,26 @@ export interface ColorPopoverProps
   extends Omit<ButtonProps, 'type'>,
     Pick<UseTextColorConfig, 'editor' | 'hideWhenUnavailable' | 'onApplied'> {
   textColors?: ColorValue[];
-  icon?: React.ReactNode;
 }
 
 const ColorPickerButton = React.forwardRef<HTMLButtonElement, ButtonProps & { currentTextColor?: string }>(
-  ({ className, currentTextColor, children, ...props }, ref) => (
+  ({ className, currentTextColor, ...props }, ref) => (
     <Button
       type='button'
-      className={cn(className, 'we:data-[active=true]:[&_svg]:text-[var(--current-text-color)]')}
+      className={cn(className, 'we:flex we:items-center we:px-1 we:h-[28px]')}
       data-style='ghost'
       data-appearance='default'
       role='button'
       tabIndex={-1}
       aria-label='Text Color'
       ref={ref}
-      style={{ '--current-text-color': currentTextColor } as React.CSSProperties}
       {...props}
     >
-      {children}
+      <span
+        className='we:h-5 we:w-5 we:rounded-full we:shrink-0'
+        style={{ backgroundColor: currentTextColor || 'var(--we-text-normal)' }}
+      />
+      <ChevronDown className='we:h-3 we:w-3 we:text-foreground/60 we:shrink-0' />
     </Button>
   )
 );
@@ -54,7 +56,6 @@ export function ColorPopover({
   textColors = pickTextColorsByValue(TEXT_COLORS_MAP),
   hideWhenUnavailable = false,
   onApplied,
-  icon,
   ...props
 }: ColorPopoverProps) {
   const { editor } = useTiptapEditor(providedEditor);
@@ -80,29 +81,31 @@ export function ColorPopover({
           data-disabled={!canTextColor}
           aria-pressed={isActive}
           aria-label={label}
-          tooltip={label}
+          tooltip={getTranslate('color')}
           isActive={isActive}
           currentTextColor={currentTextColor}
           {...props}
-        >
-          {icon || <TypeIcon />}
-        </ColorPickerButton>
+        />
       </PopoverTrigger>
 
-      <PopoverContent aria-label='Color picker' className='we:h-10 we:w-fit we:p-2' side='bottom' align='start'>
-        <div ref={containerRef} tabIndex={0} className='we:flex we:h-full we:flex-1 we:items-center we:gap-1'>
+      <PopoverContent aria-label='Color picker' className='we:h-auto we:w-fit we:p-2' side='bottom' align='start'>
+        <div
+          ref={containerRef}
+          tabIndex={0}
+          className='we:flex we:items-center we:gap-1.5 we:outline-none focus:we:outline-none'
+        >
           {textColors?.map((color) => (
             <TextColorButton key={color.value} editor={editor} textColor={color} aria-label={`${color.label} color`} />
           ))}
-          <Separator orientation='vertical' className='mx-1' />
+          <Separator orientation='vertical' className='we:mx-1 we:h-6' />
           <Button
             type='button'
             size='icon'
-            className='we:h-6 we:w-6'
             onClick={handleRemoveTextColor}
             aria-label='Remove text color'
+            tooltip={getTranslate('removeColor')}
           >
-            <Ban className='we:text-foreground/80' size={4} />
+            <Ban className='we:text-foreground/60' size={20} />
           </Button>
         </div>
       </PopoverContent>

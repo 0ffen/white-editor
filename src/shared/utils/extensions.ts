@@ -229,6 +229,10 @@ export function createEditorExtensions<T, P extends Record<string, unknown> = Re
         enableClickSelection: true,
         autolink: true,
       },
+      dropcursor: {
+        color: 'var(--we-brand-light)',
+        width: 2,
+      },
     }),
     CustomParagraph,
     CharacterCount.configure({
@@ -350,7 +354,6 @@ export function createViewerExtensions(
     Superscript,
     Subscript,
     CodeBlockLowlight.extend({
-      readonly: true,
       addNodeView() {
         if (typeof window === 'undefined') return null;
         // customNodeViews에 codeBlock이 있으면 사용, 없으면 기본 CodeBlock 사용

@@ -64,6 +64,8 @@ interface WhiteEditorUIProps {
   disabled?: boolean;
   placeholder?: string;
   showToolbar?: boolean;
+  /** 국제화 locale (ko | en). 지정 시 에디터 내 텍스트가 해당 언어로 동기화됨 */
+  locale?: 'ko' | 'en';
 }
 
 interface WhiteEditorExtensions<T = Record<string, unknown>> {

@@ -127,7 +127,7 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
           const dataURL = editorRef.current.toDataURL();
           const blobData = base64ToBlob(dataURL);
           return blobData;
-        } catch (error) {
+        } catch {
           return null;
         }
       },

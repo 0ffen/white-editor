@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { getTranslate } from '@/shared';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
@@ -58,6 +59,7 @@ export const ListButton = React.forwardRef<HTMLButtonElement, ListButtonProps>(
     return (
       <Button
         type='button'
+        size='icon'
         data-style='ghost'
         data-active-state={isActive ? 'on' : 'off'}
         role='button'
@@ -66,7 +68,7 @@ export const ListButton = React.forwardRef<HTMLButtonElement, ListButtonProps>(
         data-disabled={!canToggle}
         aria-label={label}
         aria-pressed={isActive}
-        tooltip={label}
+        tooltip={getTranslate(type)}
         onClick={handleClick}
         isActive={isActive}
         className={cn(className)}

@@ -84,7 +84,7 @@
   border-radius: 4px;
   padding: 4px;
   font-family: 'D2Coding', monospace;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--we-editor-inline-code);
 
@@ -170,8 +170,8 @@
     padding-block: 0;
     display: inline-block;
     width: 100%;
-    padding-left: 0;
-    margin-left: 24px;
+    padding-left: 24px;
+    margin-left: 0;
   }
 
   /* Unordered list styles - 기호목록 */
@@ -278,7 +278,7 @@
 .white-editor .markdown table {
   width: 100%;
   max-width: 1440px;
-  border: 1px solid var(--we-border);
+  border: 1px solid var(--we-border-default);
   table-layout: fixed;
 }
 
@@ -291,37 +291,34 @@
 
 .white-editor .markdown .selectedCell,
 .white-editor .markdown .selectedCell.tableSelection {
-  background-color: hsl(var(--we-primary) / 0.1);
+  background-color: var(--we-brand-weak);
 }
 
 .white-editor .markdown th {
-  border: 1px solid var(--we-border);
+  border: 1px solid var(--we-border-default);
   padding: calc(var(--we-spacing) * 2);
-  background-color: var(--we-accent);
+  background-color: var(--we-elevation-level1);
 }
 
 .white-editor .markdown td {
-  border: 1px solid var(--we-border);
+  border: 1px solid var(--we-border-default);
   padding: calc(var(--we-spacing) * 2);
 }
 
 .white-editor .markdown hr {
-  border-color: var(--we-border);
+  border-color: var(--we-border-default);
   margin-block: calc(var(--we-spacing) * 6);
   border-width: 0;
   border-bottom-width: 1px;
 }
 
 .white-editor .markdown a {
-  color: var(--we-primary);
+  color: var(--we-brand-default);
   font-weight: 400;
-  text-decoration: underline;
-}
 
-.white-editor .markdown input[type='checkbox']:disabled {
-  color: var(--we-foreground);
-  border-color: var(--we-primary);
-  focus: var(--we-ring-primary);
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .white-editor .markdown [data-type='taskList'] {
@@ -332,14 +329,69 @@
 .white-editor .markdown [data-type='taskList'] li {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   list-style: none;
+
+  label {
+    margin-top: 0 !important;
+    position: relative;
+    padding-right: 0.5rem;
+  }
+
+  p {
+    margin-top: 0 !important;
+  }
 }
 
-.white-editor .markdown [data-type='taskList'] li input[type='checkbox'] {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 0;
+/* Tiptap-style task list checkbox: input 숨김, span으로 시각 표현 */
+.white-editor .markdown [data-type='taskList'] li label input[type='checkbox'] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.white-editor .markdown [data-type='taskList'] li label span {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--we-text-light);
+  border-radius: 2px;
+  position: relative;
+  cursor: pointer;
+  background-color: var(--we-elevation-background);
+  flex-shrink: 0;
+  transition:
+    background-color 80ms ease-out,
+    border-color 80ms ease-out;
+}
+
+.white-editor .markdown [data-type='taskList'] li label input[type='checkbox']:checked + span {
+  background-color: var(--we-brand-default);
+  border-color: var(--we-brand-default);
+}
+
+/* 체크마크: CSS border로 기본 check 스타일 */
+.white-editor .markdown [data-type='taskList'] li label input[type='checkbox']:checked + span::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 4px;
+  width: 10px;
+  height: 6px;
+  border-left: 2px solid var(--we-white);
+  border-bottom: 2px solid var(--we-white);
+  transform: rotate(-45deg);
+}
+
+.white-editor .markdown [data-type='taskList'] li label input[type='checkbox']:disabled + span {
+  cursor: default;
+  opacity: 0.6;
+}
+
+/* 체크된 할 일: 텍스트 취소선 */
+.white-editor .markdown [data-type='taskList'] li[data-checked='true'] p {
+  text-decoration: line-through;
+  color: var(--we-text-light);
 }
 
 .white-editor .markdown details {
@@ -348,7 +400,7 @@
 }
 
 .white-editor .markdown summary {
-  color: var(--we-foreground);
+  color: var(--we-text-normal);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -358,7 +410,7 @@
 
 .white-editor .markdown summary::after {
   content: '';
-  border-color: var(--we-foreground);
+  border-color: var(--we-text-normal);
   border-width: 2px;
   border-style: solid;
   border-bottom-width: 2px;

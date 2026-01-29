@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { getTranslate } from '@/shared';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
@@ -59,7 +60,7 @@ export const HeadingButton = React.forwardRef<HTMLButtonElement, HeadingButtonPr
         data-disabled={!canToggle}
         aria-label={label}
         aria-pressed={isActive}
-        tooltip={label}
+        tooltip={getTranslate('heading')}
         onClick={handleClick}
         justify='start'
         className={cn(itemButtonClassName)}
