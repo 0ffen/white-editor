@@ -31,14 +31,16 @@ export interface HeadingDropdownMenuProps extends Omit<ButtonProps, 'type'>, Use
   icon?: React.ReactNode;
 }
 
-const defaultHeadingOptions: HeadingOption[] = [
-  { label: '제목 1', level: 1 },
-  { label: '제목 2', level: 2 },
-  { label: '제목 3', level: 3 },
-  { label: '제목 4', level: 4 },
-  { label: '본문 1', level: null, paragraphVariant: 1 },
-  { label: '본문 2', level: null, paragraphVariant: 2 },
-];
+function getDefaultHeadingOptions(): HeadingOption[] {
+  return [
+    { label: getTranslate('heading1'), level: 1 },
+    { label: getTranslate('heading2'), level: 2 },
+    { label: getTranslate('heading3'), level: 3 },
+    { label: getTranslate('heading4'), level: 4 },
+    { label: getTranslate('body1'), level: null, paragraphVariant: 1 },
+    { label: getTranslate('body2'), level: null, paragraphVariant: 2 },
+  ];
+}
 
 interface HeadingCheckboxItemProps {
   editor: Editor | null;
@@ -73,8 +75,9 @@ function HeadingCheckboxItem({ editor, option, className, onSelect }: HeadingChe
 
 // Helper to get current active option label
 function useCurrentLabel(editor: Editor | null, options: HeadingOption[]): string {
-  // Default to 본문 1 (first paragraph option with variant 1)
-  const defaultLabel = options.find((opt) => opt.level === null && opt.paragraphVariant === 1)?.label ?? '본문 1';
+  // Default to body1 (first paragraph option with variant 1)
+  const defaultLabel =
+    options.find((opt) => opt.level === null && opt.paragraphVariant === 1)?.label ?? getTranslate('body1');
   const [currentLabel, setCurrentLabel] = React.useState<string>(defaultLabel);
 
   React.useEffect(() => {
@@ -141,7 +144,7 @@ export const HeadingDropdownMenu = React.forwardRef<HTMLButtonElement, HeadingDr
       hideWhenUnavailable,
     });
 
-    const resolvedOptions = options ?? defaultHeadingOptions;
+    const resolvedOptions = options ?? getDefaultHeadingOptions();
     const currentLabel = useCurrentLabel(editor, resolvedOptions);
 
     // 사용자가 직접 선택한 경우에만 버튼 활성화
@@ -174,7 +177,7 @@ export const HeadingDropdownMenu = React.forwardRef<HTMLButtonElement, HeadingDr
             tabIndex={-1}
             disabled={!canToggle}
             data-disabled={!canToggle}
-            aria-label='heading dropdown menu'
+            aria-label={getTranslate('headingDropdownMenu')}
             aria-pressed={isActive}
             tooltip={getTranslate('heading')}
             isActive={isActive}

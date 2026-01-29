@@ -1,11 +1,24 @@
 import { useRef, useState } from 'react';
 import type { JSONContent } from '@tiptap/react';
-import { Button, createEmptyContent, ThemeToggle, TooltipProvider } from './shared';
-import { cn } from './shared/utils';
+import {
+  Button,
+  createEmptyContent,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  ThemeToggle,
+  TooltipProvider,
+} from './shared';
+import { cn, i18n } from './shared/utils';
 import { offenDefaultToolbarItems, WhiteEditor, WhiteViewer, type WhiteEditorRef } from './white-editor';
+
+type Locale = 'ko' | 'en';
 
 export default function App() {
   const [content, setContent] = useState<JSONContent>(createEmptyContent());
+  const [locale, setLocale] = useState<Locale>('ko');
   const editorRef = useRef<WhiteEditorRef>(null);
 
   const pageLinksData = [
@@ -67,7 +80,22 @@ export default function App() {
           className={cn('we:w-full we:relative we:border-b we:flex we:items-center we:justify-center we:mb-8 we:pb-6')}
         >
           <h1 className='we:font-bold we:text-4xl'>White Editor</h1>
-          <div className='we:w-fit we:right-0 we:absolute'>
+          <div className='we:absolute we:right-0 we:flex we:w-fit we:items-center we:gap-3'>
+            <Select
+              value={locale}
+              onValueChange={(value) => {
+                const next = value as Locale;
+                void i18n.changeLanguage(next).then(() => setLocale(next));
+              }}
+            >
+              <SelectTrigger className='we:w-[120px]'>
+                <SelectValue placeholder='Locale' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='ko'>한국어</SelectItem>
+                <SelectItem value='en'>English</SelectItem>
+              </SelectContent>
+            </Select>
             <ThemeToggle />
           </div>
         </div>
@@ -77,7 +105,8 @@ export default function App() {
             <h2 className='we:mb-8 we:text-3xl we:font-bold we:text-center'>Editor</h2>
 
             <WhiteEditor
-              locale={'en'}
+              key={locale}
+              locale={locale}
               ref={editorRef}
               disabled={false}
               editorClassName='we:h-[500px]! we:rounded-md!'
