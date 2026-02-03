@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ChevronDownIcon } from 'lucide-react';
 
-import { getTranslate } from '@/shared';
 import { Button, type ButtonProps, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
@@ -78,7 +77,7 @@ export const TableButton = React.forwardRef<HTMLButtonElement, TableButtonProps>
             data-disabled={!canInsert}
             aria-label={label}
             aria-pressed={isActive}
-            tooltip={getTranslate('table')}
+            tooltip={label}
             onClick={handleClick}
             isActive={isActive}
             className={cn('we:gap-0.5', className)}
