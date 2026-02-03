@@ -1,10 +1,10 @@
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Check, Minus, Plus } from 'lucide-react';
+import { Minus, Plus } from 'lucide-react';
 
 import TuiImageEditor from 'tui-image-editor';
-import { Button, Textarea } from '@/shared';
+import { Button } from '@/shared';
 import { base64ToBlob } from '@/shared/utils/base64-to-blob';
-import { CropEditor, DrawEditor, ImageEditorToolbar, ShapeEditor, TextEditor } from '@/white-editor';
+import { CropEditor, DrawEditor, ImageEditorFooter, ImageEditorToolbar, ShapeEditor, TextEditor } from '@/white-editor';
 import { useImageZoom } from '@/white-editor/nodes/image/hook';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
@@ -25,10 +25,13 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
 
   const rootEl = useRef<HTMLDivElement | null>(null);
   const editorRef = useRef<TuiImageEditorType | null>(null);
+  const editorApplyRef = useRef<() => void | Promise<void>>(null);
+  const editorCancelRef = useRef<() => void>(null);
+  /** 모드 진입 시점 캔버스 스냅샷. 취소 시 이 상태로 복원하여 해당 모드에서 추가한 요소만 제거 */
+  const modeEnterSnapshotRef = useRef<string | null>(null);
 
   const [drawingColor, setDrawingColor] = useState<string>('#000000');
   const [drawingRange, setDrawingRange] = useState<number>(10);
-  const [caption, setCaption] = useState<string>(defaultCaption);
 
   const { zoomLevel, handleZoomIn, handleZoomOut, handleZoomReset } = useImageZoom();
   const BASE_WIDTH = 720;
@@ -44,8 +47,12 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
         cssMaxHeight: BASE_HEIGHT,
         usageStatistics: false,
         selectionStyle: {
-          cornerSize: 20,
-          rotatingPointOffset: 70,
+          cornerSize: 10,
+          rotatingPointOffset: 10,
+          borderColor: '#ffffff',
+          lineWidth: 1,
+          cornerColor: '#ffffff',
+          cornerStrokeColor: '#000000',
         },
       });
 
@@ -66,6 +73,17 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
       };
     }
   }, [imageUrl]);
+
+  // 텍스트/도형/그리기 모드 진입 시 캔버스 스냅샷 저장 → 취소 시 이 상태로 복원
+  useEffect(() => {
+    if (activeMode === 'text' || activeMode === 'draw' || activeMode === 'shape') {
+      if (editorRef.current) {
+        modeEnterSnapshotRef.current = editorRef.current.toDataURL();
+      }
+    } else {
+      modeEnterSnapshotRef.current = null;
+    }
+  }, [activeMode]);
 
   const startCropMode = useCallback(() => {
     if (!editorRef.current) return;
@@ -108,15 +126,6 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
     [startCropMode, startDrawMode, startShapeMode, setActiveMode]
   );
 
-  const handleCaptionChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const newCaption = e.target.value;
-      setCaption(newCaption);
-      onCaptionChange?.(newCaption);
-    },
-    [onCaptionChange]
-  );
-
   useImperativeHandle(
     ref,
     () => ({
@@ -140,29 +149,28 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
   );
 
   return (
-    <div className='we:flex we:w-full we:flex-col'>
+    <div className='white-editor we:flex we:w-full we:flex-col'>
       {/* Toolbar */}
-      <ImageEditorToolbar editorRef={editorRef} activeMode={activeMode} handleModeChange={handleModeChange} />
+      <div className='we:px-4 we:flex we:justify-between we:items-center'>
+        <ImageEditorToolbar editorRef={editorRef} activeMode={activeMode} handleModeChange={handleModeChange} />
 
-      {/* 확대/축소 컨트롤 */}
-      <div
-        className='we:flex we:items-center we:gap-1 we:fixed we:top-15 we:right-6 we:bg-background we:rounded-lg we:z-10 we:w-fit'
-        onMouseDown={(e) => e.stopPropagation()}
-      >
-        <Button type='button' onClick={handleZoomOut} disabled={zoomLevel <= 50}>
-          <Minus />
-        </Button>
-        <Button type='button' onClick={handleZoomReset} className='we:min-w-[50px]'>
-          {zoomLevel}%
-        </Button>
-        <Button type='button' onClick={handleZoomIn} disabled={zoomLevel >= 500}>
-          <Plus />
-        </Button>
+        {/* 확대/축소 컨트롤 */}
+        <div className='we:flex we:items-center we:gap-1 we:w-fit' onMouseDown={(e) => e.stopPropagation()}>
+          <Button type='button' onClick={handleZoomOut} disabled={zoomLevel <= 50}>
+            <Minus />
+          </Button>
+          <Button type='button' onClick={handleZoomReset} className='we:min-w-[50px]'>
+            {zoomLevel}%
+          </Button>
+          <Button type='button' onClick={handleZoomIn} disabled={zoomLevel >= 500}>
+            <Plus />
+          </Button>
+        </div>
       </div>
 
       {/* Image */}
       <div
-        className='we:overflow-auto we:rounded we:bg-border/50 we:relative we:h-[420px] we:w-full we:grid we:place-items-center'
+        className='we:overflow-auto we:rounded we:bg-elevation-level1 we:relative we:h-[420px] we:w-full we:grid we:place-items-center'
         style={{
           userSelect: 'none',
         }}
@@ -188,24 +196,21 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
         </div>
       </div>
 
-      {!activeMode && (
-        <div className='we:mx-auto we:mt-4 we:flex we:w-full we:flex-col we:space-y-4 we:p-2'>
-          <div className='we:flex we:w-full we:flex-col we:space-y-2'>
-            <h3 className='we:text-muted-foreground we:text-xs we:font-medium'>Caption</h3>
-            <Textarea
-              name='caption'
-              value={caption}
-              onChange={handleCaptionChange}
-              rows={3}
-              className='we:resize-none'
-            />
-          </div>
-        </div>
-      )}
-      {/* Editor Options */}
+      {/* Editor Options (패딩 영역) */}
       {activeMode && (
-        <div className='we:mx-auto we:mt-4 we:w-full'>
-          {activeMode === 'crop' && <CropEditor editorRef={editorRef} setActiveMode={setActiveMode} />}
+        <div className='we:mx-auto we:w-full we:px-4'>
+          {activeMode === 'crop' && (
+            <CropEditor
+              editorRef={editorRef}
+              setActiveMode={setActiveMode}
+              onRegisterApply={(fn) => {
+                editorApplyRef.current = fn;
+              }}
+              onRegisterCancel={(fn) => {
+                editorCancelRef.current = fn;
+              }}
+            />
+          )}
           {activeMode === 'text' && <TextEditor editorRef={editorRef} />}
           {activeMode === 'draw' && (
             <DrawEditor
@@ -218,22 +223,51 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
             />
           )}
           {activeMode === 'shape' && <ShapeEditor editorRef={editorRef} />}
-          {activeMode !== 'crop' && (
-            <div className='we:mt-4 we:flex we:justify-center we:items-center'>
-              <Button
-                className='we:w-fit we:pl-4 we:pr-6 we:rounded-4xl'
-                type='button'
-                variant='default'
-                onClick={() => {
+        </div>
+      )}
+
+      {activeMode && (
+        <ImageEditorFooter
+          showBorderTop={activeMode !== 'crop'}
+          onCancel={() => {
+            if (activeMode === 'crop') {
+              editorCancelRef.current?.();
+              return;
+            }
+            // 텍스트/도형/그리기: 모드 진입 전 상태로 복원 후 모드 해제
+            const snapshot = modeEnterSnapshotRef.current;
+            if (
+              (activeMode === 'text' || activeMode === 'draw' || activeMode === 'shape') &&
+              editorRef.current &&
+              snapshot
+            ) {
+              editorRef.current
+                .loadImageFromURL(snapshot, 'UploadedImage')
+                .then(() => {
                   editorRef.current?.stopDrawingMode();
                   setActiveMode(null);
-                }}
-              >
-                <Check /> Done
-              </Button>
-            </div>
-          )}
-        </div>
+                  setTimeout(() => editorRef.current?.clearUndoStack(), 100);
+                })
+                .catch(() => {
+                  editorRef.current?.discardSelection();
+                  editorRef.current?.stopDrawingMode();
+                  setActiveMode(null);
+                });
+            } else {
+              editorRef.current?.discardSelection();
+              editorRef.current?.stopDrawingMode();
+              setActiveMode(null);
+            }
+          }}
+          onApply={() => {
+            if (activeMode === 'crop') editorApplyRef.current?.();
+            else {
+              editorRef.current?.discardSelection();
+              editorRef.current?.stopDrawingMode();
+              setActiveMode(null);
+            }
+          }}
+        />
       )}
     </div>
   );

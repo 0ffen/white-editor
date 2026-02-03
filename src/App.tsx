@@ -65,12 +65,10 @@ export default function App() {
     }
 
     await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000));
-    const mockServerUrl = `https://example.com/uploads/${Date.now()}-${file.name}`;
 
-    // eslint-disable-next-line no-console
-    console.log('📤 이미지 업로드 완료:', mockServerUrl);
+    const logoUrl = '/white.png';
 
-    return mockServerUrl;
+    return logoUrl;
   };
 
   return (

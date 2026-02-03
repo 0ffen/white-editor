@@ -17,12 +17,14 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'we:bg-primary we:text-primary-foreground hover:we:bg-primary/90',
-        destructive: 'we:bg-destructive we:text-destructive-foreground we:hover:bg-destructive/90',
-        outline: 'we:border we:border-input we:bg-background we:shadow-sm we:hover:bg-accent',
-        secondary: 'we:bg-elevation-level2 we:text-text-sub we:hover:bg-elevation-level2/80',
+        default: 'we:bg-brand-default we:text-white',
+        destructive:
+          'we:bg-[var(--we-red-weak)] we:text-[var(--we-red-default)] we:[&_svg]:text-[var(--we-red-default)]',
+        outline:
+          'we:border we:border-border-default we:bg-elevation-background we:shadow-sm we:hover:bg-elevation-level1',
+        secondary: 'we:bg-elevation-level2 we:text-text-sub',
         ghost: 'we:text-text-sub we:hover:bg-interaction-hover',
-        link: 'we:text-primary we:underline-offset-4 we:hover:underline',
+        link: 'we:text-brand-default we:underline-offset-4 we:hover:underline',
       },
       size: {
         default: 'we:h-9 we:py-[9px] we:px-2',

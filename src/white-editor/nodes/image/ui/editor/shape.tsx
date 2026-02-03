@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Ban, Circle, Square, Triangle } from 'lucide-react';
-import { Button, cn, Slider } from '@/shared';
+import { Button, cn, getTranslate, Slider } from '@/shared';
 import { EDITOR_COLORS } from '@/white-editor';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
@@ -9,13 +9,14 @@ interface ShapeEditorProps {
 }
 
 const transparentColor = '#ffffff00';
-const defaultColor = '#000000'; //black
+/** EDITOR_COLORS[0].editorHex와 동일. 모듈 로드 순서 이슈로 상수 사용 */
+const DEFAULT_SHAPE_COLOR = '#161616';
 
 export function ShapeEditor(props: ShapeEditorProps) {
   const { editorRef } = props;
 
-  const [shapeFillColor, setShapeFillColor] = useState<string>(defaultColor);
-  const [shapeStrokeColor, setShapeStrokeColor] = useState<string>(defaultColor);
+  const [shapeFillColor, setShapeFillColor] = useState<string>(DEFAULT_SHAPE_COLOR);
+  const [shapeStrokeColor, setShapeStrokeColor] = useState<string>(DEFAULT_SHAPE_COLOR);
   const [shapeStroke, setShapeStroke] = useState<number>(10);
   const [shapeType, setShapeType] = useState<string | null>('rect');
   const [activeObjectId, setActiveObjectId] = useState<number | null>(null);
@@ -110,118 +111,147 @@ export function ShapeEditor(props: ShapeEditorProps) {
   };
 
   return (
-    <div className='we:flex we:w-full we:flex-col we:gap-4 we:space-y-2 we:p-2'>
-      <div className='we:flex we:w-full we:flex-col we:gap-2'>
-        <h3 className='we:text-muted-foreground we:w-fit we:text-xs we:font-medium'>Shape</h3>
-        <div className='we:flex we:items-center we:justify-center we:gap-2'>
-          <Button
-            type='button'
-            size='default'
-            variant='outline'
-            onClick={() => handleCreateShape('rect')}
-            isActive={shapeType === 'rect'}
-            className='we:shadow-none'
-          >
-            <Square className='size-6' />
-          </Button>
-          <Button
-            type='button'
-            size='default'
-            variant='outline'
-            onClick={() => handleCreateShape('triangle')}
-            isActive={shapeType === 'triangle'}
-            className='we:shadow-none'
-          >
-            <Triangle />
-          </Button>
-          <Button
-            type='button'
-            size='default'
-            variant='outline'
-            onClick={() => handleCreateShape('circle')}
-            isActive={shapeType === 'circle'}
-            className='we:shadow-none'
-          >
-            <Circle />
-          </Button>
-        </div>
-      </div>
-
-      <div className='we:flex we:w-full we:flex-col we:gap-2'>
-        <h3 className='we:text-muted-foreground we:text-xs we:font-medium'>Fill Color</h3>
-        <div className='we:flex we:flex-wrap we:items-center we:gap-3'>
-          {EDITOR_COLORS.map((color) => (
+    <div className='we:flex we:w-full we:flex-col we:gap-2 we:space-y-2 we:p-2 we:mt-2'>
+      <div className='we:flex we:w-full we:gap-2'>
+        <div className='we:flex we:w-full we:gap-3 we:h-full we:items-center'>
+          <h3 className='we:text-text-normal we:w-fit we:text-sm we:min-w-[72px]'>{getTranslate('도형')}</h3>
+          <div className='we:flex we:items-center we:justify-center we:gap-2'>
             <Button
               type='button'
-              key={color.value}
-              className={cn(
-                'we:h-6 we:w-6 we:cursor-pointer we:rounded-4xl we:border we:transition-all',
-                shapeFillColor === color.hex && 'we:ring-2 we:ring-blue-500 we:ring-offset-0'
-              )}
-              style={{ backgroundColor: color.value, borderColor: color.border }}
-              onClick={() => handleShapeFillColorChange(color.hex)}
-              title={color.label}
-              aria-label={`${color.label} color`}
-              isActive={shapeFillColor === color.hex}
-            />
-          ))}
-          <button
-            type='button'
-            onClick={() => handleShapeFillColorChange(transparentColor)}
-            className={cn(
-              'we:h-6 we:w-6 we:cursor-pointer we:rounded-4xl we:border we:border-none we:transition-all',
-              shapeFillColor === transparentColor && 'we:ring-2 we:ring-blue-500 we:ring-offset-0'
-            )}
-          >
-            <Ban size={24} className='we:text-muted-foreground' />
-          </button>
-        </div>
-      </div>
-
-      <div className='we:space-y-2'>
-        <h3 className='we:text-muted-foreground we:text-xs we:font-medium'>Stroke Color</h3>
-        <div className='we:flex we:flex-wrap we:items-center we:gap-3'>
-          {EDITOR_COLORS.map((color) => (
+              variant='ghost'
+              onClick={() => handleCreateShape('rect')}
+              isActive={shapeType === 'rect'}
+              className='we:shadow-none we:data-[active=true]:bg-transparent we:data-[active=true]:text-brand-default we:data-[active=true]:[&_svg]:text-brand-default'
+            >
+              <div
+                className={cn(
+                  'we:flex we:items-center we:justify-center we:gap-1',
+                  shapeType === 'rect' ? 'we:text-brand-default' : 'we:text-text-light'
+                )}
+              >
+                <Square size={20} color={shapeType === 'rect' ? 'var(--we-brand-default)' : 'var(--we-text-light)'} />
+                {getTranslate('사각형')}
+              </div>
+            </Button>
             <Button
               type='button'
-              key={color.value}
-              className={cn(
-                'we:h-6 we:w-6 we:cursor-pointer we:rounded-4xl we:border we:transition-all',
-                shapeStrokeColor === color.hex && 'we:ring-2 we:ring-blue-500 we:ring-offset-0'
-              )}
-              style={{ backgroundColor: color.value, borderColor: color.border }}
-              onClick={() => handleShapeStrokeColorChange(color.hex)}
-              title={color.label}
-              aria-label={`${color.label} color`}
-              isActive={shapeStrokeColor === color.hex}
+              variant='ghost'
+              onClick={() => handleCreateShape('triangle')}
+              isActive={shapeType === 'triangle'}
+              className='we:shadow-none we:data-[active=true]:bg-transparent we:data-[active=true]:text-brand-default we:data-[active=true]:[&_svg]:text-brand-default'
+            >
+              <div
+                className={cn(
+                  'we:flex we:items-center we:justify-center we:gap-1',
+                  shapeType === 'triangle' ? 'we:text-brand-default' : 'we:text-text-light'
+                )}
+              >
+                <Triangle
+                  size={20}
+                  color={shapeType === 'triangle' ? 'var(--we-brand-default)' : 'var(--we-text-light)'}
+                />
+                {getTranslate('삼각형')}
+              </div>
+            </Button>
+            <Button
+              type='button'
+              variant='ghost'
+              onClick={() => handleCreateShape('circle')}
+              isActive={shapeType === 'circle'}
+              className='we:shadow-none we:data-[active=true]:bg-transparent we:data-[active=true]:text-brand-default we:data-[active=true]:[&_svg]:text-brand-default'
+            >
+              <div
+                className={cn(
+                  'we:flex we:items-center we:justify-center we:gap-1',
+                  shapeType === 'circle' ? 'we:text-brand-default' : 'we:text-text-light'
+                )}
+              >
+                <Circle size={20} color={shapeType === 'circle' ? 'var(--we-brand-default)' : 'var(--we-text-light)'} />
+                {getTranslate('원형')}
+              </div>
+            </Button>
+          </div>
+        </div>
+        <div className='we:space-y-2 we:flex we:w-full we:gap-3 we:justify-between we:items-center'>
+          <h3 className='we:text-text-normal we:text-sm we:m-0! we:min-w-[80px]'>{getTranslate('두께')}</h3>
+          <div className='we:flex we:w-full we:items-center we:gap-3 we:py-2'>
+            <Slider
+              max={50}
+              step={1}
+              min={1}
+              defaultValue={[shapeStroke]}
+              onValueChange={(value: number[]) => {
+                handleShapeStrokeChange(value[0]);
+              }}
             />
-          ))}
-          <button
-            type='button'
-            onClick={() => handleShapeStrokeColorChange(transparentColor)}
-            className={cn(
-              'we:h-6 we:w-6 we:cursor-pointer we:rounded-4xl we:border we:border-none we:transition-all',
-              shapeStrokeColor === transparentColor && 'we:ring-2 we:ring-blue-500 we:ring-offset-0'
-            )}
-          >
-            <Ban size={24} className='we:text-muted-foreground' />
-          </button>
+            <span className='we:text-text-light we:w-8 we:text-center we:text-sm'>{shapeStroke}</span>
+          </div>
         </div>
       </div>
 
-      <div className='we:space-y-2'>
-        <h3 className='we:text-muted-foreground we:text-xs we:font-medium'>Stroke Width</h3>
-        <div className='we:flex we:items-center we:gap-3'>
-          <Slider
-            max={50}
-            step={10}
-            min={1}
-            defaultValue={[shapeStroke]}
-            onValueChange={(value: number[]) => {
-              handleShapeStrokeChange(value[0]);
-            }}
-          />
-          <span className='we:text-muted-foreground we:w-8 we:text-center we:text-xs'>{shapeStroke}</span>
+      <div className='we:flex we:w-full we:gap-2'>
+        <div className='we:flex we:w-full we:gap-2 we:items-center'>
+          <h3 className='we:text-text-normal we:text-sm we:m-0! we:min-w-[80px]'>{getTranslate('도형 색상')}</h3>
+          <div className='we:flex we:flex-wrap we:items-center we:gap-1'>
+            {EDITOR_COLORS.map((color) => (
+              <Button
+                type='button'
+                size='icon'
+                key={color.value}
+                className={cn(
+                  'we:h-6 we:w-6 we:cursor-pointer we:rounded-4xl we:border we:transition-all we:m-1',
+                  shapeFillColor === color.editorHex && 'we:ring-2 we:ring-brand-default we:ring-offset-1'
+                )}
+                style={{ backgroundColor: color.value, borderColor: color.border }}
+                onClick={() => handleShapeFillColorChange(color.editorHex)}
+                title={color.label}
+                aria-label={`${color.label} color`}
+                isActive={shapeFillColor === color.editorHex}
+              />
+            ))}
+            <button
+              type='button'
+              onClick={() => handleShapeFillColorChange(transparentColor)}
+              className={cn(
+                'we:h-6 we:w-6 we:cursor-pointer we:rounded-4xl we:border we:border-none we:transition-all we:m-1',
+                shapeFillColor === transparentColor && 'we:ring-2 we:ring-brand-default we:ring-offset-1'
+              )}
+            >
+              <Ban size={24} className='we:text-text-light' />
+            </button>
+          </div>
+        </div>
+
+        <div className='we:flex we:w-full we:gap-2 we:items-center'>
+          <h3 className='we:text-text-normal we:text-sm we:m-0! we:min-w-[80px]'>{getTranslate('도형 획')}</h3>
+          <div className='we:flex we:flex-wrap we:items-center we:gap-1'>
+            {EDITOR_COLORS.map((color) => (
+              <Button
+                type='button'
+                size='icon'
+                key={color.value}
+                className={cn(
+                  'we:h-6 we:w-6 we:cursor-pointer we:rounded-4xl we:border we:transition-all we:m-1',
+                  shapeStrokeColor === color.editorHex && 'we:ring-2 we:ring-brand-default we:ring-offset-1'
+                )}
+                style={{ backgroundColor: color.value, borderColor: color.border }}
+                onClick={() => handleShapeStrokeColorChange(color.editorHex)}
+                title={color.label}
+                aria-label={`${color.label} color`}
+                isActive={shapeStrokeColor === color.editorHex}
+              />
+            ))}
+            <button
+              type='button'
+              onClick={() => handleShapeStrokeColorChange(transparentColor)}
+              className={cn(
+                'we:h-6 we:w-6 we:cursor-pointer we:rounded-4xl we:border we:border-none we:transition-all we:m-1',
+                shapeStrokeColor === transparentColor && 'we:ring-2 we:ring-brand-default we:ring-offset-1'
+              )}
+            >
+              <Ban size={24} className='we:text-text-light' />
+            </button>
+          </div>
         </div>
       </div>
     </div>

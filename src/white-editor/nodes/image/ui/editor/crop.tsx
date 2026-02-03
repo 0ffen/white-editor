@@ -1,35 +1,33 @@
-import { Check, XIcon } from 'lucide-react';
-import { Button } from '@/shared';
+import { useCallback, useEffect } from 'react';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
 interface CropEditorProps {
   editorRef: React.RefObject<TuiImageEditorType | null>;
   setActiveMode: (mode: string | null) => void;
+  /** 푸터 적용/취소 핸들러 등록 (푸터는 ImageEditor에서 full width로 렌더) */
+  onRegisterApply?: (fn: () => void | Promise<void>) => void;
+  onRegisterCancel?: (fn: () => void) => void;
 }
 
 export function CropEditor(props: CropEditorProps) {
-  const { editorRef, setActiveMode } = props;
+  const { editorRef, setActiveMode, onRegisterApply, onRegisterCancel } = props;
 
-  const applyCrop = async () => {
+  const applyCrop = useCallback(async () => {
     if (!editorRef.current) return;
     await editorRef.current.crop(editorRef.current.getCropzoneRect());
     editorRef.current.stopDrawingMode();
     setActiveMode(null);
-  };
+  }, [editorRef, setActiveMode]);
 
-  const stopCropMode = () => {
+  const stopCropMode = useCallback(() => {
     editorRef.current?.stopDrawingMode();
     setActiveMode(null);
-  };
+  }, [editorRef, setActiveMode]);
 
-  return (
-    <div className='we:flex we:items-start we:justify-center we:gap-3 we:space-y-2 we:p-2'>
-      <Button type='button' className='we:h-6 we:w-6 we:rounded-4xl' variant='secondary' onClick={stopCropMode}>
-        <XIcon />
-      </Button>
-      <Button type='button' className='we:h-6 we:w-6 we:rounded-4xl' variant='default' onClick={applyCrop}>
-        <Check />
-      </Button>
-    </div>
-  );
+  useEffect(() => {
+    onRegisterApply?.(applyCrop);
+    onRegisterCancel?.(stopCropMode);
+  }, [onRegisterApply, onRegisterCancel, applyCrop, stopCropMode]);
+
+  return null;
 }
