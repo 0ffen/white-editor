@@ -24,7 +24,7 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
   const contentRef = useRef<JSONContent>(normalizedContent);
 
   const editor = useEditor({
-    immediatelyRender: true,
+    immediatelyRender: false,
     editable: false,
     extensions,
     content: normalizedContent || { type: 'doc', content: [] },
