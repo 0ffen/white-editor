@@ -55,9 +55,6 @@ export const ImageFloatingControls: React.FC<ImageFloatingControlsProps> = (prop
       <Toolbar
         variant='floating'
         className='we:absolute we:top-2 we:right-1/2 we:h-[40px] we:w-fit we:translate-x-1/2 we:border-none we:p-2'
-        style={{
-          boxShadow: 'var(--we-popover-shadow)',
-        }}
       >
         {widthMode !== 'full' && (
           <>

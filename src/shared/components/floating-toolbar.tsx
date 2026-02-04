@@ -130,6 +130,7 @@ export const FloatingToolbar = React.forwardRef<HTMLDivElement, FloatingToolbarP
         variant='floating'
         className={cn(className)}
         style={{
+          backgroundColor: 'var(--we-elevation-dropdown)',
           position: 'fixed',
           top: `${position.top}px`,
           left: `${position.left}px`,

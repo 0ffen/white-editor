@@ -5,17 +5,23 @@ import { EDITOR_I18N } from '@/shared/constants/editor-i18n';
 const EDITOR_NS = 'editor';
 
 /** EDITOR_I18N → i18next resources (id 기준 unique) */
-function buildEditorResources(): { ko: Record<string, string>; en: Record<string, string> } {
+function buildEditorResources(): {
+  ko: Record<string, string>;
+  en: Record<string, string>;
+  es: Record<string, string>;
+} {
   const ko: Record<string, string> = {};
   const en: Record<string, string> = {};
+  const es: Record<string, string> = {};
   for (const entry of Object.values(EDITOR_I18N)) {
     ko[entry.id] = entry.ko;
     en[entry.id] = entry.en;
+    es[entry.id] = entry.es;
   }
-  return { ko, en };
+  return { ko, en, es };
 }
 
-const { ko: koEditor, en: enEditor } = buildEditorResources();
+const { ko: koEditor, en: enEditor, es: esEditor } = buildEditorResources();
 
 i18n.use(initReactI18next).init({
   lng: 'ko',
@@ -25,6 +31,7 @@ i18n.use(initReactI18next).init({
   resources: {
     ko: { [EDITOR_NS]: koEditor },
     en: { [EDITOR_NS]: enEditor },
+    es: { [EDITOR_NS]: esEditor },
   },
   interpolation: { escapeValue: false },
 });

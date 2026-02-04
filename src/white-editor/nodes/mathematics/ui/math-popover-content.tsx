@@ -68,21 +68,19 @@ export const MathPopoverContent = (props: Props) => {
             onClick={setMath}
             disabled={!mathString && !isActive}
             title={getTranslate('적용')}
-            className='we:text-foreground/80'
             size={'icon'}
           >
-            <CornerDownLeft />
+            <CornerDownLeft className='we:text-text-sub' />
           </Button>
           <Button
             type='button'
+            size='icon'
+            variant='ghost'
             onClick={removeMath}
             title='Remove math'
             disabled={!mathString && !isActive}
-            variant='ghost'
-            className='we:text-foreground/80'
-            size={'icon'}
           >
-            <Trash2Icon />
+            <Trash2Icon className='we:text-text-sub' />
           </Button>
         </ButtonGroup>
       </div>

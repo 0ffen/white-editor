@@ -5,6 +5,7 @@ import { Button, PopoverContent, PopoverTrigger, Separator, type ButtonProps } f
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
 import {
+  HIGHLIGHT_COLORS,
   HIGHLIGHT_COLORS_MAP,
   pickHighlightColorsByValue,
   useColorHighlight,
@@ -101,11 +102,11 @@ export function HighlightPopover({
 
   const currentHighlightColor = editor?.getAttributes('highlight')?.color || '';
 
-  // Get the default color for the current highlight color (convert -weak to -default)
+  // 아이콘에 표시할 강조 색 (고정 팔레트의 border 값)
   const currentIconColor = React.useMemo(() => {
     if (!currentHighlightColor) return undefined;
-    // Convert var(--we-brand-weak) -> var(--we-brand-default), etc.
-    return currentHighlightColor.replace(/-weak\)$/, '-default)');
+    const entry = HIGHLIGHT_COLORS.find((c) => c.value === currentHighlightColor);
+    return entry?.border;
   }, [currentHighlightColor]);
 
   if (!isVisible) return null;
@@ -152,7 +153,7 @@ export function HighlightPopover({
             aria-label='Remove highlight'
             tooltip={getTranslate('removeHighlight')}
           >
-            <Ban className='we:text-foreground/80' size={4} />
+            <Ban className='we:text-text-sub' size={20} />
           </Button>
         </div>
       </PopoverContent>

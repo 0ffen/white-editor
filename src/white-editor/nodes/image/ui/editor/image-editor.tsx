@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Minus, Plus } from 'lucide-react';
 
 import TuiImageEditor from 'tui-image-editor';
@@ -14,14 +14,12 @@ export interface ImageEditorRef {
 }
 interface ImageEditorProps {
   imageUrl: string;
-  onCaptionChange?: (caption: string) => void;
-  defaultCaption?: string;
   activeMode: string | null;
   setActiveMode: (mode: string | null) => void;
 }
 
 export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, ref) => {
-  const { imageUrl, onCaptionChange, defaultCaption = '', activeMode, setActiveMode } = props;
+  const { imageUrl, activeMode, setActiveMode } = props;
 
   const rootEl = useRef<HTMLDivElement | null>(null);
   const editorRef = useRef<TuiImageEditorType | null>(null);
@@ -30,7 +28,7 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
   /** 모드 진입 시점 캔버스 스냅샷. 취소 시 이 상태로 복원하여 해당 모드에서 추가한 요소만 제거 */
   const modeEnterSnapshotRef = useRef<string | null>(null);
 
-  const [drawingColor, setDrawingColor] = useState<string>('#000000');
+  const [drawingColor, setDrawingColor] = useState<string>('#161616');
   const [drawingRange, setDrawingRange] = useState<number>(10);
 
   const { zoomLevel, handleZoomIn, handleZoomOut, handleZoomReset } = useImageZoom();
@@ -49,10 +47,10 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
         selectionStyle: {
           cornerSize: 10,
           rotatingPointOffset: 10,
-          borderColor: '#ffffff',
+          borderColor: 'var(--we-white)',
           lineWidth: 1,
-          cornerColor: '#ffffff',
-          cornerStrokeColor: '#000000',
+          cornerColor: 'var(--we-white)',
+          cornerStrokeColor: 'var(--we-black)',
         },
       });
 

@@ -18,8 +18,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: 'we:bg-brand-default we:text-white',
-        destructive:
-          'we:bg-[var(--we-red-weak)] we:text-[var(--we-red-default)] we:[&_svg]:text-[var(--we-red-default)]',
+        destructive: 'we:bg-red-weak we:text-red-default we:[&_svg]:text-red-default',
         outline:
           'we:border we:border-border-default we:bg-elevation-background we:shadow-sm we:hover:bg-elevation-level1',
         secondary: 'we:bg-elevation-level2 we:text-text-sub',

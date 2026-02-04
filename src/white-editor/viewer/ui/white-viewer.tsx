@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useRef } from 'react';
-import { cn, createViewerExtensions, normalizeContent } from '@/shared/utils';
+import { cn, normalizeContent } from '@/shared/utils';
+import { createViewerExtensions } from '@/shared/utils/extensions';
 import type { ExtensibleEditorConfig } from '@/white-editor';
 import { EditorContent, useEditor, type JSONContent } from '@tiptap/react';
 

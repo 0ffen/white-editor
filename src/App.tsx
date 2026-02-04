@@ -12,9 +12,15 @@ import {
   TooltipProvider,
 } from './shared';
 import { cn, i18n } from './shared/utils';
-import { WhiteEditor, WhiteEditorThemeProvider, WhiteViewer, type WhiteEditorRef } from './white-editor';
+import {
+  offenDefaultToolbarItems,
+  WhiteEditor,
+  WhiteEditorThemeProvider,
+  WhiteViewer,
+  type WhiteEditorRef,
+} from './white-editor';
 
-type Locale = 'ko' | 'en';
+type Locale = 'ko' | 'en' | 'es';
 
 export default function App() {
   const [content, setContent] = useState<JSONContent>(createEmptyContent());
@@ -92,6 +98,7 @@ export default function App() {
               <SelectContent>
                 <SelectItem value='ko'>한국어</SelectItem>
                 <SelectItem value='en'>English</SelectItem>
+                <SelectItem value='es'>Español</SelectItem>
               </SelectContent>
             </Select>
             <ThemeToggle />
@@ -101,15 +108,8 @@ export default function App() {
         <div className='we:grid we:grid-cols-1 we:gap-8 lg:we:grid-cols-2'>
           <section className='we:space-y-3'>
             <h2 className='we:mb-8 we:text-3xl we:font-bold we:text-center'>Editor</h2>
-            <WhiteEditorThemeProvider
-              theme='light'
-              // colors={{
-              //   background: 'var(--color-elevation-background)',
-              //   primary: 'var(--color-brand-default)',
-              //   primaryForeground: 'var(--color-white)',
-              //   primaryWeak: 'var(--color-brand-weak)',
-              // }}
-            >
+            {/* theme.colors: design-tokens.css 변수명 그대로 (elevationBackground, textNormal 등). 값은 hex 또는 var(--호스트앱 변수) 가능 */}
+            <WhiteEditorThemeProvider theme={{}}>
               <WhiteEditor
                 key={locale}
                 locale={locale}
@@ -117,7 +117,7 @@ export default function App() {
                 disabled={false}
                 editorClassName='we:h-[500px]! we:rounded-md!'
                 contentClassName='we:h-full we:px-2'
-                // toolbarItems={offenDefaultToolbarItems}
+                toolbarItems={offenDefaultToolbarItems}
                 onChange={() => {
                   if (editorRef.current) {
                     setContent(editorRef.current.getJSON());

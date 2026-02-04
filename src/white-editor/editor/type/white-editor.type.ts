@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
 import type React from 'react';
+import type { WhiteEditorThemeColors, WhiteEditorThemeZIndex } from '@/shared/utils/theme';
 import type { MentionConfig, ToolbarItem, ToolbarItemProps } from '@/white-editor';
 import type { Node as TipTapNode } from '@tiptap/core';
 import type { EditorProps } from '@tiptap/pm/view';
@@ -32,25 +33,11 @@ interface EditorExtensions<T = Record<string, unknown>, P = Record<string, unkno
   };
 }
 
+/** Design token 기반 테마 (colors, zIndex는 선택 항목만 넘기면 됨) */
 interface WhiteEditorTheme {
   mode?: 'light' | 'dark';
-  colors?: {
-    background?: string;
-    foreground?: string;
-    card?: string;
-    cardForeground?: string;
-    popover?: string;
-    popoverForeground?: string;
-    primary?: string;
-    primaryForeground?: string;
-    secondary?: string;
-    secondaryForeground?: string;
-    muted?: string;
-    mutedForeground?: string;
-    accent?: string;
-    accentForeground?: string;
-    codeBlockBackground?: string;
-  };
+  colors?: WhiteEditorThemeColors;
+  zIndex?: WhiteEditorThemeZIndex;
 }
 
 interface WhiteEditorUIProps {
@@ -64,8 +51,8 @@ interface WhiteEditorUIProps {
   disabled?: boolean;
   placeholder?: string;
   showToolbar?: boolean;
-  /** 국제화 locale (ko | en). 지정 시 에디터 내 텍스트가 해당 언어로 동기화됨 */
-  locale?: 'ko' | 'en';
+  /** 국제화 locale (ko | en | es). 지정 시 에디터 내 텍스트가 해당 언어로 동기화됨 */
+  locale?: 'ko' | 'en' | 'es';
 }
 
 interface WhiteEditorExtensions<T = Record<string, unknown>> {
@@ -156,3 +143,4 @@ export type {
   CustomNodeViews,
   ExtensibleEditorConfig,
 };
+export type { WhiteEditorThemeColors, WhiteEditorThemeZIndex } from '@/shared/utils/theme';

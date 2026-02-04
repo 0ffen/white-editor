@@ -88,24 +88,25 @@ export function ColorPopover({
         />
       </PopoverTrigger>
 
-      <PopoverContent aria-label='Color picker' className='we:h-auto we:w-fit we:p-2' side='bottom' align='start'>
+      <PopoverContent aria-label='Color picker' className='we:h-10 we:w-fit we:p-2' side='bottom' align='start'>
         <div
           ref={containerRef}
           tabIndex={0}
-          className='we:flex we:items-center we:gap-1.5 we:outline-none focus:we:outline-none'
+          className='we:flex we:h-full we:flex-1 we:items-center we:gap-1 we:outline-none focus:we:outline-none'
         >
           {textColors?.map((color) => (
             <TextColorButton key={color.value} editor={editor} textColor={color} aria-label={`${color.label} color`} />
           ))}
-          <Separator orientation='vertical' className='we:mx-1 we:h-6' />
+          <Separator orientation='vertical' className='mx-1' />
           <Button
             type='button'
             size='icon'
+            className='we:h-6 we:w-6'
             onClick={handleRemoveTextColor}
             aria-label='Remove text color'
             tooltip={getTranslate('removeColor')}
           >
-            <Ban className='we:text-foreground/60' size={20} />
+            <Ban className='we:text-text-sub' size={20} />
           </Button>
         </div>
       </PopoverContent>

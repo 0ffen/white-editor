@@ -70,7 +70,7 @@ export function DrawEditor(props: DrawEditorProps) {
         <div className='we:flex we:w-full we:items-center we:gap-3'>
           <Slider
             max={50}
-            step={10}
+            step={1}
             min={1}
             defaultValue={[drawingRange]}
             onValueChange={(value: number[]) => {

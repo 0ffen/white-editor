@@ -108,9 +108,8 @@ export const CodeBlock = ({
                 </Button>
               </PopoverTrigger>
               <PopoverContent
-                className='we:w-[160px] we:p-0 we:bg-elevation-dropdown we:rounded-sm we:overflow-hidden'
+                className='we:w-[160px] we:p-0 we:bg-elevation-dropdown we:shadow-popover we:rounded-sm we:overflow-hidden'
                 align='start'
-                style={{ boxShadow: 'var(--we-popover-shadow)' }}
               >
                 <Command>
                   <CommandInput placeholder={getTranslate('검색')} iconPosition='right' />

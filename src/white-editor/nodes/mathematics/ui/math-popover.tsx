@@ -102,7 +102,7 @@ export const MathPopover = React.forwardRef<HTMLButtonElement, MathPopoverProps>
         </PopoverTrigger>
         <PopoverContent
           align='start'
-          className={cn('we:w-[300px] we:rounded-2xl we:px-2 we:py-2', mathPopoverClassName)}
+          className={cn('we:w-[300px] we:rounded-[5px] we:px-2 we:py-2', mathPopoverClassName)}
         >
           <MathPopoverContent
             mathString={mathString}

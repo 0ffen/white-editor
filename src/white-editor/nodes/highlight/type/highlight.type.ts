@@ -21,8 +21,8 @@ const COLOR_HIGHLIGHT_SHORTCUT_KEY = 'mod+shift+h';
 const HIGHLIGHT_COLORS = [
   {
     label: 'Blue background',
-    value: 'var(--we-brand-weak)',
-    border: 'var(--we-brand-light)',
+    value: 'var(--we-color-highlight-blue)',
+    border: 'var(--we-color-highlight-blue-border)',
   },
   {
     label: 'Green background',

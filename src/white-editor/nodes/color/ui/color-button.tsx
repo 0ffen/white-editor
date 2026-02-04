@@ -60,11 +60,11 @@ export const TextColorButton = React.forwardRef<HTMLButtonElement, TextColorButt
         onClick={handleClick}
         {...buttonProps}
         ref={ref}
-        className='we:h-7 we:w-7 we:p-0'
+        className='we:h-7 we:w-7'
       >
         {children ?? (
           <span
-            className={cn('we:h-5 we:w-5 we:rounded-full we:border')}
+            className={cn('we:h-full we:w-full we:rounded-full we:border')}
             style={
               {
                 backgroundColor: textColor?.value,

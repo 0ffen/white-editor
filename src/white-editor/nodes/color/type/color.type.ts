@@ -39,8 +39,8 @@ const TEXT_COLORS = [
   },
   {
     label: 'Blue',
-    value: 'var(--we-brand-default)',
-    border: 'var(--we-brand-default)',
+    value: 'var( --we-color-text-blue)',
+    border: 'var( --we-color-text-blue)',
   },
   {
     label: 'Purple',

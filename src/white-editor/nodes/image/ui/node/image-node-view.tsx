@@ -252,6 +252,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
     <NodeViewWrapper
       className={cn('we:my-2 we:w-full')}
       data-type='image'
+      data-full-width={currentWidth === '100%'}
       draggable='true'
       style={{ textAlign: textAlign || _align }}
     >
@@ -347,17 +348,9 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           />
         )}
         {uploadingProgress != null && (
-          <div
-            className='we:absolute we:flex we:h-5 we:items-center we:justify-center we:gap-1 we:rounded-[2px] we:px-1'
-            style={{
-              right: 8,
-              bottom: 8.532,
-              background: 'var(--Neutral-Opacity-Light-64, rgba(22, 22, 22, 0.64))',
-              color: 'var(--we-gray-dark-800)',
-            }}
-          >
+          <div className='we:absolute we:right-2 we:bottom-2 we:flex we:h-5 we:items-center we:justify-center we:gap-1 we:rounded-[2px] we:px-1 we:bg-elevation-opacity-2 we:text-text-inverse'>
             <Loader2 className='we:h-3.5 we:w-3.5 we:animate-spin' aria-hidden />
-            <span className='we:text-xs we:font-medium'>Uploading {uploadingProgress}%</span>
+            <span className='we:text-xs we:font-medium we:text-text-inverse'>Uploading {uploadingProgress}%</span>
           </div>
         )}
         {props.editor.isEditable && isCaptionEditing ? (
@@ -444,40 +437,34 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
               </div>
 
               {/* 하단 툴바: -, 100%, +, 다운로드, 닫기*/}
-              <div className='we:flex we:w-fit we:flex-shrink-0 we:mb-[40px] we:items-center we:justify-center we:gap-1 we:rounded-sm we:py-1 we:px-1 we:bg-[var(--Neutral-Opacity-Light-64,rgba(22,22,22,0.64))] we:text-[var(--we-gray-dark-800,#ECECEC)]'>
+              <div className='we:flex we:w-fit we:flex-shrink-0 we:mb-[40px] we:items-center we:justify-center we:gap-1 we:rounded-sm we:py-1 we:px-1 we:bg-elevation-opacity-2 we:text-text-inverse'>
                 <Button
                   type='button'
                   variant='ghost'
                   size='icon'
-                  className='we:text-white'
+                  className='we:text-text-inverse'
                   onClick={handleZoomOut}
                   disabled={zoomLevel <= 50}
                 >
                   <Minus className='we:h-5 we:w-5' />
                 </Button>
-                <span className='we:min-w-[3rem] we:text-center we:text-sm we:text-text-white'>{zoomLevel}%</span>
+                <span className='we:min-w-[3rem] we:text-center we:text-sm we:text-text-inverse'>{zoomLevel}%</span>
                 <Button
                   type='button'
                   variant='ghost'
                   size='icon'
-                  className='we:text-white'
+                  className='we:text-text-inverse'
                   onClick={handleZoomIn}
                   disabled={zoomLevel >= 200}
                 >
                   <Plus className='we:h-5 we:w-5' />
                 </Button>
-                <Separator
-                  orientation='vertical'
-                  className='we:h-4! we:mx-2'
-                  style={{
-                    backgroundColor: 'var(--we-neutral-opacity-dark-12)',
-                  }}
-                />
+                <Separator orientation='vertical' className='we:h-4! we:mx-2 we:bg-border-color' />
                 <Button
                   type='button'
                   variant='ghost'
                   size='icon'
-                  className='we:text-white'
+                  className='we:text-text-inverse'
                   onClick={handleDownload}
                   tooltip={getTranslate('다운로드')}
                 >
@@ -487,7 +474,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
                   type='button'
                   variant='ghost'
                   size='icon'
-                  className='we:ml-1 we:text-white'
+                  className='we:ml-1 we:text-text-inverse'
                   onClick={() => setIsViewerImageDialogOpen(false)}
                   tooltip={getTranslate('닫기')}
                 >

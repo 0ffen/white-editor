@@ -95,6 +95,36 @@ function MyEditor() {
 <WhiteEditor theme='dark' />
 ```
 
+### WhiteEditorThemeProvider — 컬러/z-index 커스터마이징
+
+`WhiteEditorThemeProvider`로 감싸고 `theme`에 `mode`와 `colors`를 넘기면, 에디터 배경·텍스트·드롭다운·브랜드 색 등을 맞출 수 있습니다. **키는 design-tokens.css 변수명과 동일한 camelCase**를 사용합니다 (예: `elevationBackground`, `textNormal`, `elevationDropdown`).
+
+```tsx
+import { WhiteEditor, WhiteEditorThemeProvider } from '@0ffen/white-editor';
+
+<WhiteEditorThemeProvider
+  theme={{
+    mode: 'light',
+    colors: {
+      textNormal: '#1a1a2e',
+      textSub: '#4a4a6a',
+      elevationBackground: '#f8f9fc',
+      elevationLevel1: '#eef0f6',
+      elevationDropdown: '#ffffff',
+      brandDefault: '#894dff',
+      // 다른 프로젝트에서는 자체 디자인 토큰을 var() 로 넘길 수 있음:
+      // elevationBackground: 'var(--app-elevation-background)',
+      // textNormal: 'var(--app-text-primary)',
+    },
+  }}
+>
+  <WhiteEditor ... />
+</WhiteEditorThemeProvider>
+```
+
+- **값**: hex, rgb, hsl 또는 **`var(--호스트앱에서 정의한 변수)`** 모두 가능합니다.
+- **`var()` 사용 시**: 참조하는 변수는 호스트 앱 CSS에 정의되어 있어야 합니다. 에디터 번들의 `--color-*` 와 이름이 겹치면 순환 참조가 날 수 있으므로, 호스트 전용 변수명(예: `--app-elevation-background`) 또는 hex 사용을 권장합니다.
+
 ## WhiteViewer 컴포넌트
 
 저장된 콘텐츠를 읽기 전용으로 표시합니다.

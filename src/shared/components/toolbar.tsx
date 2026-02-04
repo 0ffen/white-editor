@@ -15,7 +15,7 @@ const toolbarVariants = cva('we:flex we:items-center we:gap-1', {
       ],
       floating: [
         'we:p-1.5 we:rounded-[5px] we:border we:border-none we:z-floating',
-        'we:bg-elevation-dropdown we:shadow-md we:outline-none we:overflow-hidden we:fixed',
+        'we:bg-elevation-dropdown we:shadow-popover we:outline-none we:overflow-hidden we:fixed',
       ],
     },
   },
@@ -108,7 +108,9 @@ export const Toolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
         data-plain={plain}
         className={cn(
           toolbarVariants({ variant }),
-          variant === 'floating' && plain && 'we:rounded-none we:border-none we:bg-transparent we:p-0 we:shadow-none',
+          variant === 'floating' &&
+            plain &&
+            'we:rounded-none we:border-none we:bg-elevation-dropdown we:p-0 we:shadow-none',
           className
         )}
         {...props}
