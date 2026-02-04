@@ -66,7 +66,7 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        'we:bg-popover we:text-popover-foreground we:data-[state=open]:animate-in we:data-[state=closed]:animate-out we:data-[state=closed]:fade-out-0 we:data-[state=open]:fade-in-0 we:data-[state=closed]:zoom-out-95 we:data-[state=open]:zoom-in-95 we:data-[side=bottom]:slide-in-from-top-2 we:data-[side=left]:slide-in-from-right-2 we:data-[side=right]:slide-in-from-left-2 we:data-[side=top]:slide-in-from-bottom-2 we:relative we:z-50 we:max-h-[--radix-select-content-available-height] we:min-w-[8rem] we:origin-[--radix-select-content-transform-origin] we:overflow-x-hidden we:overflow-y-auto we:rounded-md we:border we:shadow-md',
+        'we:bg-popover we:text-popover-foreground we:data-[state=open]:animate-in we:data-[state=closed]:animate-out we:data-[state=closed]:fade-out-0 we:data-[state=open]:fade-in-0 we:data-[state=closed]:zoom-out-95 we:data-[state=open]:zoom-in-95 we:data-[side=bottom]:slide-in-from-top-2 we:data-[side=left]:slide-in-from-right-2 we:data-[side=right]:slide-in-from-left-2 we:data-[side=top]:slide-in-from-bottom-2 we:relative we:z-floating we:max-h-[--radix-select-content-available-height] we:min-w-[8rem] we:origin-[--radix-select-content-transform-origin] we:overflow-x-hidden we:overflow-y-auto we:rounded-md we:border we:shadow-md',
         position === 'popper' &&
           'we:data-[side=bottom]:translate-y-1 we:data-[side=left]:-translate-x-1 we:data-[side=right]:translate-x-1 we:data-[side=top]:-translate-y-1',
         className

@@ -91,7 +91,7 @@ export const MentionList = (props: MentionListProps) => {
       style={{
         boxShadow: 'var(--we-popover-shadow)',
       }}
-      className='we:bg-popover we:z-10 we:border-border we:relative we:flex we:max-h-52 we:min-w-26 we:flex-col we:gap-1 we:overflow-y-auto we:rounded-md we:p-1.5'
+      className='we:bg-popover we:z-inline we:border-border we:relative we:flex we:max-h-52 we:min-w-26 we:flex-col we:gap-1 we:overflow-y-auto we:rounded-md we:p-1.5'
     >
       {mentionList.length > 0 ? (
         mentionList.map((item: MentionItem, index) => (

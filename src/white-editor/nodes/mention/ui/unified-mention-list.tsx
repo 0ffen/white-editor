@@ -114,7 +114,7 @@ export const UnifiedMentionList = (props: UnifiedMentionListProps) => {
         style={{
           boxShadow: 'var(--we-popover-shadow)',
         }}
-        className='we:bg-popover we:z-10 we:border-border we:relative we:flex we:max-h-52 we:min-w-26 we:flex-col we:overflow-y-auto we:rounded-md'
+        className='we:bg-popover we:z-inline we:border-border we:relative we:flex we:max-h-52 we:min-w-26 we:flex-col we:overflow-y-auto we:rounded-md'
       >
         <div className='we:p-4 we:text-center we:text-muted-foreground'>No result</div>
       </div>
@@ -127,13 +127,13 @@ export const UnifiedMentionList = (props: UnifiedMentionListProps) => {
       style={{
         boxShadow: 'var(--we-popover-shadow)',
       }}
-      className='we:bg-popover we:z-10 we:border-border we:relative we:flex we:max-h-52 we:min-w-26 we:flex-col we:overflow-y-auto we:rounded-md'
+      className='we:bg-popover we:z-inline we:border-border we:relative we:flex we:max-h-52 we:min-w-26 we:flex-col we:overflow-y-auto we:rounded-md'
     >
       {/* 사람 섹션 */}
       {mentionItems.length > 0 && (
         <>
           {showLabels && showPeopleLabel && (
-            <div className='we:sticky we:top-0 we:z-10 we:bg-popover we:px-2 we:py-4 we:text-xs we:font-medium we:text-muted-foreground we:uppercase'>
+            <div className='we:sticky we:top-0 we:z-inline we:bg-popover we:px-2 we:py-4 we:text-xs we:font-medium we:text-muted-foreground we:uppercase'>
               {peopleLabel}
             </div>
           )}
@@ -171,7 +171,7 @@ export const UnifiedMentionList = (props: UnifiedMentionListProps) => {
         <>
           {mentionItems.length > 0 && <div className='we:border-t we:border-border we:my-1' />}
           {showLabels && showPagesLabel && (
-            <div className='we:sticky we:top-0 we:z-10 we:bg-popover we:px-2 we:py-1.5 we:text-xs we:font-medium we:text-muted-foreground we:uppercase'>
+            <div className='we:sticky we:top-0 we:z-inline we:bg-popover we:px-2 we:py-1.5 we:text-xs we:font-medium we:text-muted-foreground we:uppercase'>
               {pagesLabel}
             </div>
           )}

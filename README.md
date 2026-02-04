@@ -158,6 +158,28 @@ function MyComponent() {
 <WhiteEditor showToolbar={false} placeholder='툴바 없이 간단한 입력만 가능합니다.' />
 ```
 
+#### Z-Index 설정
+
+에디터 내 툴바, 드롭다운, 다이얼로그 등에 사용되는 z-index를 프로젝트에서 조절할 수 있습니다. `:root`(또는 `body`)에 아래 CSS 변수를 오버라이드하세요. 다이얼로그·드롭다운 등은 `document.body`에 렌더되므로, 변수는 `:root`에 설정해야 적용됩니다.
+
+| 변수 | 기본값 | 용도 |
+|------|--------|------|
+| `--we-z-index-toolbar` | 10 | 툴바 |
+| `--we-z-index-inline` | 10 | 멘션 리스트, 스티키 헤더 등 |
+| `--we-z-index-handle` | 20 | 테이블 열 리사이즈 핸들 |
+| `--we-z-index-overlay` | 50 | 다이얼로그 배경(오버레이) |
+| `--we-z-index-floating` | 50 | 드롭다운, 팝오버, 툴팁, 셀렉트, 컨텍스트 메뉴, 다이얼로그 콘텐츠 |
+
+```css
+:root {
+  --we-z-index-toolbar: 100;
+  --we-z-index-inline: 100;
+  --we-z-index-handle: 110;
+  --we-z-index-overlay: 9999;
+  --we-z-index-floating: 10000;
+}
+```
+
 ### 1-1. Editor Types
 
 #### WhiteEditorProps

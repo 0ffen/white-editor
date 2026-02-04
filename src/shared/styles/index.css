@@ -180,6 +180,13 @@
   --color-brand-default: var(--we-brand-default);
   --color-brand-strong: var(--we-brand-strong);
   --color-brand-vs: var(--we-brand-vs);
+
+  /* Z-index layers (values from :root --we-z-index-*) */
+  --z-index-toolbar: var(--we-z-index-toolbar);
+  --z-index-inline: var(--we-z-index-inline);
+  --z-index-handle: var(--we-z-index-handle);
+  --z-index-overlay: var(--we-z-index-overlay);
+  --z-index-floating: var(--we-z-index-floating);
 }
 
 :root {
@@ -254,6 +261,13 @@
   --we-color-highlight-purple-contrast: #e4ccff;
   --we-color-highlight-red-contrast: #ffccd0;
   --we-color-highlight-gray-contrast: rgba(84, 72, 49, 0.15);
+
+  /* Z-index layers (override in your app to avoid stacking conflicts) */
+  --we-z-index-toolbar: 10;
+  --we-z-index-inline: 10;
+  --we-z-index-handle: 20;
+  --we-z-index-overlay: 50;
+  --we-z-index-floating: 50;
 }
 
 .dark {

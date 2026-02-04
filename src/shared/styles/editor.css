@@ -84,7 +84,7 @@
     top: 0;
     bottom: 0;
     width: 4px;
-    z-index: 20;
+    z-index: var(--we-z-index-handle, 20);
     background-color: var(--we-border-default);
     pointer-events: none;
   }
@@ -221,7 +221,7 @@
     cursor: pointer;
 
     &:hover {
-      background-color: var(--we-accent);
+      background-color: var(--we-elevation-level1);
     }
   }
 
@@ -319,7 +319,7 @@
     .mention-section-header {
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: var(--we-z-index-inline, 10);
       background-color: var(--we-elevation-dropdown);
       padding: 0.375rem 0.5rem;
       font-size: 0.75rem;
