@@ -34,7 +34,7 @@ export const ImageErrorBlock: React.FC<ImageErrorBlockProps> = ({ variant, mainT
   }
 
   return (
-    <div className='we:mt-4 we:flex we:items-center we:gap-3 we:rounded-[5px] we:bg-elevation-level2 we:p-3 we:min-w-[412px]'>
+    <div className='we:mt-4 we:flex we:items-center we:gap-3 we:rounded-[5px] we:bg-elevation-level2 we:p-3 we:min-w-[412px] we:max-w-[412px] we:w-fit we:box-border'>
       <ImageOff className='we:h-5 we:w-5 we:shrink-0 we:text-text-light' aria-hidden />
       <div className='we:min-w-0 we:flex-1 we:flex we:gap-2 we:items-center'>
         <p className='we:text-[14px]! we:mt-0! we:text-text-sub! we:text-start! we:break-words! we:select-none!'>

@@ -13,7 +13,7 @@ import {
 } from './shared';
 import { cn, i18n } from './shared/utils';
 import {
-  offenDefaultToolbarItems,
+  DEFAULT_TOOLBAR_ITEMS,
   WhiteEditor,
   WhiteEditorThemeProvider,
   WhiteViewer,
@@ -117,7 +117,7 @@ export default function App() {
                 disabled={false}
                 editorClassName='we:h-[500px]! we:rounded-md!'
                 contentClassName='we:h-full we:px-2'
-                toolbarItems={offenDefaultToolbarItems}
+                toolbarItems={DEFAULT_TOOLBAR_ITEMS}
                 onChange={() => {
                   if (editorRef.current) {
                     setContent(editorRef.current.getJSON());

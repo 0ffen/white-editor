@@ -19,7 +19,10 @@ export default defineConfig({
       tsconfigPath: path.resolve(__dirname, './tsconfig.app.json'),
       insertTypesEntry: true,
     }),
-    cssInjectedByJsPlugin(),
+    cssInjectedByJsPlugin({
+      // 멀티 진입점에서 각 번들(index/editor/viewer)에 해당 진입점이 사용한 CSS만 주입
+      relativeCSSInjection: true,
+    }),
     tailwindcss(),
   ],
   resolve: {
@@ -33,9 +36,12 @@ export default defineConfig({
     sourcemap: false,
     cssCodeSplit: true,
     lib: {
-      entry: path.resolve(__dirname, './src/index.ts'),
-      name: 'white-editor',
-      fileName: (format) => `index.${format}.js`,
+      entry: {
+        index: path.resolve(__dirname, './src/index.ts'),
+        utils: path.resolve(__dirname, './src/entries/utils.ts'),
+        editor: path.resolve(__dirname, './src/entries/editor.ts'),
+        viewer: path.resolve(__dirname, './src/entries/viewer.ts'),
+      },
       formats: ['es'],
     },
     terserOptions: {

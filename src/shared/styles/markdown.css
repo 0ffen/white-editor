@@ -45,11 +45,6 @@
   margin-bottom: 0;
 }
 
-/* 첫 번째 요소의 margin-top 제거 */
-.white-editor .markdown .tiptap > :first-child {
-  margin-top: 0;
-}
-
 /* Paragraph Styles - 본문 1, 본문 2 */
 .white-editor .markdown .tiptap p[data-variant='1'] {
   font-size: 16px;

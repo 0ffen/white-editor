@@ -8,7 +8,7 @@ import {
   useWhiteEditor,
   type WhiteEditorProps,
   type UseWhiteEditorReturn,
-  defaultToolbarItems,
+  DEFAULT_TOOLBAR_ITEMS,
   EditorToolbar,
   SelectionToolbar,
   LinkFloatingDropdown,
@@ -104,7 +104,7 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
       return <EditorToolbar toolbarItems={toolbarItems} toolbarProps={mergedToolbarProps} />;
     }
     /** 기본 툴바 */
-    return <EditorToolbar toolbarItems={defaultToolbarItems} toolbarProps={mergedToolbarProps} />;
+    return <EditorToolbar toolbarItems={DEFAULT_TOOLBAR_ITEMS} toolbarProps={mergedToolbarProps} />;
   };
 
   return (

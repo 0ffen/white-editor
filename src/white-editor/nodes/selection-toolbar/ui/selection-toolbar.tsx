@@ -179,29 +179,63 @@ export function SelectionToolbar({ editor: providedEditor, className }: Selectio
     };
   }, [editor, isLinkHovered]);
 
-  // 플로팅 툴바가 떠있을 때 스크롤 막기
+  // 스크롤/리사이즈 시 선택 영역이 에디터 영역 밖이면 툴바 숨김
   React.useEffect(() => {
-    if (!isVisible) return;
+    if (!editor || !isVisible) return;
 
-    const originalOverflow = document.body.style.overflow;
-    const originalPosition = document.body.style.position;
-    const originalWidth = document.body.style.width;
-    const originalTop = document.body.style.top;
-    const scrollY = window.scrollY;
+    const MARGIN = 24;
 
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.width = '100%';
-    document.body.style.top = `-${scrollY}px`;
+    /** 에디터가 렌더된 컨테이너 요소 (스크롤 가능한 부모 또는 직계 부모) */
+    const getEditorContainer = (): HTMLElement | null => {
+      let el: HTMLElement | null = editor.view.dom?.parentElement ?? null;
+      while (el && el !== document.body) {
+        const { overflowY } = getComputedStyle(el);
+        if (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') {
+          return el;
+        }
+        el = el.parentElement;
+      }
+      return editor.view.dom?.parentElement ?? null;
+    };
+
+    const hideIfOutOfEditorArea = () => {
+      if (editor.isDestroyed) return;
+      const rect = getSelectionBoundingRect(editor);
+      if (!rect) {
+        setIsVisible(false);
+        return;
+      }
+      const container = getEditorContainer();
+      if (!container) return;
+
+      const editorRect = container.getBoundingClientRect();
+      const inEditorArea =
+        rect.bottom >= editorRect.top - MARGIN &&
+        rect.top <= editorRect.bottom + MARGIN &&
+        rect.right >= editorRect.left - MARGIN &&
+        rect.left <= editorRect.right + MARGIN;
+      if (!inEditorArea) setIsVisible(false);
+    };
+
+    window.addEventListener('scroll', hideIfOutOfEditorArea, true);
+    window.addEventListener('resize', hideIfOutOfEditorArea);
+
+    const scrollParents: HTMLElement[] = [];
+    let el: HTMLElement | null = editor.view.dom?.parentElement ?? null;
+    while (el && el !== document.body) {
+      scrollParents.push(el);
+      el.addEventListener('scroll', hideIfOutOfEditorArea, true);
+      el = el.parentElement;
+    }
 
     return () => {
-      document.body.style.overflow = originalOverflow;
-      document.body.style.position = originalPosition;
-      document.body.style.width = originalWidth;
-      document.body.style.top = originalTop;
-      window.scrollTo(0, scrollY);
+      window.removeEventListener('scroll', hideIfOutOfEditorArea, true);
+      window.removeEventListener('resize', hideIfOutOfEditorArea);
+      scrollParents.forEach((parent) => {
+        parent.removeEventListener('scroll', hideIfOutOfEditorArea, true);
+      });
     };
-  }, [isVisible]);
+  }, [editor, isVisible]);
 
   if (!editor) return null;
 

@@ -103,33 +103,7 @@
   }
 
   .ProseMirror ::selection {
-    background-color: var(--we-brand-weak);
-  }
-
-  /* NodeSelection 스타일 - 블록 전체 선택 */
-  .ProseMirror-selectednode {
-    position: relative;
-    background-color: var(--we-brand-weak);
-    border-radius: 4px;
-    outline: none;
-  }
-
-  .ProseMirror p.ProseMirror-selectednode,
-  .ProseMirror h1.ProseMirror-selectednode,
-  .ProseMirror h2.ProseMirror-selectednode,
-  .ProseMirror h3.ProseMirror-selectednode,
-  .ProseMirror h4.ProseMirror-selectednode,
-  .ProseMirror h5.ProseMirror-selectednode,
-  .ProseMirror h6.ProseMirror-selectednode,
-  .ProseMirror ul.ProseMirror-selectednode,
-  .ProseMirror ol.ProseMirror-selectednode {
-    display: block;
-    width: 100%;
-    background-color: var(--we-brand-weak);
-    border-radius: 4px;
-    padding: 0 4px;
-    margin: 0 -4px;
-    box-sizing: border-box;
+    background-color: var(--we-interaction-hover);
   }
 
   /* Blockquote 선택 시 스타일 유지 */

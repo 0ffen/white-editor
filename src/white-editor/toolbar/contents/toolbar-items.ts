@@ -1,6 +1,6 @@
-import type { ToolbarItem } from '@/white-editor';
+import type { ToolbarItem } from '../type/toolbar.type';
 
-export const defaultToolbarItems: ToolbarItem[][] = [
+export const WHITE_EDITOR_TOOLBAR_ITEMS: ToolbarItem[][] = [
   ['undo', 'redo'],
   ['heading', 'bulletList', 'orderedList', 'blockquote'],
   ['bold', 'italic', 'strike', 'code', 'underline', 'color', 'highlight'],
@@ -9,7 +9,7 @@ export const defaultToolbarItems: ToolbarItem[][] = [
   ['link', 'table', 'image'],
 ];
 
-export const offenDefaultToolbarItems: ToolbarItem[][] = [
+export const DEFAULT_TOOLBAR_ITEMS: ToolbarItem[][] = [
   ['heading'],
   ['color'],
   ['bold', 'italic', 'strike', 'underline', 'highlight', 'link'],
@@ -20,7 +20,7 @@ export const offenDefaultToolbarItems: ToolbarItem[][] = [
   ['textAlignLeft', 'textAlignCenter', 'textAlignRight'],
 ];
 
-export const minimalToolbarItems: ToolbarItem[][] = [
+export const MINIMAL_TOOLBAR_ITEMS: ToolbarItem[][] = [
   ['heading', 'color'],
   ['blockquote', 'bulletList', 'orderedList'],
   ['table'],

@@ -278,11 +278,11 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           ref={imageRef}
           className={cn(currentWidth === '100%' ? 'we:block we:w-full' : 'we:inline-block we:max-w-full')}
           style={{
-            width: currentWidth !== 'auto' && currentWidth !== '100%' ? currentWidth : undefined,
-            height:
-              (uploadError || imageLoadError) && props.editor.isEditable && currentHeight !== 'auto'
-                ? currentHeight
+            width:
+              !uploadError && !imageLoadError && currentWidth !== 'auto' && currentWidth !== '100%'
+                ? currentWidth
                 : undefined,
+            height: !uploadError && !imageLoadError && currentHeight !== 'auto' ? currentHeight : undefined,
           }}
         >
           {/* 업로드 실패: 에러 블록 */}
