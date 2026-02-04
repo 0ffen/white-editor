@@ -65,7 +65,7 @@ export const UndoRedoButton = React.forwardRef<HTMLButtonElement, UndoRedoButton
         role='button'
         tabIndex={-1}
         aria-label={label}
-        tooltip={getTranslate(action)}
+        tooltip={action != null ? getTranslate(action) : undefined}
         onClick={handleClick}
         className={cn(className)}
         {...buttonProps}

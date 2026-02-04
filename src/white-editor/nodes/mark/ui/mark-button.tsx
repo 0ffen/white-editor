@@ -68,7 +68,7 @@ export const MarkButton = React.forwardRef<HTMLButtonElement, MarkButtonProps>(
         tabIndex={-1}
         aria-label={label}
         aria-pressed={isActive}
-        tooltip={getTranslate(type)}
+        tooltip={type != null ? getTranslate(type) : undefined}
         onClick={handleClick}
         isActive={isActive}
         className={cn(className)}

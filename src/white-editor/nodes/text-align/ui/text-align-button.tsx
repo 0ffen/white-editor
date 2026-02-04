@@ -68,7 +68,7 @@ export const TextAlignButton = React.forwardRef<HTMLButtonElement, TextAlignButt
         tabIndex={-1}
         aria-label={label}
         aria-pressed={isActive}
-        tooltip={getTranslate(`textAlign${align.charAt(0).toUpperCase() + align.slice(1)}`)}
+        tooltip={align != null ? getTranslate(`textAlign${align.charAt(0).toUpperCase() + align.slice(1)}`) : undefined}
         isActive={isActive}
         onClick={handleClick}
         className={cn(className)}

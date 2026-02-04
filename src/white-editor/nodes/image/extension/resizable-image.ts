@@ -213,7 +213,7 @@ export const ResizableImage = Image.extend<ResizableImageOptions>({
             attrs.uploadingProgress = null;
             attrs.uploadId = null;
             attrs.uploadError = false;
-            attrs.uploadErrorFileName = null;
+            attrs.uploadErrorFileName = undefined;
           }
           if (state.uploadError !== undefined) {
             attrs.uploadError = state.uploadError;

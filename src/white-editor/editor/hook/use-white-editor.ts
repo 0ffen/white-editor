@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { createEditorExtensions } from '@/shared/utils/extensions';
 import { normalizeContent } from '@/shared/utils';
+import { createEditorExtensions } from '@/shared/utils/extensions';
 import {
   useImageDragPaste,
   type EditorExtensions,

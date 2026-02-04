@@ -68,7 +68,7 @@ export const ListButton = React.forwardRef<HTMLButtonElement, ListButtonProps>(
         data-disabled={!canToggle}
         aria-label={label}
         aria-pressed={isActive}
-        tooltip={getTranslate(type)}
+        tooltip={type != null ? getTranslate(type) : undefined}
         onClick={handleClick}
         isActive={isActive}
         className={cn(className)}
