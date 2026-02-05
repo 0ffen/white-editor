@@ -37,6 +37,12 @@
   user-select: text !important;
 }
 
+/* 뷰어/읽기 전용에서는 편집용 trailing break 숨김 (코드 블록 등 leaf 노드 끝의 빈 줄 제거) */
+.white-editor.viewer .ProseMirror-trailingBreak,
+.white-editor .readonly .ProseMirror-trailingBreak {
+  display: none !important;
+}
+
 .white-editor .readonly .ProseMirror-selectednode {
   outline: none !important;
   box-shadow: none !important;
