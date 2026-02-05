@@ -31,6 +31,8 @@ declare module '@tiptap/react' {
 export const ResizableImage = Image.extend<ResizableImageOptions>({
   name: 'image',
 
+  draggable: true,
+
   addOptions() {
     return {
       ...this.parent?.(),

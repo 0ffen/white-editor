@@ -253,7 +253,6 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
       className={cn('we:my-2 we:w-full')}
       data-type='image'
       data-full-width={currentWidth === '100%'}
-      draggable='true'
       style={{ textAlign: textAlign || _align }}
     >
       <section
@@ -264,7 +263,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           caption && 'we:mb-2',
           resizeState.isResizing ? 'we:resizing' : '',
           props.selected && props.editor.isEditable
-            ? 'we:selected we:ring-primary/40 we:rounded-xs we:ring-2 we:ring-offset-2'
+            ? 'we:selected we:border-none we:ring-2 we:ring-offset-2 we:ring-brand-default we:rounded-xs'
             : ''
         )}
         onMouseEnter={hoverHandlers.handleMouseEnter}
@@ -276,7 +275,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
         {/* 리사이즈 기준 요소: 정상 시 img, 에러 시 래퍼에 ref 부여해 드래그로 크기 조절 가능 */}
         <div
           ref={imageRef}
-          className={cn(currentWidth === '100%' ? 'we:block we:w-full' : 'we:inline-block we:max-w-full')}
+          className={cn(currentWidth === '100%' ? 'we:block we:w-full' : 'we:inline we:max-w-full')}
           style={{
             width:
               !uploadError && !imageLoadError && currentWidth !== 'auto' && currentWidth !== '100%'
@@ -333,8 +332,9 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
               style={{
                 width: currentWidth !== 'auto' ? currentWidth : undefined,
               }}
-              draggable={false}
               onError={() => setImageLoadError(true)}
+              draggable={false}
+              data-drag-handle
             />
           )}
         </div>
@@ -431,7 +431,6 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
                     transform: `scale(${zoomLevel / 100}) translate(${dragOffset.x}px, ${dragOffset.y}px)`,
                     transformOrigin: 'center center',
                   }}
-                  draggable={false}
                   onDoubleClick={handleImageDoubleClick}
                 />
               </div>
