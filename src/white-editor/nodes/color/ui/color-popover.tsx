@@ -6,6 +6,7 @@ import { cn, getTranslate } from '@/shared';
 import { Button, PopoverContent, PopoverTrigger, Separator, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import {
+  getDisplayTextColor,
   pickTextColorsByValue,
   TEXT_COLORS_MAP,
   TextColorButton,
@@ -68,7 +69,9 @@ export function ColorPopover({
     onApplied,
   });
 
-  const currentTextColor = editor?.getAttributes('textStyle')?.color || '';
+  const rawTextColor = editor?.getAttributes('textStyle')?.color || '';
+  // 색이 없거나 팔레트에 없으면 기본 색을 팔레트에 표시
+  const currentTextColor = getDisplayTextColor(rawTextColor) || 'var(--we-text-normal)';
 
   if (!isVisible) return null;
 

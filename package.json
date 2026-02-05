@@ -13,7 +13,7 @@
   },
   "private": false,
   "license": "MIT",
-  "version": "1.1.14",
+  "version": "1.0.14-alpha.0",
   "description": "A WYSIWYG editor and viewer built with TipTap and Tui Image Editor",
   "keywords": [
     "editor",
@@ -36,11 +36,23 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
+    "./util": {
+      "import": "./dist/util.js",
+      "types": "./dist/util.d.ts"
+    },
+    "./editor": {
+      "import": "./dist/editor.js",
+      "types": "./dist/editor.d.ts"
+    },
+    "./viewer": {
+      "import": "./dist/viewer.js",
+      "types": "./dist/viewer.d.ts"
+    },
     "./dist/index.css": "./dist/index.css"
   },
   "scripts": {
     "dev": "vite",
-    "build": "rm -rf ./dist && vite build",
+    "build": "rm -rf ./dist ./dist-css && vite build && vite build --config vite.css.config.ts && cp dist-css/index.css dist/ && rm -rf dist-css",
     "lint": "eslint ./src",
     "lint:debug": "eslint ./src --debug",
     "lint:fix": "eslint ./src --fix",

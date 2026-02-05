@@ -1,6 +1,7 @@
 # Utilities API
 
-White Editor가 제공하는 유틸리티 함수들의 API를 설명합니다.
+White Editor가 제공하는 유틸리티 함수들의 API를 설명합니다.  
+**유틸 함수는 `@0ffen/white-editor/util`에서 import합니다.**
 
 ## createEmptyContent
 
@@ -24,7 +25,7 @@ function createEmptyContent(): JSONContent;
 ### 사용 예제
 
 ```tsx
-import { createEmptyContent } from '@0ffen/white-editor';
+import { createEmptyContent } from '@0ffen/white-editor/util';
 
 const emptyContent = createEmptyContent();
 ```
@@ -33,7 +34,8 @@ const emptyContent = createEmptyContent();
 
 ```tsx
 import { useState } from 'react';
-import { WhiteEditor, createEmptyContent } from '@0ffen/white-editor';
+import { WhiteEditor } from '@0ffen/white-editor';
+import { createEmptyContent } from '@0ffen/white-editor/util';
 
 function MyEditor() {
   const [content, setContent] = useState(createEmptyContent());
@@ -61,6 +63,46 @@ function EditorWithReset() {
 }
 ```
 
+## normalizeContentSchema, isValidJSONContent, normalizeEmptyTextBetweenMentions
+
+뷰어에 넘기기 전에 콘텐츠를 검증·정규화할 때 사용합니다. WhiteViewer는 내부에서 `normalizeContentSchema`를 사용하므로, 대부분은 `content`를 그대로 넘기면 됩니다.
+
+### normalizeContentSchema
+
+- **시그니처:** `function normalizeContentSchema(content: unknown): JSONContent`
+- **역할:** `unknown`(JSONContent, `{ content: JSONContent, html?: string }`, 배열 등)을 받아 유효한 JSONContent로 정규화합니다. 유효하지 않으면 `{ type: 'doc', content: [] }`를 반환합니다. mention 사이 빈 텍스트는 공백으로 치환합니다.
+
+### isValidJSONContent
+
+- **시그니처:** `function isValidJSONContent(data: unknown): data is JSONContent`
+- **역할:** 값이 최소한 `type`(string)을 가진 객체이고, `content`가 있으면 배열인지 검사합니다.
+
+### normalizeEmptyTextBetweenMentions
+
+- **시그니처:** `function normalizeEmptyTextBetweenMentions(content: JSONContent): JSONContent`
+- **역할:** mention 노드 사이에 있는 빈 text 노드를 공백(`' '`)으로 치환합니다. 연속 mention이 붙어 보이는 현상을 방지할 때 사용합니다.
+
+### 사용 예제
+
+```tsx
+import {
+  WhiteViewer,
+  normalizeContentSchema,
+  isValidJSONContent,
+  normalizeEmptyTextBetweenMentions,
+} from '@0ffen/white-editor/util';
+
+// API 응답이 { content: JSONContent, html: string } 형태일 때
+const apiResponse = await fetch('/api/doc/1').then((r) => r.json());
+const normalized = normalizeContentSchema(apiResponse);
+<WhiteViewer content={apiResponse} />; // 내부에서 정규화되므로 그대로 넘겨도 됨
+
+// 저장 전 검증
+if (isValidJSONContent(userInput)) {
+  await save(userInput);
+}
+```
+
 ## getHtmlContent
 
 JSONContent를 HTML 문자열로 변환합니다.
@@ -82,7 +124,7 @@ HTML 문자열
 ### 사용 예제
 
 ```tsx
-import { getHtmlContent } from '@0ffen/white-editor';
+import { getHtmlContent } from '@0ffen/white-editor/util';
 import type { JSONContent } from '@0ffen/white-editor';
 
 const content: JSONContent = {
@@ -219,7 +261,7 @@ function setCSSVariables(variables: Record<string, string>): void;
 
 ```tsx
 import { useEffect } from 'react';
-import { setCSSVariables } from '@0ffen/white-editor';
+import { setCSSVariables } from '@0ffen/white-editor/util';
 
 function MyEditor() {
   useEffect(() => {
@@ -310,7 +352,8 @@ useEffect(() => {
 
 ```tsx
 import { useState, useEffect } from 'react';
-import { WhiteEditor, setCSSVariables } from '@0ffen/white-editor';
+import { WhiteEditor } from '@0ffen/white-editor';
+import { setCSSVariables } from '@0ffen/white-editor/util';
 
 const themes = {
   light: {
@@ -377,7 +420,8 @@ useEffect(() => {
 
 ```tsx
 import { useState, useEffect } from 'react';
-import { WhiteEditor, WhiteViewer, createEmptyContent, getHtmlContent, setCSSVariables } from '@0ffen/white-editor';
+import { WhiteEditor, WhiteViewer } from '@0ffen/white-editor';
+import { createEmptyContent, getHtmlContent, setCSSVariables } from '@0ffen/white-editor/util';
 import type { JSONContent } from '@0ffen/white-editor';
 
 function CompleteSystem() {

@@ -50,7 +50,8 @@ function MyEditor() {
 ### 빈 콘텐츠 생성
 
 ```tsx
-import { WhiteEditor, createEmptyContent } from '@0ffen/white-editor';
+import { WhiteEditor } from '@0ffen/white-editor';
+import { createEmptyContent } from '@0ffen/white-editor/util';
 
 function MyEditor() {
   return <WhiteEditor content={createEmptyContent()} />;
@@ -97,7 +98,11 @@ function MyEditor() {
 
 ### WhiteEditorThemeProvider — 컬러/z-index 커스터마이징
 
-`WhiteEditorThemeProvider`로 감싸고 `theme`에 `mode`와 `colors`를 넘기면, 에디터 배경·텍스트·드롭다운·브랜드 색 등을 맞출 수 있습니다. **키는 design-tokens.css 변수명과 동일한 camelCase**를 사용합니다 (예: `elevationBackground`, `textNormal`, `elevationDropdown`).
+**어디에 쓰나요?**  
+`WhiteEditorThemeProvider`는 WhiteEditor/WhiteViewer를 **감싸는 상위**에 둡니다. `theme`에 넘긴 값은 **document.documentElement(전역)** 에 CSS 변수로 적용되므로, Provider 한 번으로 페이지 전체의 에디터/뷰어 테마가 바뀝니다.
+
+**theme 형태**  
+`theme`에 `mode`와 `colors`(및 선택적으로 `zIndex`)를 넘기면, 에디터 배경·텍스트·드롭다운·브랜드 색 등을 맞출 수 있습니다. **키는 design-tokens.css 변수명과 동일한 camelCase**를 사용합니다 (예: `elevationBackground`, `textNormal`, `elevationDropdown`). `colors`만 넘겨도 되고, `mode`를 생략하면 기본은 `'light'`입니다.
 
 ```tsx
 import { WhiteEditor, WhiteEditorThemeProvider } from '@0ffen/white-editor';
@@ -127,7 +132,7 @@ import { WhiteEditor, WhiteEditorThemeProvider } from '@0ffen/white-editor';
 
 ## WhiteViewer 컴포넌트
 
-저장된 콘텐츠를 읽기 전용으로 표시합니다.
+저장된 콘텐츠를 읽기 전용으로 표시합니다. `content`에는 JSONContent뿐 아니라 `{ content: JSONContent, html?: string }` 같은 래퍼 형태도 넘길 수 있으며, 내부에서 정규화합니다. Heading 기반 목차가 필요하면 `tableOfContents` prop을 켜면 됩니다(자세한 옵션은 [Viewer API](/api/viewer#tableofcontents) 참고)..
 
 ```tsx
 import { WhiteViewer } from '@0ffen/white-editor';
@@ -154,7 +159,8 @@ function MyViewer() {
 
 ```tsx
 import { useState } from 'react';
-import { WhiteEditor, WhiteViewer, createEmptyContent } from '@0ffen/white-editor';
+import { WhiteEditor, WhiteViewer } from '@0ffen/white-editor';
+import { createEmptyContent } from '@0ffen/white-editor/util';
 import type { JSONContent } from '@0ffen/white-editor';
 
 function App() {

@@ -57,7 +57,7 @@ interface WhiteEditorProps<T> extends WhiteEditorUIProps, WhiteEditorExtensions<
 ### toolbarItems
 
 - **타입:** `ToolbarItem[][]`
-- **기본값:** `defaultToolbarItems`
+- **기본값:** `DEFAULT_TOOLBAR_ITEMS`
 
 툴바 버튼을 그룹화하여 설정합니다.
 

@@ -18,6 +18,7 @@ type Locale = 'ko' | 'en' | 'es';
 
 export default function App() {
   const [content, setContent] = useState<JSONContent>(createEmptyContent());
+  const [viewerKey, setViewerKey] = useState(0);
   const [locale, setLocale] = useState<Locale>('ko');
   const editorRef = useRef<WhiteEditorRef>(null);
 
@@ -40,6 +41,12 @@ export default function App() {
     if (editorRef.current) {
       editorRef.current.clear();
     }
+  };
+
+  const handleTransformToViewer = () => {
+    const json = editorRef.current?.getJSON();
+    setContent(json ?? createEmptyContent());
+    setViewerKey((k) => k + 1);
   };
 
   const handleInsertText = () => {
@@ -99,7 +106,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className='we:grid we:grid-cols-1 we:gap-8 lg:we:grid-cols-2'>
+        <div className='we:grid we:grid-cols-2 we:gap-8'>
           <section className='we:space-y-3'>
             <h2 className='we:mb-8 we:text-3xl we:font-bold we:text-center'>Editor</h2>
 
@@ -108,14 +115,9 @@ export default function App() {
               locale={locale}
               ref={editorRef}
               disabled={false}
-              editorClassName='we:h-[500px] we:rounded-md we:border we:border-border-default'
+              editorClassName='we:h-[1000px] we:rounded-md we:border we:border-border-default'
               contentClassName='we:h-full we:px-2'
               toolbarItems={DEFAULT_TOOLBAR_ITEMS}
-              onChange={() => {
-                if (editorRef.current) {
-                  setContent(editorRef.current.getJSON());
-                }
-              }}
               extension={{
                 mention: {
                   data: [
@@ -171,11 +173,25 @@ export default function App() {
           </section>
 
           <section className='we:space-y-3 we:h-fit'>
-            <h2 className='we:mb-8 we:text-3xl we:font-bold we:text-center'>Viewer</h2>
-            <WhiteViewer
-              className='we:h-[400px] we:bg-elevation-background we:overflow-y-auto we:border we:rounded-md'
-              content={content}
-            />
+            <div className='we:mb-8 we:flex we:items-center we:justify-center we:gap-3'>
+              <h2 className='we:text-3xl we:font-bold'>Viewer</h2>
+              <Button
+                type='button'
+                variant='secondary'
+                className='we:w-fit we:bg-brand-weak we:text-brand-default'
+                onClick={handleTransformToViewer}
+              >
+                변환
+              </Button>
+            </div>
+            <div className='we:h-[1000px] we:p-4 we:bg-elevation-background we:overflow-y-auto we:border we:border-border-default we:rounded-md'>
+              <WhiteViewer
+                key={viewerKey}
+                className='we:h-full'
+                content={content}
+                tableOfContents={{ position: 'top', maxLevel: 4 }}
+              />
+            </div>
           </section>
         </div>
       </main>

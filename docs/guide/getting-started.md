@@ -58,6 +58,30 @@ export default function Home() {
 }
 ```
 
+## 스타일(CSS)
+
+스타일을 적용하는 방법은 두 가지입니다.
+
+**1) 권장: 앱 루트에서 CSS를 한 번 import**
+
+```ts
+// main.tsx, layout.tsx, _app.tsx 등
+import '@0ffen/white-editor/dist/index.css';
+```
+
+**2) WhiteEditorThemeProvider 사용 시**  
+Provider로 앱을 감싸면 테마(라이트/다크/커스텀)와 함께 공통 스타일이 주입됩니다. 별도 CSS import 없이 사용할 수 있습니다.
+
+```tsx
+import { WhiteEditor, WhiteEditorThemeProvider } from '@0ffen/white-editor';
+
+<WhiteEditorThemeProvider theme="light">
+  <WhiteEditor />
+</WhiteEditorThemeProvider>
+```
+
+그 외, 메인/editor/viewer 진입점을 import하면 해당 번들 로드 시 스타일이 자동 주입됩니다.
+
 ## 기본 예제
 
 콘텐츠 변경을 추적하는 기본 예제입니다.

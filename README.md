@@ -42,23 +42,25 @@ npm config set @0ffen:registry=https://npm.pkg.github.com
 pnpm install @0ffen/white-editor
 ```
 
+**진입점 (Entry points)**  
+- `@0ffen/white-editor` — 에디터·뷰어·테마·타입·확장 (메인)
+- `@0ffen/white-editor/util` — 유틸만 (`getHtmlContent`, `createEmptyContent`, `normalizeContentSchema` 등)
+- `@0ffen/white-editor/editor` — 에디터 전용
+- `@0ffen/white-editor/viewer` — 뷰어 전용
+
+Next.js(App Router), React 19에서 정적 import로 사용할 수 있도록 `"use client"`가 포함되어 있습니다.
+
 ## 사용 방법
 
 ### 1. White Editor
 
-### Next
+### Next (App Router)
 
 ```tsx
 'use client';
 
-import dynamic from 'next/dynamic';
 import { useRef } from 'react';
-import type { WhiteEditorRef } from '@0ffen/white-editor';
-
-// SSR 비활성화로 동적 임포트
-const WhiteEditor = dynamic(() => import('@0ffen/white-editor').then((mod) => ({ default: mod.WhiteEditor })), {
-  ssr: false,
-});
+import { WhiteEditor, type WhiteEditorRef } from '@0ffen/white-editor';
 
 export default function Home() {
   const editorRef = useRef<WhiteEditorRef>(null);
@@ -697,7 +699,8 @@ JSONContent를 HTML 문자열로 변환합니다.
 
 ```tsx
 import { useRef } from 'react';
-import { WhiteEditor, type WhiteEditorRef, getHtmlContent } from '@0ffen/white-editor';
+import { WhiteEditor, type WhiteEditorRef } from '@0ffen/white-editor';
+import { getHtmlContent } from '@0ffen/white-editor/util';
 
 function MyComponent() {
   const editorRef = useRef<WhiteEditorRef>(null);
@@ -724,7 +727,7 @@ function MyComponent() {
 HTML 문자열을 JSONContent로 변환합니다.
 
 ```tsx
-import { convertHtmlToJson } from '@0ffen/white-editor';
+import { convertHtmlToJson } from '@0ffen/white-editor/util';
 
 const htmlString = '<h1>제목</h1><p>본문 내용</p>';
 const jsonContent = convertHtmlToJson(htmlString);
@@ -743,7 +746,7 @@ console.log(jsonContent);
 JSONContent에서 순수 텍스트만 추출합니다.
 
 ```tsx
-import { getGeneratedText } from '@0ffen/white-editor';
+import { getGeneratedText } from '@0ffen/white-editor/util';
 
 const jsonContent = {
   type: 'doc',
@@ -765,7 +768,7 @@ console.log(text); // 'Hello World'
 빈 JSONContent 값을 입력해야 할 때 사용합니다.
 
 ```tsx
-import { createEmptyContent } from '@0ffen/white-editor';
+import { createEmptyContent } from '@0ffen/white-editor/util';
 
 const emptyContent = createEmptyContent();
 // {
@@ -779,7 +782,7 @@ const emptyContent = createEmptyContent();
 Markdown 문자열을 HTML 문자열로 변환합니다.
 
 ```tsx
-import { markdownToHtml, convertHtmlToJson, createEmptyContent } from '@0ffen/white-editor';
+import { markdownToHtml, convertHtmlToJson, createEmptyContent } from '@0ffen/white-editor/util';
 
 const markdown = '# 제목\n\n본문 내용입니다.';
 const html = markdownToHtml(markdown);

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { normalizeContent } from '@/shared/utils';
+import { normalizeContent, transformPastedToTextNormal } from '@/shared/utils';
 import { createEditorExtensions } from '@/shared/utils/extensions';
 import {
   useImageDragPaste,
@@ -70,6 +70,10 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
       },
       handleDrop,
       handlePaste,
+      transformPasted: (slice, view) => {
+        const normalized = transformPastedToTextNormal(slice, view);
+        return editorProps?.transformPasted?.(normalized, view) ?? normalized;
+      },
     },
     extensions: createEditorExtensions(
       mentionDataRef,

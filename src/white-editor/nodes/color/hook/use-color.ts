@@ -3,6 +3,7 @@ import { useTiptapEditor } from '@/shared/hooks';
 import { isMarkInSchema, isNodeTypeSelected } from '@/shared/utils';
 import { TEXT_COLORS, type ColorValue } from '@/white-editor';
 import { type Editor } from '@tiptap/react';
+import { resolveTextColorToHex } from '../utils/resolve-text-color';
 
 export function pickTextColorsByValue(values: string[]) {
   const colorMap = new Map(TEXT_COLORS.map((color: ColorValue) => [color.value, color]));
@@ -25,9 +26,21 @@ export function canTextColor(editor: Editor | null): boolean {
   return editor.can().setMark('textStyle');
 }
 
+const DEFAULT_PALETTE_COLOR = 'var(--we-text-normal)';
+
 export function isTextColorActive(editor: Editor | null, textColor?: string): boolean {
   if (!editor || !editor.isEditable) return false;
-  return textColor ? editor.isActive('textStyle', { color: textColor }) : editor.isActive('textStyle');
+  const currentColor = editor.getAttributes('textStyle')?.color ?? '';
+  const hasNoColor = !editor.isActive('textStyle') || !currentColor;
+  // 색상이 없을 때는 기본(Default) 팔레트를 선택된 것처럼 표시
+  if (hasNoColor) return textColor === DEFAULT_PALETTE_COLOR;
+  if (!textColor) return true;
+  // 정확히 같은 값이면 active (팔레트에서 선택한 경우)
+  if (editor.isActive('textStyle', { color: textColor })) return true;
+  // 복붙 등으로 hex/rgb가 들어온 경우, resolved hex로 비교해 팔레트와 매칭
+  const currentHex = resolveTextColorToHex(currentColor);
+  const paletteHex = resolveTextColorToHex(textColor);
+  return !!currentHex && !!paletteHex && currentHex.toLowerCase() === paletteHex.toLowerCase();
 }
 
 export function removeTextColor(editor: Editor | null): boolean {

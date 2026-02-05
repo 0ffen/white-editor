@@ -79,3 +79,100 @@
 .white-editor .readonly .tiptap-mathematics-render {
   pointer-events: none !important;
 }
+
+/* 목차(TOC) 레이아웃 및 스타일 */
+.white-editor.viewer.we\:viewer-with-toc {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.white-editor.viewer.we\:viewer-with-toc.we\:viewer-toc-top {
+  flex-direction: column;
+}
+
+.white-editor.viewer.we\:viewer-with-toc .we\:viewer-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.white-editor.viewer .we\:viewer-toc {
+  flex-shrink: 0;
+  width: 12rem;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.white-editor.viewer .we\:viewer-toc.we\:viewer-toc-top {
+  width: 100%;
+  max-height: none;
+}
+
+.white-editor.viewer .we\:viewer-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  margin-top: 1rem;
+  color: var(--we-text-light);
+}
+
+.white-editor.viewer .we\:viewer-toc-item {
+  padding-left: calc((var(--we-toc-level, 1) - 1) * 0.75rem);
+  margin-bottom: 0.25rem;
+  text-decoration: underline;
+}
+
+.white-editor.viewer .we\:viewer-toc-link {
+  display: block;
+  width: 100%;
+  padding: 0.25rem 0;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  text-align: left;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.white-editor.viewer .we\:viewer-toc-link:hover {
+  text-decoration: underline;
+}
+
+/* 헤딩 링크 앵커: 텍스트 오른쪽 끝(마지막 글자 옆)에 인라인 배치 */
+.white-editor.viewer .readonly :is(h1, h2, h3, h4, h5, h6):has(.we\:viewer-heading-anchor) {
+  cursor: pointer;
+}
+
+.white-editor.viewer .we\:viewer-heading-anchor {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0 0 0 0.25rem;
+  vertical-align: middle;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--we-text-light);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.white-editor.viewer .readonly :is(h1, h2, h3, h4, h5, h6):hover .we\:viewer-heading-anchor,
+.white-editor.viewer .we\:viewer-heading-anchor:hover {
+  opacity: 1;
+}
+
+.white-editor.viewer .we\:viewer-heading-anchor:focus {
+  opacity: 1;
+  outline: none;
+}
+
+.white-editor.viewer .we\:viewer-heading-anchor svg {
+  width: 14px;
+  height: 14px;
+}
