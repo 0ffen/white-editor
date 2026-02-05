@@ -12,13 +12,7 @@ import {
   TooltipProvider,
 } from './shared';
 import { cn, i18n } from './shared/utils';
-import {
-  DEFAULT_TOOLBAR_ITEMS,
-  WhiteEditor,
-  WhiteEditorThemeProvider,
-  WhiteViewer,
-  type WhiteEditorRef,
-} from './white-editor';
+import { DEFAULT_TOOLBAR_ITEMS, WhiteEditor, WhiteViewer, type WhiteEditorRef } from './white-editor';
 
 type Locale = 'ko' | 'en' | 'es';
 
@@ -108,74 +102,72 @@ export default function App() {
         <div className='we:grid we:grid-cols-1 we:gap-8 lg:we:grid-cols-2'>
           <section className='we:space-y-3'>
             <h2 className='we:mb-8 we:text-3xl we:font-bold we:text-center'>Editor</h2>
-            {/* theme.colors: design-tokens.css 변수명 그대로 (elevationBackground, textNormal 등). 값은 hex 또는 var(--호스트앱 변수) 가능 */}
-            <WhiteEditorThemeProvider theme={{}}>
-              <WhiteEditor
-                key={locale}
-                locale={locale}
-                ref={editorRef}
-                disabled={false}
-                editorClassName='we:h-[500px]! we:rounded-md!'
-                contentClassName='we:h-full we:px-2'
-                toolbarItems={DEFAULT_TOOLBAR_ITEMS}
-                onChange={() => {
-                  if (editorRef.current) {
-                    setContent(editorRef.current.getJSON());
-                  }
-                }}
-                extension={{
-                  mention: {
-                    data: [
-                      { uuid: 1, name: 'White Lee', nickname: 'white' },
-                      { uuid: 2, name: 'Black Kim', nickname: 'black' },
-                    ],
-                    id: 'uuid',
-                    label: 'nickname',
-                  },
-                  pageMention: {
-                    data: pageLinksData,
-                    id: 'id',
-                    title: 'title',
-                    href: 'href',
-                    path: 'path',
-                  },
-                  character: {
-                    show: true,
-                  },
-                  imageUpload: {
-                    upload: handleImageUpload,
-                    onSuccess: (url) => {
-                      // eslint-disable-next-line no-console
-                      console.log('✅ 이미지 업로드 성공:', url);
-                    },
-                    onError: (error) => {
-                      // eslint-disable-next-line no-console
-                      console.error('❌ 이미지 업로드 실패:', error.message);
-                    },
-                  },
-                }}
-                footer={
-                  <div className='we:flex we:flex-col we:gap-2'>
-                    <div className='we:flex we:justify-end we:gap-2'>
-                      <Button
-                        type='button'
-                        variant='secondary'
-                        className='we:w-fit we:bg-brand-weak we:text-brand-default'
-                        onClick={handleInsertText}
-                      >
-                        텍스트 삽입
-                      </Button>
-                      <Button type='button' variant='secondary' className='we:w-fit' onClick={handleInsertFailedImage}>
-                        실패 이미지 삽입
-                      </Button>
-                      <Button type='button' variant='secondary' className='we:w-fit' onClick={handleClear}>
-                        초기화
-                      </Button>
-                    </div>
-                  </div>
+
+            <WhiteEditor
+              key={locale}
+              locale={locale}
+              ref={editorRef}
+              disabled={false}
+              editorClassName='we:h-[500px] we:rounded-md we:border we:border-border-default'
+              contentClassName='we:h-full we:px-2'
+              toolbarItems={DEFAULT_TOOLBAR_ITEMS}
+              onChange={() => {
+                if (editorRef.current) {
+                  setContent(editorRef.current.getJSON());
                 }
-              />
-            </WhiteEditorThemeProvider>
+              }}
+              extension={{
+                mention: {
+                  data: [
+                    { uuid: 1, name: 'White Lee', nickname: 'white' },
+                    { uuid: 2, name: 'Black Kim', nickname: 'black' },
+                  ],
+                  id: 'uuid',
+                  label: 'nickname',
+                },
+                pageMention: {
+                  data: pageLinksData,
+                  id: 'id',
+                  title: 'title',
+                  href: 'href',
+                  path: 'path',
+                },
+                character: {
+                  show: true,
+                },
+                imageUpload: {
+                  upload: handleImageUpload,
+                  onSuccess: (url) => {
+                    // eslint-disable-next-line no-console
+                    console.log('✅ 이미지 업로드 성공:', url);
+                  },
+                  onError: (error) => {
+                    // eslint-disable-next-line no-console
+                    console.error('❌ 이미지 업로드 실패:', error.message);
+                  },
+                },
+              }}
+              footer={
+                <div className='we:flex we:flex-col we:gap-2'>
+                  <div className='we:flex we:justify-end we:gap-2'>
+                    <Button
+                      type='button'
+                      variant='secondary'
+                      className='we:w-fit we:bg-brand-weak we:text-brand-default'
+                      onClick={handleInsertText}
+                    >
+                      텍스트 삽입
+                    </Button>
+                    <Button type='button' variant='secondary' className='we:w-fit' onClick={handleInsertFailedImage}>
+                      실패 이미지 삽입
+                    </Button>
+                    <Button type='button' variant='secondary' className='we:w-fit' onClick={handleClear}>
+                      초기화
+                    </Button>
+                  </div>
+                </div>
+              }
+            />
           </section>
 
           <section className='we:space-y-3 we:h-fit'>

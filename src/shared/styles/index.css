@@ -345,7 +345,7 @@
   --we-z-index-inline: 10;
   --we-z-index-handle: 20;
   --we-z-index-overlay: 50;
-  --we-z-index-floating: 50;
+  --we-z-index-floating: 10;
 }
 
 .dark {

@@ -1,9 +1,11 @@
-.white-editor {
+/* border/rounded는 editorClassName으로 오버라이드 가능하도록 여기서 설정하지 않음 */
+/* @layer base로 감싸서 소비자 Tailwind utilities(editorClassName)가 important 없이 우선 적용되도록 함 */
+@layer base {
+  .white-editor {
   font-family: var(--we-font-pretendard);
   font-display: swap;
   text-rendering: optimizeLegibility;
   scroll-behavior: smooth;
-  border: none;
   min-height: 0px;
 
   /* CSS 변수가 설정되면 사용, 없으면 기본값 사용 */
@@ -346,18 +348,19 @@
       }
     }
   }
-}
+  }
 
-.white-editor.viewer {
-  border: none !important;
-  background-color: transparent !important;
-}
+  .white-editor.viewer {
+    border: none !important;
+    background-color: transparent !important;
+  }
 
-.tiptap p.is-editor-empty:first-child::before {
-  color: var(--we-text-placeholder);
-  content: attr(data-placeholder);
-  float: left;
-  height: 0;
-  pointer-events: none;
-  font-size: 14px;
+  .tiptap p.is-editor-empty:first-child::before {
+    color: var(--we-text-placeholder);
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+    font-size: 14px;
+  }
 }
