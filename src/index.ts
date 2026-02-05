@@ -1,3 +1,5 @@
+'use client';
+
 import './shared/styles/index.css';
 
 //editor, viewer
@@ -60,13 +62,3 @@ export { CharacterCount, Selection } from '@tiptap/extensions';
 // TipTap Core - 커스텀 노드를 만들 때 필요한 유틸리티
 export { Node } from '@tiptap/core';
 export { ReactNodeViewRenderer, NodeViewContent, NodeViewWrapper } from '@tiptap/react';
-
-//utils
-export {
-  getHtmlContent,
-  convertHtmlToJson,
-  getGeneratedText,
-  createEmptyContent,
-  setCSSVariables,
-  markdownToHtml,
-} from './shared/utils';

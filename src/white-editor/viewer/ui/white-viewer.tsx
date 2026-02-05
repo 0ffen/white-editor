@@ -1,13 +1,16 @@
 import React, { useMemo, useEffect, useRef } from 'react';
-import { cn, normalizeContent } from '@/shared/utils';
+import { cn, normalizeContentSchema } from '@/shared/utils';
 import { createViewerExtensions } from '@/shared/utils/extensions';
 import type { ExtensibleEditorConfig } from '@/white-editor';
 import { EditorContent, useEditor, type JSONContent } from '@tiptap/react';
 
 import '@/shared/styles/viewer.css';
 
+const EMPTY_DOC: JSONContent = { type: 'doc', content: [] };
+
 export interface WhiteViewerProps extends ExtensibleEditorConfig {
-  content: JSONContent;
+  /** JSONContent 또는 { content: JSONContent, html?: string } 등 래퍼 형태. 내부에서 정규화합니다. */
+  content: unknown;
   className?: string;
   footer?: React.ReactNode;
 }
@@ -20,8 +23,15 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
     [addExtensions, customNodes, overrideExtensions, customNodeViews]
   );
 
-  // content를 정규화 (text 필드가 숫자인 경우 문자열로 변환)
-  const normalizedContent = useMemo(() => normalizeContent(content), [content]);
+  const normalizedContent = useMemo(() => {
+    try {
+      return normalizeContentSchema(content);
+    } catch (error) {
+      console.warn('Failed to normalize content schema, using fallback:', error);
+      return EMPTY_DOC;
+    }
+  }, [content]);
+
   const contentRef = useRef<JSONContent>(normalizedContent);
 
   const editor = useEditor({

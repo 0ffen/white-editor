@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Editor 전용 진입점.
  * import { WhiteEditor, useWhiteEditor, ... } from '@0ffen/white-editor/editor'

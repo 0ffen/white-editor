@@ -14,7 +14,7 @@ export interface ResizableImageOptions {
   extension?: EditorExtensions<Record<string, unknown>> | null;
 }
 
-import type { Node as TipTapNode } from '@tiptap/core';
+import { Node, type Node as TipTapNode } from '@tiptap/core';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
@@ -27,7 +27,7 @@ import Superscript from '@tiptap/extension-superscript';
 import { Table, TableCell, TableRow } from '@tiptap/extension-table';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyleKit } from '@tiptap/extension-text-style';
-import { Selection, CharacterCount } from '@tiptap/extensions';
+import { Selection, CharacterCount, Dropcursor } from '@tiptap/extensions';
 import { ReactNodeViewRenderer, type Extension } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
@@ -48,6 +48,47 @@ const CustomParagraph = Paragraph.extend({
     };
   },
 });
+
+/** 마크다운/HTML 내 `<div>` 블록을 파싱·렌더링 (style, class 유지). 뷰어용. */
+const BlockDiv = Node.create({
+  name: 'blockDiv',
+  group: 'block',
+  content: 'block+',
+  addAttributes() {
+    return {
+      style: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('style'),
+        renderHTML: (attrs) => (attrs.style ? { style: attrs.style } : {}),
+      },
+      class: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('class'),
+        renderHTML: (attrs) => (attrs.class ? { class: attrs.class } : {}),
+      },
+    };
+  },
+  parseHTML() {
+    return [
+      {
+        tag: 'div',
+        getAttrs: (dom) => {
+          if (dom instanceof HTMLElement) {
+            return {
+              style: dom.getAttribute('style'),
+              class: dom.getAttribute('class'),
+            };
+          }
+          return {};
+        },
+      },
+    ];
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ['div', HTMLAttributes, 0];
+  },
+});
+
 import type {
   EditorExtensions,
   OverrideExtensionsConfig,
@@ -224,19 +265,20 @@ export function createEditorExtensions<T, P extends Record<string, unknown> = Re
     StarterKit.configure({
       codeBlock: false,
       paragraph: false, // Use CustomParagraph instead
+      dropcursor: false, // 아래에서 단일 Dropcursor로 설정하므로 중복 비활성화
       link: {
         openOnClick: false,
         enableClickSelection: true,
         autolink: true,
       },
-      dropcursor: {
-        color: 'var(--we-brand-light)',
-        width: 2,
-      },
     }),
     CustomParagraph,
     CharacterCount.configure({
       limit: maxCharacters || null,
+    }),
+    Dropcursor.configure({
+      color: 'var(--we-brand-light)',
+      width: 2,
     }),
     Table.configure({
       resizable: true,
@@ -335,6 +377,7 @@ export function createViewerExtensions(
       },
     }),
     CustomParagraph,
+    BlockDiv,
     Table.configure({
       resizable: false,
       allowTableNodeSelection: false,

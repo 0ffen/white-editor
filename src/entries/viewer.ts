@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Viewer 전용 진입점.
  * import { WhiteViewer } from '@0ffen/white-editor/viewer'

@@ -38,7 +38,7 @@ export default defineConfig({
     lib: {
       entry: {
         index: path.resolve(__dirname, './src/index.ts'),
-        utils: path.resolve(__dirname, './src/entries/utils.ts'),
+        util: path.resolve(__dirname, './src/entries/util.ts'),
         editor: path.resolve(__dirname, './src/entries/editor.ts'),
         viewer: path.resolve(__dirname, './src/entries/viewer.ts'),
       },
