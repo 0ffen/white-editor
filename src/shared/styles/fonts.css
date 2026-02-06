@@ -1,0 +1,31 @@
+/* D2Coding - Regular */
+@font-face {
+  font-family: 'D2Coding';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url('../assets/fonts/D2Coding.ttf') format('truetype');
+}
+
+/* D2Coding - Bold */
+@font-face {
+  font-family: 'D2Coding';
+  font-style: normal;
+  font-weight: bold;
+  font-display: swap;
+  src: url('../assets/fonts/D2CodingBold.ttf') format('truetype');
+}
+
+/*
+ * Pretendard Variable
+ * Copyright (c) 2021 Kil Hyung-jin, with Reserved Font Name Pretendard.
+ * https://github.com/orioncactus/pretendard
+ * Licensed under the SIL Open Font License, Version 1.1.
+ */
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+  src: url('../assets/fonts/PretendardVariable.ttf') format('truetype');
+}

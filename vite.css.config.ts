@@ -22,6 +22,8 @@ export default defineConfig({
     minify: false,
     sourcemap: false,
     cssCodeSplit: false,
+    // .ttf만 url() 유지, 나머지는 기본 동작 (KaTeX 등)
+    assetsInlineLimit: (filePath) => (filePath?.endsWith('.ttf') ? false : undefined),
     lib: {
       entry: path.resolve(__dirname, './src/entries/styles.css-entry.ts'),
       formats: ['es'],
