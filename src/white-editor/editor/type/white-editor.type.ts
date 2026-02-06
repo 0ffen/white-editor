@@ -125,6 +125,13 @@ interface WhiteEditorProps<T>
   onUpdate?: (jsonContent: JSONContent) => void;
   onBlur?: (jsonContent: JSONContent) => void;
   onFocus?: (jsonContent: JSONContent) => void;
+  /** 빈 상태가 바뀔 때 호출. 제출 버튼 비활성화 등에 사용. */
+  onEmptyChange?: (isEmpty: boolean) => void;
+  /**
+   * onEmptyChange 호출 디바운스 시간(ms). 0이면 입력할 때마다 즉시 호출.
+   * @default 200
+   */
+  emptyCheckDebounceMs?: number;
   onCreate?: (editor: Editor) => void;
   onDestroy?: () => void;
   onSelectionUpdate?: (editor: Editor) => void;

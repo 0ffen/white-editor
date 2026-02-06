@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { normalizeContent, transformPastedToTextNormal } from '@/shared/utils';
+import { checkEditorEmpty, normalizeContent, transformPastedToTextNormal } from '@/shared/utils';
 import { createEditorExtensions } from '@/shared/utils/extensions';
 import {
   useImageDragPaste,
@@ -20,6 +20,8 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
     onUpdate,
     onBlur,
     onFocus,
+    onEmptyChange,
+    emptyCheckDebounceMs = 200,
     onCreate,
     onDestroy,
     onSelectionUpdate,
@@ -29,6 +31,33 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
     customNodeViews,
     content,
   } = props;
+
+  const onEmptyChangeRef = useRef(onEmptyChange);
+  onEmptyChangeRef.current = onEmptyChange;
+  const emptyCheckTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastEmptyRef = useRef<boolean | null>(null);
+
+  const notifyEmptyChange = useCallback((isEmpty: boolean) => {
+    if (lastEmptyRef.current === isEmpty) return;
+    lastEmptyRef.current = isEmpty;
+    onEmptyChangeRef.current?.(isEmpty);
+  }, []);
+
+  const scheduleEmptyCheck = useCallback(
+    (normalizedJSON: JSONContent) => {
+      const isEmpty = checkEditorEmpty({ content: normalizedJSON });
+      if (emptyCheckDebounceMs <= 0) {
+        notifyEmptyChange(isEmpty);
+        return;
+      }
+      if (emptyCheckTimerRef.current) clearTimeout(emptyCheckTimerRef.current);
+      emptyCheckTimerRef.current = setTimeout(() => {
+        emptyCheckTimerRef.current = null;
+        notifyEmptyChange(isEmpty);
+      }, emptyCheckDebounceMs);
+    },
+    [emptyCheckDebounceMs, notifyEmptyChange]
+  );
 
   // for mention
   const mentionDataRef = useRef<MentionConfig<T>>(extension?.mention);
@@ -70,9 +99,9 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
       },
       handleDrop,
       handlePaste,
-      transformPasted: (slice, view) => {
+      transformPasted: (slice, view, editor) => {
         const normalized = transformPastedToTextNormal(slice, view);
-        return editorProps?.transformPasted?.(normalized, view) ?? normalized;
+        return editorProps?.transformPasted?.(normalized, view, editor) ?? normalized;
       },
     },
     extensions: createEditorExtensions(
@@ -88,6 +117,10 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
     ),
     onCreate: ({ editor: currentEditor }) => {
       editorInstanceRef.current = currentEditor;
+      if (onEmptyChange) {
+        const initialJSON = normalizeContent(currentEditor.getJSON());
+        scheduleEmptyCheck(initialJSON);
+      }
       onCreate?.(currentEditor);
     },
     onUpdate: ({ editor: currentEditor }) => {
@@ -104,6 +137,9 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
         currentEditor.commands.setContent(normalizedJSON, { emitUpdate: false });
       }
 
+      if (onEmptyChange) {
+        scheduleEmptyCheck(normalizedJSON);
+      }
       onUpdate?.(normalizedJSON);
       onChange?.(normalizedJSON);
     },
@@ -123,6 +159,16 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
   useEffect(() => {
     editorInstanceRef.current = editor;
   }, [editor]);
+
+  // 디바운스 타이머 정리
+  useEffect(() => {
+    return () => {
+      if (emptyCheckTimerRef.current) {
+        clearTimeout(emptyCheckTimerRef.current);
+        emptyCheckTimerRef.current = null;
+      }
+    };
+  }, []);
 
   const editorState = useEditorState({
     editor,
@@ -155,7 +201,8 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
   const focus = useCallback(() => editor?.commands.focus(), [editor]);
   const blur = useCallback(() => editor?.commands.blur(), [editor]);
   const clear = useCallback(() => editor?.commands.clearContent(true), [editor]);
-  const isEmpty = editor?.isEmpty ?? true;
+
+  const isEmpty = editor ? checkEditorEmpty({ content: getJSON() }) : true;
 
   return {
     editor,

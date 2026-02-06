@@ -10,4 +10,5 @@ export * from './convert-html-to-json';
 export * from './markdown-to-html';
 export * from './normalize-content';
 export * from './get-headings-from-content';
+export * from './check-editor-empty';
 export * from './transform-pasted-text-normal';

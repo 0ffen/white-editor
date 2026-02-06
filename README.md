@@ -44,7 +44,7 @@ pnpm install @0ffen/white-editor
 
 **진입점 (Entry points)**  
 - `@0ffen/white-editor` — 에디터·뷰어·테마·타입·확장 (메인)
-- `@0ffen/white-editor/util` — 유틸만 (`getHtmlContent`, `createEmptyContent`, `normalizeContentSchema` 등)
+- `@0ffen/white-editor/util` — 유틸만 (`getHtmlContent`, `createEmptyContent`, `checkEditorEmpty`, `normalizeContentSchema` 등)
 - `@0ffen/white-editor/editor` — 에디터 전용
 - `@0ffen/white-editor/viewer` — 뷰어 전용
 
@@ -195,6 +195,8 @@ interface WhiteEditorProps<T> extends WhiteEditorUIProps, WhiteEditorExtensions<
   onUpdate?: (jsonContent: JSONContent) => void; // 실시간 업데이트
   onFocus?: (jsonContent: JSONContent) => void; // 포커스시
   onBlur?: (jsonContent: JSONContent) => void; // 포커스 해제시
+  onEmptyChange?: (isEmpty: boolean) => void; // 빈 상태 변경시 (제출 버튼 비활성화 등)
+  emptyCheckDebounceMs?: number; // onEmptyChange 디바운스 시간(ms). 0이면 입력할 때마다 즉시. 기본값 200
   onCreate?: (editor: Editor) => void; // 에디터 생성시
   onDestroy?: () => void; // 에디터 파괴시
   onSelectionUpdate?: (editor: Editor) => void; // 선택 영역 업데이트시
@@ -289,9 +291,72 @@ interface WhiteEditorRef {
   setContent: (content: string | JSONContent) => void; // 콘텐츠 설정 - 수정기능이 필요할때 사용
   focus: () => void; // 포커스
   blur: () => void; // 블러
-  isEmpty: boolean; // 빈 상태 확인
+  isEmpty: boolean; // 빈 상태 확인 (ref는 마운트 이후에만 채워짐)
   clear: () => void; // 콘텐츠 비우기
 }
+```
+
+#### 에디터 빈 상태 확인
+
+에디터가 비어 있는지 판단해 제출 버튼 비활성화, 폼 검증 등에 사용할 수 있습니다.
+
+**1) onEmptyChange 콜백 (권장)**
+
+입력/삭제 시 빈 상태가 바뀔 때마다 콜백이 호출됩니다. 디바운스로 호출 횟수를 줄일 수 있습니다.
+
+```tsx
+import { useState } from 'react';
+import { WhiteEditor } from '@0ffen/white-editor';
+
+function FormWithEditor() {
+  const [editorEmpty, setEditorEmpty] = useState(true);
+
+  return (
+    <form>
+      <WhiteEditor
+        onEmptyChange={setEditorEmpty}
+        emptyCheckDebounceMs={200}
+        footer={
+          <button type="submit" disabled={editorEmpty}>
+            제출
+          </button>
+        }
+      />
+    </form>
+  );
+}
+```
+
+- `emptyCheckDebounceMs`: 디바운스 시간(ms). 기본값 `200`. `0`이면 입력할 때마다 즉시 호출.
+
+**2) checkEditorEmpty 유틸 (저장된 필드 검사)**
+
+서버에 저장된 에디터 필드(`{ content?, html? }`)나 폼 초기값이 비어 있는지 검사할 때 사용합니다.
+
+```tsx
+import { checkEditorEmpty } from '@0ffen/white-editor';
+
+// 저장된 에디터 필드 검사
+if (checkEditorEmpty(formData.body)) {
+  setError('내용을 입력해 주세요.');
+}
+
+// ref로 현재 에디터 내용 검사 (이벤트 핸들러 등에서, 마운트 이후)
+const isEmpty = editorRef.current ? checkEditorEmpty({ content: editorRef.current.getJSON() }) : true;
+```
+
+**3) ref.current.isEmpty**
+
+ref를 통해 현재 에디터의 빈 상태를 읽을 수 있습니다. ref는 **에디터가 마운트된 뒤**에만 채워지므로, 렌더 단계가 아닌 이벤트 핸들러나 `useEffect` 안에서 사용하세요.
+
+```tsx
+const handleSubmit = () => {
+  if (editorRef.current?.isEmpty) {
+    alert('내용을 입력해 주세요.');
+    return;
+  }
+  // 제출 처리
+};
 ```
 
 ### 1-2. Toolbar
@@ -775,6 +840,22 @@ const emptyContent = createEmptyContent();
 //   type: 'doc',
 //   content: [],
 // }
+```
+
+### checkEditorEmpty - 에디터 필드 빈 값 확인
+
+저장된 에디터 필드(`{ content?: JSONContent; html?: string }`)가 비어 있는지 확인합니다. 폼 검증, 제출 전 검사에 사용합니다. 이미지·코드 블록 등 텍스트가 없어도 내용이 있을 수 있으므로 JSON 구조를 기준으로 판단합니다.
+
+```tsx
+import { checkEditorEmpty } from '@0ffen/white-editor';
+
+// 저장된 필드 검사
+if (checkEditorEmpty(formData.body)) {
+  setError('내용을 입력해 주세요.');
+}
+
+// content만 넘겨도 됨
+const isEmpty = checkEditorEmpty({ content: editorRef.current?.getJSON() });
 ```
 
 ### markdownToHtml - Markdown 변환
