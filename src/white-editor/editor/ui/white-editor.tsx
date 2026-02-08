@@ -110,7 +110,12 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
   return (
     <TooltipProvider>
       <div
-        className={cn('white-editor group/editor', editorClassName, disabled && 'we:opacity-60 we:pointer-events-none')}
+        className={cn(
+          'white-editor group/editor',
+          disabled && 'we:bg-elevation-level1 we:pointer-events-none',
+          editorClassName
+        )}
+        data-disabled={disabled || undefined}
         onClick={handleEditorClick}
       >
         <EditorContext.Provider value={{ editor }}>

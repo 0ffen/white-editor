@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Loader2, Minus, Plus, Download, X } from 'lucide-react';
-import { Button, Dialog, DialogContent, DialogTitle, Separator, cn, getTranslate } from '@/shared';
+import { Button, Dialog, DialogContent, DialogTitle, Separator, TooltipProvider, cn, getTranslate } from '@/shared';
 import {
   ImageCaption,
   ImageEditDialog,
@@ -415,72 +415,74 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
             hideCloseButton
             className='we:bg-transparent we:shadow-none we:p-0 we:max-w-none we:w-full we:h-full we:min-h-[100dvh] we:top-0 we:left-0 we:translate-x-0 we:translate-y-0 we:rounded-none we:flex we:flex-col we:overflow-hidden'
           >
-            <div className='we:flex we:flex-1 we:min-h-0 we:flex-col we:items-center we:justify-center'>
-              <div
-                className='we:relative we:flex we:flex-1 we:w-full we:items-center we:justify-center we:overflow-hidden'
-                onMouseDown={handleMouseDown}
-                style={{ cursor: zoomLevel > 100 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
-              >
-                <img
-                  ref={dialogImageRef}
-                  src={src}
-                  alt={alt}
-                  title={title}
-                  className='we:max-h-[calc(100dvh-80px)] we:max-w-full we:object-contain we:transition-transform we:duration-200 we:select-none'
-                  style={{
-                    transform: `scale(${zoomLevel / 100}) translate(${dragOffset.x}px, ${dragOffset.y}px)`,
-                    transformOrigin: 'center center',
-                  }}
-                  onDoubleClick={handleImageDoubleClick}
-                />
-              </div>
+            <TooltipProvider>
+              <div className='we:flex we:flex-1 we:min-h-0 we:flex-col we:items-center we:justify-center'>
+                <div
+                  className='we:relative we:flex we:flex-1 we:w-full we:items-center we:justify-center we:overflow-hidden'
+                  onMouseDown={handleMouseDown}
+                  style={{ cursor: zoomLevel > 100 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
+                >
+                  <img
+                    ref={dialogImageRef}
+                    src={src}
+                    alt={alt}
+                    title={title}
+                    className='we:max-h-[calc(100dvh-80px)] we:max-w-full we:object-contain we:transition-transform we:duration-200 we:select-none'
+                    style={{
+                      transform: `scale(${zoomLevel / 100}) translate(${dragOffset.x}px, ${dragOffset.y}px)`,
+                      transformOrigin: 'center center',
+                    }}
+                    onDoubleClick={handleImageDoubleClick}
+                  />
+                </div>
 
-              {/* 하단 툴바: -, 100%, +, 다운로드, 닫기*/}
-              <div className='we:flex we:w-fit we:flex-shrink-0 we:mb-[40px] we:items-center we:justify-center we:gap-1 we:rounded-sm we:py-1 we:px-1 we:bg-elevation-opacity-2 we:text-text-inverse'>
-                <Button
-                  type='button'
-                  variant='ghost'
-                  size='icon'
-                  className='we:text-text-inverse'
-                  onClick={handleZoomOut}
-                  disabled={zoomLevel <= 50}
-                >
-                  <Minus className='we:h-5 we:w-5' />
-                </Button>
-                <span className='we:min-w-[3rem] we:text-center we:text-sm we:text-text-inverse'>{zoomLevel}%</span>
-                <Button
-                  type='button'
-                  variant='ghost'
-                  size='icon'
-                  className='we:text-text-inverse'
-                  onClick={handleZoomIn}
-                  disabled={zoomLevel >= 200}
-                >
-                  <Plus className='we:h-5 we:w-5' />
-                </Button>
-                <Separator orientation='vertical' className='we:h-4! we:mx-2 we:bg-border-color' />
-                <Button
-                  type='button'
-                  variant='ghost'
-                  size='icon'
-                  className='we:text-text-inverse'
-                  onClick={handleDownload}
-                  tooltip={getTranslate('다운로드')}
-                >
-                  <Download className='we:h-5 we:w-5' />
-                </Button>
-                <Button
-                  type='button'
-                  variant='ghost'
-                  size='icon'
-                  className='we:ml-1 we:text-text-inverse'
-                  onClick={() => setIsViewerImageDialogOpen(false)}
-                  tooltip={getTranslate('닫기')}
-                >
-                  <X className='we:h-5 we:w-5' />
-                </Button>
+                {/* 하단 툴바: -, 100%, +, 다운로드, 닫기*/}
+                <div className='we:flex we:w-fit we:flex-shrink-0 we:mb-[40px] we:items-center we:justify-center we:gap-1 we:rounded-sm we:py-1 we:px-1 we:bg-elevation-opacity-2 we:text-text-inverse'>
+                  <Button
+                    type='button'
+                    variant='ghost'
+                    size='icon'
+                    className='we:text-text-inverse'
+                    onClick={handleZoomOut}
+                    disabled={zoomLevel <= 50}
+                  >
+                    <Minus className='we:h-5 we:w-5' />
+                  </Button>
+                  <span className='we:min-w-[3rem] we:text-center we:text-sm we:text-text-inverse'>{zoomLevel}%</span>
+                  <Button
+                    type='button'
+                    variant='ghost'
+                    size='icon'
+                    className='we:text-text-inverse'
+                    onClick={handleZoomIn}
+                    disabled={zoomLevel >= 200}
+                  >
+                    <Plus className='we:h-5 we:w-5' />
+                  </Button>
+                  <Separator orientation='vertical' className='we:h-4! we:mx-2 we:bg-border-color' />
+                  <Button
+                    type='button'
+                    variant='ghost'
+                    size='icon'
+                    className='we:text-text-inverse'
+                    onClick={handleDownload}
+                    tooltip={getTranslate('다운로드')}
+                  >
+                    <Download className='we:h-5 we:w-5' />
+                  </Button>
+                  <Button
+                    type='button'
+                    variant='ghost'
+                    size='icon'
+                    className='we:ml-1 we:text-text-inverse'
+                    onClick={() => setIsViewerImageDialogOpen(false)}
+                    tooltip={getTranslate('닫기')}
+                  >
+                    <X className='we:h-5 we:w-5' />
+                  </Button>
+                </div>
               </div>
-            </div>
+            </TooltipProvider>
           </DialogContent>
         </Dialog>
       )}

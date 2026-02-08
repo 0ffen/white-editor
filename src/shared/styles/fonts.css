@@ -4,7 +4,7 @@
   font-style: normal;
   font-weight: normal;
   font-display: swap;
-  src: url('../assets/fonts/D2Coding.ttf') format('truetype');
+  src: url('../assets/fonts/D2Coding.woff') format('woff');
 }
 
 /* D2Coding - Bold */
@@ -13,7 +13,7 @@
   font-style: normal;
   font-weight: bold;
   font-display: swap;
-  src: url('../assets/fonts/D2CodingBold.ttf') format('truetype');
+  src: url('../assets/fonts/D2CodingBold.woff') format('woff');
 }
 
 /*
@@ -27,5 +27,5 @@
   font-weight: 45 920;
   font-style: normal;
   font-display: swap;
-  src: url('../assets/fonts/PretendardVariable.ttf') format('truetype');
+  src: url('../assets/fonts/PretendardVariable.woff2') format('woff2');
 }
