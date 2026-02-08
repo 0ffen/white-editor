@@ -11,7 +11,7 @@ const buttonVariants = cva(
     'we:data-[active=true]:bg-brand-weak we:data-[active=true]:text-brand-default we:data-[active=true]:[&_svg]:text-brand-default',
     'we:w-full we:justify-center we:gap-2 we:whitespace-nowrap we:rounded we:text-sm we:font-normal',
     'we:transition-colors we:outline-none we:focus:outline-none we:focus-visible:outline-none we:active:outline-none',
-    'we:disabled:pointer-events-none we:disabled:text-text-light',
+    'we:disabled:cursor-not-allowed we:disabled:opacity-90',
     'we:[&_svg]:pointer-events-none we:[&_svg]:size-5 we:[&_svg]:shrink-0'
   ),
   {

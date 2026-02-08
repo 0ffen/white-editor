@@ -9,7 +9,7 @@ const EDITOR_COLORS = [
     value: '#161616',
     hex: '#161616',
     editorHex: '#161616',
-    border: '#161616',
+    border: '#9f9f9f',
   },
   {
     label: 'Gray',

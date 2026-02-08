@@ -46,7 +46,6 @@ export function ImageEditDialog(props: ImageEditDialogProps) {
           width: '90vw',
         }}
         onInteractOutside={(e) => e.preventDefault()}
-        onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <DialogHeader className='we:px-4 we:pt-5 we:border-b we:border-border-default we:pb-4'>
           <DialogTitle className='we:text-[16px] we:text-text-normal'>{getTranslate('이미지 편집')}</DialogTitle>

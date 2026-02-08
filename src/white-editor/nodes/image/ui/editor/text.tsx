@@ -1,8 +1,11 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { Button, cn, getTranslate, Input } from '@/shared';
+import { Button, cn, getTranslate, Textarea } from '@/shared';
 import { EDITOR_COLORS, normalizeCanvasColor } from '@/white-editor';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
+
+const TEXTAREA_MIN_HEIGHT = 40;
+const TEXTAREA_MAX_HEIGHT = 300;
 
 interface TextEditorProps {
   editorRef: React.RefObject<TuiImageEditorType | null>;
@@ -10,11 +13,19 @@ interface TextEditorProps {
 
 export function TextEditor(props: TextEditorProps) {
   const { editorRef } = props;
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [textColor, setTextColor] = useState<string>(EDITOR_COLORS[0].editorHex);
   const [activeTextId, setActiveTextId] = useState<number | null>(null);
   const [textInput, setTextInput] = useState<string>('');
   const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  const adjustTextareaHeight = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(Math.max(el.scrollHeight, TEXTAREA_MIN_HEIGHT), TEXTAREA_MAX_HEIGHT)}px`;
+  }, []);
 
   const addNewText = useCallback(() => {
     if (editorRef.current && textInput.trim() !== '') {
@@ -76,7 +87,11 @@ export function TextEditor(props: TextEditorProps) {
     }
   }, [editorRef, handleObjectActivated, handleSelectionCleared]);
 
-  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [textInput, adjustTextareaHeight]);
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
     setTextInput(newText);
     if (isEditing && editorRef.current && activeTextId) {
@@ -98,19 +113,32 @@ export function TextEditor(props: TextEditorProps) {
 
   return (
     <div className='we:flex we:flex-col we:space-y-2 we:py-4 we:gap-2'>
-      <div className='we:flex we:w-full we:gap-2 we:h-full we:items-center'>
-        <h3 className='we:text-text-normal we:text-sm we:m-0! we:min-w-[80px]'>{getTranslate('텍스트')}</h3>
+      <div className='we:flex we:w-full we:gap-2 we:items-start'>
+        <h3 className='we:text-text-normal we:text-sm we:m-0! we:min-w-[80px] we:pt-2'>{getTranslate('텍스트')}</h3>
         <div className='we:flex we:w-full we:space-x-2'>
-          <Input
-            type='text'
+          <Textarea
+            ref={textareaRef}
+            id='text-input'
             value={textInput}
             onChange={handleTextChange}
-            onKeyDown={(e) => e.key === 'Enter' && handleAddButton()}
-            className='we:w-full we:h-[36px]'
+            onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleAddButton();
+              }
+            }}
+            className='we:w-full we:min-h-[40px] we:max-h-[200px] we:resize-none we:overflow-y-auto'
             placeholder={getTranslate('내용을 입력하세요')}
+            rows={1}
           />
           {!isEditing && (
-            <Button type='button' variant='secondary' onClick={handleAddButton} className='we:w-[36px]'>
+            <Button
+              type='button'
+              variant='secondary'
+              onClick={handleAddButton}
+              className='we:w-[36px]'
+              disabled={textInput.trim() === ''}
+            >
               <Plus />
             </Button>
           )}

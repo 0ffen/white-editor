@@ -47,10 +47,10 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
         selectionStyle: {
           cornerSize: 10,
           rotatingPointOffset: 10,
-          borderColor: 'var(--we-white)',
-          lineWidth: 1,
-          cornerColor: 'var(--we-white)',
-          cornerStrokeColor: 'var(--we-black)',
+          borderColor: '#ffffff',
+          lineWidth: 2,
+          cornerColor: '#ffffff',
+          cornerStrokeColor: '#161616',
         },
       });
 
@@ -108,8 +108,12 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
 
   const handleModeChange = useCallback(
     (mode: string | null) => {
-      setActiveMode?.(mode);
       editorRef.current?.stopDrawingMode();
+      setActiveMode?.(null);
+
+      setTimeout(() => {
+        setActiveMode?.(mode);
+      }, 100);
 
       if (mode === 'draw') {
         startDrawMode();
