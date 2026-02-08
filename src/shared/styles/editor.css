@@ -42,8 +42,7 @@
       outline: 0;
     }
 
-    &[data-disabled] .ProseMirror
-    {
+    &[data-disabled] .ProseMirror {
       background-color: var(--we-elevation-level1);
       color: var(--we-text-light);
       cursor: not-allowed;
