@@ -90,12 +90,9 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
   }, [headings, tocConfig]);
 
   const updateUrlWithHash = useCallback((id: string) => {
-    const path = window.location.pathname.replace(/\/$/, '') || '';
-    const hash = '#' + encodeURIComponent(id);
-    const url = path
-      ? window.location.origin + path + window.location.search + hash
-      : window.location.origin + window.location.search + hash;
-    window.history.replaceState(null, '', url);
+    const pathname = window.location.pathname.replace(/\/$/, '') || '/';
+    const base = pathname + window.location.search;
+    window.history.replaceState(null, '', base + '#' + encodeURIComponent(id));
   }, []);
 
   const scrollToIndex = useCallback((index: number) => {
@@ -124,6 +121,8 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
     [updateUrlWithHash]
   );
 
+  const contentRef = useRef<JSONContent>(normalizedContent);
+
   const editor = useEditor({
     immediatelyRender: false,
     editable: false,
@@ -136,6 +135,23 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
       },
     },
   });
+
+  useEffect(() => {
+    if (editor && normalizedContent) {
+      // content가 실제로 변경되었는지 확인
+      const currentContent = editor.getJSON();
+      const contentString = JSON.stringify(normalizedContent);
+      const currentContentString = JSON.stringify(currentContent);
+
+      if (contentString !== currentContentString) {
+        contentRef.current = normalizedContent;
+        // flushSync 경고를 피하기 위해 비동기로 처리
+        queueMicrotask(() => {
+          editor.commands.setContent(normalizedContent, { emitUpdate: false });
+        });
+      }
+    }
+  }, [editor, normalizedContent]);
 
   useEffect(() => {
     if (!onHeadingsReady || headings.length === 0) return;
@@ -180,12 +196,10 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
         button.onclick = (e) => {
           e.preventDefault();
           e.stopPropagation();
-          updateUrlWithHash(heading.id);
-          heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          scrollToHeading(headings[i]);
         };
         const onHeadingClick = () => {
-          updateUrlWithHash(heading.id);
-          heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          scrollToHeading(headings[i]);
         };
         heading.addEventListener('click', onHeadingClick);
 
@@ -215,7 +229,7 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
       });
       headingAnchorsRef.current = [];
     };
-  }, [editor, normalizedContent, showHeadingAnchors, headings, updateUrlWithHash]);
+  }, [editor, normalizedContent, showHeadingAnchors, headings, updateUrlWithHash, scrollToHeading]);
 
   const contentArea = (
     <>
