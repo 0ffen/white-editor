@@ -1,3 +1,5 @@
+'use client';
+
 import { computePosition, flip, shift } from '@floating-ui/dom';
 import { Editor, posToDOMRect } from '@tiptap/react';
 

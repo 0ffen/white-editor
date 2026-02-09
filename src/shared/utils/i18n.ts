@@ -1,3 +1,5 @@
+'use client';
+
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { EDITOR_I18N } from '@/shared/constants/editor-i18n';

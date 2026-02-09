@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * design-tokens.css 변수명과 1:1 대응하는 테마 컬러 (camelCase).
  * 지정한 항목만 --we-* CSS 변수로 적용되고, 나머지는 design-tokens.css 기본값 사용.

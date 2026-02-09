@@ -1,3 +1,5 @@
+'use client';
+
 import { Fragment, type Node, Slice } from '@tiptap/pm/model';
 import type { EditorView } from '@tiptap/pm/view';
 

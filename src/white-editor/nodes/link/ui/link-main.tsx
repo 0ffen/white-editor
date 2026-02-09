@@ -68,6 +68,7 @@ export const LinkMain: React.FC<LinkMainProps> = ({
       {/* 입력 필드 */}
       <Input
         type='url'
+        id='link-input'
         placeholder={placeholder || getTranslate('링크를 입력하세요')}
         value={url}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUrl(e.target.value)}

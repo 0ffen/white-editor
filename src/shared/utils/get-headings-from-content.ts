@@ -1,3 +1,5 @@
+'use client';
+
 import type { JSONContent } from '@tiptap/react';
 
 export interface HeadingItem {

@@ -12,7 +12,13 @@ import {
   TooltipProvider,
 } from './shared';
 import { cn, i18n } from './shared/utils';
-import { DEFAULT_TOOLBAR_ITEMS, WhiteEditor, WhiteViewer, type WhiteEditorRef } from './white-editor';
+import {
+  WHITE_EDITOR_TOOLBAR_ITEMS,
+  WhiteEditor,
+  WhiteEditorThemeProvider,
+  WhiteViewer,
+  type WhiteEditorRef,
+} from './white-editor';
 
 type Locale = 'ko' | 'en' | 'es';
 
@@ -20,6 +26,7 @@ export default function App() {
   const [content, setContent] = useState<JSONContent>(createEmptyContent());
   const [viewerKey, setViewerKey] = useState(0);
   const [locale, setLocale] = useState<Locale>('ko');
+  const [editorEmpty, setEditorEmpty] = useState(true);
   const editorRef = useRef<WhiteEditorRef>(null);
 
   const pageLinksData = [
@@ -109,67 +116,84 @@ export default function App() {
         <div className='we:grid we:grid-cols-2 we:gap-8'>
           <section className='we:space-y-3'>
             <h2 className='we:mb-8 we:text-3xl we:font-bold we:text-center'>Editor</h2>
-
-            <WhiteEditor
-              key={locale}
-              locale={locale}
-              ref={editorRef}
-              disabled={false}
-              editorClassName='we:h-[1000px] we:rounded-md we:border we:border-border-default'
-              contentClassName='we:h-full we:px-2'
-              toolbarItems={DEFAULT_TOOLBAR_ITEMS}
-              extension={{
-                mention: {
-                  data: [
-                    { uuid: 1, name: 'White Lee', nickname: 'white' },
-                    { uuid: 2, name: 'Black Kim', nickname: 'black' },
-                  ],
-                  id: 'uuid',
-                  label: 'nickname',
-                },
-                pageMention: {
-                  data: pageLinksData,
-                  id: 'id',
-                  title: 'title',
-                  href: 'href',
-                  path: 'path',
-                },
-                character: {
-                  show: true,
-                },
-                imageUpload: {
-                  upload: handleImageUpload,
-                  onSuccess: (url) => {
-                    // eslint-disable-next-line no-console
-                    console.log('✅ 이미지 업로드 성공:', url);
-                  },
-                  onError: (error) => {
-                    // eslint-disable-next-line no-console
-                    console.error('❌ 이미지 업로드 실패:', error.message);
-                  },
-                },
+            <WhiteEditorThemeProvider
+              theme={{
+                mode: 'light',
+                colors: {},
+                zIndex: {},
               }}
-              footer={
-                <div className='we:flex we:flex-col we:gap-2'>
-                  <div className='we:flex we:justify-end we:gap-2'>
-                    <Button
-                      type='button'
-                      variant='secondary'
-                      className='we:w-fit we:bg-brand-weak we:text-brand-default'
-                      onClick={handleInsertText}
-                    >
-                      텍스트 삽입
-                    </Button>
-                    <Button type='button' variant='secondary' className='we:w-fit' onClick={handleInsertFailedImage}>
-                      실패 이미지 삽입
-                    </Button>
-                    <Button type='button' variant='secondary' className='we:w-fit' onClick={handleClear}>
-                      초기화
-                    </Button>
+            >
+              <WhiteEditor
+                key={locale}
+                locale={locale}
+                ref={editorRef}
+                disabled={false}
+                onEmptyChange={setEditorEmpty}
+                editorClassName='we:h-[1000px] we:rounded-md we:border we:border-border-default'
+                contentClassName='we:h-full we:px-2'
+                toolbarItems={WHITE_EDITOR_TOOLBAR_ITEMS}
+                extension={{
+                  mention: {
+                    data: [
+                      { uuid: 1, name: 'White Lee', nickname: 'white' },
+                      { uuid: 2, name: 'Black Kim', nickname: 'black' },
+                    ],
+                    id: 'uuid',
+                    label: 'nickname',
+                  },
+                  pageMention: {
+                    data: pageLinksData,
+                    id: 'id',
+                    title: 'title',
+                    href: 'href',
+                    path: 'path',
+                  },
+                  character: {
+                    show: true,
+                  },
+                  imageUpload: {
+                    upload: handleImageUpload,
+                    onSuccess: (url) => {
+                      // eslint-disable-next-line no-console
+                      console.log('✅ 이미지 업로드 성공:', url);
+                    },
+                    onError: (error) => {
+                      // eslint-disable-next-line no-console
+                      console.error('❌ 이미지 업로드 실패:', error.message);
+                    },
+                  },
+                }}
+                footer={
+                  <div className='we:flex we:flex-col we:gap-2'>
+                    <div className='we:flex we:justify-end we:gap-2'>
+                      <Button
+                        type='button'
+                        variant='default'
+                        className='we:w-fit'
+                        disabled={editorEmpty}
+                        onClick={() => alert('제출 (예시)')}
+                      >
+                        제출
+                      </Button>
+                      <Button
+                        type='button'
+                        variant='secondary'
+                        className='we:w-fit we:bg-brand-weak we:text-brand-default'
+                        onClick={handleInsertText}
+                      >
+                        텍스트 삽입
+                      </Button>
+                      <Button type='button' variant='secondary' className='we:w-fit' onClick={handleInsertFailedImage}>
+                        실패 이미지 삽입
+                      </Button>
+                      <Button type='button' variant='secondary' className='we:w-fit' onClick={handleClear}>
+                        초기화
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              }
-            />
+                }
+              />
+            </WhiteEditorThemeProvider>
           </section>
 
           <section className='we:space-y-3 we:h-fit'>
@@ -185,12 +209,7 @@ export default function App() {
               </Button>
             </div>
             <div className='we:h-[1000px] we:p-4 we:bg-elevation-background we:overflow-y-auto we:border we:border-border-default we:rounded-md'>
-              <WhiteViewer
-                key={viewerKey}
-                className='we:h-full'
-                content={content}
-                tableOfContents={{ position: 'top', maxLevel: 4 }}
-              />
+              <WhiteViewer key={viewerKey} className='we:h-full' content={content} />
             </div>
           </section>
         </div>

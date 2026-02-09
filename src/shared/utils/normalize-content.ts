@@ -1,3 +1,5 @@
+'use client';
+
 import type { JSONContent } from '@tiptap/react';
 
 const EMPTY_DOC: JSONContent = { type: 'doc', content: [] };

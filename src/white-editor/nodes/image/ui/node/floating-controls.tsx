@@ -105,17 +105,19 @@ export const ImageFloatingControls: React.FC<ImageFloatingControlsProps> = (prop
           <Edit3 />
         </Button>
       </Toolbar>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div
-            className='we:resize-handle we:bg-primary we:absolute we:-right-2 we:-bottom-2 we:h-4 we:w-4 we:cursor-se-resize we:rounded-full'
-            onMouseDown={onResizeStart}
-          />
-        </TooltipTrigger>
-        <TooltipContent side='bottom'>
-          <div className='we:flex we:flex-col we:items-center we:text-center'>{getTranslate('이미지 크기 조절')}</div>
-        </TooltipContent>
-      </Tooltip>
+      {!isCaptionEditing && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div
+              className='we:resize-handle we:bg-primary we:absolute we:-right-2 we:-bottom-2 we:h-4 we:w-4 we:cursor-se-resize we:rounded-full'
+              onMouseDown={onResizeStart}
+            />
+          </TooltipTrigger>
+          <TooltipContent side='bottom'>
+            <div className='we:flex we:flex-col we:items-center we:text-center'>{getTranslate('이미지 크기 조절')}</div>
+          </TooltipContent>
+        </Tooltip>
+      )}
     </>
   );
 };

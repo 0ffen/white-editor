@@ -1,3 +1,4 @@
+'use client';
 /**
  * Base64 Data URL을 Blob 객체로 변환합니다.
  * 서버사이드에서는 에러를 throw합니다.

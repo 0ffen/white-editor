@@ -1,3 +1,5 @@
+'use client';
+
 import type { RefObject } from 'react';
 import React from 'react';
 import { all, createLowlight } from 'lowlight';

@@ -43,12 +43,114 @@ pnpm install @0ffen/white-editor
 ```
 
 **진입점 (Entry points)**  
-- `@0ffen/white-editor` — 에디터·뷰어·테마·타입·확장 (메인)
+- `@0ffen/white-editor` — 에디터·뷰어·테마·타입·확장·툴바 프리셋(`WHITE_EDITOR_TOOLBAR_ITEMS`, `DEFAULT_TOOLBAR_ITEMS`, `MINIMAL_TOOLBAR_ITEMS`) (메인)
 - `@0ffen/white-editor/util` — 유틸만 (`getHtmlContent`, `createEmptyContent`, `checkEditorEmpty`, `normalizeContentSchema` 등)
 - `@0ffen/white-editor/editor` — 에디터 전용
 - `@0ffen/white-editor/viewer` — 뷰어 전용
 
 Next.js(App Router), React 19에서 정적 import로 사용할 수 있도록 `"use client"`가 포함되어 있습니다.
+
+### 스타일 / 폰트
+
+```ts
+import { WhiteEditorThemeProvider } from '@0ffen/white-editor';
+```
+
+- **스타일이 호스트 루트에 영향을 주지 않게 하려면** `WhiteEditorThemeProvider`로 에디터/뷰어를 감싸세요. 테마(색상·다크 모드)가 래퍼 안으로만 적용됩니다.
+
+- **폰트 CDN 사용 불가(로컬·오프라인)인 경우**  
+  호스트 앱의 **`public/assets/fonts`** 에 폰트를 두려면 아래 복사 스크립트를 사용하세요.
+  - **수동 실행**: `node node_modules/@0ffen/white-editor/scripts/copy-fonts-to-public.cjs`
+  - **package.json 예시** (설치 후 매번 복사하려면 `postinstall` 사용):
+
+  ```json
+  "scripts": {
+    "copy:white-editor-fonts": "node node_modules/@0ffen/white-editor/scripts/copy-fonts-to-public.cjs",
+  }
+  ```
+
+### WhiteEditorThemeProvider (theme, zIndex, color)
+
+에디터/뷰어를 감싸는 `WhiteEditorThemeProvider`에서 theme(라이트/다크·색상), zIndex, color를 설정할 수 있습니다.
+
+#### theme prop 타입
+
+```ts
+type ThemeProp = 'light' | 'dark' | {
+  mode?: 'light' | 'dark';
+  colors?: WhiteEditorThemeColors;  // 일부만 넘겨도 됨
+  zIndex?: WhiteEditorThemeZIndex; // 일부만 넘겨도 됨
+};
+```
+
+#### color (WhiteEditorThemeColors)
+
+지정한 키만 CSS 변수로 적용됩니다. 값 타입: `string` (hex, rgb, hsl, `var(--호스트앱변수)` 등).
+
+| 키 | 설명 |
+| --- | --- |
+| `textNormal` | 본문 텍스트 |
+| `textLight` | 보조 텍스트, 이미지 도형 비선택 색 |
+| `textSub` | 드롭다운/메뉴 보조 텍스트 |
+| `textPlaceholder` | 에디터 플레이스홀더 |
+| `elevationBackground` | 에디터/뷰어 배경 |
+| `elevationLevel1` | 카드/블록 배경 |
+| `elevationLevel2` | 코드블록 배경 등 |
+| `elevationDropdown` | 커맨드 리스트·드롭다운 배경 |
+| `borderDefault` | 구분선, 핸들, 테두리 |
+| `interactionHover` | 호버 배경 |
+| `brandWeak` | 선택/강조 배경 |
+| `brandLight` | 선택 테두리, 하이라이트, 버튼 |
+| `brandDefault` | 링크/액센트, 도형 선택, 인라인 코드 등 |
+
+```tsx
+import { WhiteEditorThemeProvider, WhiteEditor } from '@0ffen/white-editor';
+
+<WhiteEditorThemeProvider
+  theme={{
+    mode: 'dark',
+    colors: {
+      textNormal: 'var(--color-text-normal)',
+      textPlaceholder: 'var(--color-text-placeholder)',
+      elevationBackground: 'var(--color-elevation-background)',
+      elevationDropdown: 'var(--color-elevation-dropdown)',
+      brandDefault: 'var(--color-brand-default)',
+      brandWeak: 'var(--color-brand-weak)',
+    },
+  }}
+>
+  <WhiteEditor />
+</WhiteEditorThemeProvider>
+```
+
+#### zIndex (WhiteEditorThemeZIndex)
+
+레이어별 z-index를 숫자로 지정합니다. 지정한 항목만 적용됩니다.
+
+| 키 | 타입 | 설명 |
+| --- | --- | --- |
+| `toolbar` | `number` | 툴바 |
+| `inline` | `number` | 멘션 리스트, 스티키 헤더 등 |
+| `handle` | `number` | 테이블 열 리사이즈 핸들 |
+| `overlay` | `number` | 다이얼로그 배경(오버레이) |
+| `floating` | `number` | 드롭다운, 팝오버, 툴팁, 셀렉트, 컨텍스트 메뉴, 다이얼로그 콘텐츠 (overlay보다 큰 값을 입력해주세요) |
+
+```tsx
+<WhiteEditorThemeProvider
+  theme={{
+    mode: 'light',
+    zIndex: {
+      toolbar: 10,
+      inline: 10,
+      handle: 10,
+      overlay: 10,
+      floating: 20,
+    },
+  }}
+>
+  <WhiteEditor />
+</WhiteEditorThemeProvider>
+```
 
 ## 사용 방법
 
@@ -113,44 +215,7 @@ function MyComponent() {
 }
 ```
 
-#### 커스텀 테마 설정
 
-테마를 객체로 설정하여 색상을 커스터마이징할 수 있습니다. 루트 레이아웃에서 설정하는 것을 권장합니다.
-
-```tsx
-import { useRef } from 'react';
-import { WhiteEditor, type WhiteEditorRef } from '@0ffen/white-editor';
-
-function MyComponent() {
-  const editorRef = useRef<WhiteEditorRef | null>(null);
-
-  return (
-    <WhiteEditorThemeProvider
-      theme={{
-        mode: 'dark',
-        colors: {
-          background: 'var(--color-elevation-background)',
-          foreground: 'var(--color-text-normal)',
-          popover: 'var(--color-elevation-dropdown)',
-          popoverForeground: 'var(--color-text-normal)',
-          card: 'var(--color-elevation-level1)',
-          cardForeground: 'var(--color-text-normal)',
-          primary: 'var(--color-brand-default)',
-          primaryForeground: 'var(--color-white)',
-          secondary: 'var(--color-elevation-level2)',
-          secondaryForeground: 'var(--color-text-sub)',
-          muted: 'var(--color-elevation-level2)',
-          mutedForeground: 'var(--color-text-normal)',
-          accent: 'var(--color-brand-weak)',
-          accentForeground: 'var(--color-text-normal)',
-        },
-      }}
-    >
-      <WhiteEditor ref={editorRef} placeholder='내용을 입력해주세요.' showToolbar={true} />
-    </WhiteEditorThemeProvider>
-  );
-}
-```
 
 #### 툴바 숨기기
 
@@ -160,26 +225,28 @@ function MyComponent() {
 <WhiteEditor showToolbar={false} placeholder='툴바 없이 간단한 입력만 가능합니다.' />
 ```
 
-#### Z-Index 설정
+#### 국제화 (locale)
 
-에디터 내 툴바, 드롭다운, 다이얼로그 등에 사용되는 z-index를 프로젝트에서 조절할 수 있습니다. `:root`(또는 `body`)에 아래 CSS 변수를 오버라이드하세요. 다이얼로그·드롭다운 등은 `document.body`에 렌더되므로, 변수는 `:root`에 설정해야 적용됩니다.
+에디터 내 툴바 라벨, 플레이스홀더, 버튼 문구 등은 `locale` prop으로 언어를 바꿀 수 있습니다. 지원 값: `'ko'`(한국어, 기본값), `'en'`(영어), `'es'`(스페인어). 지정한 값으로 i18n이 전환되어 해당 언어로 표시됩니다.
 
-| 변수 | 기본값 | 용도 |
-|------|--------|------|
-| `--we-z-index-toolbar` | 10 | 툴바 |
-| `--we-z-index-inline` | 10 | 멘션 리스트, 스티키 헤더 등 |
-| `--we-z-index-handle` | 20 | 테이블 열 리사이즈 핸들 |
-| `--we-z-index-overlay` | 50 | 다이얼로그 배경(오버레이) |
-| `--we-z-index-floating` | 50 | 드롭다운, 팝오버, 툴팁, 셀렉트, 컨텍스트 메뉴, 다이얼로그 콘텐츠 |
+```tsx
+import { WhiteEditor } from '@0ffen/white-editor';
 
-```css
-:root {
-  --we-z-index-toolbar: 100;
-  --we-z-index-inline: 100;
-  --we-z-index-handle: 110;
-  --we-z-index-overlay: 9999;
-  --we-z-index-floating: 10000;
-}
+// 한국어 (기본)
+<WhiteEditor locale="ko" placeholder="내용을 입력하세요." />
+
+// 영어
+<WhiteEditor locale="en" placeholder="Enter your content." />
+
+// 스페인어
+<WhiteEditor locale="es" placeholder="Ingrese su contenido." />
+```
+
+동적으로 바꾸려면 상위에서 `locale` 를 prop으로 넘기면 됩니다.
+
+```tsx
+
+<WhiteEditor locale={locale} showToolbar={true} />
 ```
 
 ### 1-1. Editor Types
@@ -210,36 +277,24 @@ interface WhiteEditorProps<T> extends WhiteEditorUIProps, WhiteEditorExtensions<
 
 ```ts
 interface WhiteEditorUIProps {
-  theme?: 'light' | 'dark' | WhiteEditorTheme; // 테마 설정
-  disabled?: boolean; // 에디터 비활성화 여부
   editorClassName?: string; // 에디터 전체 스타일
   contentClassName?: string; // 에디터 내용 영역 스타일
   toolbarItems?: ToolbarItem[][]; // 툴바 버튼 그룹 설정
   toolbarProps?: ToolbarItemProps; // 각 툴바 버튼의 상세 옵션
+  /** @deprecated 다음 마이너 버전에서 제거 필요 */
+  theme?: 'light' | 'dark' | WhiteEditorTheme; // 테마 설정
   footer?: React.ReactNode; // 에디터 하단 커스텀 영역
+  disabled?: boolean; // 에디터 비활성화 여부
   placeholder?: string; // 에디터가 비어있을 때 표시할 텍스트
   showToolbar?: boolean; // 툴바 표시 여부 (기본값: true)
+  /** 국제화 locale (ko | en | es). 지정 시 에디터 내 텍스트가 해당 언어로 동기화됨 */
+  locale?: 'ko' | 'en' | 'es'; // 기본값: 'ko'
 }
 
 interface WhiteEditorTheme {
   mode?: 'light' | 'dark';
-  colors?: {
-    background?: string;
-    foreground?: string;
-    card?: string;
-    cardForeground?: string;
-    popover?: string;
-    popoverForeground?: string;
-    primary?: string;
-    primaryForeground?: string;
-    secondary?: string;
-    secondaryForeground?: string;
-    muted?: string;
-    mutedForeground?: string;
-    accent?: string;
-    accentForeground?: string;
-    codeBlockBackground?: string; // 코드 블록 배경색
-  };
+  colors?: WhiteEditorThemeColors;  // textNormal, elevationBackground, brandDefault 등 (WhiteEditorThemeProvider 절 참고)
+  zIndex?: WhiteEditorThemeZIndex;  // toolbar, overlay, floating 등 number
 }
 ```
 
@@ -334,7 +389,7 @@ function FormWithEditor() {
 서버에 저장된 에디터 필드(`{ content?, html? }`)나 폼 초기값이 비어 있는지 검사할 때 사용합니다.
 
 ```tsx
-import { checkEditorEmpty } from '@0ffen/white-editor';
+import { checkEditorEmpty } from '@0ffen/white-editor/util';
 
 // 저장된 에디터 필드 검사
 if (checkEditorEmpty(formData.body)) {
@@ -361,9 +416,39 @@ const handleSubmit = () => {
 
 ### 1-2. Toolbar
 
+#### 툴바 프리셋 (Preset Toolbar Items)
+
+패키지에서 제공하는 툴바 아이템 배열을 import 해서 그대로 사용할 수 있습니다.
+
+| 이름 | 설명 |
+| --- | --- |
+| `WHITE_EDITOR_TOOLBAR_ITEMS` | 전체 툴바 버튼이 노출됩니다. undo/redo, heading, 리스트, blockquote, bold/italic/strike/code/underline, color/highlight, textAlign, codeblock, 수식, link, table, image 등 모든 기능을 포함합니다. |
+| `DEFAULT_TOOLBAR_ITEMS` | 기본 툴바 구성입니다. heading, color, 텍스트 서식, link, code/codeblock, blockquote, 리스트, table, image, textAlign 등이 포함됩니다. |
+| `MINIMAL_TOOLBAR_ITEMS` | 최소 툴바 구성입니다. heading, color, blockquote, 리스트, table, image, textAlign 만 노출됩니다. |
+
+```tsx
+import {
+  WhiteEditor,
+  WHITE_EDITOR_TOOLBAR_ITEMS,
+  DEFAULT_TOOLBAR_ITEMS,
+  MINIMAL_TOOLBAR_ITEMS,
+} from '@0ffen/white-editor';
+
+// 전체 툴바 (모든 버튼 노출)
+<WhiteEditor toolbarItems={WHITE_EDITOR_TOOLBAR_ITEMS} showToolbar={true} />
+
+// 기본 툴바
+<WhiteEditor toolbarItems={DEFAULT_TOOLBAR_ITEMS} showToolbar={true} />
+
+// 최소 툴바
+<WhiteEditor toolbarItems={MINIMAL_TOOLBAR_ITEMS} showToolbar={true} />
+```
+
+`toolbarItems`를 넘기지 않으면 에디터는 내부적으로 `DEFAULT_TOOLBAR_ITEMS`를 사용합니다.
+
 #### Custom Toolbar Items
 
-이중 배열로 툴바 버튼을 그룹화합니다.
+이중 배열로 툴바 버튼을 그룹화하여 직접 정의할 수 있습니다.
 
 ```tsx
 toolbarItems={[
@@ -758,6 +843,8 @@ function MyComponent() {
 
 ## 5. Utilities
 
+아래 유틸은 진입점 **`@0ffen/white-editor/util`** 에서 import합니다. 예시 코드의 import 경로를 그대로 사용하면 됩니다.
+
 ### getHtmlContent - HTML 변환
 
 JSONContent를 HTML 문자열로 변환합니다.
@@ -847,7 +934,7 @@ const emptyContent = createEmptyContent();
 저장된 에디터 필드(`{ content?: JSONContent; html?: string }`)가 비어 있는지 확인합니다. 폼 검증, 제출 전 검사에 사용합니다. 이미지·코드 블록 등 텍스트가 없어도 내용이 있을 수 있으므로 JSON 구조를 기준으로 판단합니다.
 
 ```tsx
-import { checkEditorEmpty } from '@0ffen/white-editor';
+import { checkEditorEmpty } from '@0ffen/white-editor/util';
 
 // 저장된 필드 검사
 if (checkEditorEmpty(formData.body)) {
@@ -929,20 +1016,13 @@ function CompleteExample() {
         theme={{
           mode: 'dark',
           colors: {
-            background: 'var(--color-elevation-background)',
-            foreground: 'var(--color-text-normal)',
-            popover: 'var(--color-elevation-dropdown)',
-            popoverForeground: 'var(--color-text-normal)',
-            card: 'var(--color-elevation-level1)',
-            cardForeground: 'var(--color-text-normal)',
-            primary: 'var(--color-brand-default)',
-            primaryForeground: 'var(--color-white)',
-            secondary: 'var(--color-elevation-level2)',
-            secondaryForeground: 'var(--color-text-sub)',
-            muted: 'var(--color-elevation-level2)',
-            mutedForeground: 'var(--color-text-normal)',
-            accent: 'var(--color-brand-weak)',
-            accentForeground: 'var(--color-text-normal)',
+            textNormal: 'var(--color-text-normal)',
+            textPlaceholder: 'var(--color-text-placeholder)',
+            elevationBackground: 'var(--color-elevation-background)',
+            elevationLevel1: 'var(--color-elevation-level1)',
+            elevationDropdown: 'var(--color-elevation-dropdown)',
+            brandDefault: 'var(--color-brand-default)',
+            brandWeak: 'var(--color-brand-weak)',
           },
         }}
         // UI 설정

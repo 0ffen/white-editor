@@ -3,6 +3,7 @@ export * from './ui/image-dialog';
 export * from './ui/image-edit-dialog';
 
 export * from './ui/node/image-node-view';
+export * from './ui/node/image-viewer-modal';
 export * from './ui/node/image-error-block';
 export * from './ui/node/floating-controls';
 export * from './ui/node/caption';

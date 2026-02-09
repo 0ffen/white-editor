@@ -6,10 +6,10 @@
 
 pre:has(.hljs),
 .hljs {
+  font-family: 'D2Coding', monospace;
   color: var(--we-text-normal);
   background: var(--we-elevation-level1);
   border: 1px solid var(--we-border-default);
-  font-family: 'D2Coding', monospace;
 }
 
 .dark pre:has(.hljs),

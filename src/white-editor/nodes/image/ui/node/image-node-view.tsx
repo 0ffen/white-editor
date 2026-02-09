@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Loader2, Minus, Plus, Download, X } from 'lucide-react';
-import { Button, Dialog, DialogContent, DialogTitle, Separator, TooltipProvider, cn, getTranslate } from '@/shared';
+import { Loader2 } from 'lucide-react';
+import { cn, getTranslate } from '@/shared';
 import {
   ImageCaption,
   ImageEditDialog,
@@ -9,12 +9,12 @@ import {
   useImageEdit,
   useImageHover,
   useImageResize,
-  downloadImage,
   getFilenameFromSrc,
 } from '@/white-editor';
-
 import type { NodeViewProps } from '@tiptap/react';
 import { NodeViewWrapper } from '@tiptap/react';
+
+import { ImageViewerModal } from './image-viewer-modal';
 
 type AlignType = 'left' | 'center' | 'right';
 
@@ -27,7 +27,6 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const { src, alt, title, width, height, caption, textAlign, uploadingProgress, uploadError, uploadErrorFileName } =
     props.node.attrs;
   const containerRef = useRef<HTMLDivElement>(null);
-  const dialogImageRef = useRef<HTMLImageElement>(null);
 
   const [_align, setAlign] = useState<AlignType>(textAlign || 'center');
 
@@ -38,10 +37,6 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const [captionInput, setCaptionInput] = useState<string>(caption || '');
   const captionInputRef = useRef<HTMLTextAreaElement>(null);
   const [imageLoadError, setImageLoadError] = useState<boolean>(false);
-  const [zoomLevel, setZoomLevel] = useState<number>(100);
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
-  const [dragOffset, setDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   useEffect(() => {
     if (textAlign && textAlign !== _align) setAlign(textAlign as AlignType);
@@ -156,98 +151,6 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
     el.style.height = `${el.scrollHeight}px`;
   }, [isCaptionEditing, captionInput]);
 
-  const handleZoomIn = useCallback(() => {
-    setZoomLevel((prev) => {
-      const newZoom = Math.min(prev + 25, 500);
-      // 확대 시 드래그 오프셋을 조정하여 이미지가 중앙에 유지되도록
-      if (newZoom > 100 && prev <= 100) {
-        setDragOffset({ x: 0, y: 0 });
-      }
-      return newZoom;
-    });
-  }, []);
-
-  const handleZoomOut = useCallback(() => {
-    setZoomLevel((prev) => {
-      const newZoom = Math.max(prev - 25, 25);
-      if (newZoom <= 100) {
-        setDragOffset({ x: 0, y: 0 });
-      }
-      return newZoom;
-    });
-  }, []);
-
-  const handleImageDoubleClick = useCallback(() => {
-    if (zoomLevel === 100) {
-      setZoomLevel(200);
-    } else {
-      setZoomLevel(100);
-      setDragOffset({ x: 0, y: 0 });
-    }
-  }, [zoomLevel]);
-
-  const handleDownload = useCallback(() => {
-    if (src) downloadImage(src);
-  }, [src]);
-
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      if (zoomLevel > 100) {
-        e.preventDefault();
-        setIsDragging(true);
-        setDragStart({ x: e.clientX, y: e.clientY });
-      }
-    },
-    [zoomLevel]
-  );
-
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (isDragging && dragStart) {
-        e.preventDefault();
-        const deltaX = e.clientX - dragStart.x;
-        const deltaY = e.clientY - dragStart.y;
-
-        setDragOffset((prev) => {
-          const newX = prev.x + deltaX;
-          const newY = prev.y + deltaY;
-
-          const maxOffset = 400;
-          const constrainedX = Math.max(-maxOffset, Math.min(maxOffset, newX));
-          const constrainedY = Math.max(-maxOffset, Math.min(maxOffset, newY));
-
-          return {
-            x: constrainedX,
-            y: constrainedY,
-          };
-        });
-
-        setDragStart({ x: e.clientX, y: e.clientY });
-      }
-    },
-    [isDragging, dragStart]
-  );
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-    setDragStart(null);
-  }, []);
-
-  useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-    } else {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDragging, handleMouseMove, handleMouseUp]);
-
   return (
     <NodeViewWrapper
       className={cn('we:my-2 we:w-full')}
@@ -355,14 +258,26 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
         )}
         {props.editor.isEditable && isCaptionEditing ? (
           <textarea
+            id='image-caption-input'
             ref={captionInputRef}
             value={captionInput}
             onChange={(e) => setCaptionInput(e.target.value)}
-            onBlur={handleCaptionCommit}
+            onBlur={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleCaptionCommit();
+            }}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                (e.target as HTMLTextAreaElement).blur();
+              if (e.key === 'Enter') {
+                e.stopPropagation();
+                if (!e.shiftKey) {
+                  e.preventDefault();
+                  (e.target as HTMLTextAreaElement).blur();
+                }
               }
             }}
             placeholder={getTranslate('캡션을 입력하세요')}
@@ -399,92 +314,14 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
         />
       )}
 
-      {!imageLoadError && isViewerImageDialogOpen && (
-        <Dialog
+      {!imageLoadError && (
+        <ImageViewerModal
           open={isViewerImageDialogOpen}
-          onOpenChange={(open) => {
-            setIsViewerImageDialogOpen(open);
-            if (!open) {
-              setZoomLevel(100);
-              setDragOffset({ x: 0, y: 0 });
-            }
-          }}
-        >
-          <DialogTitle className='we:sr-only'>View Image</DialogTitle>
-          <DialogContent
-            hideCloseButton
-            className='we:bg-transparent we:shadow-none we:p-0 we:max-w-none we:w-full we:h-full we:min-h-[100dvh] we:top-0 we:left-0 we:translate-x-0 we:translate-y-0 we:rounded-none we:flex we:flex-col we:overflow-hidden'
-          >
-            <TooltipProvider>
-              <div className='we:flex we:flex-1 we:min-h-0 we:flex-col we:items-center we:justify-center'>
-                <div
-                  className='we:relative we:flex we:flex-1 we:w-full we:items-center we:justify-center we:overflow-hidden'
-                  onMouseDown={handleMouseDown}
-                  style={{ cursor: zoomLevel > 100 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
-                >
-                  <img
-                    ref={dialogImageRef}
-                    src={src}
-                    alt={alt}
-                    title={title}
-                    className='we:max-h-[calc(100dvh-80px)] we:max-w-full we:object-contain we:transition-transform we:duration-200 we:select-none'
-                    style={{
-                      transform: `scale(${zoomLevel / 100}) translate(${dragOffset.x}px, ${dragOffset.y}px)`,
-                      transformOrigin: 'center center',
-                    }}
-                    onDoubleClick={handleImageDoubleClick}
-                  />
-                </div>
-
-                {/* 하단 툴바: -, 100%, +, 다운로드, 닫기*/}
-                <div className='we:flex we:w-fit we:flex-shrink-0 we:mb-[40px] we:items-center we:justify-center we:gap-1 we:rounded-sm we:py-1 we:px-1 we:bg-elevation-opacity-2 we:text-text-inverse'>
-                  <Button
-                    type='button'
-                    variant='ghost'
-                    size='icon'
-                    className='we:text-text-inverse'
-                    onClick={handleZoomOut}
-                    disabled={zoomLevel <= 50}
-                  >
-                    <Minus className='we:h-5 we:w-5' />
-                  </Button>
-                  <span className='we:min-w-[3rem] we:text-center we:text-sm we:text-text-inverse'>{zoomLevel}%</span>
-                  <Button
-                    type='button'
-                    variant='ghost'
-                    size='icon'
-                    className='we:text-text-inverse'
-                    onClick={handleZoomIn}
-                    disabled={zoomLevel >= 200}
-                  >
-                    <Plus className='we:h-5 we:w-5' />
-                  </Button>
-                  <Separator orientation='vertical' className='we:h-4! we:mx-2 we:bg-border-color' />
-                  <Button
-                    type='button'
-                    variant='ghost'
-                    size='icon'
-                    className='we:text-text-inverse'
-                    onClick={handleDownload}
-                    tooltip={getTranslate('다운로드')}
-                  >
-                    <Download className='we:h-5 we:w-5' />
-                  </Button>
-                  <Button
-                    type='button'
-                    variant='ghost'
-                    size='icon'
-                    className='we:ml-1 we:text-text-inverse'
-                    onClick={() => setIsViewerImageDialogOpen(false)}
-                    tooltip={getTranslate('닫기')}
-                  >
-                    <X className='we:h-5 we:w-5' />
-                  </Button>
-                </div>
-              </div>
-            </TooltipProvider>
-          </DialogContent>
-        </Dialog>
+          onOpenChange={setIsViewerImageDialogOpen}
+          src={src}
+          alt={alt}
+          title={title}
+        />
       )}
     </NodeViewWrapper>
   );

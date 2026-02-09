@@ -1,3 +1,5 @@
+'use client';
+
 import { generateText, type JSONContent } from '@tiptap/core';
 import { createViewerExtensions } from './extensions';
 

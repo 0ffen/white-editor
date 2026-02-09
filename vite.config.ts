@@ -2,6 +2,7 @@ import path from 'node:path';
 import { defineConfig } from 'vite';
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import dts from 'vite-plugin-dts';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
@@ -24,6 +25,14 @@ export default defineConfig({
       relativeCSSInjection: true,
     }),
     tailwindcss(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: 'src/shared/assets/fonts/*',
+          dest: 'assets/fonts',
+        },
+      ],
+    }),
   ],
   resolve: {
     alias: {
@@ -35,6 +44,7 @@ export default defineConfig({
     minify: 'terser',
     sourcemap: false,
     cssCodeSplit: true,
+    assetsInlineLimit: 0,
     lib: {
       entry: {
         index: path.resolve(__dirname, './src/index.ts'),
@@ -54,6 +64,18 @@ export default defineConfig({
       external: ['react', 'react-dom', 'react/jsx-runtime'],
       output: {
         entryFileNames: '[name].js',
+        chunkFileNames: 'chunks/[name]-[hash].js',
+        manualChunks(id) {
+          const nodeModules = path.sep + 'node_modules' + path.sep;
+          if (!id.includes(nodeModules)) return undefined;
+          if (id.includes(nodeModules + '@tiptap')) return 'tiptap';
+          if (id.includes(nodeModules + 'lowlight') || id.includes(nodeModules + 'highlight.js')) return 'lowlight';
+          if (id.includes(nodeModules + 'katex')) return 'katex';
+          if (id.includes(nodeModules + 'prosemirror')) return 'prosemirror';
+          if (id.includes(nodeModules + '@radix-ui')) return 'radix-ui';
+          if (id.includes(nodeModules + '@floating-ui')) return 'floating-ui';
+          return undefined;
+        },
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
