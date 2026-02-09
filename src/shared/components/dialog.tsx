@@ -19,7 +19,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'we:data-[state=open]:animate-in we:data-[state=closed]:animate-out we:data-[state=closed]:fade-out-0 we:data-[state=open]:fade-in-0 we:fixed we:inset-0 we:z-50 we:bg-black/80',
+      'we:data-[state=open]:animate-in we:data-[state=closed]:animate-out we:data-[state=closed]:fade-out-0 we:data-[state=open]:fade-in-0 we:fixed we:inset-0 we:z-overlay we:bg-[var(--Neutral-Opacity-Light-40,rgba(22,22,22,0.4))]',
       className
     )}
     {...props}
@@ -27,29 +27,38 @@ const DialogOverlay = React.forwardRef<
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
-const DialogContent = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <DialogPortal>
-    <DialogOverlay />
-    <DialogPrimitive.Content
-      aria-describedby={props['aria-describedby']}
-      ref={ref}
-      className={cn(
-        'we:bg-background we:data-[state=open]:animate-in we:data-[state=closed]:animate-out we:data-[state=closed]:fade-out-0 we:data-[state=open]:fade-in-0 we:data-[state=closed]:zoom-out-95 we:data-[state=open]:zoom-in-95 we:fixed we:top-[50%] we:left-[50%] we:z-50 we:mx-4 we:grid we:w-full we:max-w-lg we:translate-x-[-50%] we:translate-y-[-50%] we:gap-4 we:overflow-y-auto we:rounded-lg we:border we:p-6 we:shadow-lg we:duration-200',
-        className
-      )}
-      {...props}
-    >
-      {children}
-      <DialogPrimitive.Close className='we:cursor-pointer we:ring-offset-background we:focus:we:ring-ring we:data-[state=open]:bg-accent we:data-[state=open]:text-muted-foreground we:absolute we:top-4 we:right-4 we:rounded-sm we:opacity-70 we:transition-opacity we:hover:opacity-100 we:focus:ring-2 we:focus:ring-offset-2 we:focus:outline-none we:disabled:pointer-events-none'>
-        <X className='we:h-4 we:w-4' />
-        <span className='we:sr-only'>Close</span>
-      </DialogPrimitive.Close>
-    </DialogPrimitive.Content>
-  </DialogPortal>
-));
+interface DialogContentProps extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
+  /** true이면 닫기(X) 버튼 숨김 */
+  hideCloseButton?: boolean;
+  /** 오버레이 배경 커스텀 (예: 이미지 뷰어용 Neutral Opacity/Light/40) */
+  overlayClassName?: string;
+}
+
+const DialogContent = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>, DialogContentProps>(
+  ({ className, children, hideCloseButton = false, overlayClassName, ...props }, ref) => (
+    <DialogPortal>
+      <DialogOverlay className={overlayClassName} />
+      <DialogPrimitive.Content
+        aria-describedby={props['aria-describedby']}
+        ref={ref}
+        tabIndex={-1}
+        className={cn(
+          'we:bg-elevation-background we:data-[state=open]:animate-in we:data-[state=closed]:animate-out we:data-[state=closed]:fade-out-0 we:data-[state=open]:fade-in-0 we:data-[state=closed]:zoom-out-95 we:data-[state=open]:zoom-in-95 we:fixed we:top-[50%] we:left-[50%] we:z-floating we:mx-4 we:grid we:w-full we:max-w-lg we:translate-x-[-50%] we:translate-y-[-50%] we:gap-4 we:overflow-y-auto we:rounded-lg we:p-6 we:shadow-lg we:duration-200 we:outline-none we:focus:outline-none we:focus-visible:outline-none we:focus-visible:ring-0',
+          className
+        )}
+        {...props}
+      >
+        {children}
+        {!hideCloseButton && (
+          <DialogPrimitive.Close className='we:cursor-pointer we:ring-offset-elevation-background we:focus:we:none we:data-[state=open]:bg-elevation-level1 we:data-[state=open]:text-text-normal we:absolute we:top-4 we:right-4 we:rounded-sm we:opacity-70 we:transition-opacity we:hover:opacity-100 we:focus:outline-none we:disabled:pointer-events-none'>
+            <X className='we:h-4 we:w-4' />
+            <span className='we:sr-only'>Close</span>
+          </DialogPrimitive.Close>
+        )}
+      </DialogPrimitive.Content>
+    </DialogPortal>
+  )
+);
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
@@ -68,7 +77,7 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn('we:text-lg we:leading-none we:font-semibold we:tracking-tight', className)}
+    className={cn('we:text-[18px] we:text-text-normal we:leading-none we:font-medium we:tracking-tight', className)}
     {...props}
   />
 ));
@@ -78,7 +87,7 @@ const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
-  <DialogPrimitive.Description ref={ref} className={cn('we:text-muted-foreground we:text-sm', className)} {...props} />
+  <DialogPrimitive.Description ref={ref} className={cn('we:text-text-sub we:text-sm', className)} {...props} />
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 

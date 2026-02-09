@@ -1,29 +1,22 @@
 import { useRef, useState } from 'react';
-import { Loader2 } from 'lucide-react';
-import { Button, cn, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/shared';
-import { ImageEditor, type ImageEditorRef } from '@/white-editor';
+import { cn, Dialog, DialogContent, DialogHeader, DialogTitle, getTranslate } from '@/shared';
+import { ImageEditor, ImageEditorFooter, type ImageEditorRef } from '@/white-editor';
 
 interface ImageEditDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   imageUrl: string;
-  currentCaption: string;
-  onSave: (file: File, caption: string) => void;
+  onSave: (file: File) => void;
   cancelText?: string;
   saveText?: string;
 }
 
 export function ImageEditDialog(props: ImageEditDialogProps) {
-  const { isOpen, onOpenChange, imageUrl, currentCaption, onSave, cancelText, saveText } = props;
+  const { isOpen, onOpenChange, imageUrl, onSave, cancelText, saveText } = props;
 
   const imageRef = useRef<ImageEditorRef>(null);
-  const [caption, setCaption] = useState<string>(currentCaption);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [activeMode, setActiveMode] = useState<string | null>(null);
-
-  const handleCaptionChange = (newCaption: string) => {
-    setCaption(newCaption);
-  };
 
   const handleSaveClick = async () => {
     setIsSaving(true);
@@ -32,7 +25,7 @@ export function ImageEditDialog(props: ImageEditDialogProps) {
 
       if (editedDataBlob) {
         const file = new File([editedDataBlob], 'edited-image.png', { type: editedDataBlob.type });
-        onSave(file, caption);
+        onSave(file);
       }
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -45,47 +38,38 @@ export function ImageEditDialog(props: ImageEditDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
+        hideCloseButton
         className={cn(
-          'we:max-h-[95vh] we:max-w-[800px] we:min-w-[600px]',
-          'we:max-w-[800px] we:min-w-[600px] we:text-foreground!'
+          'white-editor we:min-h-[574px] we:max-h-[90vh] we:overflow-y-auto we:max-w-[972px] we:min-w-[600px] we:px-0 we:text-text-normal we:p-0! we:gap-0! we:flex we:flex-col'
         )}
+        style={{
+          width: '90vw',
+        }}
         onInteractOutside={(e) => e.preventDefault()}
       >
-        <DialogHeader>
-          <DialogTitle className='we:text-foreground!'>Edit Image</DialogTitle>
+        <DialogHeader className='we:px-4 we:pt-5 we:border-b we:border-border-default we:pb-4'>
+          <DialogTitle className='we:text-[16px] we:text-text-normal'>{getTranslate('이미지 편집')}</DialogTitle>
         </DialogHeader>
 
         <div
           className={cn(
-            'we:relative we:flex we:w-full we:items-center we:justify-center we:overflow-y-auto',
+            'we:relative we:flex we:min-h-0 we:flex-1 we:w-full we:items-start we:justify-center we:overflow-y-auto we:overflow-x-hidden',
             isSaving ? 'we:pointer-events-none we:opacity-60' : ''
           )}
         >
-          <ImageEditor
-            ref={imageRef}
-            imageUrl={imageUrl}
-            onCaptionChange={handleCaptionChange}
-            defaultCaption={caption}
-            activeMode={activeMode}
-            setActiveMode={setActiveMode}
-          />
+          <ImageEditor ref={imageRef} imageUrl={imageUrl} activeMode={activeMode} setActiveMode={setActiveMode} />
         </div>
 
         {!activeMode && (
-          <DialogFooter>
-            <Button type='button' variant='secondary' onClick={() => onOpenChange(false)} disabled={isSaving}>
-              {cancelText || 'Cancel'}
-            </Button>
-            <Button
-              type='button'
-              variant='default'
-              onClick={handleSaveClick}
-              className='we:min-w-20'
-              disabled={isSaving}
-            >
-              {isSaving ? <Loader2 className='we:h-4 we:w-4 we:animate-spin' /> : saveText || 'Edit'}
-            </Button>
-          </DialogFooter>
+          <ImageEditorFooter
+            onCancel={() => onOpenChange(false)}
+            onApply={handleSaveClick}
+            cancelLabel={cancelText || getTranslate('취소')}
+            applyLabel={saveText || getTranslate('확인')}
+            isApplyLoading={isSaving}
+            isApplyDisabled={isSaving}
+            isCancelDisabled={isSaving}
+          />
         )}
       </DialogContent>
     </Dialog>

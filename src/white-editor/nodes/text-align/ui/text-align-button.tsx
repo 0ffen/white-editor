@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { getTranslate } from '@/shared';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
@@ -58,6 +59,7 @@ export const TextAlignButton = React.forwardRef<HTMLButtonElement, TextAlignButt
     return (
       <Button
         type='button'
+        size='icon'
         disabled={!canAlign}
         data-style='ghost'
         data-active-state={isActive ? 'on' : 'off'}
@@ -66,6 +68,7 @@ export const TextAlignButton = React.forwardRef<HTMLButtonElement, TextAlignButt
         tabIndex={-1}
         aria-label={label}
         aria-pressed={isActive}
+        tooltip={align != null ? getTranslate(`textAlign${align.charAt(0).toUpperCase() + align.slice(1)}`) : undefined}
         isActive={isActive}
         onClick={handleClick}
         className={cn(className)}

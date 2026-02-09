@@ -1,3 +1,4 @@
+import type { RefObject } from 'react';
 import { useState, useCallback, useRef } from 'react';
 
 export interface ImageResizeOptions {
@@ -20,27 +21,32 @@ export interface ImageResizeHandlers {
   setCurrentHeight: (height: string) => void;
 }
 
-export function useImageResize(options: ImageResizeOptions = {}) {
+export function useImageResize(options: ImageResizeOptions = {}): {
+  imageRef: RefObject<HTMLDivElement | null>;
+  resizeState: ImageResizeState;
+  resizeHandlers: ImageResizeHandlers;
+} {
   const { initialWidth = 'auto', initialHeight = 'auto', minWidth = 50, minHeight = 50, onResize } = options;
 
   const [currentWidth, setCurrentWidth] = useState(initialWidth);
   const [currentHeight, setCurrentHeight] = useState(initialHeight);
   const [isResizing, setIsResizing] = useState(false);
 
-  const imageRef = useRef<HTMLImageElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
   const handleResizeStart = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
 
-      if (!imageRef.current) return;
+      const el = imageRef.current;
+      if (!el) return;
 
       setIsResizing(true);
 
       const startX = e.clientX;
-      const startWidth = imageRef.current.offsetWidth;
-      const startHeight = imageRef.current.offsetHeight;
-      const aspectRatio = startWidth / startHeight;
+      const startWidth = el.offsetWidth;
+      const startHeight = el.offsetHeight;
+      const aspectRatio = startHeight > 0 ? startWidth / startHeight : 16 / 9;
 
       const handleMouseMove = (moveEvent: MouseEvent) => {
         const deltaX = moveEvent.clientX - startX;

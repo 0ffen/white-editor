@@ -1,266 +1,329 @@
-.white-editor {
-  font-family: var(--we-font-pretendard);
-  font-display: swap;
-  text-rendering: optimizeLegibility;
-  scroll-behavior: smooth;
-  border: none;
-  min-height: 0px;
-
-  /* CSS 변수가 설정되면 사용, 없으면 기본값 사용 */
-  background-color: var(--we-background);
-  color: var(--we-foreground);
-  display: flex;
-  flex-direction: column;
-  justify-content: stretch;
-  cursor: text;
-
-  .toolbar-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding-block: 0.25rem;
-    height: 40px;
-    cursor: default;
-  }
-
-  .ProseMirror {
-    padding: 16px;
-    flex: 1;
-    overflow-y: auto;
+/* border/rounded는 editorClassName으로 오버라이드 가능하도록 여기서 설정하지 않음 */
+/* @layer base로 감싸서 소비자 Tailwind utilities(editorClassName)가 important 없이 우선 적용되도록 함 */
+@layer base {
+  .white-editor {
+    font-family: var(--we-font-pretendard);
+    font-display: swap;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
     min-height: 0px;
-    cursor: text;
-    white-space: pre-wrap;
-    /* CSS 변수를 직접 사용하여 상속 보장 */
-    background-color: var(--we-background, inherit);
-    color: var(--we-foreground, inherit);
-  }
 
-  .ProseMirror:focus {
-    outline: 0;
-  }
-
-  .prosemirror-dropcursor-block,
-  .prosemirror-dropcursor-inline {
-    background-color: var(--we-border) !important;
-    border-radius: var(--we-radius-md) !important;
-    width: 100%;
-    height: 2px !important;
-    cursor: grabbing;
-  }
-
-  .ProseMirror table {
-    border-collapse: collapse;
-    table-layout: fixed;
-    width: 100%;
-    overflow: hidden;
-  }
-
-  .ProseMirror td,
-  .ProseMirror th {
-    vertical-align: top;
-    box-sizing: border-box;
-    position: relative;
-  }
-
-  .selectedCell {
-    background-color: var(--we-primary-background) !important;
-  }
-
-  .ProseMirror .node-image {
-    display: block;
-    margin-block: 1.5rem;
-  }
-
-  .ProseMirror td:not([data-colwidth]):not(.column-resize-dragging),
-  .ProseMirror th:not([data-colwidth]):not(.column-resize-dragging) {
-    min-width: 200px;
-  }
-
-  .ProseMirror .column-resize-handle {
-    position: absolute;
-    right: -2px;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    z-index: 20;
-    background-color: #adf;
-    pointer-events: none;
-  }
-
-  .ProseMirror.resize-cursor {
-    cursor: ew-resize;
-    cursor: col-resize;
-  }
-
-  .ProseMirror .selection {
-    background-color: var(--we-primary-background);
-  }
-
-  .dark .ProseMirror .selection {
-    background-color: var(--we-primary-background);
-  }
-
-  .block-math-inner {
-    background-color: transparent;
+    /* CSS 변수가 설정되면 사용, 없으면 기본값 사용 */
+    background-color: var(--we-elevation-background);
+    color: var(--we-text-normal);
     display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--we-radius-md);
-    padding: 1rem;
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
-    margin-block: 0.5rem;
+    flex-direction: column;
+    justify-content: stretch;
+    cursor: text;
 
-    &:hover {
-      background-color: var(--we-accent);
-    }
-  }
-
-  .tiptap-mathematics-render[data-type='inline-math'] {
-    display: inline-block;
-    background-color: transparent;
-    border-radius: var(--we-radius-sm);
-    padding: 0.25rem 0.5rem;
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
-
-    &:hover {
-      background-color: var(--we-accent);
-    }
-  }
-
-  .ProseMirror-separator {
-    display: none;
-  }
-
-  .tiptap {
-    :first-child {
-      margin-top: 0;
-    }
-
-    strong {
-      color: inherit !important;
-    }
-
-    [data-type='mention'] {
-      color: var(--we-primary);
-      border-radius: var(--we-radius-sm);
-      padding: 0.25rem 0.5rem;
-      background-color: var(--we-primary-background);
-      box-decoration-break: clone;
-    }
-
-    .dark [data-type='mention'] {
-      background-color: var(--we-primary-background);
-
-      &::after {
-        content: normal;
-      }
-    }
-
-    [data-type='pageMention'] {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 0.25rem;
-      cursor: pointer;
-      transition: color 0.2s ease;
-      font-weight: 500;
-      font-size: 14px;
-      line-height: 1.5;
-      vertical-align: baseline;
-      padding-bottom: 0.1em;
-
-      svg {
-        vertical-align: baseline;
-      }
-
-      &:hover {
-        opacity: 0.8;
-      }
-    }
-
-    a {
-      span {
-        color: var(--we-primary);
-        text-decoration: underline;
-
-        strong {
-          color: var(--we-primary);
-          text-decoration: inherit;
-        }
-      }
-    }
-  }
-
-  /* 통합 Mention List 스타일 */
-  .unified-mention-list {
-    .mention-section-header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background-color: var(--we-popover);
-      padding: 0.375rem 0.5rem;
-      font-size: 0.75rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      color: var(--we-muted-foreground);
-      border-bottom: 1px solid var(--we-border);
-    }
-
-    .mention-item {
+    .toolbar-wrapper {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.375rem 0.5rem;
-      border-radius: var(--we-radius-sm);
+      padding-block: 0.25rem;
+      height: 40px;
+      cursor: default;
+    }
+
+    .ProseMirror {
+      padding: 12px;
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0px;
+      cursor: text;
+      white-space: pre-wrap;
+      position: relative;
+      /* CSS 변수를 직접 사용하여 상속 보장 */
+      background-color: var(--we-elevation-background, inherit);
+      color: var(--we-text-normal, inherit);
+    }
+
+    .ProseMirror:focus {
+      outline: 0;
+    }
+
+    &[data-disabled] .ProseMirror {
+      background-color: var(--we-elevation-level1);
+      color: var(--we-text-light);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .prosemirror-dropcursor-block,
+    .prosemirror-dropcursor-inline {
+      background-color: var(--we-brand-light) !important;
+      border-radius: 4px !important;
+      border: 1px solid var(--we-brand-light) !important;
+      width: 100%;
+      height: 2px !important;
+      cursor: grabbing;
+    }
+
+    .ProseMirror table {
+      border-collapse: collapse;
+      table-layout: fixed;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .ProseMirror td,
+    .ProseMirror th {
+      vertical-align: top;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .selectedCell {
+      background-color: var(--we-brand-weak) !important;
+    }
+
+    .ProseMirror .node-image {
+      display: block;
+      margin-block: 1.5rem;
+    }
+
+    .ProseMirror td:not([data-colwidth]):not(.column-resize-dragging),
+    .ProseMirror th:not([data-colwidth]):not(.column-resize-dragging) {
+      min-width: 200px;
+    }
+
+    .ProseMirror .column-resize-handle {
+      position: absolute;
+      right: -2px;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      z-index: 1;
+      background-color: var(--we-border-default);
+      pointer-events: none;
+    }
+
+    .ProseMirror.resize-cursor {
+      cursor: ew-resize;
+      cursor: col-resize;
+    }
+
+    .ProseMirror .selection {
+      background-color: var(--we-interaction-hover);
+    }
+
+    .dark .ProseMirror .selection {
+      background-color: var(--we-interaction-hover);
+    }
+
+    .ProseMirror ::selection {
+      background-color: var(--we-interaction-hover);
+    }
+
+    .ProseMirror > * {
+      position: relative;
+    }
+
+    .ProseMirror li {
+      position: relative;
+    }
+
+    .ProseMirror hr {
+      height: 4px !important;
+    }
+
+    .ProseMirror [data-type='horizontalRule'] {
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      height: 20px !important;
+    }
+
+    .block-math-inner {
+      background-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      padding: 1rem;
+      transition: all 0.2s ease-in-out;
       cursor: pointer;
-      transition: background-color 0.2s ease;
+      margin-block: 0.5rem;
 
       &:hover {
-        background-color: var(--we-accent);
+        background-color: var(--we-elevation-level1);
+      }
+    }
+
+    .tiptap-mathematics-render[data-type='inline-math'] {
+      display: inline-block;
+      background-color: transparent;
+      border-radius: 4px;
+      padding: 0.25rem 0.5rem;
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--we-elevation-level1);
+      }
+    }
+
+    .ProseMirror-separator {
+      display: none;
+    }
+
+    .tiptap {
+      strong {
+        color: inherit !important;
       }
 
-      &.selected {
-        background-color: var(--we-accent);
+      [data-type='mention'] {
+        color: var(--we-brand-default);
+        border-radius: var(--we-radius-sm);
+        padding: 0.25rem 0.5rem;
+        background-color: var(--we-brand-weak);
+        box-decoration-break: clone;
       }
 
-      .mention-content {
-        display: flex;
-        flex-direction: column;
-        gap: 0.125rem;
-        min-width: 0;
-        flex: 1;
+      .dark [data-type='mention'] {
+        background-color: var(--we-brand-weak);
 
-        .mention-label {
-          font-size: 0.875rem;
-          line-height: 1.25rem;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+        &::after {
+          content: normal;
+        }
+      }
+
+      [data-type='pageMention'] {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.25rem;
+        cursor: pointer;
+        transition: color 0.2s ease;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 1.5;
+        vertical-align: baseline;
+        padding-bottom: 0.1em;
+
+        svg {
+          vertical-align: baseline;
         }
 
-        .mention-path {
-          font-size: 0.75rem;
-          line-height: 1rem;
-          color: var(--we-muted-foreground);
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+
+      a {
+        color: var(--we-brand-default);
+        text-decoration: none;
+        transition: text-decoration 0.2s ease;
+
+        &:hover {
+          text-decoration: underline;
+        }
+
+        span {
+          color: var(--we-brand-default);
+          text-decoration: none;
+
+          strong {
+            color: var(--we-brand-default);
+            text-decoration: inherit;
+          }
+        }
+
+        &:hover span {
+          text-decoration: underline;
+        }
+      }
+
+      /* Highlight mark 스타일 - 텍스트 크기의 125% 높이, line-height와 별개 */
+      mark[data-type='highlight'] {
+        display: inline;
+        box-decoration-break: clone;
+        padding: 0;
+        border-radius: 0;
+        /* 높이는 텍스트 크기의 125%, line-height와 별개로 설정 */
+        padding-top: 0.125em;
+        padding-bottom: 0.125em;
+        /* 미묘한 테두리 - 배경색과 거의 같은 색상으로 설정 */
+        border: 1px solid;
+        border-color: currentColor;
+        opacity: 0.15;
+        /* line-height와 독립적으로 높이 설정 */
+        line-height: 1;
+        vertical-align: baseline;
+      }
+    }
+
+    /* 통합 Mention List 스타일 */
+    .unified-mention-list {
+      .mention-section-header {
+        position: sticky;
+        top: 0;
+        z-index: var(--we-z-index-inline, 10);
+        background-color: var(--we-elevation-dropdown);
+        padding: 0.375rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        color: var(--we-text-sub);
+        border-bottom: 1px solid var(--we-border-default);
+      }
+
+      .mention-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.375rem 0.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: var(--we-interaction-hover);
+        }
+
+        &.selected {
+          background-color: var(--we-interaction-hover);
+        }
+
+        .mention-content {
+          display: flex;
+          flex-direction: column;
+          gap: 0.125rem;
+          min-width: 0;
+          flex: 1;
+
+          .mention-label {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .mention-path {
+            font-size: 0.75rem;
+            line-height: 1rem;
+            color: var(--we-text-sub);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
         }
       }
     }
   }
-}
 
-.white-editor.viewer {
-  border: none !important;
-  background-color: transparent !important;
-}
+  .white-editor.viewer {
+    border: none !important;
+    background-color: transparent !important;
+  }
 
-.tiptap p.is-editor-empty:first-child::before {
-  color: #adb5bd;
-  content: attr(data-placeholder);
-  float: left;
-  height: 0;
-  pointer-events: none;
+  .tiptap p.is-editor-empty:first-child::before {
+    color: var(--we-text-placeholder);
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+    font-size: 14px;
+  }
 }

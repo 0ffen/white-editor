@@ -65,6 +65,7 @@ export function createPageLinkExtension<T = Record<string, unknown>>({ pageLinks
       return [
         {
           find: /(\/(?:pages|page)\/[^\s]+)$/,
+          undoable: true,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           handler: ({ state, range, match }: { state: any; range: any; match: RegExpMatchArray }) => {
             const url = match[1];

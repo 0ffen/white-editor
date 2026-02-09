@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { getTranslate } from '@/shared';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks/use-tiptap-editor';
 import { cn } from '@/shared/utils';
@@ -57,13 +58,14 @@ export const UndoRedoButton = React.forwardRef<HTMLButtonElement, UndoRedoButton
     return (
       <Button
         type='button'
+        size='icon'
         disabled={!canExecute}
         data-style='ghost'
         data-disabled={!canExecute}
         role='button'
         tabIndex={-1}
         aria-label={label}
-        tooltip={label}
+        tooltip={action != null ? getTranslate(action) : undefined}
         onClick={handleClick}
         className={cn(className)}
         {...buttonProps}

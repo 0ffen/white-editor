@@ -1,6 +1,6 @@
 # 유틸리티
 
-White Editor가 제공하는 유틸리티 함수들을 소개합니다.
+White Editor가 제공하는 유틸리티 함수들은 **`@0ffen/white-editor/util`**에서 import합니다.
 
 ## createEmptyContent
 
@@ -9,7 +9,7 @@ White Editor가 제공하는 유틸리티 함수들을 소개합니다.
 ### 사용법
 
 ```tsx
-import { createEmptyContent } from '@0ffen/white-editor';
+import { createEmptyContent } from '@0ffen/white-editor/util';
 
 const emptyContent = createEmptyContent();
 ```
@@ -27,7 +27,8 @@ const emptyContent = createEmptyContent();
 
 ```tsx
 import { useState } from 'react';
-import { WhiteEditor, createEmptyContent } from '@0ffen/white-editor';
+import { WhiteEditor } from '@0ffen/white-editor';
+import { createEmptyContent } from '@0ffen/white-editor/util';
 
 function MyEditor() {
   const [content, setContent] = useState(createEmptyContent());
@@ -43,7 +44,7 @@ JSONContent를 HTML 문자열로 변환하는 유틸리티 함수입니다.
 ### 사용법
 
 ```tsx
-import { getHtmlContent } from '@0ffen/white-editor';
+import { getHtmlContent } from '@0ffen/white-editor/util';
 import type { JSONContent } from '@0ffen/white-editor';
 
 const content: JSONContent = {
@@ -77,7 +78,8 @@ console.log(html);
 #### 서버에 HTML과 JSON 모두 저장
 
 ```tsx
-import { WhiteEditor, getHtmlContent } from '@0ffen/white-editor';
+import { WhiteEditor } from '@0ffen/white-editor';
+import { getHtmlContent } from '@0ffen/white-editor/util';
 import type { JSONContent } from '@0ffen/white-editor';
 
 function MyEditor() {
@@ -130,7 +132,8 @@ const sendEmail = async (content: JSONContent) => {
 
 ```tsx
 import { useEffect } from 'react';
-import { WhiteEditor, setCSSVariables } from '@0ffen/white-editor';
+import { WhiteEditor } from '@0ffen/white-editor';
+import { setCSSVariables } from '@0ffen/white-editor/util';
 
 function MyEditor() {
   useEffect(() => {
@@ -241,7 +244,8 @@ function ThemedEditor() {
 
 ```tsx
 import { useState, useEffect } from 'react';
-import { WhiteEditor, WhiteViewer, createEmptyContent, getHtmlContent, setCSSVariables } from '@0ffen/white-editor';
+import { WhiteEditor, WhiteViewer } from '@0ffen/white-editor';
+import { createEmptyContent, getHtmlContent, setCSSVariables } from '@0ffen/white-editor/util';
 import type { JSONContent, Editor } from '@0ffen/white-editor';
 
 function CompleteEditor() {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { getTranslate } from '@/shared';
 import { ToolbarButton } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
@@ -22,11 +23,11 @@ const TableActionButton = React.forwardRef<
 
   return (
     <ToolbarButton
-      className={cn('we:[&_svg]:text-foreground/80')}
+      className={cn('we:[&_svg]:text-foreground/80 we:disabled:[&_svg]:text-text-light')}
       onClick={handleClick}
       disabled={!canExecute}
       ref={ref}
-      tooltip={action.label}
+      tooltip={getTranslate(action.action)}
     >
       <div className='we:flex we:h-5 we:w-5 we:items-center we:justify-center'>
         {action.icon && React.createElement(action.icon)}

@@ -30,7 +30,7 @@ export function useImageEdit(options: UseImageEditOptions = {}) {
   }, []);
 
   const handleImageSave = useCallback(
-    async (newImageFile: File, newCaption: string) => {
+    async (newImageFile: File) => {
       if (!editingImage || !editor) return;
 
       try {
@@ -48,7 +48,7 @@ export function useImageEdit(options: UseImageEditOptions = {}) {
           console.warn('Image upload callback not provided. Using local URL for development.');
         }
 
-        // 서버에서 받은 URL로 에디터 노드 업데이트
+        // 서버에서 받은 URL로 에디터 노드 업데이트 (캡션은 플로팅 캡션 버튼으로만 수정)
         const transaction = editor.state.tr;
         const node = editor.state.doc.nodeAt(editingImage.nodePos);
 
@@ -56,7 +56,7 @@ export function useImageEdit(options: UseImageEditOptions = {}) {
           const newAttrs = {
             ...node.attrs,
             src: uploadedUrl,
-            caption: newCaption,
+            caption: editingImage.caption ?? node.attrs.caption ?? '',
           };
 
           transaction.setNodeMarkup(editingImage.nodePos, undefined, newAttrs);

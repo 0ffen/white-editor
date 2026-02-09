@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { Ban, LucideHighlighter } from 'lucide-react';
+import { getTranslate } from '@/shared';
 import { Button, PopoverContent, PopoverTrigger, Separator, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
 import {
+  HIGHLIGHT_COLORS,
   HIGHLIGHT_COLORS_MAP,
   pickHighlightColorsByValue,
   useColorHighlight,
@@ -26,23 +28,56 @@ export interface HighlightPopoverProps
   icon?: React.ReactNode;
 }
 
-const HighlightPickerButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, children, activeClassName, ...props }, ref) => (
-    <Button
-      type='button'
-      className={cn('we:data-[active=true]:[&_svg]:text-foreground', className)}
-      data-style='ghost'
-      data-appearance='default'
-      role='button'
-      tabIndex={-1}
-      aria-label='Highlight'
-      style={{ backgroundColor: activeClassName }}
-      ref={ref}
-      {...props}
-    >
-      {children ?? <LucideHighlighter />}
-    </Button>
-  )
+interface HighlightPickerButtonProps extends ButtonProps {
+  activeIconColor?: string;
+}
+
+const HighlightPickerButton = React.forwardRef<HTMLButtonElement, HighlightPickerButtonProps>(
+  ({ className, children, activeClassName, activeIconColor, ...props }, ref) => {
+    const hasActiveColor = activeClassName && activeIconColor;
+
+    // Clone children to apply color if it's a React element
+    const iconWithColor = React.useMemo(() => {
+      if (!children) {
+        return (
+          <LucideHighlighter
+            style={hasActiveColor ? { color: activeIconColor } : undefined}
+            className={hasActiveColor ? undefined : 'we:text-foreground'}
+          />
+        );
+      }
+
+      if (hasActiveColor && React.isValidElement(children)) {
+        const childElement = children as React.ReactElement<{ style?: React.CSSProperties }>;
+        return React.cloneElement(childElement, {
+          ...childElement.props,
+          style: { ...childElement.props?.style, color: activeIconColor },
+        });
+      }
+
+      return children;
+    }, [children, hasActiveColor, activeIconColor]);
+
+    return (
+      <Button
+        type='button'
+        size='icon'
+        className={cn(!hasActiveColor && 'we:data-[active=true]:[&_svg]:text-foreground', className)}
+        data-style='ghost'
+        data-appearance='default'
+        role='button'
+        tabIndex={-1}
+        aria-label='Highlight'
+        style={{
+          backgroundColor: activeClassName,
+        }}
+        ref={ref}
+        {...props}
+      >
+        {iconWithColor}
+      </Button>
+    );
+  }
 );
 
 HighlightPickerButton.displayName = 'HighlightPickerButton';
@@ -67,6 +102,13 @@ export function HighlightPopover({
 
   const currentHighlightColor = editor?.getAttributes('highlight')?.color || '';
 
+  // 아이콘에 표시할 강조 색 (고정 팔레트의 border 값)
+  const currentIconColor = React.useMemo(() => {
+    if (!currentHighlightColor) return undefined;
+    const entry = HIGHLIGHT_COLORS.find((c) => c.value === currentHighlightColor);
+    return entry?.border;
+  }, [currentHighlightColor]);
+
   if (!isVisible) return null;
 
   return (
@@ -78,9 +120,10 @@ export function HighlightPopover({
           data-disabled={!canColorHighlight}
           aria-pressed={isActive}
           aria-label={label}
-          tooltip={label}
+          tooltip={getTranslate('highlight')}
           isActive={isActive}
           activeClassName={currentHighlightColor}
+          activeIconColor={currentIconColor}
           {...props}
         >
           {icon || <LucideHighlighter />}
@@ -88,13 +131,16 @@ export function HighlightPopover({
       </PopoverTrigger>
 
       <PopoverContent aria-label='Highlight picker' className='we:h-10 we:w-fit we:p-2' side='bottom' align='start'>
-        <div ref={containerRef} tabIndex={0} className='we:flex we:h-full we:flex-1 we:items-center we:gap-1'>
+        <div
+          ref={containerRef}
+          tabIndex={0}
+          className='we:flex we:h-full we:flex-1 we:items-center we:gap-1 we:outline-none focus:we:outline-none'
+        >
           {highlightColors?.map((color) => (
             <HighlightColorButton
               key={color.value}
               editor={editor}
               highlightColor={color}
-              tooltip={color.label}
               aria-label={`${color.label} highlight color`}
             />
           ))}
@@ -105,8 +151,9 @@ export function HighlightPopover({
             className='we:h-6 we:w-6'
             onClick={handleRemoveHighlight}
             aria-label='Remove highlight'
+            tooltip={getTranslate('removeHighlight')}
           >
-            <Ban className='we:text-foreground/80' size={4} />
+            <Ban className='we:text-text-sub' size={20} />
           </Button>
         </div>
       </PopoverContent>

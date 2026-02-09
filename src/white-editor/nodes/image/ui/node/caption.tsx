@@ -19,7 +19,7 @@ export const ImageCaption: React.FC<ImageCaptionProps> = (props: ImageCaptionPro
   return (
     <div
       className={cn(
-        'we:text-foreground/80 we:word-break-keep we:mt-2 we:text-center we:text-xs we:whitespace-pre',
+        'we:text-text-sub we:break-all we:mt-2 we:text-center we:text-xs we:whitespace-pre-wrap',
         className
       )}
       style={captionStyle}

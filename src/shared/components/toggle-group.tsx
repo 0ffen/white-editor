@@ -52,7 +52,7 @@ function ToggleGroupItem({
           variant: context.variant || variant,
           size: context.size || size,
         }),
-        'we:min-w-0 we:flex-1 we:shrink-0 we:rounded-none we:shadow-none we:first:rounded-l-md we:last:rounded-r-md we:focus:z-10 we:focus-visible:z-10 we:data-[variant=outline]:border-l-0 we:data-[variant=outline]:first:border-l',
+        'we:min-w-0 we:flex-1 we:shrink-0 we:rounded-none we:shadow-none we:first:rounded-l-md we:last:rounded-r-md we:focus:z-inline we:focus-visible:z-inline we:data-[variant=outline]:border-l-0 we:data-[variant=outline]:first:border-l',
         className
       )}
       {...props}

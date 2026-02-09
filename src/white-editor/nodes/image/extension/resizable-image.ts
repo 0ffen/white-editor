@@ -15,13 +15,23 @@ declare module '@tiptap/react' {
         width?: string;
         height?: string;
         textAlign?: string;
+        /** 인라인 업로드 시 진행률 표시용 (HTML에 저장하지 않음) */
+        uploadId?: string | null;
+        uploadingProgress?: number | null;
       }) => ReturnType;
+      /** uploadId에 해당하는 이미지 노드의 업로드 상태 업데이트 */
+      updateImageUploadState: (
+        uploadId: string,
+        state: { progress?: number | null; src?: string; uploadError?: boolean; uploadErrorFileName?: string }
+      ) => ReturnType;
     };
   }
 }
 
 export const ResizableImage = Image.extend<ResizableImageOptions>({
   name: 'image',
+
+  draggable: true,
 
   addOptions() {
     return {
@@ -113,6 +123,27 @@ export const ResizableImage = Image.extend<ResizableImageOptions>({
           return { style: `text-align: ${attributes.textAlign}` };
         },
       },
+      // 인라인 업로드 상태 (HTML로 내보내지 않음)
+      uploadId: {
+        default: null,
+        parseHTML: () => null,
+        renderHTML: () => ({}),
+      },
+      uploadingProgress: {
+        default: null,
+        parseHTML: () => null,
+        renderHTML: () => ({}),
+      },
+      uploadError: {
+        default: null,
+        parseHTML: () => null,
+        renderHTML: () => ({}),
+      },
+      uploadErrorFileName: {
+        default: null,
+        parseHTML: () => null,
+        renderHTML: () => ({}),
+      },
     };
   },
 
@@ -131,6 +162,8 @@ export const ResizableImage = Image.extend<ResizableImageOptions>({
           width?: string;
           height?: string;
           textAlign?: string;
+          uploadId?: string | null;
+          uploadingProgress?: number | null;
         }) =>
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ({ commands }: { commands: any }) => {
@@ -144,8 +177,53 @@ export const ResizableImage = Image.extend<ResizableImageOptions>({
               width: options.width || null,
               height: options.height || null,
               textAlign: options.textAlign || null,
+              uploadId: options.uploadId ?? null,
+              uploadingProgress: options.uploadingProgress ?? null,
             },
           });
+        },
+      updateImageUploadState:
+        (
+          uploadId: string,
+          state: {
+            progress?: number | null;
+            src?: string;
+            uploadError?: boolean;
+            uploadErrorFileName?: string;
+          }
+        ) =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ({ state: editorState, chain }: { state: any; chain: any }) => {
+          let pos: number | null = null;
+          editorState.doc.descendants((node: { type: { name: string }; attrs: { uploadId?: string } }, p: number) => {
+            if (node.type.name === 'image' && node.attrs.uploadId === uploadId) {
+              pos = p;
+              return false; // stop
+            }
+          });
+          if (pos == null) return false;
+          const attrs: {
+            uploadingProgress?: number | null;
+            src?: string;
+            uploadId?: null;
+            uploadError?: boolean;
+            uploadErrorFileName?: string;
+          } = {};
+          if (state.progress !== undefined) attrs.uploadingProgress = state.progress;
+          if (state.src !== undefined) {
+            attrs.src = state.src;
+            attrs.uploadingProgress = null;
+            attrs.uploadId = null;
+            attrs.uploadError = false;
+            attrs.uploadErrorFileName = undefined;
+          }
+          if (state.uploadError !== undefined) {
+            attrs.uploadError = state.uploadError;
+            attrs.uploadingProgress = null;
+            attrs.uploadId = null;
+            if (state.uploadErrorFileName !== undefined) attrs.uploadErrorFileName = state.uploadErrorFileName;
+          }
+          return chain().setNodeSelection(pos).updateAttributes('image', attrs).run();
         },
     };
   },

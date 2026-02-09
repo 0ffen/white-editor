@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { getTranslate } from '@/shared';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
@@ -56,6 +57,7 @@ export const BlockquoteButton = React.forwardRef<HTMLButtonElement, BlockquoteBu
     return (
       <Button
         type='button'
+        size='icon'
         variant='ghost'
         data-style='ghost'
         data-active-state={isActive ? 'on' : 'off'}
@@ -65,7 +67,7 @@ export const BlockquoteButton = React.forwardRef<HTMLButtonElement, BlockquoteBu
         data-disabled={!canToggle}
         aria-label={label}
         aria-pressed={isActive}
-        tooltip='Blockquote'
+        tooltip={getTranslate('blockquote')}
         onClick={handleClick}
         isActive={isActive}
         className={cn(className)}

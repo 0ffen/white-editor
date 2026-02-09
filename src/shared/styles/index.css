@@ -1,8 +1,8 @@
-@import url('https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css');
-
 @import 'tailwindcss' prefix(we);
 @plugin '@tailwindcss/typography';
 
+@import './katex.css';
+@import './design-tokens.css';
 @import './github-dark.css';
 @import './editor.css';
 @import './markdown.css';
@@ -14,6 +14,37 @@
   .white-editor {
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
+    font-family:
+      'Pretendard Variable',
+      Pretendard,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      'Roboto',
+      'Oxygen',
+      'Ubuntu',
+      'Cantarell',
+      'Fira Sans',
+      'Droid Sans',
+      'Helvetica Neue',
+      sans-serif;
+    font-display: swap;
+  }
+
+  /* 폼 컨트롤이 임베딩된 페이지(다른 프로젝트)의 font-size/폰트를 상속받지 않도록 고정 */
+  .white-editor input,
+  .white-editor button,
+  .white-editor select,
+  .white-editor textarea {
+    font-size: 14px !important;
+    font-family: var(--we-font-pretendard);
+  }
+
+  .white-editor input::placeholder,
+  .white-editor textarea::placeholder,
+  .white-editor select::placeholder {
+    font-size: 14px !important;
+    font-family: var(--we-font-pretendard);
   }
 
   .white-editor .font-pretendard {
@@ -43,17 +74,29 @@
     outline: none;
     border-radius: 10px;
     border: 4px solid transparent;
-    box-shadow: inset 8px 8px 0 rgba(79, 76, 76, 0.574);
+    box-shadow: inset 8px 8px 0 var(--we-gray-light-100);
+  }
+
+  .dark .white-editor ::-webkit-scrollbar-thumb {
+    box-shadow: inset 8px 8px 0 var(--we-gray-dark-100);
+  }
+
+  .dark .white-editor ::-webkit-scrollbar-thumb:hover {
+    box-shadow: inset 8px 8px 0 var(--we-gray-dark-100);
+  }
+
+  .dark .white-editor ::-webkit-scrollbar-thumb:active {
+    box-shadow: inset 8px 8px 0 var(--we-gray-dark-100);
   }
 
   .white-editor ::-webkit-scrollbar-thumb:hover {
     border: 4px solid transparent;
-    box-shadow: inset 8px 8px 0 rgba(79, 76, 76, 0.574);
+    box-shadow: inset 8px 8px 0 var(--we-gray-light-100);
   }
 
   .white-editor ::-webkit-scrollbar-thumb:active {
     border: 4px solid transparent;
-    box-shadow: inset 8px 8px 0 rgba(79, 76, 76, 0.574);
+    box-shadow: inset 8px 8px 0 var(--we-gray-light-100);
   }
 
   .white-editor ::-webkit-scrollbar-track {
@@ -61,7 +104,35 @@
     background-color: transparent;
   }
 
-  ::-webkit-scrollbar-corner {
+  .white-editor ::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+}
+
+@layer base {
+  /* Command List / Dropdown 스크롤바 스타일 (Portal 사용 시) */
+  .white-editor [data-slot='command-list']::-webkit-scrollbar,
+  .white-editor [data-slot='dropdown-menu-content']::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+  }
+
+  .white-editor [data-slot='command-list']::-webkit-scrollbar-thumb,
+  .white-editor [data-slot='dropdown-menu-content']::-webkit-scrollbar-thumb {
+    outline: none;
+    border-radius: 10px;
+    border: 4px solid transparent;
+    box-shadow: inset 8px 8px 0 var(--we-gray-light-100);
+  }
+
+  .dark .white-editor [data-slot='command-list']::-webkit-scrollbar-thumb,
+  .dark .white-editor [data-slot='dropdown-menu-content']::-webkit-scrollbar-thumb {
+    box-shadow: inset 8px 8px 0 var(--we-gray-dark-100);
+  }
+
+  .white-editor [data-slot='command-list']::-webkit-scrollbar-track,
+  .white-editor [data-slot='dropdown-menu-content']::-webkit-scrollbar-track {
+    box-shadow: none;
     background-color: transparent;
   }
 }
@@ -70,6 +141,7 @@
   --font-pretendard:
     'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
     'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-code: 'D2Coding', monospace;
   --radius-sm: calc(var(--we-radius) - 4px);
   --radius-md: calc(var(--we-radius) - 2px);
   --radius-lg: var(--we-radius);
@@ -107,124 +179,241 @@
   --color-sidebar-border: var(--we-sidebar-border);
   --color-sidebar-ring: var(--we-sidebar-ring);
   --color-primary-background: var(--we-primary-background);
+
+  /* Design Tokens - Semantic Colors */
+  --color-text-strong: var(--we-text-strong);
+  --color-text-normal: var(--we-text-normal);
+  --color-text-sub: var(--we-text-sub);
+  --color-text-light: var(--we-text-light);
+  --color-text-placeholder: var(--we-text-placeholder);
+  --color-text-error: var(--we-text-error);
+  --color-text-inverse: var(--we-text-inverse);
+
+  --color-elevation-background: var(--we-elevation-background);
+  --color-elevation-level1: var(--we-elevation-level1);
+  --color-elevation-level2: var(--we-elevation-level2);
+  --color-elevation-dropdown: var(--we-elevation-dropdown);
+  --color-elevation-opacity: var(--we-elevation-opacity);
+  --color-elevation-opacity-2: var(--we-elevation-opacity-2);
+
+  --color-border-default: var(--we-border-default);
+  --color-border-light: var(--we-border-light);
+  --color-border-error: var(--we-border-error);
+  --color-border-interactive: var(--we-border-interactive);
+  --color-border-success: var(--we-border-success);
+  --color-border-color: var(--we-border-color);
+  --color-border-only-light: var(--we-border-only-light);
+
+  --color-interaction-hover: var(--we-interaction-hover);
+
+  --color-brand-weak: var(--we-brand-weak);
+  --color-brand-weak2: var(--we-brand-weak2);
+  --color-brand-light: var(--we-brand-light);
+  --color-brand-default: var(--we-brand-default);
+  --color-brand-strong: var(--we-brand-strong);
+  --color-brand-vs: var(--we-brand-vs);
+
+  /* Design Tokens - Risk levels */
+  --color-risk-level-critical: var(--we-risk-level-critical);
+  --color-risk-level-high: var(--we-risk-level-high);
+  --color-risk-level-medium: var(--we-risk-level-medium);
+  --color-risk-level-low: var(--we-risk-level-low);
+  --color-risk-level-none: var(--we-risk-level-none);
+
+  /* Design Tokens - Semantic palette */
+  --color-green-weak: var(--we-green-weak);
+  --color-green-light: var(--we-green-light);
+  --color-green-default: var(--we-green-default);
+  --color-green-strong: var(--we-green-strong);
+  --color-green-vs: var(--we-green-vs);
+  --color-orange-weak: var(--we-orange-weak);
+  --color-orange-light: var(--we-orange-light);
+  --color-orange-default: var(--we-orange-default);
+  --color-orange-strong: var(--we-orange-strong);
+  --color-orange-vs: var(--we-orange-vs);
+  --color-red-weak: var(--we-red-weak);
+  --color-red-light: var(--we-red-light);
+  --color-red-default: var(--we-red-default);
+  --color-red-strong: var(--we-red-strong);
+  --color-red-vs: var(--we-red-vs);
+  --color-pink-weak: var(--we-pink-weak);
+  --color-pink-light: var(--we-pink-light);
+  --color-pink-default: var(--we-pink-default);
+  --color-pink-strong: var(--we-pink-strong);
+  --color-pink-vs: var(--we-pink-vs);
+  --color-purple-weak: var(--we-purple-weak);
+  --color-purple-light: var(--we-purple-light);
+  --color-purple-default: var(--we-purple-default);
+  --color-purple-strong: var(--we-purple-strong);
+  --color-purple-vs: var(--we-purple-vs);
+  --color-yellow-weak: var(--we-yellow-weak);
+  --color-yellow-light: var(--we-yellow-light);
+  --color-yellow-default: var(--we-yellow-default);
+  --color-yellow-strong: var(--we-yellow-strong);
+  --color-yellow-vs: var(--we-yellow-vs);
+
+  /* Design Tokens - Graphic grays & editor */
+  --color-graphic-gray50: var(--we-graphic-gray50);
+  --color-graphic-gray100: var(--we-graphic-gray100);
+  --color-graphic-gray200: var(--we-graphic-gray200);
+  --color-editor-inline-code: var(--we-editor-inline-code);
+  --color-editor-fontcolor-high: var(--we-editor-fontcolor-high);
+  --color-editor-fontcolor-medium: var(--we-editor-fontcolor-medium);
+  --color-editor-fontcolor-warm: var(--we-editor-fontcolor-warm);
+
+  --color-tooltip: var(--we-gray-light-600);
+  --color-tooltip-foreground: var(--we-gray-dark-800);
+
+  --color-white: var(--we-white);
+  --color-black: var(--we-black);
+
+  --shadow-popover: var(--we-popover-shadow);
+
+  /* Z-index (Tailwind namespace; values from :root --we-z-index-*) */
+  --z-index-toolbar: var(--we-z-index-toolbar);
+  --z-index-inline: var(--we-z-index-inline);
+  --z-index-handle: var(--we-z-index-handle);
+  --z-index-overlay: var(--we-z-index-overlay);
+  --z-index-floating: var(--we-z-index-floating);
 }
 
 :root {
   --we-radius: 0.65rem;
-  --we-background: oklch(1 0 0);
-  --we-foreground: oklch(0.32 0.01 0);
-  --we-codeblock-background: oklch(0.17 0 0);
-  --we-card: oklch(1 0 0);
-  --we-card-foreground: oklch(0.141 0.005 285.823);
-  --we-popover: oklch(1 0 0);
-  --we-popover-foreground: oklch(0.141 0.005 285.823);
-  --we-primary: oklch(0.623 0.214 259.815);
-  --we-primary-foreground: oklch(0.97 0.014 254.604);
-  --we-secondary: oklch(0.967 0.001 286.375);
-  --we-secondary-foreground: oklch(0.21 0.006 285.885);
-  --we-muted: oklch(0.967 0.001 286.375);
-  --we-muted-foreground: oklch(0.7 0 0);
-  --we-accent: oklch(0.967 0.001 286.375);
-  --we-accent-foreground: oklch(0.7 0 0);
-  --we-destructive: oklch(0.577 0.245 27.325);
-  --we-border: oklch(0.92 0.004 286.32);
-  --we-input: oklch(0.92 0.004 286.32);
-  --we-ring: oklch(0.623 0.214 259.815);
-  --we-chart-1: oklch(0.646 0.222 41.116);
-  --we-chart-2: oklch(0.6 0.118 184.704);
-  --we-chart-3: oklch(0.398 0.07 227.392);
-  --we-chart-4: oklch(0.828 0.189 84.429);
-  --we-chart-5: oklch(0.769 0.188 70.08);
-  --we-sidebar: oklch(0.985 0 0);
-  --we-sidebar-foreground: oklch(0.141 0.005 285.823);
-  --we-sidebar-primary: oklch(0.623 0.214 259.815);
-  --we-sidebar-primary-foreground: oklch(0.97 0.014 254.604);
-  --we-sidebar-accent: oklch(0.967 0.001 286.375);
-  --we-sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-  --we-sidebar-border: oklch(0.92 0.004 286.32);
-  --we-sidebar-ring: oklch(0.623 0.214 259.815);
+  --we-radius-sm: calc(var(--we-radius) - 4px);
+  --we-spacing: 0.25rem;
+  --we-font-pretendard:
+    'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  /** 전역 기본 폰트 (KaTeX 제외). 소비 앱에서 오버라이드 가능. */
+  --we-font-base: var(--we-font-pretendard);
+  /* Shadcn/shell colors → design-tokens (design-tokens.css) */
+  --we-background: var(--we-elevation-background);
+  --we-foreground: var(--we-text-normal);
+  --we-codeblock-background: var(--we-elevation-level2);
+  --we-card: var(--we-elevation-level1);
+  --we-card-foreground: var(--we-text-normal);
+  --we-popover: var(--we-elevation-dropdown);
+  --we-popover-foreground: var(--we-text-normal);
+  --we-primary: var(--we-brand-default);
+  --we-primary-foreground: var(--we-text-inverse);
+  --we-secondary: var(--we-elevation-level1);
+  --we-secondary-foreground: var(--we-text-normal);
+  --we-muted: var(--we-elevation-level2);
+  --we-muted-foreground: var(--we-text-sub);
+  --we-accent: var(--we-brand-weak);
+  --we-accent-foreground: var(--we-text-normal);
+  --we-destructive: var(--we-red-default);
+  --we-border: var(--we-border-default);
+  --we-input: var(--we-border-default);
+  --we-ring: var(--we-brand-default);
+  --we-primary-background: var(--we-brand-weak);
+
+  /* Chart/sidebar → design-tokens */
+  --we-chart-1: var(--we-brand-default);
+  --we-chart-2: var(--we-green-default);
+  --we-chart-3: var(--we-purple-default);
+  --we-chart-4: var(--we-orange-default);
+  --we-chart-5: var(--we-red-default);
+  --we-sidebar: var(--we-elevation-level1);
+  --we-sidebar-foreground: var(--we-text-normal);
+  --we-sidebar-primary: var(--we-brand-default);
+  --we-sidebar-primary-foreground: var(--we-text-inverse);
+  --we-sidebar-accent: var(--we-brand-weak);
+  --we-sidebar-accent-foreground: var(--we-text-normal);
+  --we-sidebar-border: var(--we-border-default);
+  --we-sidebar-ring: var(--we-brand-default);
+
+  /* Popover shadow (index.css only; .dark overrides below) */
   --we-popover-shadow:
     0px 16px 48px 0px rgba(17, 24, 39, 0.04), 0px 12px 24px 0px rgba(17, 24, 39, 0.04),
     0px 6px 8px 0px rgba(17, 24, 39, 0.02), 0px 2px 3px 0px rgba(17, 24, 39, 0.02);
-  --we-primary-background: oklch(0.72 0.16 261.3 / 0.15);
 
-  /* Text colors */
-  --we-color-text-white: hsl(0, 0%, 100%);
-  --we-color-text-transparent: hsla(0, 0%, 0%, 0);
-  --we-color-text-black: hsl(0, 0%, 0%);
-  --we-color-text-gray: hsl(0, 0%, 61%);
-  --we-color-text-yellow: hsl(49, 100%, 62%);
-  --we-color-text-green: hsl(141, 79%, 46%);
-  --we-color-text-blue: hsl(221, 100%, 63%);
-  --we-color-text-purple: hsl(270, 100%, 67%);
-  --we-color-text-red: hsl(1, 100%, 66%);
-  --we-color-text-black-contrast: hsl(0, 0%, 20%);
-  --we-color-text-gray-contrast: hsla(37, 8%, 33%, 0.15);
-  --we-color-text-yellow-contrast: hsla(44, 82%, 59%, 0.39);
-  --we-color-text-green-contrast: hsla(126, 29%, 60%, 0.27);
-  --we-color-text-blue-contrast: hsla(202, 54%, 59%, 0.27);
-  --we-color-text-purple-contrast: hsla(274, 37%, 64%, 0.27);
-  --we-color-text-red-contrast: hsla(8, 79%, 79%, 0.4);
+  /* Text colors – 컬러 팔레트용, design-tokens -default/base와 동기화 (theme 커스텀과 분리) */
+  --we-color-text-white: var(--we-white);
+  --we-color-text-transparent: rgba(0, 0, 0, 0);
+  --we-color-text-black: var(--we-gray-light-800);
+  --we-color-text-gray: var(--we-gray-light-300);
+  --we-color-text-red: var(--we-red-light-400-negative);
+  --we-color-text-yellow: var(--we-yellow-light-400);
+  --we-color-text-green: var(--we-green-light-400-positive);
+  --we-color-text-blue: var(--we-primary-light-400-primary); /* brand-default*/
+  --we-color-text-purple: var(--we-purple-light-400);
+  --we-color-text-pink: var(--we-pink-light-400);
+  --we-color-text-black-contrast: var(--we-gray-light-700);
+  --we-color-text-gray-contrast: var(--we-neutral-opacity-light-12);
+  --we-color-text-yellow-contrast: var(--we-yellow-light-200);
+  --we-color-text-green-contrast: var(--we-green-light-200);
+  --we-color-text-blue-contrast: var(--we-primary-light-200);
+  --we-color-text-purple-contrast: var(--we-purple-light-200);
+  --we-color-text-red-contrast: var(--we-red-light-200);
+  --we-color-text-pink-contrast: var(--we-pink-light-200);
 
-  /* Highlight colors */
-  --we-color-highlight-yellow: #fef9c3;
-  --we-color-highlight-green: #dcfce7;
-  --we-color-highlight-blue: #e0f2fe;
-  --we-color-highlight-purple: #f3e8ff;
-  --we-color-highlight-red: #ffe4e6;
-  --we-color-highlight-gray: rgb(248, 248, 247);
-  --we-color-highlight-yellow-contrast: #fbe604;
-  --we-color-highlight-green-contrast: #c7fad8;
-  --we-color-highlight-blue-contrast: #ceeafd;
-  --we-color-highlight-purple-contrast: #e4ccff;
-  --we-color-highlight-red-contrast: #ffccd0;
-  --we-color-highlight-gray-contrast: rgba(84, 72, 49, 0.15);
+  /* Highlight colors – design-tokens -weak / -light와 동기화 */
+  --we-color-highlight-yellow: var(--we-yellow-light-25);
+  --we-color-highlight-green: var(--we-green-light-50);
+  --we-color-highlight-blue: var(--we-primary-light-25);
+  --we-color-highlight-purple: var(--we-purple-light-50);
+  --we-color-highlight-red: var(--we-red-light-50);
+  --we-color-highlight-gray: var(--we-gray-light-25);
+  --we-color-highlight-yellow-border: var(--we-yellow-light-200);
+  --we-color-highlight-green-border: var(--we-green-light-200);
+  --we-color-highlight-blue-border: var(--we-primary-light-200);
+  --we-color-highlight-purple-border: var(--we-purple-light-200);
+  --we-color-highlight-red-border: var(--we-red-light-200);
+  --we-color-highlight-yellow-contrast: var(--we-yellow-light-300);
+  --we-color-highlight-green-contrast: var(--we-green-light-100);
+  --we-color-highlight-blue-contrast: var(--we-primary-light-100);
+  --we-color-highlight-purple-contrast: var(--we-purple-light-100);
+  --we-color-highlight-red-contrast: var(--we-red-light-100);
+  --we-color-highlight-gray-contrast: var(--we-gray-light-100);
+
+  /* Z-index layers (override in your app to avoid stacking conflicts) */
+  --we-z-index-toolbar: 10;
+  --we-z-index-inline: 10;
+  --we-z-index-handle: 10;
+  --we-z-index-overlay: 10;
+  --we-z-index-floating: 10;
 }
 
 .dark {
-  --we-background: oklch(0.17 0 0);
-  --we-foreground: oklch(0.93 0.01 0);
-  --we-codeblock-background: oklch(0.2 0 0);
-  --we-card: oklch(0.2 0 0);
-  --we-card-foreground: oklch(0.985 0 0);
-  --we-popover: oklch(0.2 0 0);
-  --we-popover-foreground: oklch(0.985 0 0);
-  --we-primary: oklch(0.68 0.18 257.96);
-  --we-primary-foreground: oklch(0.93 0.01 0);
-  --we-secondary: oklch(0.274 0.006 286.033);
-  --we-secondary-foreground: oklch(0.985 0 0);
-  --we-muted: oklch(0.274 0.006 286.033);
-  --we-muted-foreground: oklch(1 0 0);
-  --we-accent: oklch(0.21 0 0);
-  --we-accent-foreground: oklch(0.985 0 0);
-  --we-destructive: oklch(0.704 0.191 22.216);
-  --we-border: oklch(1 0 0 / 10%);
-  --we-input: oklch(1 0 0 / 15%);
-  --we-ring: oklch(0.488 0.243 264.376);
-  --we-chart-1: oklch(0.488 0.243 264.376);
-  --we-chart-2: oklch(0.696 0.17 162.48);
-  --we-chart-3: oklch(0.769 0.188 70.08);
-  --we-chart-4: oklch(0.627 0.265 303.9);
-  --we-chart-5: oklch(0.645 0.246 16.439);
-  --we-sidebar: oklch(0.21 0.006 285.885);
-  --we-sidebar-foreground: oklch(0.985 0 0);
-  --we-sidebar-primary: oklch(0.546 0.245 262.881);
-  --we-sidebar-primary-foreground: oklch(0.379 0.146 265.522);
-  --we-sidebar-accent: oklch(0.274 0.006 286.033);
-  --we-sidebar-accent-foreground: oklch(0.985 0 0);
-  --we-sidebar-border: oklch(1 0 0 / 10%);
-  --we-sidebar-ring: oklch(0.488 0.243 264.376);
+  /* Shadcn/shell colors follow design-tokens.css .dark (no overrides needed) */
   --we-popover-shadow: none;
 
-  /* Highlight colors */
-  --we-color-highlight-yellow: #b2b928;
-  --we-color-highlight-green: #2bed6f67;
-  --we-color-highlight-blue: #296cfc49;
-  --we-color-highlight-purple: #7105c49d;
-  --we-color-highlight-red: #722329f3;
-  --we-color-highlight-yellow-contrast: #58531eba;
-  --we-color-highlight-green-contrast: #2bed6f2b;
-  --we-color-highlight-blue-contrast: #296cfc42;
-  --we-color-highlight-purple-contrast: #7105c479;
-  --we-color-highlight-red-contrast: #72232a;
+  /* Text colors – 다크 모드 (design-tokens dark -default/base와 동기화) */
+  --we-color-text-white: var(--we-white);
+  --we-color-text-black: var(--we-gray-dark-800);
+  --we-color-text-gray: var(--we-gray-dark-500);
+  --we-color-text-red: var(--we-red-dark-500);
+  --we-color-text-yellow: var(--we-yellow-dark-400);
+  --we-color-text-green: var(--we-green-dark-500);
+  --we-color-text-blue: var(--we-primary-dark-400-primary);
+  --we-color-text-purple: var(--we-purple-dark-500);
+  --we-color-text-pink: var(--we-pink-dark-500);
+  --we-color-text-black-contrast: var(--we-gray-dark-700);
+  --we-color-text-gray-contrast: var(--we-neutral-opacity-dark-12);
+  --we-color-text-yellow-contrast: var(--we-yellow-dark-200);
+  --we-color-text-green-contrast: var(--we-green-dark-200);
+  --we-color-text-blue-contrast: var(--we-primary-dark-200);
+  --we-color-text-purple-contrast: var(--we-purple-dark-200);
+  --we-color-text-red-contrast: var(--we-red-dark-200);
+  --we-color-text-pink-contrast: var(--we-pink-dark-200);
+
+  /* Highlight colors – 다크 모드 (design-tokens dark -weak / -light) */
+  --we-color-highlight-yellow: var(--we-yellow-dark-25);
+  --we-color-highlight-green: var(--we-green-dark-50);
+  --we-color-highlight-blue: var(--we-primary-dark-25);
+  --we-color-highlight-purple: var(--we-purple-dark-50);
+  --we-color-highlight-red: var(--we-red-dark-50);
+  --we-color-highlight-gray: var(--we-gray-dark-25);
+  --we-color-highlight-yellow-border: var(--we-yellow-dark-200);
+  --we-color-highlight-green-border: var(--we-green-dark-300);
+  --we-color-highlight-blue-border: var(--we-primary-dark-300);
+  --we-color-highlight-purple-border: var(--we-purple-dark-300);
+  --we-color-highlight-red-border: var(--we-red-dark-300);
+  --we-color-highlight-yellow-contrast: var(--we-yellow-dark-300);
+  --we-color-highlight-green-contrast: var(--we-green-dark-200);
+  --we-color-highlight-blue-contrast: var(--we-primary-dark-200);
+  --we-color-highlight-purple-contrast: var(--we-purple-dark-200);
+  --we-color-highlight-red-contrast: var(--we-red-dark-200);
+  --we-color-highlight-gray-contrast: var(--we-gray-dark-100);
 }

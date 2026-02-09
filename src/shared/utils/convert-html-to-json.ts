@@ -1,3 +1,5 @@
+'use client';
+
 import { generateJSON } from '@tiptap/react';
 import { createViewerExtensions } from './extensions';
 

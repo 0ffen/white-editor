@@ -22,7 +22,6 @@ export function useHeadingDropdownMenu(config?: UseHeadingDropdownMenuConfig) {
   const [isVisible, setIsVisible] = React.useState(true);
 
   const activeLevel = getActiveHeadingLevel(editor, levels);
-  const isActive = isHeadingActive(editor);
   const canToggleState = canToggle(editor);
 
   React.useEffect(() => {
@@ -44,7 +43,6 @@ export function useHeadingDropdownMenu(config?: UseHeadingDropdownMenuConfig) {
   return {
     isVisible,
     activeLevel,
-    isActive,
     canToggle: canToggleState,
     levels,
     label: `Heading ${activeLevel}`,
