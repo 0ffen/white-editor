@@ -1,5 +1,8 @@
 .katex {
-  font: normal 1.21em KaTeX_Main, Times New Roman, serif;
+  font:
+    normal 1.21em KaTeX_Main,
+    Times New Roman,
+    serif;
   line-height: 1.2;
   text-indent: 0;
   text-rendering: auto;
@@ -11,7 +14,7 @@
   border-color: currentColor;
 }
 .katex .katex-version::after {
-  content: "0.16.28";
+  content: '0.16.28';
 }
 .katex .katex-mathml {
   /* Accessibility hack to only show to screen readers
@@ -950,8 +953,9 @@
   position: relative;
   overflow: hidden;
 }
-.katex .stretchy::before, .katex .stretchy::after {
-  content: "";
+.katex .stretchy::before,
+.katex .stretchy::after {
+  content: '';
 }
 .katex .hide-tail {
   width: 100%;
@@ -1029,11 +1033,11 @@
 }
 .katex .eqn-num::before {
   counter-increment: katexEqnNo;
-  content: "(" counter(katexEqnNo) ")";
+  content: '(' counter(katexEqnNo) ')';
 }
 .katex .mml-eqn-num::before {
   counter-increment: mmlEqnNo;
-  content: "(" counter(mmlEqnNo) ")";
+  content: '(' counter(mmlEqnNo) ')';
 }
 .katex .mtr-glue {
   width: 50%;
