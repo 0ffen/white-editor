@@ -8,3 +8,7 @@
 **/tsconfig.app.json
 **/dist
 **/src/assets/icons
+**/shared/assets/fonts
+**/*.ttf
+**/*.woff
+**/*.woff2

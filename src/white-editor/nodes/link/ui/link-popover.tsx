@@ -39,6 +39,21 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
       onSetLink,
     });
 
+    // 링크 드롭다운이 열려있으면 기본 Popover를 닫음
+    React.useEffect(() => {
+      const handleLinkDropdownOpen = () => {
+        if (isOpen) {
+          setIsOpen(false);
+        }
+      };
+
+      window.addEventListener('link-dropdown-open', handleLinkDropdownOpen);
+
+      return () => {
+        window.removeEventListener('link-dropdown-open', handleLinkDropdownOpen);
+      };
+    }, [isOpen]);
+
     const handleOnOpenChange = React.useCallback(
       (nextIsOpen: boolean) => {
         setIsOpen(nextIsOpen);
@@ -56,14 +71,28 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
       (event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event);
         if (event.defaultPrevented) return;
+
+        // 링크가 활성화되어 있으면 LinkFloatingDropdown을 트리거하고 기본 Popover는 닫음
+        if (isActive) {
+          setIsOpen(false);
+          // 커스텀 이벤트 발생
+          window.dispatchEvent(new CustomEvent('link-toolbar-button-click'));
+          return;
+        }
+
+        // 링크가 없으면 일반 Popover 표시
         setIsOpen(!isOpen);
       },
-      [onClick, isOpen]
+      [onClick, isOpen, isActive]
     );
 
+    // 링크가 활성화되어 있을 때는 LinkFloatingDropdown을 사용하므로
+    // 기본 Popover는 자동으로 열리지 않도록 함
     React.useEffect(() => {
+      // autoOpenOnLinkActive가 true이고 링크가 활성화되어 있으면
+      // LinkFloatingDropdown이 처리하므로 여기서는 열지 않음
       if (autoOpenOnLinkActive && isActive) {
-        setIsOpen(true);
+        setIsOpen(false);
       }
     }, [autoOpenOnLinkActive, isActive]);
 
@@ -89,7 +118,7 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
           </LinkButton>
         </PopoverTrigger>
 
-        <PopoverContent className={cn('we:w-[300px] we:rounded-2xl we:px-2 we:py-2 we:pr-3', linkPopoverClassName)}>
+        <PopoverContent className={cn('we:w-[240px] we:rounded-lg we:p-1.5 we:shadow-lg', linkPopoverClassName)}>
           <LinkMain
             url={url}
             setUrl={setUrl}

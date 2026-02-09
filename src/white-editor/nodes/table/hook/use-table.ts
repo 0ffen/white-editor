@@ -1,5 +1,6 @@
 import React from 'react';
 import { Table } from 'lucide-react';
+import { getTranslate } from '@/shared';
 import { useTiptapEditor } from '@/shared/hooks';
 import { isExtensionAvailable, isNodeTypeSelected } from '@/shared/utils';
 import type { TableActions } from '@/white-editor';
@@ -97,7 +98,7 @@ export function useTable(config: UseTableConfig) {
     isActive,
     handleTable,
     canInsert,
-    label: 'Table',
+    label: getTranslate('table'),
     Icon: Table,
   };
 }

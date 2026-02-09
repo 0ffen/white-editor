@@ -1,6 +1,7 @@
 export * from './blockquote';
 export * from './code-block';
 export * from './heading';
+export * from './selection-toolbar';
 export * from './image';
 export * from './link';
 export * from './list';

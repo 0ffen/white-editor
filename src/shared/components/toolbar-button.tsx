@@ -18,7 +18,7 @@ export const ToolbarButton = ({
   ...props
 }: ToolbarButtonProps) => {
   const toggleButton = (
-    <Toggle className={cn({ 'we:bg-accent': isActive }, className)} {...props}>
+    <Toggle className={cn({ 'we:bg-brand-weak we:text-brand-default': isActive }, className)} {...props}>
       {children}
     </Toggle>
   );

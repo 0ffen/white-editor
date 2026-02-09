@@ -4,17 +4,24 @@ White Editor의 툴바를 원하는 대로 설정하는 방법을 안내합니�
 
 ## 기본 툴바
 
-기본 툴바는 다음과 같이 구성되어 있습니다.
+기본 툴바 프리셋은 패키지에서 import 해서 사용할 수 있습니다.
 
 ```tsx
-const defaultToolbarItems = [
-  ['undo', 'redo'],
-  ['heading', 'bulletList', 'orderedList', 'blockquote'],
-  ['bold', 'italic', 'strike', 'code', 'underline', 'color', 'highlight'],
-  ['textAlignLeft', 'textAlignCenter', 'textAlignRight', 'textAlignJustify'],
-  ['codeblock', 'inlineMath', 'blockMath'],
-  ['link', 'table', 'image'],
-];
+import {
+  WHITE_EDITOR_TOOLBAR_ITEMS,
+  DEFAULT_TOOLBAR_ITEMS,
+  MINIMAL_TOOLBAR_ITEMS,
+  type ToolbarItem,
+} from '@0ffen/white-editor';
+
+// 전체 툴바 (White Editor 기본 구성)
+toolbarItems={WHITE_EDITOR_TOOLBAR_ITEMS}
+
+// 기본 프리셋
+toolbarItems={DEFAULT_TOOLBAR_ITEMS}
+
+// 최소 프리셋
+toolbarItems={MINIMAL_TOOLBAR_ITEMS}
 ```
 
 ## 커스텀 툴바

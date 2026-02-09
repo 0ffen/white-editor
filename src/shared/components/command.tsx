@@ -13,7 +13,7 @@ const Command = React.forwardRef<
   <CommandPrimitive
     ref={ref}
     className={cn(
-      'we:bg-popover we:text-popover-foreground we:flex we:h-full we:w-full we:flex-col we:overflow-hidden we:rounded-md',
+      'we:bg-elevation-dropdown we:text-text-normal we:flex we:h-full we:w-full we:flex-col we:overflow-hidden we:rounded-sm',
       className
     )}
     {...props}
@@ -35,18 +35,19 @@ const CommandDialog = ({ children, ...props }: DialogProps) => {
 
 const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
->(({ className, ...props }, ref) => (
-  <div className='we:flex we:items-center we:border-b we:px-3'>
-    <Search className='we:mr-2 we:h-4 we:w-4 we:shrink-0 we:opacity-50' />
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input> & { iconPosition?: 'left' | 'right' }
+>(({ className, iconPosition = 'left', ...props }, ref) => (
+  <div className='we:flex we:items-center we:border-b we:border-border we:px-3'>
+    {iconPosition === 'left' && <Search className='we:mr-2 we:h-4 we:w-4 we:shrink-0 we:text-text-light' />}
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
-        'we:placeholder:text-foreground/30 we:flex we:h-10 we:w-full we:rounded-md we:bg-transparent we:py-3 we:text-sm we:outline-none we:disabled:cursor-not-allowed we:disabled:opacity-50',
+        'we:placeholder:text-text-light we:flex we:h-10 we:w-full we:rounded-md we:bg-transparent we:py-3 we:text-sm we:text-text-normal we:outline-none we:disabled:cursor-not-allowed we:disabled:opacity-50',
         className
       )}
       {...props}
     />
+    {iconPosition === 'right' && <Search className='we:ml-2 we:h-4 we:w-4 we:shrink-0 we:text-text-light' />}
   </div>
 ));
 
@@ -58,6 +59,7 @@ const CommandList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.List
     ref={ref}
+    data-slot='command-list'
     className={cn('we:max-h-[300px] we:overflow-x-hidden we:overflow-y-auto', className)}
     {...props}
   />
@@ -79,7 +81,7 @@ const CommandGroup = React.forwardRef<
   <CommandPrimitive.Group
     ref={ref}
     className={cn(
-      'we:text-foreground we:[&_[cmdk-group-heading]]:text-foreground we:overflow-hidden we:p-1 we:[&_[cmdk-group-heading]]:px-2 we:[&_[cmdk-group-heading]]:py-1.5 we:[&_[cmdk-group-heading]]:text-xs we:[&_[cmdk-group-heading]]:font-medium',
+      'we:text-foreground we:[&_[cmdk-group-heading]]:text-foreground we:overflow-hidden we:[&_[cmdk-group-heading]]:px-2 we:[&_[cmdk-group-heading]]:py-1.5 we:[&_[cmdk-group-heading]]:text-xs we:[&_[cmdk-group-heading]]:font-medium',
       className
     )}
     {...props}
@@ -103,8 +105,8 @@ const CommandItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      'we:data-[selected=true]:bg-accent we:data-[selected=true]:text-foreground we:relative we:flex we:cursor-default we:items-center we:gap-2 we:rounded-sm we:px-2',
-      'we:py-1.5 we:text-sm we:outline-none we:select-none we:data-[disabled=true]:pointer-events-none we:data-[disabled=true]:opacity-50 we:[&_svg]:pointer-events-none we:[&_svg]:size-4 we:[&_svg]:shrink-0',
+      'we:data-[selected=true]:bg-interaction-hover we:relative we:flex we:cursor-default we:items-center we:gap-2 we:rounded we:px-2',
+      'we:py-2 we:text-sm we:text-text-normal we:outline-none we:select-none we:data-[disabled=true]:pointer-events-none we:data-[disabled=true]:opacity-50 we:[&_svg]:pointer-events-none we:[&_svg]:size-4 we:[&_svg]:shrink-0',
       className
     )}
     {...props}

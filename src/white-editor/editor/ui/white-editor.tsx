@@ -3,12 +3,15 @@ import { useImperativeHandle, forwardRef, useMemo } from 'react';
 
 import { Toolbar, TooltipProvider } from '@/shared/components';
 import { applyTheme, cn, normalizeContent } from '@/shared/utils';
+import { getTranslate, i18n } from '@/shared/utils/i18n';
 import {
   useWhiteEditor,
   type WhiteEditorProps,
   type UseWhiteEditorReturn,
-  defaultToolbarItems,
+  DEFAULT_TOOLBAR_ITEMS,
   EditorToolbar,
+  SelectionToolbar,
+  LinkFloatingDropdown,
 } from '@/white-editor';
 import { EditorContent, EditorContext, type JSONContent } from '@tiptap/react';
 import '@/shared/styles/index.css';
@@ -29,7 +32,12 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
     disabled,
     extension,
     showToolbar = true,
+    locale = 'ko',
   } = props;
+
+  React.useEffect(() => {
+    i18n.changeLanguage(locale);
+  }, [locale]);
 
   const toolbarRef = React.useRef<HTMLDivElement>(null);
 
@@ -49,6 +57,7 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
   const editorHook = useWhiteEditor<T>({
     ...props,
     content: normalizedContent,
+    placeholder: props.placeholder ?? getTranslate('내용을 입력하세요'),
   });
   const { editor, charactersCount, focus } = editorHook;
 
@@ -95,13 +104,18 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
       return <EditorToolbar toolbarItems={toolbarItems} toolbarProps={mergedToolbarProps} />;
     }
     /** 기본 툴바 */
-    return <EditorToolbar toolbarItems={defaultToolbarItems} toolbarProps={mergedToolbarProps} />;
+    return <EditorToolbar toolbarItems={DEFAULT_TOOLBAR_ITEMS} toolbarProps={mergedToolbarProps} />;
   };
 
   return (
     <TooltipProvider>
       <div
-        className={cn('white-editor', editorClassName, disabled && 'we:opacity-60 we:pointer-events-none')}
+        className={cn(
+          'white-editor group/editor',
+          disabled && 'we:bg-elevation-level1 we:pointer-events-none',
+          editorClassName
+        )}
+        data-disabled={disabled || undefined}
         onClick={handleEditorClick}
       >
         <EditorContext.Provider value={{ editor }}>
@@ -117,6 +131,8 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
               contentClassName
             )}
           />
+          <SelectionToolbar editor={editor} />
+          <LinkFloatingDropdown editor={editor} />
           <div className='we:mt-auto we:flex we:flex-col we:justify-end we:px-2'>
             {extension?.character?.show && (
               <span

@@ -13,34 +13,44 @@ interface UseTextColorConfig {
 
 const TEXT_COLORS = [
   {
-    label: 'Gray background',
-    value: 'var(--we-color-text-gray)',
-    border: 'var(--we-color-text-gray-contrast)',
+    label: 'Default',
+    value: 'var(--we-text-normal)',
+    border: 'var(--we-text-normal)',
   },
   {
-    label: 'Yellow background',
-    value: 'var(--we-color-text-yellow)',
-    border: 'var(--we-color-text-yellow-contrast)',
+    label: 'Gray',
+    value: 'var(--we-text-light)',
+    border: 'var(--we-text-light)',
   },
   {
-    label: 'Green background',
-    value: 'var(--we-color-text-green)',
-    border: 'var(--we-color-text-green-contrast)',
+    label: 'Red',
+    value: 'var(--we-red-default)',
+    border: 'var(--we-red-default)',
   },
   {
-    label: 'Blue background',
-    value: 'var(--we-color-text-blue)',
-    border: 'var(--we-color-text-blue-contrast)',
+    label: 'Yellow',
+    value: 'var(--we-yellow-default)',
+    border: 'var(--we-yellow-default)',
   },
   {
-    label: 'Purple background',
-    value: 'var(--we-color-text-purple)',
-    border: 'var(--we-color-text-purple-contrast)',
+    label: 'Green',
+    value: 'var(--we-green-default)',
+    border: 'var(--we-green-default)',
   },
   {
-    label: 'Red background',
-    value: 'var(--we-color-text-red)',
-    border: 'var(--we-color-text-red-contrast)',
+    label: 'Blue',
+    value: 'var( --we-color-text-blue)',
+    border: 'var( --we-color-text-blue)',
+  },
+  {
+    label: 'Purple',
+    value: 'var(--we-purple-default)',
+    border: 'var(--we-purple-default)',
+  },
+  {
+    label: 'Pink',
+    value: 'var(--we-pink-default)',
+    border: 'var(--we-pink-default)',
   },
 ];
 

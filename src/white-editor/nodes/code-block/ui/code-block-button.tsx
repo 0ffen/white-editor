@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { getTranslate } from '@/shared';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
@@ -56,6 +57,7 @@ export const CodeBlockButton = React.forwardRef<HTMLButtonElement, CodeBlockButt
     return (
       <Button
         type='button'
+        size='icon'
         data-style='ghost'
         data-active-state={isActive ? 'on' : 'off'}
         role='button'
@@ -64,6 +66,7 @@ export const CodeBlockButton = React.forwardRef<HTMLButtonElement, CodeBlockButt
         tabIndex={-1}
         aria-label={label}
         aria-pressed={isActive}
+        tooltip={getTranslate('codeblock')}
         onClick={handleClick}
         className={cn(className)}
         isActive={isActive}

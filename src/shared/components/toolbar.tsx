@@ -9,13 +9,13 @@ const toolbarVariants = cva('we:flex we:items-center we:gap-1', {
   variants: {
     variant: {
       fixed: [
-        'we:z-10 we:w-full we:min-h-[2.75rem]',
+        'we:z-toolbar we:w-full we:min-h-[2.75rem]',
         'we:bg-transparent we:border-b we:border-border we:rounded-t-md',
         'we:px-2 we:overflow-x-auto we:overscroll-x-contain',
       ],
       floating: [
-        'we:p-0.5 we:rounded-lg we:border we:border-border',
-        'we:bg-background we:shadow-xs we:outline-none we:overflow-hidden',
+        'we:p-1.5 we:rounded-[5px] we:border we:border-none we:z-floating',
+        'we:bg-elevation-dropdown we:shadow-popover we:outline-none we:overflow-hidden we:fixed',
       ],
     },
   },
@@ -108,7 +108,9 @@ export const Toolbar = React.forwardRef<HTMLDivElement, ToolbarProps>(
         data-plain={plain}
         className={cn(
           toolbarVariants({ variant }),
-          variant === 'floating' && plain && 'we:rounded-none we:border-none we:bg-transparent we:p-0 we:shadow-none',
+          variant === 'floating' &&
+            plain &&
+            'we:rounded-none we:border-none we:bg-elevation-dropdown we:p-0 we:shadow-none',
           className
         )}
         {...props}
@@ -137,7 +139,7 @@ export const ToolbarGroup = React.forwardRef<HTMLDivElement, BaseProps>(({ child
     <div
       ref={ref}
       role='group'
-      className={cn('we:flex we:items-center we:gap-0.5 we:max-sm:flex-shrink-0', className)}
+      className={cn('we:flex we:items-center we:gap-1 we:max-sm:flex-shrink-0', className)}
       {...props}
     >
       {children}
@@ -147,6 +149,6 @@ export const ToolbarGroup = React.forwardRef<HTMLDivElement, BaseProps>(({ child
 ToolbarGroup.displayName = 'ToolbarGroup';
 
 export const ToolbarSeparator = React.forwardRef<HTMLDivElement, BaseProps>(({ ...props }, ref) => (
-  <Separator ref={ref} orientation='vertical' decorative className='we:h-5!' {...props} />
+  <Separator ref={ref} orientation='vertical' decorative className='we:h-4! we:p-0! we:mx-1!' {...props} />
 ));
 ToolbarSeparator.displayName = 'ToolbarSeparator';

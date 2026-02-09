@@ -56,18 +56,20 @@ export const HighlightColorButton = React.forwardRef<HTMLButtonElement, Highligh
         data-disabled={!canColorHighlight}
         aria-label={label}
         aria-pressed={isActive}
-        tooltip={label}
         isActive={isActive}
         onClick={handleClick}
         {...buttonProps}
         ref={ref}
-        className='we:h-6 we:w-6'
+        className='we:h-7 we:w-7'
       >
         {children ?? (
           <span
             className={cn('we:h-full we:w-full we:rounded-4xl we:border')}
             style={
-              { backgroundColor: highlightColor?.value, borderColor: highlightColor?.border } as React.CSSProperties
+              {
+                backgroundColor: highlightColor?.value,
+                borderColor: highlightColor?.border,
+              } as React.CSSProperties
             }
           />
         )}

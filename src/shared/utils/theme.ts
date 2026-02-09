@@ -1,45 +1,72 @@
-interface CustomThemeColors {
-  background?: string;
-  foreground?: string;
-  card?: string;
-  cardForeground?: string;
-  popover?: string;
-  popoverForeground?: string;
-  primary?: string;
-  primaryForeground?: string;
-  secondary?: string;
-  secondaryForeground?: string;
-  muted?: string;
-  mutedForeground?: string;
-  accent?: string;
-  accentForeground?: string;
-  codeBlockBackground?: string;
+'use client';
+
+/**
+ * design-tokens.css 변수명과 1:1 대응하는 테마 컬러 (camelCase).
+ * 지정한 항목만 --we-* CSS 변수로 적용되고, 나머지는 design-tokens.css 기본값 사용.
+ *
+ * 값: hex, rgb, hsl 또는 var(--호스트앱에서 정의한 변수) 모두 가능.
+ * 다른 프로젝트에서 theme 커스텀 시 var() 로 자체 디자인 토큰을 넘기면 됨.
+ * var() 참조 변수는 호스트 앱 CSS에 정의되어 있어야 하며, 에디터 번들 --color-* 와
+ * 이름이 겹치면 순환 참조가 날 수 있으므로 호스트 전용 변수명 또는 hex 권장.
+ */
+export interface WhiteEditorThemeColors {
+  /** 본문 텍스트 */
+  textNormal?: string;
+  /** 보조 텍스트, 이미지 도형 비선택 색 */
+  textLight?: string;
+  /** 드롭다운/메뉴 보조 텍스트 */
+  textSub?: string;
+  /** 에디터 플레이스홀더 */
+  textPlaceholder?: string;
+  /** 에디터/뷰어 배경 */
+  elevationBackground?: string;
+  /** 카드/블록 배경 */
+  elevationLevel1?: string;
+  /** 코드블록 배경 등 */
+  elevationLevel2?: string;
+  /** 커맨드 리스트·드롭다운 배경 */
+  elevationDropdown?: string;
+  /** 구분선, 핸들, 테두리 */
+  borderDefault?: string;
+  /** 호버 배경 */
+  interactionHover?: string;
+  /** 선택/강조 배경 */
+  brandWeak?: string;
+  /** 선택 테두리, 하이라이트, 버튼 */
+  brandLight?: string;
+  /** 링크/액센트, 도형 선택, 인라인 코드 등 */
+  brandDefault?: string;
 }
 
-interface ThemeConfig {
+/**
+ * z-index 레이어 커스텀 (숫자만 전달, CSS에 그대로 적용).
+ */
+export interface WhiteEditorThemeZIndex {
+  toolbar?: number;
+  inline?: number;
+  handle?: number;
+  overlay?: number;
+  floating?: number;
+}
+
+export interface ThemeConfig {
   mode?: 'light' | 'dark';
-  colors?: CustomThemeColors;
+  colors?: WhiteEditorThemeColors;
+  zIndex?: WhiteEditorThemeZIndex;
 }
 
 /**
  * 다크/라이트 테마를 적용합니다.
  * document.documentElement에 'dark' 클래스를 추가하거나 제거합니다.
- * 커스텀 컬러가 제공되면 CSS 변수로 설정합니다.
+ * design token 기반 colors / zIndex가 제공되면 해당 CSS 변수로 설정합니다.
  * 서버사이드에서는 아무 작업도 수행하지 않습니다.
  *
  * @param theme - 적용할 테마 ('light' | 'dark' | ThemeConfig)
  * @example
  * ```ts
- * applyTheme('dark'); // 다크 테마 적용
- * applyTheme('light'); // 라이트 테마 적용
- * applyTheme({
- *   mode: 'dark',
- *   colors: {
- *     background: '#1a1a1a',
- *     foreground: '#ffffff',
- *     popover: '#2a2a2a'
- *   }
- * }); // 커스텀 컬러와 함께 다크 테마 적용
+ * applyTheme('dark');
+ * applyTheme({ mode: 'dark', colors: { textNormal: '#e0e0e0', elevationBackground: '#1a1a1a' } });
+ * applyTheme({ mode: 'light', zIndex: { overlay: 100, floating: 100 } });
  * ```
  */
 export function applyTheme(theme: 'light' | 'dark' | ThemeConfig) {
@@ -70,59 +97,36 @@ export function applyTheme(theme: 'light' | 'dark' | ThemeConfig) {
     root.classList.remove('dark');
   }
 
-  // 커스텀 컬러가 있으면 CSS 변수로 설정
+  const cssVariables: Record<string, string> = {};
+
   if (themeConfig.colors) {
-    const cssVariables: Record<string, string> = {};
+    const c = themeConfig.colors;
+    if (c.textNormal != null) cssVariables['--we-text-normal'] = c.textNormal;
+    if (c.textLight != null) cssVariables['--we-text-light'] = c.textLight;
+    if (c.textSub != null) cssVariables['--we-text-sub'] = c.textSub;
+    if (c.textPlaceholder != null) cssVariables['--we-text-placeholder'] = c.textPlaceholder;
+    if (c.elevationBackground != null) cssVariables['--we-elevation-background'] = c.elevationBackground;
+    if (c.elevationLevel1 != null) cssVariables['--we-elevation-level1'] = c.elevationLevel1;
+    if (c.elevationLevel2 != null) cssVariables['--we-elevation-level2'] = c.elevationLevel2;
+    if (c.elevationDropdown != null) cssVariables['--we-elevation-dropdown'] = c.elevationDropdown;
+    if (c.borderDefault != null) cssVariables['--we-border-default'] = c.borderDefault;
+    if (c.interactionHover != null) cssVariables['--we-interaction-hover'] = c.interactionHover;
+    if (c.brandWeak != null) cssVariables['--we-brand-weak'] = c.brandWeak;
+    if (c.brandLight != null) cssVariables['--we-brand-light'] = c.brandLight;
+    if (c.brandDefault != null) cssVariables['--we-brand-default'] = c.brandDefault;
+  }
 
-    if (themeConfig.colors.background) {
-      cssVariables['--we-background'] = themeConfig.colors.background;
-    }
-    if (themeConfig.colors.foreground) {
-      cssVariables['--we-foreground'] = themeConfig.colors.foreground;
-    }
-    if (themeConfig.colors.card) {
-      cssVariables['--we-card'] = themeConfig.colors.card;
-    }
-    if (themeConfig.colors.cardForeground) {
-      cssVariables['--we-card-foreground'] = themeConfig.colors.cardForeground;
-    }
-    if (themeConfig.colors.popover) {
-      cssVariables['--we-popover'] = themeConfig.colors.popover;
-    }
-    if (themeConfig.colors.popoverForeground) {
-      cssVariables['--we-popover-foreground'] = themeConfig.colors.popoverForeground;
-    }
-    if (themeConfig.colors.primary) {
-      cssVariables['--we-primary'] = themeConfig.colors.primary;
-    }
-    if (themeConfig.colors.primaryForeground) {
-      cssVariables['--we-primary-foreground'] = themeConfig.colors.primaryForeground;
-    }
-    if (themeConfig.colors.secondary) {
-      cssVariables['--we-secondary'] = themeConfig.colors.secondary;
-    }
-    if (themeConfig.colors.secondaryForeground) {
-      cssVariables['--we-secondary-foreground'] = themeConfig.colors.secondaryForeground;
-    }
-    if (themeConfig.colors.muted) {
-      cssVariables['--we-muted'] = themeConfig.colors.muted;
-    }
-    if (themeConfig.colors.mutedForeground) {
-      cssVariables['--we-muted-foreground'] = themeConfig.colors.mutedForeground;
-    }
-    if (themeConfig.colors.accent) {
-      cssVariables['--we-accent'] = themeConfig.colors.accent;
-    }
-    if (themeConfig.colors.accentForeground) {
-      cssVariables['--we-accent-foreground'] = themeConfig.colors.accentForeground;
-    }
-    if (themeConfig.colors.codeBlockBackground) {
-      cssVariables['--we-codeblock-background'] = themeConfig.colors.codeBlockBackground;
-    }
+  if (themeConfig.zIndex) {
+    const z = themeConfig.zIndex;
+    if (z.toolbar != null) cssVariables['--we-z-index-toolbar'] = String(z.toolbar);
+    if (z.inline != null) cssVariables['--we-z-index-inline'] = String(z.inline);
+    if (z.handle != null) cssVariables['--we-z-index-handle'] = String(z.handle);
+    if (z.overlay != null) cssVariables['--we-z-index-overlay'] = String(z.overlay);
+    if (z.floating != null) cssVariables['--we-z-index-floating'] = String(z.floating);
+  }
 
-    if (Object.keys(cssVariables).length > 0) {
-      setCSSVariables(cssVariables);
-    }
+  if (Object.keys(cssVariables).length > 0) {
+    setCSSVariables(cssVariables);
   }
 }
 

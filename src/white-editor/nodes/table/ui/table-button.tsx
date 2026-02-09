@@ -80,12 +80,14 @@ export const TableButton = React.forwardRef<HTMLButtonElement, TableButtonProps>
             tooltip={label}
             onClick={handleClick}
             isActive={isActive}
-            className={cn('gap-1', className)}
+            className={cn('we:h-[28px] we:max-w-[50px]', className)}
             {...buttonProps}
             ref={ref}
           >
-            {children ?? <>{RenderIcon}</>}
-            {isActive && <ChevronDownIcon className='text-muted-foreground size-2' />}
+            <div className='we:flex we:items-center we:gap-1'>
+              {children ?? <>{RenderIcon}</>}
+              {isActive && <ChevronDownIcon className='we:text-text-light we:size-3' />}
+            </div>
           </Button>
         </DropdownMenuTrigger>
 

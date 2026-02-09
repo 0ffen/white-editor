@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { ImagePlusIcon } from 'lucide-react';
+import { getTranslate } from '@/shared';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { useImageUpload, type UseImageUploadConfig } from '@/white-editor';
@@ -34,6 +35,7 @@ export const ImageUploadButton = React.forwardRef<HTMLButtonElement, ImageUpload
     return (
       <Button
         type='button'
+        size='icon'
         data-style='ghost'
         data-active-state={isActive ? 'on' : 'off'}
         role='button'
@@ -42,6 +44,7 @@ export const ImageUploadButton = React.forwardRef<HTMLButtonElement, ImageUpload
         data-disabled={!canInsert}
         aria-label={label}
         aria-pressed={isActive}
+        tooltip={getTranslate('image')}
         onClick={handleClick}
         {...buttonProps}
         ref={ref}

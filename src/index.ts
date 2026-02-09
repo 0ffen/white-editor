@@ -1,9 +1,11 @@
+'use client';
+
 import './shared/styles/index.css';
 
 //editor, viewer
 export { WhiteEditor, useWhiteEditor, WhiteViewer, WhiteEditorThemeProvider } from './white-editor';
 
-//toolbar types
+//toolbar types & preset items (toolbar-items.ts)
 export type {
   BlockquoteButtonProps,
   CodeBlockButtonProps,
@@ -22,6 +24,8 @@ export type {
   ToolbarItemProps,
   EditorToolbarConfig,
 } from './white-editor';
+
+export { WHITE_EDITOR_TOOLBAR_ITEMS, DEFAULT_TOOLBAR_ITEMS, MINIMAL_TOOLBAR_ITEMS } from './white-editor';
 
 //editor types
 export type {
@@ -58,13 +62,3 @@ export { CharacterCount, Selection } from '@tiptap/extensions';
 // TipTap Core - 커스텀 노드를 만들 때 필요한 유틸리티
 export { Node } from '@tiptap/core';
 export { ReactNodeViewRenderer, NodeViewContent, NodeViewWrapper } from '@tiptap/react';
-
-//utils
-export {
-  getHtmlContent,
-  convertHtmlToJson,
-  getGeneratedText,
-  createEmptyContent,
-  setCSSVariables,
-  markdownToHtml,
-} from './shared/utils';

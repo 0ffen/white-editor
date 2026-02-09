@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { getTranslate } from '@/shared';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
@@ -58,6 +59,7 @@ export const MarkButton = React.forwardRef<HTMLButtonElement, MarkButtonProps>(
     return (
       <Button
         type='button'
+        size='icon'
         variant={'ghost'}
         disabled={!canToggle}
         data-active-state={isActive ? 'on' : 'off'}
@@ -66,6 +68,7 @@ export const MarkButton = React.forwardRef<HTMLButtonElement, MarkButtonProps>(
         tabIndex={-1}
         aria-label={label}
         aria-pressed={isActive}
+        tooltip={type != null ? getTranslate(type) : undefined}
         onClick={handleClick}
         isActive={isActive}
         className={cn(className)}

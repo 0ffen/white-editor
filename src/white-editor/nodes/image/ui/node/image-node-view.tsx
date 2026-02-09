@@ -1,17 +1,20 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Minus, Plus, RefreshCcw } from 'lucide-react';
-import { Button, Dialog, DialogContent, DialogTitle, cn } from '@/shared';
+import { Loader2 } from 'lucide-react';
+import { cn, getTranslate } from '@/shared';
 import {
   ImageCaption,
   ImageEditDialog,
+  ImageErrorBlock,
   ImageFloatingControls,
   useImageEdit,
   useImageHover,
   useImageResize,
+  getFilenameFromSrc,
 } from '@/white-editor';
-
 import type { NodeViewProps } from '@tiptap/react';
 import { NodeViewWrapper } from '@tiptap/react';
+
+import { ImageViewerModal } from './image-viewer-modal';
 
 type AlignType = 'left' | 'center' | 'right';
 
@@ -21,20 +24,19 @@ type AlignType = 'left' | 'center' | 'right';
  */
 export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const { getPos } = props;
-  const { src, alt, title, width, height, caption, textAlign } = props.node.attrs;
+  const { src, alt, title, width, height, caption, textAlign, uploadingProgress, uploadError, uploadErrorFileName } =
+    props.node.attrs;
   const containerRef = useRef<HTMLDivElement>(null);
-  const dialogImageRef = useRef<HTMLImageElement>(null);
 
   const [_align, setAlign] = useState<AlignType>(textAlign || 'center');
 
   const [currentWidth, setCurrentWidth] = useState<string>(width || '500px');
   const [currentHeight, setCurrentHeight] = useState<string>(height || 'auto');
   const [isViewerImageDialogOpen, setIsViewerImageDialogOpen] = useState<boolean>(false);
+  const [isCaptionEditing, setIsCaptionEditing] = useState<boolean>(false);
+  const [captionInput, setCaptionInput] = useState<string>(caption || '');
+  const captionInputRef = useRef<HTMLTextAreaElement>(null);
   const [imageLoadError, setImageLoadError] = useState<boolean>(false);
-  const [zoomLevel, setZoomLevel] = useState<number>(100);
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
-  const [dragOffset, setDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   useEffect(() => {
     if (textAlign && textAlign !== _align) setAlign(textAlign as AlignType);
@@ -98,115 +100,73 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
     [props]
   );
 
-  const handleZoomIn = useCallback(() => {
-    setZoomLevel((prev) => {
-      const newZoom = Math.min(prev + 25, 500);
-      // 확대 시 드래그 오프셋을 조정하여 이미지가 중앙에 유지되도록
-      if (newZoom > 100 && prev <= 100) {
-        setDragOffset({ x: 0, y: 0 });
-      }
-      return newZoom;
-    });
-  }, []);
+  const RECOMMENDED_WIDTH = '500px';
 
-  const handleZoomOut = useCallback(() => {
-    setZoomLevel((prev) => {
-      const newZoom = Math.max(prev - 25, 25);
-      if (newZoom <= 100) {
-        setDragOffset({ x: 0, y: 0 });
-      }
-      return newZoom;
-    });
-  }, []);
+  const handleWidthModeChange = useCallback(
+    (mode: 'recommended' | 'full') => {
+      const nextWidth = mode === 'recommended' ? RECOMMENDED_WIDTH : '100%';
+      const nextHeight = 'auto';
+      setCurrentWidth(nextWidth);
+      setCurrentHeight(nextHeight);
+      resizeHandlers.setCurrentWidth(nextWidth);
+      resizeHandlers.setCurrentHeight(nextHeight);
+      props.updateAttributes({ width: nextWidth, height: nextHeight });
+    },
+    [props, resizeHandlers]
+  );
 
-  const handleZoomReset = useCallback(() => {
-    setZoomLevel(100);
-    setDragOffset({ x: 0, y: 0 });
-  }, []);
-
-  const handleImageDoubleClick = useCallback(() => {
-    if (zoomLevel === 100) {
-      setZoomLevel(200);
-    } else {
-      setZoomLevel(100);
-      setDragOffset({ x: 0, y: 0 });
-    }
-  }, [zoomLevel]);
-
-  const handleMouseDown = useCallback(
+  const handleCaptionClick = useCallback(
     (e: React.MouseEvent) => {
-      if (zoomLevel > 100) {
-        e.preventDefault();
-        setIsDragging(true);
-        setDragStart({ x: e.clientX, y: e.clientY });
-      }
+      e.preventDefault();
+      e.stopPropagation();
+      setCaptionInput(caption || '');
+      setIsCaptionEditing(true);
     },
-    [zoomLevel]
+    [caption]
   );
 
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (isDragging && dragStart) {
-        e.preventDefault();
-        const deltaX = e.clientX - dragStart.x;
-        const deltaY = e.clientY - dragStart.y;
-
-        setDragOffset((prev) => {
-          const newX = prev.x + deltaX;
-          const newY = prev.y + deltaY;
-
-          const maxOffset = 400;
-          const constrainedX = Math.max(-maxOffset, Math.min(maxOffset, newX));
-          const constrainedY = Math.max(-maxOffset, Math.min(maxOffset, newY));
-
-          return {
-            x: constrainedX,
-            y: constrainedY,
-          };
-        });
-
-        setDragStart({ x: e.clientX, y: e.clientY });
-      }
-    },
-    [isDragging, dragStart]
-  );
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-    setDragStart(null);
-  }, []);
+  const handleCaptionCommit = useCallback(() => {
+    props.updateAttributes({ caption: captionInput });
+    setIsCaptionEditing(false);
+  }, [props, captionInput]);
 
   useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-    } else {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+    if (isCaptionEditing && captionInputRef.current) {
+      const el = captionInputRef.current;
+      el.focus();
+      // DOM에 value 반영 후 커서를 텍스트 끝으로 이동
+      const timer = setTimeout(() => {
+        const len = el.value.length;
+        el.setSelectionRange(len, len);
+      }, 0);
+      return () => clearTimeout(timer);
     }
+  }, [isCaptionEditing]);
 
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  // 캡션 textarea 내용에 맞춰 높이 자동 확장 (스크롤 없음)
+  useEffect(() => {
+    const el = captionInputRef.current;
+    if (!el || !isCaptionEditing) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  }, [isCaptionEditing, captionInput]);
 
   return (
     <NodeViewWrapper
       className={cn('we:my-2 we:w-full')}
       data-type='image'
-      draggable='true'
-      data-drag-handle
+      data-full-width={currentWidth === '100%'}
       style={{ textAlign: textAlign || _align }}
     >
       <section
         ref={containerRef}
         className={cn(
-          'we:group we:relative we:inline-block',
+          'we:group we:relative',
+          currentWidth === '100%' ? 'we:w-full we:block' : 'we:inline-block',
           caption && 'we:mb-2',
           resizeState.isResizing ? 'we:resizing' : '',
           props.selected && props.editor.isEditable
-            ? 'we:selected we:ring-primary/40 we:rounded-xs we:ring-2 we:ring-offset-2'
+            ? 'we:selected we:border-none we:ring-2 we:ring-offset-2 we:ring-brand-default we:rounded-xs'
             : ''
         )}
         onMouseEnter={hoverHandlers.handleMouseEnter}
@@ -215,26 +175,132 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           if (!props.editor.isEditable) setIsViewerImageDialogOpen(true);
         }}
       >
-        <img
+        {/* 리사이즈 기준 요소: 정상 시 img, 에러 시 래퍼에 ref 부여해 드래그로 크기 조절 가능 */}
+        <div
           ref={imageRef}
-          src={src}
-          alt={alt}
-          title={title}
-          className='we:mb-0 we:inline-block we:h-auto we:max-w-full we:rounded we:shadow-md'
+          className={cn(currentWidth === '100%' ? 'we:block we:w-full' : 'we:inline we:max-w-full')}
           style={{
-            width: currentWidth !== 'auto' ? currentWidth : undefined,
+            width:
+              !uploadError && !imageLoadError && currentWidth !== 'auto' && currentWidth !== '100%'
+                ? currentWidth
+                : undefined,
+            height: !uploadError && !imageLoadError && currentHeight !== 'auto' ? currentHeight : undefined,
           }}
-          draggable={false}
-          onError={() => setImageLoadError(true)}
-        />
-        {caption && <ImageCaption caption={caption} imageWidth={currentWidth} />}
-        {props.editor.isEditable && props.selected && (
+        >
+          {/* 업로드 실패: 에러 블록 */}
+          {uploadError && props.editor.isEditable && (
+            <ImageErrorBlock
+              variant='inline'
+              mainText={getTranslate('이미지를 업로드 할 수 없습니다')}
+              filename={uploadErrorFileName}
+              onRemove={() => {
+                const pos = getPos?.();
+                if (pos != null) {
+                  props.editor
+                    .chain()
+                    .focus()
+                    .deleteRange({ from: pos, to: pos + props.node.nodeSize })
+                    .run();
+                }
+              }}
+            />
+          )}
+
+          {/* 이미지 깨짐 (에디터): 에러 블록 */}
+          {!uploadError && imageLoadError && props.editor.isEditable && (
+            <ImageErrorBlock
+              variant='inline'
+              mainText={getTranslate('이미지를 찾을 수 없습니다')}
+              filename={getFilenameFromSrc(src) || undefined}
+              onRemove={() => {
+                const pos = getPos?.();
+                if (pos != null) {
+                  props.editor
+                    .chain()
+                    .focus()
+                    .deleteRange({ from: pos, to: pos + props.node.nodeSize })
+                    .run();
+                }
+              }}
+            />
+          )}
+
+          {/* 이미지 (정상일 때만 표시) */}
+          {!uploadError && !imageLoadError && (
+            <img
+              src={src}
+              alt={alt}
+              title={title}
+              className='we:mb-0 we:block we:h-auto we:w-full we:max-w-full we:rounded we:shadow-md'
+              style={{
+                width: currentWidth !== 'auto' ? currentWidth : undefined,
+              }}
+              onError={() => setImageLoadError(true)}
+              draggable={false}
+              data-drag-handle
+            />
+          )}
+        </div>
+
+        {/* 조회 시 이미지 깨짐: 큰 블록, 아이콘 중앙, X 없음 */}
+        {!props.editor.isEditable && imageLoadError && (
+          <ImageErrorBlock
+            variant='viewer'
+            mainText={getTranslate('삭제되었거나 찾을 수 없는 이미지입니다')}
+            filename={getFilenameFromSrc(src) || undefined}
+          />
+        )}
+        {uploadingProgress != null && (
+          <div className='we:absolute we:right-2 we:bottom-2 we:flex we:h-5 we:items-center we:justify-center we:gap-1 we:rounded-[2px] we:px-1 we:bg-elevation-opacity-2 we:text-text-inverse'>
+            <Loader2 className='we:h-3.5 we:w-3.5 we:animate-spin' aria-hidden />
+            <span className='we:text-xs we:font-medium we:text-text-inverse'>Uploading {uploadingProgress}%</span>
+          </div>
+        )}
+        {props.editor.isEditable && isCaptionEditing ? (
+          <textarea
+            id='image-caption-input'
+            ref={captionInputRef}
+            value={captionInput}
+            onChange={(e) => setCaptionInput(e.target.value)}
+            onBlur={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleCaptionCommit();
+            }}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.stopPropagation();
+                if (!e.shiftKey) {
+                  e.preventDefault();
+                  (e.target as HTMLTextAreaElement).blur();
+                }
+              }
+            }}
+            placeholder={getTranslate('캡션을 입력하세요')}
+            rows={1}
+            className={cn(
+              'we:mt-2 we:w-full we:min-h-[2.5rem] we:resize-none we:overflow-hidden we:border-0 we:bg-transparent we:text-center we:text-xs we:text-foreground/80 we:outline-none we:placeholder:we:text-muted-foreground'
+            )}
+            style={currentWidth !== '100%' ? { maxWidth: currentWidth } : undefined}
+          />
+        ) : caption ? (
+          <ImageCaption caption={caption} imageWidth={currentWidth} />
+        ) : null}
+        {props.editor.isEditable && props.selected && !uploadError && !imageLoadError && (
           <ImageFloatingControls
             onEditClick={handleEditClick}
             onResizeStart={resizeHandlers.handleResizeStart}
             showControls={showControls}
             align={_align}
             onAlignChange={handleAlignChange}
+            onWidthModeChange={handleWidthModeChange}
+            widthMode={currentWidth === '100%' ? 'full' : 'recommended'}
+            onCaptionClick={handleCaptionClick}
+            isCaptionEditing={isCaptionEditing}
           />
         )}
       </section>
@@ -244,66 +310,18 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           isOpen={isDialogOpen}
           onOpenChange={setIsDialogOpen}
           imageUrl={editingImage.src}
-          currentCaption={editingImage.caption || ''}
           onSave={handleImageSave}
         />
       )}
 
-      {!imageLoadError && isViewerImageDialogOpen && (
-        <Dialog
+      {!imageLoadError && (
+        <ImageViewerModal
           open={isViewerImageDialogOpen}
-          onOpenChange={(open) => {
-            setIsViewerImageDialogOpen(open);
-            if (!open) {
-              setZoomLevel(100);
-              setDragOffset({ x: 0, y: 0 });
-            }
-          }}
-        >
-          <DialogTitle className='we:sr-only'>View Image</DialogTitle>
-          <DialogContent className='we:p-2 we:mx-auto we:justify-center we:max-w-[90vw] we:w-max we:h-fit we:overflow-auto'>
-            <div className='we:flex we:flex-col we:items-center we:gap-4'>
-              <div
-                className='we:relative we:overflow-clip we:rounded we:border we:bg-border/20 we:border-none we:grid we:place-items-center'
-                onMouseDown={handleMouseDown}
-                style={{ cursor: zoomLevel > 100 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
-              >
-                <div className='we:p-0 we:flex we:items-center we:justify-center'>
-                  <img
-                    ref={dialogImageRef}
-                    src={src}
-                    alt={alt}
-                    title={title}
-                    className='we:mb-0 we:inline-block we:w-full we:h-[80vh] we:rounded we:text-center we:object-contain we:transition-transform we:duration-200 we:select-none'
-                    style={{
-                      transform: `scale(${zoomLevel / 100}) translate(${dragOffset.x}px, ${dragOffset.y}px)`,
-                      transformOrigin: 'center center',
-                    }}
-                    draggable={false}
-                    onDoubleClick={handleImageDoubleClick}
-                  />
-                </div>
-              </div>
-              {caption && <ImageCaption caption={caption} className='we:mt-0 we:text-center' />}
-
-              {/* 확대/축소 컨트롤 */}
-              <div className='we:flex we:items-center we:justify-center we:gap-2 we:mt-2 we:mb-2'>
-                <div className='we:flex we:items-center we:gap-3 we:px-2 we:py-1 we:border we:rounded-lg'>
-                  <Button type='button' onClick={handleZoomOut} disabled={zoomLevel <= 50}>
-                    <Minus />
-                  </Button>
-                  <span className='we:text-sm'>{zoomLevel}%</span>
-                  <Button type='button' onClick={handleZoomIn} disabled={zoomLevel >= 200}>
-                    <Plus />
-                  </Button>
-                </div>
-                <Button type='button' onClick={handleZoomReset}>
-                  <RefreshCcw className='we:h-4 we:w-4' />
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+          onOpenChange={setIsViewerImageDialogOpen}
+          src={src}
+          alt={alt}
+          title={title}
+        />
       )}
     </NodeViewWrapper>
   );

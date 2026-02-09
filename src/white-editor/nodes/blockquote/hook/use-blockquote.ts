@@ -2,8 +2,7 @@ import * as React from 'react';
 
 import { TextQuote } from 'lucide-react';
 import { useTiptapEditor } from '@/shared/hooks';
-import { findNodePosition, isNodeInSchema, isNodeTypeSelected, isValidPosition } from '@/shared/utils';
-import { NodeSelection, TextSelection } from '@tiptap/pm/state';
+import { isNodeInSchema, isNodeTypeSelected } from '@/shared/utils';
 import type { Editor } from '@tiptap/react';
 
 export const BLOCKQUOTE_SHORTCUT_KEY = 'mod+shift+b';
@@ -14,81 +13,37 @@ export interface UseBlockquoteConfig {
   onToggled?: () => void;
 }
 
-export function canToggleBlockquote(editor: Editor | null, turnInto: boolean = true): boolean {
-  if (!editor || !editor.isEditable) return false;
-  if (!isNodeInSchema('blockquote', editor) || isNodeTypeSelected(editor, ['image'])) return false;
-
-  if (!turnInto) {
-    return editor.can().toggleWrap('blockquote');
-  }
-
-  try {
-    const view = editor.view;
-    const state = view.state;
-    const selection = state.selection;
-
-    if (selection.empty || selection instanceof TextSelection) {
-      const pos = findNodePosition({
-        editor,
-        node: state.selection.$anchor.node(1),
-      })?.pos;
-      if (!isValidPosition(pos)) return false;
-    }
-
-    return true;
-  } catch {
-    return false;
-  }
+/** Block types that can be converted to blockquote (paragraph, blockquote, any list). */
+function isInConvertibleBlock(editor: Editor | null): boolean {
+  if (!editor) return false;
+  return (
+    editor.isActive('paragraph') ||
+    editor.isActive('blockquote') ||
+    editor.isActive('bulletList') ||
+    editor.isActive('orderedList') ||
+    editor.isActive('taskList')
+  );
 }
 
+export function canToggleBlockquote(editor: Editor | null): boolean {
+  if (!editor || !editor.isEditable) return false;
+  if (!isNodeInSchema('blockquote', editor) || isNodeTypeSelected(editor, ['image'])) return false;
+  if (editor.isActive('code')) return false;
+
+  // Enable when in any block that can be converted to blockquote (so user can switch between list/blockquote).
+  return editor.can().toggleWrap('blockquote') || isInConvertibleBlock(editor);
+}
+
+/**
+ * Toggle blockquote on/off using only Tiptap's native toggleWrap command.
+ * Custom NodeSelection + clearNodes + lift caused duplicate empty paragraph nodes.
+ */
 export function toggleBlockquote(editor: Editor | null): boolean {
   if (!editor || !editor.isEditable) return false;
   if (!canToggleBlockquote(editor)) return false;
 
-  try {
-    const view = editor.view;
-    let state = view.state;
-    let tr = state.tr;
-
-    // No selection, find the the cursor position
-    if (state.selection.empty || state.selection instanceof TextSelection) {
-      const pos = findNodePosition({
-        editor,
-        node: state.selection.$anchor.node(1),
-      })?.pos;
-      if (!isValidPosition(pos)) return false;
-
-      tr = tr.setSelection(NodeSelection.create(state.doc, pos));
-      view.dispatch(tr);
-      state = view.state;
-    }
-
-    const selection = state.selection;
-
-    let chain = editor.chain().focus();
-
-    // Handle NodeSelection
-    if (selection instanceof NodeSelection) {
-      const firstChild = selection.node.firstChild?.firstChild;
-      const lastChild = selection.node.lastChild?.lastChild;
-
-      const from = firstChild ? selection.from + firstChild.nodeSize : selection.from + 1;
-
-      const to = lastChild ? selection.to - lastChild.nodeSize : selection.to - 1;
-
-      chain = chain.setTextSelection({ from, to }).clearNodes();
-    }
-
-    const toggle = editor.isActive('blockquote') ? chain.lift('blockquote') : chain.wrapIn('blockquote');
-
-    toggle.run();
-
-    editor.chain().focus().selectTextblockEnd().run();
-
-    return true;
-  } catch {
-    return false;
-  }
+  const success = editor.chain().focus().toggleWrap('blockquote').run();
+  return success;
 }
 
 function shouldShowButton(props: { editor: Editor | null; hideWhenUnavailable: boolean }): boolean {
