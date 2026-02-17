@@ -8,7 +8,7 @@ import {
   GalleryVerticalIcon,
   TvMinimal,
 } from 'lucide-react';
-import { Button, cn, getTranslate, Separator, Toolbar, Tooltip, TooltipContent, TooltipTrigger } from '@/shared';
+import { Button, cn, useTranslate, Separator, Toolbar, Tooltip, TooltipContent, TooltipTrigger } from '@/shared';
 
 export type ImageWidthMode = 'recommended' | 'full';
 
@@ -48,6 +48,7 @@ export const ImageFloatingControls: React.FC<ImageFloatingControlsProps> = (prop
     onCaptionClick,
     isCaptionEditing,
   } = props;
+  const t = useTranslate();
   if (!showControls) return null;
 
   return (
@@ -62,7 +63,7 @@ export const ImageFloatingControls: React.FC<ImageFloatingControlsProps> = (prop
               <Button
                 key={type}
                 onClick={() => onAlignChange(type as 'left' | 'center' | 'right')}
-                tooltip={getTranslate(titleKey)}
+                tooltip={t(titleKey)}
                 type='button'
                 className={cn(align === type && 'we:bg-primary/20')}
                 isActive={align === type}
@@ -74,7 +75,7 @@ export const ImageFloatingControls: React.FC<ImageFloatingControlsProps> = (prop
           </>
         )}
         <Button
-          tooltip={getTranslate('권장너비')}
+          tooltip={t('권장너비')}
           type='button'
           onClick={() => onWidthModeChange?.('recommended')}
           className={cn(widthMode === 'recommended' && 'we:bg-primary/20')}
@@ -83,7 +84,7 @@ export const ImageFloatingControls: React.FC<ImageFloatingControlsProps> = (prop
           <AlignVerticalSpaceAround size={16} className={cn(widthMode === 'recommended' && 'we:text-primary')} />
         </Button>
         <Button
-          tooltip={getTranslate('전체너비')}
+          tooltip={t('전체너비')}
           type='button'
           onClick={() => onWidthModeChange?.('full')}
           className={cn(widthMode === 'full' && 'we:bg-primary/20')}
@@ -94,14 +95,14 @@ export const ImageFloatingControls: React.FC<ImageFloatingControlsProps> = (prop
         <Separator orientation='vertical' className='we:mx-0.5 we:h-2' />
         <Button
           onClick={onCaptionClick}
-          tooltip={getTranslate('캡션')}
+          tooltip={t('캡션')}
           type='button'
           className={cn(isCaptionEditing && 'we:bg-primary/20')}
           isActive={isCaptionEditing}
         >
           <TvMinimal size={16} className={cn(isCaptionEditing && 'we:text-primary')} />
         </Button>
-        <Button onClick={onEditClick} tooltip={getTranslate('이미지 편집')} type='button'>
+        <Button onClick={onEditClick} tooltip={t('이미지 편집')} type='button'>
           <Edit3 />
         </Button>
       </Toolbar>
@@ -114,7 +115,7 @@ export const ImageFloatingControls: React.FC<ImageFloatingControlsProps> = (prop
             />
           </TooltipTrigger>
           <TooltipContent side='bottom'>
-            <div className='we:flex we:flex-col we:items-center we:text-center'>{getTranslate('이미지 크기 조절')}</div>
+            <div className='we:flex we:flex-col we:items-center we:text-center'>{t('이미지 크기 조절')}</div>
           </TooltipContent>
         </Tooltip>
       )}

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '@/shared/utils';
+import { usePortalContainer } from '@/shared/contexts';
 import { Toolbar, ToolbarGroup } from './toolbar';
 
 interface FloatingToolbarProps {
@@ -36,6 +37,7 @@ export const FloatingToolbar = React.forwardRef<HTMLDivElement, FloatingToolbarP
   ) => {
     const [position, setPosition] = React.useState<{ top: number; left: number } | null>(null);
     const toolbarRef = React.useRef<HTMLDivElement>(null);
+    const portalContainer = usePortalContainer();
 
     const hasAnchor = Boolean(anchorElement || getAnchorRect);
 
@@ -142,7 +144,7 @@ export const FloatingToolbar = React.forwardRef<HTMLDivElement, FloatingToolbarP
       </Toolbar>
     );
 
-    return createPortal(floatingToolbar, document.body);
+    return createPortal(floatingToolbar, portalContainer ?? document.body);
   }
 );
 

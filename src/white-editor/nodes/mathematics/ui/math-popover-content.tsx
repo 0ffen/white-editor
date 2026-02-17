@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import katex from 'katex';
 import { CornerDownLeft, Trash2Icon } from 'lucide-react';
-import { getTranslate } from '@/shared';
+import { useTranslate } from '@/shared';
 import { Button, ButtonGroup, Input } from '@/shared/components';
 import { cn } from '@/shared/utils';
 
@@ -19,6 +19,7 @@ interface Props {
 export const MathPopoverContent = (props: Props) => {
   const { mathPopoverClassName, placeholder, mathString, isActive, setMath, removeMath, handleKeyDown, setMathString } =
     props;
+  const t = useTranslate();
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const previewHtml = useMemo(() => {
@@ -52,7 +53,7 @@ export const MathPopoverContent = (props: Props) => {
       <div className='we:flex we:w-full we:gap-1'>
         <Input
           type='text'
-          placeholder={placeholder || getTranslate('입력하세요')}
+          placeholder={placeholder || t('입력하세요')}
           value={mathString}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMathString(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -63,13 +64,7 @@ export const MathPopoverContent = (props: Props) => {
           ref={inputRef}
         />
         <ButtonGroup orientation='horizontal'>
-          <Button
-            type='button'
-            onClick={setMath}
-            disabled={!mathString && !isActive}
-            title={getTranslate('적용')}
-            size={'icon'}
-          >
+          <Button type='button' onClick={setMath} disabled={!mathString && !isActive} title={t('적용')} size={'icon'}>
             <CornerDownLeft className='we:text-text-sub' />
           </Button>
           <Button

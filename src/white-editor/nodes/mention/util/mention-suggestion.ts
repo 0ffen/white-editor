@@ -1,5 +1,5 @@
 import type { RefObject } from 'react';
-import { transformToLabeledItems, updatePosition, type ListItemConfig } from '@/shared/utils';
+import { transformToLabeledItems, updatePosition, getPortalContainer, type ListItemConfig } from '@/shared/utils';
 import {
   MentionList,
   type KeyDownProps,
@@ -51,7 +51,8 @@ const mentionSuggestion = <T>({ mentionDataRef }: MentionSuggestionProps<T>): Me
         const element = component.element as HTMLElement;
         element.style.position = 'absolute';
 
-        document.body.appendChild(element);
+        const container = getPortalContainer(props.editor);
+        container.appendChild(element);
 
         updatePosition(props.editor, element);
       },

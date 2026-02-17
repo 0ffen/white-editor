@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { getTranslate } from '@/shared';
+import { useTranslate } from '@/shared';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks/use-tiptap-editor';
 import { cn } from '@/shared/utils';
@@ -27,6 +27,7 @@ export const UndoRedoButton = React.forwardRef<HTMLButtonElement, UndoRedoButton
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor);
+    const t = useTranslate();
     const {
       isVisible,
       handleAction,
@@ -65,7 +66,7 @@ export const UndoRedoButton = React.forwardRef<HTMLButtonElement, UndoRedoButton
         role='button'
         tabIndex={-1}
         aria-label={label}
-        tooltip={action != null ? getTranslate(action) : undefined}
+        tooltip={action != null ? t(action) : undefined}
         onClick={handleClick}
         className={cn(className)}
         {...buttonProps}

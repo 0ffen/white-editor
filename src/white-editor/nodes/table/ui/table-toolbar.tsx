@@ -1,5 +1,5 @@
 import React from 'react';
-import { getTranslate } from '@/shared';
+import { useTranslate } from '@/shared';
 import { ToolbarButton } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
@@ -13,6 +13,7 @@ const TableActionButton = React.forwardRef<
     action: TableActionItem;
   }
 >(({ editor, action }, ref) => {
+  const t = useTranslate();
   const canExecute = canExecuteAction(editor, action.action);
 
   const handleClick = React.useCallback(() => {
@@ -27,7 +28,7 @@ const TableActionButton = React.forwardRef<
       onClick={handleClick}
       disabled={!canExecute}
       ref={ref}
-      tooltip={getTranslate(action.action)}
+      tooltip={t(action.action)}
     >
       <div className='we:flex we:h-5 we:w-5 we:items-center we:justify-center'>
         {action.icon && React.createElement(action.icon)}

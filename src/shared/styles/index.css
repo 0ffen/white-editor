@@ -137,6 +137,177 @@
   }
 }
 
+@layer base {
+  [data-we-portal-container],
+  .white-editor {
+    /* --- Shell / intermediate variables (mirrors :root declarations) --- */
+    --we-background: var(--we-elevation-background);
+    --we-foreground: var(--we-text-normal);
+    --we-codeblock-background: var(--we-elevation-level2);
+    --we-card: var(--we-elevation-level1);
+    --we-card-foreground: var(--we-text-normal);
+    --we-popover: var(--we-elevation-dropdown);
+    --we-popover-foreground: var(--we-text-normal);
+    --we-primary: var(--we-brand-default);
+    --we-primary-foreground: var(--we-text-inverse);
+    --we-secondary: var(--we-elevation-level1);
+    --we-secondary-foreground: var(--we-text-normal);
+    --we-muted: var(--we-elevation-level2);
+    --we-muted-foreground: var(--we-text-sub);
+    --we-accent: var(--we-brand-weak);
+    --we-accent-foreground: var(--we-text-normal);
+    --we-destructive: var(--we-red-default);
+    --we-border: var(--we-border-default);
+    --we-input: var(--we-border-default);
+    --we-ring: var(--we-brand-default);
+    --we-primary-background: var(--we-brand-weak);
+    --we-chart-1: var(--we-brand-default);
+    --we-chart-2: var(--we-green-default);
+    --we-chart-3: var(--we-purple-default);
+    --we-chart-4: var(--we-orange-default);
+    --we-chart-5: var(--we-red-default);
+    --we-sidebar: var(--we-elevation-level1);
+    --we-sidebar-foreground: var(--we-text-normal);
+    --we-sidebar-primary: var(--we-brand-default);
+    --we-sidebar-primary-foreground: var(--we-text-inverse);
+    --we-sidebar-accent: var(--we-brand-weak);
+    --we-sidebar-accent-foreground: var(--we-text-normal);
+    --we-sidebar-border: var(--we-border-default);
+    --we-sidebar-ring: var(--we-brand-default);
+    --we-popover-shadow:
+      0px 16px 48px 0px rgba(17, 24, 39, 0.04), 0px 12px 24px 0px rgba(17, 24, 39, 0.04),
+      0px 6px 8px 0px rgba(17, 24, 39, 0.02), 0px 2px 3px 0px rgba(17, 24, 39, 0.02);
+
+    /* --- @theme color variables re-scoped --- */
+    /* Shadcn/shell colors */
+    --we-color-background: var(--we-background);
+    --we-color-foreground: var(--we-foreground);
+    --we-color-card: var(--we-card);
+    --we-color-codeblock-background: var(--we-codeblock-background);
+    --we-color-card-foreground: var(--we-card-foreground);
+    --we-color-popover: var(--we-popover);
+    --we-color-popover-foreground: var(--we-popover-foreground);
+    --we-color-primary: var(--we-primary);
+    --we-color-primary-foreground: var(--we-primary-foreground);
+    --we-color-secondary: var(--we-secondary);
+    --we-color-secondary-foreground: var(--we-secondary-foreground);
+    --we-color-muted: var(--we-muted);
+    --we-color-muted-foreground: var(--we-muted-foreground);
+    --we-color-accent: var(--we-accent);
+    --we-color-accent-foreground: var(--we-accent-foreground);
+    --we-color-destructive: var(--we-destructive);
+    --we-color-border: var(--we-border);
+    --we-color-input: var(--we-input);
+    --we-color-ring: var(--we-ring);
+    --we-color-chart-1: var(--we-chart-1);
+    --we-color-chart-2: var(--we-chart-2);
+    --we-color-chart-3: var(--we-chart-3);
+    --we-color-chart-4: var(--we-chart-4);
+    --we-color-chart-5: var(--we-chart-5);
+    --we-color-sidebar: var(--we-sidebar);
+    --we-color-sidebar-foreground: var(--we-sidebar-foreground);
+    --we-color-sidebar-primary: var(--we-sidebar-primary);
+    --we-color-sidebar-primary-foreground: var(--we-sidebar-primary-foreground);
+    --we-color-sidebar-accent: var(--we-sidebar-accent);
+    --we-color-sidebar-accent-foreground: var(--we-sidebar-accent-foreground);
+    --we-color-sidebar-border: var(--we-sidebar-border);
+    --we-color-sidebar-ring: var(--we-sidebar-ring);
+    --we-color-primary-background: var(--we-primary-background);
+
+    /* Design Tokens — Semantic Colors */
+    --we-color-text-strong: var(--we-text-strong);
+    --we-color-text-normal: var(--we-text-normal);
+    --we-color-text-sub: var(--we-text-sub);
+    --we-color-text-light: var(--we-text-light);
+    --we-color-text-placeholder: var(--we-text-placeholder);
+    --we-color-text-error: var(--we-text-error);
+    --we-color-text-inverse: var(--we-text-inverse);
+
+    --we-color-elevation-background: var(--we-elevation-background);
+    --we-color-elevation-level1: var(--we-elevation-level1);
+    --we-color-elevation-level2: var(--we-elevation-level2);
+    --we-color-elevation-dropdown: var(--we-elevation-dropdown);
+    --we-color-elevation-opacity: var(--we-elevation-opacity);
+    --we-color-elevation-opacity-2: var(--we-elevation-opacity-2);
+
+    --we-color-border-default: var(--we-border-default);
+    --we-color-border-light: var(--we-border-light);
+    --we-color-border-error: var(--we-border-error);
+    --we-color-border-interactive: var(--we-border-interactive);
+    --we-color-border-success: var(--we-border-success);
+    --we-color-border-color: var(--we-border-color);
+    --we-color-border-only-light: var(--we-border-only-light);
+
+    --we-color-interaction-hover: var(--we-interaction-hover);
+
+    --we-color-brand-weak: var(--we-brand-weak);
+    --we-color-brand-weak2: var(--we-brand-weak2);
+    --we-color-brand-light: var(--we-brand-light);
+    --we-color-brand-default: var(--we-brand-default);
+    --we-color-brand-strong: var(--we-brand-strong);
+    --we-color-brand-vs: var(--we-brand-vs);
+
+    /* Design Tokens — Risk levels */
+    --we-color-risk-level-critical: var(--we-risk-level-critical);
+    --we-color-risk-level-high: var(--we-risk-level-high);
+    --we-color-risk-level-medium: var(--we-risk-level-medium);
+    --we-color-risk-level-low: var(--we-risk-level-low);
+    --we-color-risk-level-none: var(--we-risk-level-none);
+
+    /* Design Tokens — Semantic palette */
+    --we-color-green-weak: var(--we-green-weak);
+    --we-color-green-light: var(--we-green-light);
+    --we-color-green-default: var(--we-green-default);
+    --we-color-green-strong: var(--we-green-strong);
+    --we-color-green-vs: var(--we-green-vs);
+    --we-color-orange-weak: var(--we-orange-weak);
+    --we-color-orange-light: var(--we-orange-light);
+    --we-color-orange-default: var(--we-orange-default);
+    --we-color-orange-strong: var(--we-orange-strong);
+    --we-color-orange-vs: var(--we-orange-vs);
+    --we-color-red-weak: var(--we-red-weak);
+    --we-color-red-light: var(--we-red-light);
+    --we-color-red-default: var(--we-red-default);
+    --we-color-red-strong: var(--we-red-strong);
+    --we-color-red-vs: var(--we-red-vs);
+    --we-color-pink-weak: var(--we-pink-weak);
+    --we-color-pink-light: var(--we-pink-light);
+    --we-color-pink-default: var(--we-pink-default);
+    --we-color-pink-strong: var(--we-pink-strong);
+    --we-color-pink-vs: var(--we-pink-vs);
+    --we-color-purple-weak: var(--we-purple-weak);
+    --we-color-purple-light: var(--we-purple-light);
+    --we-color-purple-default: var(--we-purple-default);
+    --we-color-purple-strong: var(--we-purple-strong);
+    --we-color-purple-vs: var(--we-purple-vs);
+    --we-color-yellow-weak: var(--we-yellow-weak);
+    --we-color-yellow-light: var(--we-yellow-light);
+    --we-color-yellow-default: var(--we-yellow-default);
+    --we-color-yellow-strong: var(--we-yellow-strong);
+    --we-color-yellow-vs: var(--we-yellow-vs);
+
+    /* Design Tokens — Graphic grays & editor */
+    --we-color-graphic-gray50: var(--we-graphic-gray50);
+    --we-color-graphic-gray100: var(--we-graphic-gray100);
+    --we-color-graphic-gray200: var(--we-graphic-gray200);
+    --we-color-editor-inline-code: var(--we-editor-inline-code);
+    --we-color-editor-fontcolor-high: var(--we-editor-fontcolor-high);
+    --we-color-editor-fontcolor-medium: var(--we-editor-fontcolor-medium);
+    --we-color-editor-fontcolor-warm: var(--we-editor-fontcolor-warm);
+
+    /* Tooltip (base palette reference — same as @theme) */
+    --we-color-tooltip: var(--we-gray-light-600);
+    --we-color-tooltip-foreground: var(--we-gray-dark-800);
+
+    /* Base */
+    --we-color-white: var(--we-white);
+    --we-color-black: var(--we-black);
+
+    /* Shadow */
+    --we-shadow-popover: var(--we-popover-shadow);
+  }
+}
+
 @theme {
   --font-pretendard:
     'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',

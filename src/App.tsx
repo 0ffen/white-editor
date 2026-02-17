@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { CheckIcon } from 'lucide-react';
 import type { JSONContent } from '@tiptap/react';
 import {
   Button,
@@ -73,9 +74,9 @@ export default function App() {
       throw new Error('이미지 파일만 업로드 가능합니다');
     }
 
-    const maxSize = 5 * 1024 * 1024;
+    const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
-      throw new Error('파일 크기는 5MB 이하여야 합니다');
+      throw new Error('파일 크기는 10MB 이하여야 합니다');
     }
 
     await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000));
@@ -124,6 +125,7 @@ export default function App() {
               }}
             >
               <WhiteEditor
+                placeholder='내용을 입력해주세요.'
                 key={locale}
                 locale={locale}
                 ref={editorRef}
@@ -132,6 +134,12 @@ export default function App() {
                 editorClassName='we:h-[1000px] we:rounded-md we:border we:border-border-default'
                 contentClassName='we:h-full we:px-2'
                 toolbarItems={WHITE_EDITOR_TOOLBAR_ITEMS}
+                toolbarProps={{
+                  image: {
+                    icon: <CheckIcon className='we:w-4 we:h-4' />, // UI만
+                    className: 'my-class', // UI만
+                  },
+                }}
                 extension={{
                   mention: {
                     data: [
@@ -153,6 +161,9 @@ export default function App() {
                   },
                   imageUpload: {
                     upload: handleImageUpload,
+                    maxSize: 1024 * 1024 * 10,
+                    accept: 'image/*',
+                    limit: 1,
                     onSuccess: (url) => {
                       // eslint-disable-next-line no-console
                       console.log('✅ 이미지 업로드 성공:', url);

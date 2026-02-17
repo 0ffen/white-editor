@@ -30,6 +30,10 @@ interface EditorExtensions<T = Record<string, unknown>, P = Record<string, unkno
     upload?: (file: File) => Promise<string>;
     onError?: (error: Error) => void;
     onSuccess?: (url: string) => void;
+    onImageInserted?: (url: string, caption?: string) => void;
+    accept?: string;
+    maxSize?: number;
+    limit?: number;
   };
 }
 

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import { cn, getTranslate } from '@/shared';
+import { cn, useTranslate } from '@/shared';
 import {
   ImageCaption,
   ImageEditDialog,
@@ -27,6 +27,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
   const { src, alt, title, width, height, caption, textAlign, uploadingProgress, uploadError, uploadErrorFileName } =
     props.node.attrs;
   const containerRef = useRef<HTMLDivElement>(null);
+  const t = useTranslate();
 
   const [_align, setAlign] = useState<AlignType>(textAlign || 'center');
 
@@ -153,7 +154,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
 
   return (
     <NodeViewWrapper
-      className={cn('we:my-2 we:w-full')}
+      className={cn('we:w-full')}
       data-type='image'
       data-full-width={currentWidth === '100%'}
       style={{ textAlign: textAlign || _align }}
@@ -191,7 +192,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           {uploadError && props.editor.isEditable && (
             <ImageErrorBlock
               variant='inline'
-              mainText={getTranslate('이미지를 업로드 할 수 없습니다')}
+              mainText={t('이미지를 업로드 할 수 없습니다')}
               filename={uploadErrorFileName}
               onRemove={() => {
                 const pos = getPos?.();
@@ -210,7 +211,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           {!uploadError && imageLoadError && props.editor.isEditable && (
             <ImageErrorBlock
               variant='inline'
-              mainText={getTranslate('이미지를 찾을 수 없습니다')}
+              mainText={t('이미지를 찾을 수 없습니다')}
               filename={getFilenameFromSrc(src) || undefined}
               onRemove={() => {
                 const pos = getPos?.();
@@ -231,7 +232,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
               src={src}
               alt={alt}
               title={title}
-              className='we:mb-0 we:block we:h-auto we:w-full we:max-w-full we:rounded we:shadow-md'
+              className='we:mb-0 we:block we:h-auto we:w-full we:max-w-full we:rounded we:shadow-md we:mt-0'
               style={{
                 width: currentWidth !== 'auto' ? currentWidth : undefined,
               }}
@@ -246,7 +247,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
         {!props.editor.isEditable && imageLoadError && (
           <ImageErrorBlock
             variant='viewer'
-            mainText={getTranslate('삭제되었거나 찾을 수 없는 이미지입니다')}
+            mainText={t('삭제되었거나 찾을 수 없는 이미지입니다')}
             filename={getFilenameFromSrc(src) || undefined}
           />
         )}
@@ -280,10 +281,10 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
                 }
               }
             }}
-            placeholder={getTranslate('캡션을 입력하세요')}
+            placeholder={t('캡션을 입력하세요')}
             rows={1}
             className={cn(
-              'we:mt-2 we:w-full we:min-h-[2.5rem] we:resize-none we:overflow-hidden we:border-0 we:bg-transparent we:text-center we:text-xs we:text-foreground/80 we:outline-none we:placeholder:we:text-muted-foreground'
+              'we:mt-2 we:w-full we:min-h-[2.5rem] we:text-xs we:resize-none we:overflow-hidden we:border-0 we:bg-transparent we:text-center we:text-foreground/80 we:outline-none we:placeholder:we:text-muted-foreground'
             )}
             style={currentWidth !== '100%' ? { maxWidth: currentWidth } : undefined}
           />

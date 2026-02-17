@@ -4,7 +4,8 @@ import type {
   ColorPopoverProps,
   HeadingDropdownMenuProps,
   HighlightPopoverProps,
-  ImageDialogProps,
+  ImageToolbarButtonProps,
+  ImageUploadButtonProps,
   LinkPopoverProps,
   ListButtonProps,
   MarkButtonProps,
@@ -64,7 +65,7 @@ export interface ToolbarItemProps {
   taskList?: ListButtonProps;
   blockquote?: BlockquoteButtonProps;
   table?: TableButtonProps;
-  image?: ImageDialogProps;
+  image?: ImageToolbarButtonProps;
   link?: LinkPopoverProps;
   codeblock?: CodeBlockButtonProps;
   inlineMath?: MathPopoverProps;
@@ -176,7 +177,7 @@ export interface EditorToolbarConfig {
   };
   image?: {
     show: boolean;
-    props?: ImageDialogProps;
+    props?: ImageUploadButtonProps;
   };
   theme?: boolean;
 }

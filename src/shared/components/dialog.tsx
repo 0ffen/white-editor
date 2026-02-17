@@ -2,6 +2,7 @@ import * as React from 'react';
 import { X } from 'lucide-react';
 
 import { cn } from '@/shared/utils/utils';
+import { usePortalContainer } from '@/shared/contexts';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 
 const Dialog = DialogPrimitive.Root;
@@ -35,29 +36,33 @@ interface DialogContentProps extends React.ComponentPropsWithoutRef<typeof Dialo
 }
 
 const DialogContent = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>, DialogContentProps>(
-  ({ className, children, hideCloseButton = false, overlayClassName, ...props }, ref) => (
-    <DialogPortal>
-      <DialogOverlay className={overlayClassName} />
-      <DialogPrimitive.Content
-        aria-describedby={props['aria-describedby']}
-        ref={ref}
-        tabIndex={-1}
-        className={cn(
-          'we:bg-elevation-background we:data-[state=open]:animate-in we:data-[state=closed]:animate-out we:data-[state=closed]:fade-out-0 we:data-[state=open]:fade-in-0 we:data-[state=closed]:zoom-out-95 we:data-[state=open]:zoom-in-95 we:fixed we:top-[50%] we:left-[50%] we:z-floating we:mx-4 we:grid we:w-full we:max-w-lg we:translate-x-[-50%] we:translate-y-[-50%] we:gap-4 we:overflow-y-auto we:rounded-lg we:p-6 we:shadow-lg we:duration-200 we:outline-none we:focus:outline-none we:focus-visible:outline-none we:focus-visible:ring-0',
-          className
-        )}
-        {...props}
-      >
-        {children}
-        {!hideCloseButton && (
-          <DialogPrimitive.Close className='we:cursor-pointer we:ring-offset-elevation-background we:focus:we:none we:data-[state=open]:bg-elevation-level1 we:data-[state=open]:text-text-normal we:absolute we:top-4 we:right-4 we:rounded-sm we:opacity-70 we:transition-opacity we:hover:opacity-100 we:focus:outline-none we:disabled:pointer-events-none'>
-            <X className='we:h-4 we:w-4' />
-            <span className='we:sr-only'>Close</span>
-          </DialogPrimitive.Close>
-        )}
-      </DialogPrimitive.Content>
-    </DialogPortal>
-  )
+  ({ className, children, hideCloseButton = false, overlayClassName, ...props }, ref) => {
+    const portalContainer = usePortalContainer();
+
+    return (
+      <DialogPortal container={portalContainer}>
+        <DialogOverlay className={overlayClassName} />
+        <DialogPrimitive.Content
+          aria-describedby={props['aria-describedby']}
+          ref={ref}
+          tabIndex={-1}
+          className={cn(
+            'we:bg-elevation-background we:data-[state=open]:animate-in we:data-[state=closed]:animate-out we:data-[state=closed]:fade-out-0 we:data-[state=open]:fade-in-0 we:data-[state=closed]:zoom-out-95 we:data-[state=open]:zoom-in-95 we:fixed we:top-[50%] we:left-[50%] we:z-floating we:mx-4 we:grid we:w-full we:max-w-lg we:translate-x-[-50%] we:translate-y-[-50%] we:gap-4 we:overflow-y-auto we:rounded-lg we:p-6 we:shadow-lg we:duration-200 we:outline-none we:focus:outline-none we:focus-visible:outline-none we:focus-visible:ring-0',
+            className
+          )}
+          {...props}
+        >
+          {children}
+          {!hideCloseButton && (
+            <DialogPrimitive.Close className='we:cursor-pointer we:ring-offset-elevation-background we:focus:we:none we:data-[state=open]:bg-elevation-level1 we:data-[state=open]:text-text-normal we:absolute we:top-4 we:right-4 we:rounded-sm we:opacity-70 we:transition-opacity we:hover:opacity-100 we:focus:outline-none we:disabled:pointer-events-none'>
+              <X className='we:h-4 we:w-4' />
+              <span className='we:sr-only'>Close</span>
+            </DialogPrimitive.Close>
+          )}
+        </DialogPrimitive.Content>
+      </DialogPortal>
+    );
+  }
 );
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 

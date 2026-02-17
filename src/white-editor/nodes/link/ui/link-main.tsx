@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Check, Unlink } from 'lucide-react';
-import { getTranslate } from '@/shared';
+import { useTranslate } from '@/shared';
 import { Button, Input } from '@/shared/components';
 import { cn } from '@/shared/utils';
 
@@ -23,6 +23,7 @@ export const LinkMain: React.FC<LinkMainProps> = ({
   isActive,
   linkPopoverClassName,
 }: LinkMainProps) => {
+  const t = useTranslate();
   const inputRef = useRef<HTMLInputElement>(null);
   // 이미 링크가 있는 경우 (isActive가 true이고 url이 있는 경우)
   const hasExistingLink = isActive && url;
@@ -69,7 +70,7 @@ export const LinkMain: React.FC<LinkMainProps> = ({
       <Input
         type='url'
         id='link-input'
-        placeholder={placeholder || getTranslate('링크를 입력하세요')}
+        placeholder={placeholder || t('링크를 입력하세요')}
         value={url}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUrl(e.target.value)}
         onKeyDown={handleKeyDown}
@@ -94,13 +95,13 @@ export const LinkMain: React.FC<LinkMainProps> = ({
                   setLink();
                 }
               }}
-              tooltip={getTranslate('확인')}
+              tooltip={t('확인')}
             >
               <Check className={cn('we:text-text-sub', !url && 'we:text-text-light')} size={20} />
             </Button>
 
             <Button
-              tooltip={getTranslate('링크 제거')}
+              tooltip={t('링크 제거')}
               type='button'
               size='icon'
               className='we:size-7 we:cursor-pointer we:p-1'
@@ -120,7 +121,7 @@ export const LinkMain: React.FC<LinkMainProps> = ({
                 setLink();
               }
             }}
-            tooltip={getTranslate('확인')}
+            tooltip={t('확인')}
           >
             <Check className={cn('we:text-text-sub', !url && 'we:text-text-light')} size={20} />
           </Button>

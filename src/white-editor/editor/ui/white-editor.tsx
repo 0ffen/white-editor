@@ -2,8 +2,9 @@ import * as React from 'react';
 import { useImperativeHandle, forwardRef, useMemo } from 'react';
 
 import { Toolbar, TooltipProvider } from '@/shared/components';
-import { applyTheme, cn, normalizeContent } from '@/shared/utils';
-import { getTranslate, i18n } from '@/shared/utils/i18n';
+import { ImageUploadContext } from '@/shared/contexts';
+import { cn, normalizeContent } from '@/shared/utils';
+import { useTranslate, i18n } from '@/shared/utils/i18n';
 import {
   useWhiteEditor,
   type WhiteEditorProps,
@@ -28,16 +29,17 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
     contentClassName,
     editorClassName,
     footer,
-    theme,
     disabled,
     extension,
     showToolbar = true,
     locale = 'ko',
   } = props;
+  const t = useTranslate();
 
-  React.useEffect(() => {
+  // locale이 변경되면 즉시 i18n 언어를 동기적으로 설정
+  if (i18n.language !== locale) {
     i18n.changeLanguage(locale);
-  }, [locale]);
+  }
 
   const toolbarRef = React.useRef<HTMLDivElement>(null);
 
@@ -57,7 +59,7 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
   const editorHook = useWhiteEditor<T>({
     ...props,
     content: normalizedContent,
-    placeholder: props.placeholder ?? getTranslate('내용을 입력하세요'),
+    placeholder: props.placeholder ?? t('내용을 입력하세요'),
   });
   const { editor, charactersCount, focus } = editorHook;
 
@@ -77,34 +79,16 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
     [editor, focus, disabled]
   );
 
-  /** 테마 적용
-   * @deprecated 다음 마이너 버전에서 제거 필요, WhiteThemeProvider와 충돌 가능성 있돌
-   */
-  React.useEffect(() => {
-    if (theme) {
-      applyTheme(theme);
-    }
-  }, [theme]);
-
-  /** toolbarProps에 extension.imageUpload 병합 */
-  const mergedToolbarProps = useMemo(
-    () => ({
-      ...toolbarProps,
-      image: {
-        ...toolbarProps?.image,
-        ...extension?.imageUpload,
-      },
-    }),
-    [toolbarProps, extension?.imageUpload]
-  );
+  /** 이미지 업로드 설정 (Context로 전달) */
+  const imageUploadConfig = useMemo(() => extension?.imageUpload ?? {}, [extension?.imageUpload]);
 
   /** 툴바 렌더링 */
   const renderToolbar = () => {
     if (toolbarItems) {
-      return <EditorToolbar toolbarItems={toolbarItems} toolbarProps={mergedToolbarProps} />;
+      return <EditorToolbar toolbarItems={toolbarItems} toolbarProps={toolbarProps} />;
     }
     /** 기본 툴바 */
-    return <EditorToolbar toolbarItems={DEFAULT_TOOLBAR_ITEMS} toolbarProps={mergedToolbarProps} />;
+    return <EditorToolbar toolbarItems={DEFAULT_TOOLBAR_ITEMS} toolbarProps={toolbarProps} />;
   };
 
   return (
@@ -118,36 +102,38 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
         data-disabled={disabled || undefined}
         onClick={handleEditorClick}
       >
-        <EditorContext.Provider value={{ editor }}>
-          {showToolbar && (
-            <Toolbar ref={toolbarRef} role='toolbar'>
-              <div className={cn('toolbar-wrapper')}>{renderToolbar()}</div>
-            </Toolbar>
-          )}
-          <EditorContent
-            editor={editor}
-            className={cn(
-              'markdown we:prose we:dark:prose-invert we:max-w-full we:flex-1 we:overflow-y-auto',
-              contentClassName
+        <ImageUploadContext.Provider value={imageUploadConfig}>
+          <EditorContext.Provider value={{ editor }}>
+            {showToolbar && (
+              <Toolbar ref={toolbarRef} role='toolbar'>
+                <div className={cn('toolbar-wrapper')}>{renderToolbar()}</div>
+              </Toolbar>
             )}
-          />
-          <SelectionToolbar editor={editor} />
-          <LinkFloatingDropdown editor={editor} />
-          <div className='we:mt-auto we:flex we:flex-col we:justify-end we:px-2'>
-            {extension?.character?.show && (
-              <span
-                className={cn(
-                  'we:text-border we:text-sm we:flex we:justify-end we:select-none',
-                  extension?.character?.className
-                )}
-              >
-                {charactersCount}
-                {extension?.character?.limit && `/${extension.character.limit}`}
-              </span>
-            )}
-            {footer && <>{footer}</>}
-          </div>
-        </EditorContext.Provider>
+            <EditorContent
+              editor={editor}
+              className={cn(
+                'markdown we:prose we:dark:prose-invert we:max-w-full we:flex-1 we:overflow-y-auto',
+                contentClassName
+              )}
+            />
+            <SelectionToolbar editor={editor} />
+            <LinkFloatingDropdown editor={editor} />
+            <div className='we:mt-auto we:flex we:flex-col we:justify-end we:px-2'>
+              {extension?.character?.show && (
+                <span
+                  className={cn(
+                    'we:text-border we:text-sm we:flex we:justify-end we:select-none',
+                    extension?.character?.className
+                  )}
+                >
+                  {charactersCount}
+                  {extension?.character?.limit && `/${extension.character.limit}`}
+                </span>
+              )}
+              {footer && <>{footer}</>}
+            </div>
+          </EditorContext.Provider>
+        </ImageUploadContext.Provider>
       </div>
     </TooltipProvider>
   );

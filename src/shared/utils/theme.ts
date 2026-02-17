@@ -57,31 +57,33 @@ export interface ThemeConfig {
 
 /**
  * 다크/라이트 테마를 적용합니다.
- * document.documentElement에 'dark' 클래스를 추가하거나 제거합니다.
+ * target 요소에 'dark' 클래스를 추가하거나 제거합니다.
  * design token 기반 colors / zIndex가 제공되면 해당 CSS 변수로 설정합니다.
  * 서버사이드에서는 아무 작업도 수행하지 않습니다.
  *
  * @param theme - 적용할 테마 ('light' | 'dark' | ThemeConfig)
+ * @param target - 테마를 적용할 대상 요소 (기본값: document.documentElement)
  * @example
  * ```ts
  * applyTheme('dark');
  * applyTheme({ mode: 'dark', colors: { textNormal: '#e0e0e0', elevationBackground: '#1a1a1a' } });
  * applyTheme({ mode: 'light', zIndex: { overlay: 100, floating: 100 } });
+ *
+ * // 특정 요소에 스코핑
+ * applyTheme('dark', myElement);
  * ```
  */
-export function applyTheme(theme: 'light' | 'dark' | ThemeConfig) {
+export function applyTheme(theme: 'light' | 'dark' | ThemeConfig, target: HTMLElement = document.documentElement) {
   if (typeof window === 'undefined') {
     return;
   }
 
-  const root = document.documentElement;
-
   // theme이 문자열인 경우 (기존 방식)
   if (typeof theme === 'string') {
     if (theme === 'dark') {
-      root.classList.add('dark');
+      target.classList.add('dark');
     } else {
-      root.classList.remove('dark');
+      target.classList.remove('dark');
     }
     return;
   }
@@ -92,9 +94,9 @@ export function applyTheme(theme: 'light' | 'dark' | ThemeConfig) {
 
   // 다크/라이트 모드 적용
   if (mode === 'dark') {
-    root.classList.add('dark');
+    target.classList.add('dark');
   } else {
-    root.classList.remove('dark');
+    target.classList.remove('dark');
   }
 
   const cssVariables: Record<string, string> = {};
@@ -126,32 +128,34 @@ export function applyTheme(theme: 'light' | 'dark' | ThemeConfig) {
   }
 
   if (Object.keys(cssVariables).length > 0) {
-    setCSSVariables(cssVariables);
+    setCSSVariables(cssVariables, target);
   }
 }
 
 /**
  * CSS 변수를 설정합니다.
- * document.documentElement의 style 속성에 CSS 변수를 설정합니다.
+ * 지정한 target 요소의 style 속성에 CSS 변수를 설정합니다.
  * 서버사이드에서는 아무 작업도 수행하지 않습니다.
  *
  * @param variables - 설정할 CSS 변수 객체 (키: CSS 변수명, 값: 변수 값)
+ * @param target - CSS 변수를 설정할 대상 요소 (기본값: document.documentElement)
  * @example
  * ```ts
  * setCSSVariables({
  *   '--primary-color': '#007bff',
  *   '--secondary-color': '#6c757d'
  * });
+ *
+ * // 특정 요소에 스코핑
+ * setCSSVariables({ '--primary-color': '#007bff' }, myElement);
  * ```
  */
-export function setCSSVariables(variables: Record<string, string>) {
+export function setCSSVariables(variables: Record<string, string>, target: HTMLElement = document.documentElement) {
   if (typeof window === 'undefined') {
     return;
   }
 
-  const root = document.documentElement;
-
   Object.entries(variables).forEach(([key, value]) => {
-    root.style.setProperty(key, value);
+    target.style.setProperty(key, value);
   });
 }

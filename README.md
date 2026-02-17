@@ -50,45 +50,29 @@ pnpm install @0ffen/white-editor
 
 Next.js(App Router), React 19에서 정적 import로 사용할 수 있도록 `"use client"`가 포함되어 있습니다.
 
-### 스타일 / 폰트
-
-```ts
-import { WhiteEditorThemeProvider } from '@0ffen/white-editor';
-```
-
-- **스타일이 호스트 루트에 영향을 주지 않게 하려면** `WhiteEditorThemeProvider`로 에디터/뷰어를 감싸세요. 테마(색상·다크 모드)가 래퍼 안으로만 적용됩니다.
-
-- **폰트 CDN 사용 불가(로컬·오프라인)인 경우**  
-  호스트 앱의 **`public/assets/fonts`** 에 폰트를 두려면 아래 복사 스크립트를 사용하세요.
-  - **수동 실행**: `node node_modules/@0ffen/white-editor/scripts/copy-fonts-to-public.cjs`
-  - **package.json 예시** (설치 후 매번 복사하려면 `postinstall` 사용):
-
-  ```json
-  "scripts": {
-    "copy:white-editor-fonts": "node node_modules/@0ffen/white-editor/scripts/copy-fonts-to-public.cjs",
-  }
-  ```
 
 ### WhiteEditorThemeProvider (theme, zIndex, color)
 
-에디터/뷰어를 감싸는 `WhiteEditorThemeProvider`에서 theme(라이트/다크·색상), zIndex, color를 설정할 수 있습니다.
+에디터/뷰어를 감싸는 `WhiteEditorThemeProvider`에서 theme mode(라이트/다크·색상), zIndex, color를 설정할 수 있습니다.
 
-#### theme prop 타입
-
+#### Theme Props
 ```ts
 type ThemeProp = 'light' | 'dark' | {
   mode?: 'light' | 'dark';
-  colors?: WhiteEditorThemeColors;  // 일부만 넘겨도 됨
-  zIndex?: WhiteEditorThemeZIndex; // 일부만 넘겨도 됨
+  colors?: WhiteEditorThemeColors; 
+  zIndex?: WhiteEditorThemeZIndex; 
 };
 ```
 
-#### color (WhiteEditorThemeColors)
+#### Color (WhiteEditorThemeColors)
 
-지정한 키만 CSS 변수로 적용됩니다. 값 타입: `string` (hex, rgb, hsl, `var(--호스트앱변수)` 등).
+지정한 키만 CSS 변수로 적용됩니다.
 
 | 키 | 설명 |
 | --- | --- |
+| `brandWeak` | 선택/강조 배경 |
+| `brandLight` | 선택 테두리, 하이라이트, 버튼 |
+| `brandDefault` | 링크/액센트, 도형 선택, 인라인 코드 등 |
 | `textNormal` | 본문 텍스트 |
 | `textLight` | 보조 텍스트, 이미지 도형 비선택 색 |
 | `textSub` | 드롭다운/메뉴 보조 텍스트 |
@@ -99,9 +83,21 @@ type ThemeProp = 'light' | 'dark' | {
 | `elevationDropdown` | 커맨드 리스트·드롭다운 배경 |
 | `borderDefault` | 구분선, 핸들, 테두리 |
 | `interactionHover` | 호버 배경 |
-| `brandWeak` | 선택/강조 배경 |
-| `brandLight` | 선택 테두리, 하이라이트, 버튼 |
-| `brandDefault` | 링크/액센트, 도형 선택, 인라인 코드 등 |
+
+
+#### zIndex (WhiteEditorThemeZIndex)
+
+레이어별 z-index를 숫자로 지정합니다. 지정한 항목만 적용됩니다.
+
+| 키 | 타입 | 설명 |
+| --- | --- | --- |
+| `toolbar` | `number` | 툴바 |
+| `inline` | `number` | 멘션 리스트, 스티키 헤더 등 |
+| `handle` | `number` | 테이블 열 리사이즈 핸들 |
+| `overlay` | `number` | 다이얼로그 배경(오버레이) |
+| `floating` | `number` | 드롭다운, 팝오버, 툴팁, 셀렉트, 컨텍스트 메뉴, 다이얼로그 콘텐츠 (overlay보다 큰 값을 입력해주세요) |
+
+
 
 ```tsx
 import { WhiteEditorThemeProvider, WhiteEditor } from '@0ffen/white-editor';
@@ -117,29 +113,7 @@ import { WhiteEditorThemeProvider, WhiteEditor } from '@0ffen/white-editor';
       brandDefault: 'var(--color-brand-default)',
       brandWeak: 'var(--color-brand-weak)',
     },
-  }}
->
-  <WhiteEditor />
-</WhiteEditorThemeProvider>
-```
-
-#### zIndex (WhiteEditorThemeZIndex)
-
-레이어별 z-index를 숫자로 지정합니다. 지정한 항목만 적용됩니다.
-
-| 키 | 타입 | 설명 |
-| --- | --- | --- |
-| `toolbar` | `number` | 툴바 |
-| `inline` | `number` | 멘션 리스트, 스티키 헤더 등 |
-| `handle` | `number` | 테이블 열 리사이즈 핸들 |
-| `overlay` | `number` | 다이얼로그 배경(오버레이) |
-| `floating` | `number` | 드롭다운, 팝오버, 툴팁, 셀렉트, 컨텍스트 메뉴, 다이얼로그 콘텐츠 (overlay보다 큰 값을 입력해주세요) |
-
-```tsx
-<WhiteEditorThemeProvider
-  theme={{
-    mode: 'light',
-    zIndex: {
+     zIndex: {
       toolbar: 10,
       inline: 10,
       handle: 10,
@@ -151,6 +125,20 @@ import { WhiteEditorThemeProvider, WhiteEditor } from '@0ffen/white-editor';
   <WhiteEditor />
 </WhiteEditorThemeProvider>
 ```
+
+### Fonts
+
+**폰트 CDN 사용 불가(로컬·오프라인)인 경우**  
+호스트 앱의 **`public/assets/fonts`** 에 폰트를 두려면 아래 복사 스크립트를 사용하세요.
+  - **수동 실행**: `node node_modules/@0ffen/white-editor/scripts/copy-fonts-to-public.cjs`
+  - **package.json 예시** (설치 후 매번 복사하려면 `postinstall` 사용):
+
+  ```json
+  "scripts": {
+    "copy:white-editor-fonts": "node node_modules/@0ffen/white-editor/scripts/copy-fonts-to-public.cjs",
+  }
+  ```
+
 
 ## 사용 방법
 
@@ -181,48 +169,71 @@ function MyComponent() {
   const editorRef = useRef<WhiteEditorRef | null>(null);
 
   return (
-    <WhiteEditor
-      ref={editorRef}
-      theme={'light'}
-      disabled={false}
-      editorClassName={'white-editor-class'}
-      contentClassName={'content-class'}
-      placeholder='여기에 텍스트를 입력하세요...'
-      showToolbar={true}
-      toolbarItems={[
-        ['undo', 'redo'],
-        ['heading', 'bold', 'italic', 'color'],
-      ]}
-      toolbarProps={{
-        heading: {
-          options: [
-            { label: '헤딩 1', level: 1 },
-            { label: '헤딩 2', level: 2 },
-          ],
-        },
-        image: {
-          maxSize: 1024 * 1024 * 10,
-          accept: 'image/*',
-        },
-      }}
-      onChange={() => {
-        if (editorRef.current) {
-          console.log('onChange', editorRef.current.getJSON());
-        }
-      }}
-    />
+    <WhiteEditor ref={editorRef}/>
   );
 }
 ```
 
+### Toolbar
+- `showToolbar` : `showToolbar={false}`로 툴바를 숨길 수 있습니다.
+  ```tsx
+   <WhiteEditor showToolbar={false} placeholder='툴바 없이 간단한 입력만 가능합니다.' />
+  ```
+- `toolbarItems` : 이중 배열로 툴바 버튼을 그룹화하여 직접 정의할 수 있습니다. (Default: `DEFAULT_TOOLBAR_ITEMS`)
 
+#### 툴바 프리셋 (Preset Toolbar Items)
 
-#### 툴바 숨기기
+패키지에서 제공하는 툴바 아이템 배열을 import 해서 그대로 사용할 수 있습니다.
 
-`showToolbar={false}`로 설정하면 툴바를 숨길 수 있습니다.
+| 이름 | 설명 |
+| --- | --- |
+| `WHITE_EDITOR_TOOLBAR_ITEMS` | 전체 툴바 버튼이 노출됩니다. undo/redo, heading, list, blockquote, bold/italic/strike/code/underline, color/highlight, textAlign, codeblock, 수식, link, table, image 등 모든 기능을 포함합니다. |
+| `DEFAULT_TOOLBAR_ITEMS` | 기본 툴바 구성입니다. heading, color, highlight, link, code/codeblock, blockquote, list, table, image, textAlign 등이 포함됩니다. |
+| `MINIMAL_TOOLBAR_ITEMS` | 최소 툴바 구성입니다. heading, color, blockquote, list, table, image, textAlign 만 노출됩니다. |
 
 ```tsx
-<WhiteEditor showToolbar={false} placeholder='툴바 없이 간단한 입력만 가능합니다.' />
+import {
+  WhiteEditor,
+  WHITE_EDITOR_TOOLBAR_ITEMS,
+  DEFAULT_TOOLBAR_ITEMS,
+  MINIMAL_TOOLBAR_ITEMS,
+} from '@0ffen/white-editor';
+
+// 전체 툴바 (모든 버튼 노출)
+<WhiteEditor toolbarItems={WHITE_EDITOR_TOOLBAR_ITEMS} />
+
+// 기본 툴바
+<WhiteEditor toolbarItems={DEFAULT_TOOLBAR_ITEMS} />
+
+// 최소 툴바
+<WhiteEditor toolbarItems={MINIMAL_TOOLBAR_ITEMS} />
+```
+
+#### Custom Toolbar Items (툴바 커스텀)
+
+이중 배열로 툴바 버튼을 그룹화하여 직접 정의할 수 있습니다.
+
+```tsx
+toolbarItems={[
+  ['undo', 'redo'],
+  ['heading', 'bold', 'italic', 'color'],
+]}
+```
+
+#### Toolbar Props
+
+주요 toolbar props들의 커스터마이징 옵션들입니다.
+
+#### Bold/Italic/Strike 등 텍스트 서식
+
+```ts
+
+toolbarProps: {
+  bold: {
+    icon: <BoldIcon />,              // 커스텀 아이콘
+    className: 'my-bold-button',     // 추가 CSS 클래스
+  },
+}
 ```
 
 #### 국제화 (locale)
@@ -249,6 +260,7 @@ import { WhiteEditor } from '@0ffen/white-editor';
 <WhiteEditor locale={locale} showToolbar={true} />
 ```
 
+## Type 
 ### 1-1. Editor Types
 
 #### WhiteEditorProps
@@ -381,8 +393,9 @@ function FormWithEditor() {
   );
 }
 ```
-
 - `emptyCheckDebounceMs`: 디바운스 시간(ms). 기본값 `200`. `0`이면 입력할 때마다 즉시 호출.
+
+
 
 **2) checkEditorEmpty 유틸 (저장된 필드 검사)**
 
@@ -414,64 +427,8 @@ const handleSubmit = () => {
 };
 ```
 
-### 1-2. Toolbar
 
-#### 툴바 프리셋 (Preset Toolbar Items)
 
-패키지에서 제공하는 툴바 아이템 배열을 import 해서 그대로 사용할 수 있습니다.
-
-| 이름 | 설명 |
-| --- | --- |
-| `WHITE_EDITOR_TOOLBAR_ITEMS` | 전체 툴바 버튼이 노출됩니다. undo/redo, heading, 리스트, blockquote, bold/italic/strike/code/underline, color/highlight, textAlign, codeblock, 수식, link, table, image 등 모든 기능을 포함합니다. |
-| `DEFAULT_TOOLBAR_ITEMS` | 기본 툴바 구성입니다. heading, color, 텍스트 서식, link, code/codeblock, blockquote, 리스트, table, image, textAlign 등이 포함됩니다. |
-| `MINIMAL_TOOLBAR_ITEMS` | 최소 툴바 구성입니다. heading, color, blockquote, 리스트, table, image, textAlign 만 노출됩니다. |
-
-```tsx
-import {
-  WhiteEditor,
-  WHITE_EDITOR_TOOLBAR_ITEMS,
-  DEFAULT_TOOLBAR_ITEMS,
-  MINIMAL_TOOLBAR_ITEMS,
-} from '@0ffen/white-editor';
-
-// 전체 툴바 (모든 버튼 노출)
-<WhiteEditor toolbarItems={WHITE_EDITOR_TOOLBAR_ITEMS} showToolbar={true} />
-
-// 기본 툴바
-<WhiteEditor toolbarItems={DEFAULT_TOOLBAR_ITEMS} showToolbar={true} />
-
-// 최소 툴바
-<WhiteEditor toolbarItems={MINIMAL_TOOLBAR_ITEMS} showToolbar={true} />
-```
-
-`toolbarItems`를 넘기지 않으면 에디터는 내부적으로 `DEFAULT_TOOLBAR_ITEMS`를 사용합니다.
-
-#### Custom Toolbar Items
-
-이중 배열로 툴바 버튼을 그룹화하여 직접 정의할 수 있습니다.
-
-```tsx
-toolbarItems={[
-  ['undo', 'redo'],
-  ['heading', 'bold', 'italic', 'color'],
-]}
-```
-
-#### Toolbar Props
-
-주요 toolbar props들의 커스터마이징 옵션들입니다.
-
-#### Bold/Italic/Strike 등 텍스트 서식
-
-```ts
-
-toolbarProps: {
-  bold: {
-    icon: <BoldIcon />,              // 커스텀 아이콘
-    className: 'my-bold-button',     // 추가 CSS 클래스
-  },
-}
-```
 
 #### Heading 드롭다운 (Type : HeadingDropdownMenuProps)
 
@@ -962,12 +919,10 @@ const jsonContent = html ? convertHtmlToJson(html) : createEmptyContent();
 버전 1.1.10의 모든 새 기능을 포함한 종합 예제입니다.
 
 ```tsx
-import { useRef, lazy, Suspense } from 'react';
-import { WhiteEditor, type WhiteEditorRef } from '@0ffen/white-editor';
-import type { JSONContent } from '@0ffen/white-editor';
-
-// 동적 임포트 (SSR 비활성화)
-const BaseWhiteEditor = lazy(() => import('@0ffen/white-editor').then((mod) => ({ default: mod.WhiteEditor })));
+import { useRef, useState } from 'react';
+import { WhiteEditor, WhiteEditorThemeProvider, type WhiteEditorRef } from '@0ffen/white-editor';
+import { createEmptyContent } from '@0ffen/white-editor/util';
+import type { JSONContent } from '@tiptap/react';
 
 interface User {
   userId: string;
@@ -984,6 +939,7 @@ interface Page {
 
 function CompleteExample() {
   const editorRef = useRef<WhiteEditorRef>(null);
+  const [editorEmpty, setEditorEmpty] = useState(true);
 
   const users: User[] = [
     { userId: '1', username: 'white', displayName: 'White Lee' },
@@ -998,38 +954,37 @@ function CompleteExample() {
   const handleImageUpload = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append('image', file);
-
-    const response = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData,
-    });
-
+    const response = await fetch('/api/upload', { method: 'POST', body: formData });
     const data = await response.json();
     return data.url;
   };
 
   return (
-    <Suspense fallback={<div>로딩 중...</div>}>
-      <BaseWhiteEditor
+    <WhiteEditorThemeProvider
+      theme={{
+        mode: 'dark',
+        colors: {
+          textNormal: 'var(--color-text-normal)',
+          textPlaceholder: 'var(--color-text-placeholder)',
+          elevationBackground: 'var(--color-elevation-background)',
+          elevationLevel1: 'var(--color-elevation-level1)',
+          elevationDropdown: 'var(--color-elevation-dropdown)',
+          brandDefault: 'var(--color-brand-default)',
+          brandWeak: 'var(--color-brand-weak)',
+        },
+        zIndex: {}, // 필요 시 toolbar, overlay, floating 등 오버라이드
+      }}
+    >
+      <WhiteEditor
         ref={editorRef}
-        // 테마 설정 (객체로 커스터마이징)
-        theme={{
-          mode: 'dark',
-          colors: {
-            textNormal: 'var(--color-text-normal)',
-            textPlaceholder: 'var(--color-text-placeholder)',
-            elevationBackground: 'var(--color-elevation-background)',
-            elevationLevel1: 'var(--color-elevation-level1)',
-            elevationDropdown: 'var(--color-elevation-dropdown)',
-            brandDefault: 'var(--color-brand-default)',
-            brandWeak: 'var(--color-brand-weak)',
-          },
-        }}
+        // 국제화 (ko | en | es)
+        locale="ko"
         // UI 설정
         showToolbar={true}
-        placeholder='내용을 입력해주세요.'
-        editorClassName={'!rounded-xs !border'}
-        contentClassName='min-h-[500px] p-4'
+        placeholder="내용을 입력해주세요."
+        editorClassName="!rounded-xs !border"
+        contentClassName="min-h-[500px] p-4"
+        disabled={false}
         // 툴바 설정
         toolbarItems={[
           ['undo', 'redo'],
@@ -1070,31 +1025,31 @@ function CompleteExample() {
           },
           imageUpload: {
             upload: handleImageUpload,
-            onSuccess: (url) => {
-              console.log('이미지 업로드 성공:', url);
-            },
-            onError: (error) => {
-              console.error('이미지 업로드 실패:', error);
-            },
+            onSuccess: (url) => console.log('이미지 업로드 성공:', url),
+            onError: (error) => console.error('이미지 업로드 실패:', error),
           },
         }}
+        // 빈 상태 감지 (제출 버튼 비활성화 등)
+        onEmptyChange={setEditorEmpty}
+        emptyCheckDebounceMs={200}
         // 이벤트 핸들러
-        onChange={(content: JSONContent) => {
-          console.log('콘텐츠 변경:', content);
-        }}
-        onFocus={() => {
-          console.log('에디터 포커스');
-        }}
-        onBlur={() => {
-          console.log('에디터 블러');
-        }}
+        onChange={(content: JSONContent) => console.log('콘텐츠 변경:', content)}
+        onFocus={() => console.log('에디터 포커스')}
+        onBlur={() => console.log('에디터 블러')}
         onCreate={(editor) => {
-          editorRef.current.setContent({});
+          editorRef.current?.setContent(createEmptyContent());
         }}
-        // Footer
-        footer={<button onClick={() => console.log(editorRef.current?.getJSON())}>저장</button>}
+        // Footer (빈 상태일 때 제출 비활성화 예시)
+        footer={
+          <button
+            disabled={editorEmpty}
+            onClick={() => console.log(editorRef.current?.getJSON())}
+          >
+            저장
+          </button>
+        }
       />
-    </Suspense>
+    </WhiteEditorThemeProvider>
   );
 }
 ```

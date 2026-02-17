@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Ban, LucideHighlighter } from 'lucide-react';
-import { getTranslate } from '@/shared';
+import { useTranslate } from '@/shared';
 import { Button, PopoverContent, PopoverTrigger, Separator, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
@@ -91,6 +91,7 @@ export function HighlightPopover({
   ...props
 }: HighlightPopoverProps) {
   const { editor } = useTiptapEditor(providedEditor);
+  const t = useTranslate();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -120,7 +121,7 @@ export function HighlightPopover({
           data-disabled={!canColorHighlight}
           aria-pressed={isActive}
           aria-label={label}
-          tooltip={getTranslate('highlight')}
+          tooltip={t('highlight')}
           isActive={isActive}
           activeClassName={currentHighlightColor}
           activeIconColor={currentIconColor}
@@ -151,7 +152,7 @@ export function HighlightPopover({
             className='we:h-6 we:w-6'
             onClick={handleRemoveHighlight}
             aria-label='Remove highlight'
-            tooltip={getTranslate('removeHighlight')}
+            tooltip={t('removeHighlight')}
           >
             <Ban className='we:text-text-sub' size={20} />
           </Button>

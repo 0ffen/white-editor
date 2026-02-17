@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { MoonStarIcon, SunIcon } from 'lucide-react';
-import { getTranslate } from '@/shared';
+import { useTranslate } from '@/shared';
 import { Button } from '@/shared/components';
 
 export function ThemeToggle() {
+  const t = useTranslate();
   const [isDarkMode, setIsDarkMode] = React.useState<boolean>(false);
 
   React.useEffect(() => {
@@ -25,7 +26,7 @@ export function ThemeToggle() {
       onClick={toggleDarkMode}
       aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
       data-style='ghost'
-      tooltip={getTranslate('theme')}
+      tooltip={t('theme')}
     >
       {isDarkMode ? <MoonStarIcon /> : <SunIcon />}
     </Button>

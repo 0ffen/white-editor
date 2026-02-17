@@ -1,5 +1,5 @@
 import { CropIcon, PencilIcon, Redo2, Square, TypeIcon, Undo2 } from 'lucide-react';
-import { Button, getTranslate, Separator, Toolbar } from '@/shared';
+import { Button, useTranslate, Separator, Toolbar } from '@/shared';
 
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
@@ -11,6 +11,7 @@ interface ImageEditorToolbarProps {
 
 export function ImageEditorToolbar(props: ImageEditorToolbarProps) {
   const { editorRef, activeMode, handleModeChange } = props;
+  const t = useTranslate();
 
   return (
     <div className='we:h-[44px] we:text-text-sub we:flex-shrink-0'>
@@ -25,7 +26,7 @@ export function ImageEditorToolbar(props: ImageEditorToolbarProps) {
               editorRef.current?.undo();
             }
           }}
-          tooltip={getTranslate('실행 취소')}
+          tooltip={t('실행 취소')}
         >
           <Undo2 />
         </Button>
@@ -35,7 +36,7 @@ export function ImageEditorToolbar(props: ImageEditorToolbarProps) {
           variant='ghost'
           size='icon'
           onClick={() => editorRef.current?.redo()}
-          tooltip={getTranslate('다시 실행')}
+          tooltip={t('다시 실행')}
         >
           <Redo2 />
         </Button>
@@ -49,7 +50,7 @@ export function ImageEditorToolbar(props: ImageEditorToolbarProps) {
           size='icon'
           isActive={activeMode === 'crop'}
           onClick={() => handleModeChange(activeMode === 'crop' ? null : 'crop')}
-          tooltip={getTranslate('자르기')}
+          tooltip={t('자르기')}
         >
           <CropIcon />
         </Button>
@@ -61,7 +62,7 @@ export function ImageEditorToolbar(props: ImageEditorToolbarProps) {
           size='icon'
           isActive={activeMode === 'text'}
           onClick={() => handleModeChange(activeMode === 'text' ? null : 'text')}
-          tooltip={getTranslate('글자 넣기')}
+          tooltip={t('글자 넣기')}
         >
           <TypeIcon />
         </Button>
@@ -73,7 +74,7 @@ export function ImageEditorToolbar(props: ImageEditorToolbarProps) {
           size='icon'
           isActive={activeMode === 'draw'}
           onClick={() => handleModeChange(activeMode === 'draw' ? null : 'draw')}
-          tooltip={getTranslate('그리기')}
+          tooltip={t('그리기')}
         >
           <PencilIcon />
         </Button>
@@ -85,7 +86,7 @@ export function ImageEditorToolbar(props: ImageEditorToolbarProps) {
           size='icon'
           isActive={activeMode === 'shape'}
           onClick={() => handleModeChange(activeMode === 'shape' ? null : 'shape')}
-          tooltip={getTranslate('도형 추가')}
+          tooltip={t('도형 추가')}
         >
           <Square />
         </Button>

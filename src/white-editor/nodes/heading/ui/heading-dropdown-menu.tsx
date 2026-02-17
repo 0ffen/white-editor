@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { ChevronDownIcon } from 'lucide-react';
-import { getTranslate } from '@/shared';
+import { useTranslate } from '@/shared';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -31,14 +31,14 @@ export interface HeadingDropdownMenuProps extends Omit<ButtonProps, 'type'>, Use
   icon?: React.ReactNode;
 }
 
-function getDefaultHeadingOptions(): HeadingOption[] {
+function getDefaultHeadingOptions(t: (key: string) => string): HeadingOption[] {
   return [
-    { label: getTranslate('heading1'), level: 1 },
-    { label: getTranslate('heading2'), level: 2 },
-    { label: getTranslate('heading3'), level: 3 },
-    { label: getTranslate('heading4'), level: 4 },
-    { label: getTranslate('body1'), level: null, paragraphVariant: 1 },
-    { label: getTranslate('body2'), level: null, paragraphVariant: 2 },
+    { label: t('heading1'), level: 1 },
+    { label: t('heading2'), level: 2 },
+    { label: t('heading3'), level: 3 },
+    { label: t('heading4'), level: 4 },
+    { label: t('body1'), level: null, paragraphVariant: 1 },
+    { label: t('body2'), level: null, paragraphVariant: 2 },
   ];
 }
 
@@ -74,10 +74,9 @@ function HeadingCheckboxItem({ editor, option, className, onSelect }: HeadingChe
 }
 
 // Helper to get current active option label
-function useCurrentLabel(editor: Editor | null, options: HeadingOption[]): string {
+function useCurrentLabel(editor: Editor | null, options: HeadingOption[], t: (key: string) => string): string {
   // Default to body1 (first paragraph option with variant 1)
-  const defaultLabel =
-    options.find((opt) => opt.level === null && opt.paragraphVariant === 1)?.label ?? getTranslate('body1');
+  const defaultLabel = options.find((opt) => opt.level === null && opt.paragraphVariant === 1)?.label ?? t('body1');
   const [currentLabel, setCurrentLabel] = React.useState<string>(defaultLabel);
 
   React.useEffect(() => {
@@ -115,7 +114,7 @@ function useCurrentLabel(editor: Editor | null, options: HeadingOption[]): strin
       editor.off('selectionUpdate', updateLabel);
       editor.off('transaction', updateLabel);
     };
-  }, [editor, options]);
+  }, [editor, options, t]);
 
   return currentLabel;
 }
@@ -137,6 +136,7 @@ export const HeadingDropdownMenu = React.forwardRef<HTMLButtonElement, HeadingDr
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor);
+    const t = useTranslate();
     const [isOpen, setIsOpen] = React.useState(false);
     const [userSelectedLabel, setUserSelectedLabel] = React.useState<string | null>(null);
     const { isVisible, canToggle } = useHeadingDropdownMenu({
@@ -144,8 +144,8 @@ export const HeadingDropdownMenu = React.forwardRef<HTMLButtonElement, HeadingDr
       hideWhenUnavailable,
     });
 
-    const resolvedOptions = options ?? getDefaultHeadingOptions();
-    const currentLabel = useCurrentLabel(editor, resolvedOptions);
+    const resolvedOptions = options ?? getDefaultHeadingOptions(t);
+    const currentLabel = useCurrentLabel(editor, resolvedOptions, t);
 
     // 사용자가 직접 선택한 경우에만 버튼 활성화
     const isActive = userSelectedLabel !== null && currentLabel === userSelectedLabel;
@@ -177,9 +177,9 @@ export const HeadingDropdownMenu = React.forwardRef<HTMLButtonElement, HeadingDr
             tabIndex={-1}
             disabled={!canToggle}
             data-disabled={!canToggle}
-            aria-label={getTranslate('headingDropdownMenu')}
+            aria-label={t('headingDropdownMenu')}
             aria-pressed={isActive}
-            tooltip={getTranslate('heading')}
+            tooltip={t('heading')}
             isActive={isActive}
             className={cn('we:h-[28px] we:gap-1 we:px-2 we:select-none', triggerClassName)}
             {...buttonProps}
