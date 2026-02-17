@@ -282,6 +282,7 @@
   --we-editor-fontcolor-high: #111111;
   --we-editor-fontcolor-medium: #333333;
   --we-editor-fontcolor-warm: #37352f;
+  --we-scrollbar-thumb: var(--we-gray-light-100);
 }
 
 /* ========================================
@@ -358,4 +359,5 @@
   --we-editor-fontcolor-high: #f2f2f2;
   --we-editor-fontcolor-medium: #e0e0e0;
   --we-editor-fontcolor-warm: #dcd9d3;
+  --we-scrollbar-thumb: var(--we-gray-dark-100);
 }
