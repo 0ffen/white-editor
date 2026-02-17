@@ -9,7 +9,6 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  ThemeToggle,
   TooltipProvider,
 } from './shared';
 import { cn, i18n } from './shared/utils';
@@ -86,6 +85,11 @@ export default function App() {
     return logoUrl;
   };
 
+  const [mode, setMode] = useState<'light' | 'dark'>('light');
+  const toggleMode = () => {
+    setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
+
   return (
     <TooltipProvider>
       <main className='we:p-6'>
@@ -110,16 +114,21 @@ export default function App() {
                 <SelectItem value='es'>Español</SelectItem>
               </SelectContent>
             </Select>
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
           </div>
         </div>
 
         <div className='we:grid we:grid-cols-2 we:gap-8'>
           <section className='we:space-y-3'>
-            <h2 className='we:mb-8 we:text-3xl we:font-bold we:text-center'>Editor</h2>
+            <div className='we:mb-8 we:flex we:items-center we:justify-center we:gap-3'>
+              <h2 className='we:text-3xl we:font-bold'>Editor</h2>
+              <Button type='button' variant='secondary' className='we:w-fit' onClick={toggleMode}>
+                {mode === 'light' ? 'Dark Mode' : 'Light Mode'}
+              </Button>
+            </div>
             <WhiteEditorThemeProvider
               theme={{
-                mode: 'light',
+                mode: mode,
                 colors: {},
                 zIndex: {},
               }}

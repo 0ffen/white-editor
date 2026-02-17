@@ -97,8 +97,14 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
         }
         return editorProps?.handleKeyDown?.(view, event) ?? false;
       },
-      handleDrop,
-      handlePaste,
+      handleDrop: (view, event, slice, moved) => {
+        if (handleDrop(view, event, slice, moved)) return true;
+        return editorProps?.handleDrop?.(view, event, slice, moved) ?? false;
+      },
+      handlePaste: (view, event, slice) => {
+        if (handlePaste(view, event)) return true;
+        return editorProps?.handlePaste?.(view, event, slice) ?? false;
+      },
       transformPasted: (slice, view, editor) => {
         const normalized = transformPastedToTextNormal(slice, view);
         return editorProps?.transformPasted?.(normalized, view, editor) ?? normalized;
