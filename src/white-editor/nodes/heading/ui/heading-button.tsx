@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { getTranslate } from '@/shared';
+import { useTranslate } from '@/shared';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
@@ -29,6 +29,7 @@ export const HeadingButton = React.forwardRef<HTMLButtonElement, HeadingButtonPr
     ref
   ) => {
     const { editor } = useTiptapEditor(providedEditor);
+    const t = useTranslate();
     const { isVisible, canToggle, isActive, handleToggle, label } = useHeading({
       editor,
       level,
@@ -60,7 +61,7 @@ export const HeadingButton = React.forwardRef<HTMLButtonElement, HeadingButtonPr
         data-disabled={!canToggle}
         aria-label={label}
         aria-pressed={isActive}
-        tooltip={getTranslate('heading')}
+        tooltip={t('heading')}
         onClick={handleClick}
         justify='start'
         className={cn(itemButtonClassName)}

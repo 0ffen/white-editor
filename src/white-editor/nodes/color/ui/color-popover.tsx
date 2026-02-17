@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { Ban, ChevronDown } from 'lucide-react';
 
-import { cn, getTranslate } from '@/shared';
+import { cn, useTranslate } from '@/shared';
 import { Button, PopoverContent, PopoverTrigger, Separator, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import {
@@ -60,6 +60,7 @@ export function ColorPopover({
   ...props
 }: ColorPopoverProps) {
   const { editor } = useTiptapEditor(providedEditor);
+  const t = useTranslate();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -84,7 +85,7 @@ export function ColorPopover({
           data-disabled={!canTextColor}
           aria-pressed={isActive}
           aria-label={label}
-          tooltip={getTranslate('color')}
+          tooltip={t('color')}
           isActive={isActive}
           currentTextColor={currentTextColor}
           {...props}
@@ -107,7 +108,7 @@ export function ColorPopover({
             className='we:h-6 we:w-6'
             onClick={handleRemoveTextColor}
             aria-label='Remove text color'
-            tooltip={getTranslate('removeColor')}
+            tooltip={t('removeColor')}
           >
             <Ban className='we:text-text-sub' size={20} />
           </Button>

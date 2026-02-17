@@ -103,18 +103,6 @@
       cursor: col-resize;
     }
 
-    .ProseMirror .selection {
-      background-color: var(--we-interaction-hover);
-    }
-
-    .dark .ProseMirror .selection {
-      background-color: var(--we-interaction-hover);
-    }
-
-    .ProseMirror ::selection {
-      background-color: var(--we-interaction-hover);
-    }
-
     .ProseMirror > * {
       position: relative;
     }
@@ -312,18 +300,18 @@
       }
     }
   }
+}
 
-  .white-editor.viewer {
-    border: none !important;
-    background-color: transparent !important;
-  }
+.white-editor.viewer {
+  border: none;
+  background-color: transparent;
+}
 
-  .tiptap p.is-editor-empty:first-child::before {
-    color: var(--we-text-placeholder);
-    content: attr(data-placeholder);
-    float: left;
-    height: 0;
-    pointer-events: none;
-    font-size: 14px;
-  }
+.white-editor .tiptap p.is-editor-empty:first-child::before {
+  color: var(--we-text-placeholder);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  font-size: 14px;
 }

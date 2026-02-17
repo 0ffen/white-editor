@@ -14,7 +14,7 @@ import {
   HighlightPopover,
   MathPopover,
   TableButton,
-  ImageDialog,
+  ImageUploadButton,
   type EditorToolbarConfig,
   type ToolbarItem,
 } from '@/white-editor';
@@ -114,7 +114,7 @@ const TOOLBAR_ITEM_REGISTRY: Record<ToolbarItem, ToolbarItemRenderer> = {
   // Links & Media
   link: (config, key) => <LinkPopover key={key} {...config.props} />,
   table: (config, key) => <TableButton key={key} {...config.props} />,
-  image: (config, key) => <ImageDialog key={key} {...config.props} />,
+  image: (config, key) => <ImageUploadButton key={key} {...config.props} />,
 
   // Math
   inlineMath: (config, key) => <MathPopover key={key} type='inline' {...config.props} />,

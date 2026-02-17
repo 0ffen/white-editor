@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckIcon, ChevronDownIcon, Copy } from 'lucide-react';
-import { getTranslate } from '@/shared';
+import { useTranslate } from '@/shared';
 import {
   Button,
   Command,
@@ -43,6 +43,7 @@ export const CodeBlock = ({
   extension,
   editor,
 }: Props) => {
+  const t = useTranslate();
   const [isCopied, setIsCopied] = React.useState<boolean>(false);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const preRef = React.useRef<HTMLPreElement>(null);
@@ -112,7 +113,7 @@ export const CodeBlock = ({
                 align='start'
               >
                 <Command>
-                  <CommandInput placeholder={getTranslate('검색')} iconPosition='right' />
+                  <CommandInput placeholder={t('검색')} iconPosition='right' />
                   <CommandList className='we:p-[6px]'>
                     <CommandEmpty>No language found</CommandEmpty>
                     <CommandGroup>

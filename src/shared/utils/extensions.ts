@@ -244,6 +244,10 @@ export function createEditorExtensions<T, P extends Record<string, unknown> = Re
       upload?: (file: File) => Promise<string>;
       onError?: (error: Error) => void;
       onSuccess?: (url: string) => void;
+      onImageInserted?: (url: string, caption?: string) => void;
+      accept?: string;
+      maxSize?: number;
+      limit?: number;
     };
   },
   placeholder?: string,

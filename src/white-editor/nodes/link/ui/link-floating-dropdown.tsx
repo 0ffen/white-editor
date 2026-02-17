@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { getTranslate } from '@/shared';
+import { useTranslate } from '@/shared';
 import { Popover, PopoverContent, PopoverAnchor } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
 import { cn } from '@/shared/utils';
@@ -14,6 +14,7 @@ export interface LinkFloatingDropdownProps {
 
 export function LinkFloatingDropdown({ editor: providedEditor, className }: LinkFloatingDropdownProps) {
   const { editor } = useTiptapEditor(providedEditor);
+  const t = useTranslate();
   const [isVisible, setIsVisible] = React.useState(false);
   const [isPositionReady, setIsPositionReady] = React.useState(false);
   const [localUrl, setLocalUrl] = React.useState<string>('');
@@ -306,7 +307,7 @@ export function LinkFloatingDropdown({ editor: providedEditor, className }: Link
           setLink={handleSetLink}
           removeLink={handleRemoveLink}
           isActive={isActive || !!clickedLinkRef.current}
-          placeholder={getTranslate('링크를 입력하세요')}
+          placeholder={t('링크를 입력하세요')}
         />
       </PopoverContent>
     </Popover>

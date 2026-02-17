@@ -1,7 +1,8 @@
 'use client';
 
+import { useCallback } from 'react';
 import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import { initReactI18next, useTranslation } from 'react-i18next';
 import { EDITOR_I18N } from '@/shared/constants/editor-i18n';
 
 const EDITOR_NS = 'editor';
@@ -43,6 +44,26 @@ export function getTranslate(key: string): string {
   const entry = EDITOR_I18N[key];
   if (entry) return i18n.t(`${EDITOR_NS}:${entry.id}`);
   return key;
+}
+
+/**
+ * locale 변경 시 자동으로 리렌더링되는 번역 훅.
+ * react-i18next의 useTranslation을 기반으로 languageChanged 이벤트를 구독하여
+ * 포커스 없이도 즉시 UI에 반영됩니다.
+ *
+ * @returns (key: string) => string — getTranslate와 동일한 시그니처의 번역 함수
+ */
+export function useTranslate(): (key: string) => string {
+  const { t } = useTranslation(EDITOR_NS);
+
+  return useCallback(
+    (key: string): string => {
+      const entry = EDITOR_I18N[key];
+      if (entry) return t(entry.id);
+      return key;
+    },
+    [t]
+  );
 }
 
 export { i18n };

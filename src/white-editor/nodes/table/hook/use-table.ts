@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table } from 'lucide-react';
-import { getTranslate } from '@/shared';
+import { useTranslate } from '@/shared';
 import { useTiptapEditor } from '@/shared/hooks';
 import { isExtensionAvailable, isNodeTypeSelected } from '@/shared/utils';
 import type { TableActions } from '@/white-editor';
@@ -63,6 +63,7 @@ export function useTable(config: UseTableConfig) {
   const { editor: providedEditor, hideWhenUnavailable = false, onInserted } = config;
 
   const { editor } = useTiptapEditor(providedEditor);
+  const t = useTranslate();
   const [isVisible, setIsVisible] = React.useState<boolean>(true);
   const canInsert = canAddTable(editor);
   const isActive = isTableActive(editor);
@@ -98,7 +99,7 @@ export function useTable(config: UseTableConfig) {
     isActive,
     handleTable,
     canInsert,
-    label: getTranslate('table'),
+    label: t('table'),
     Icon: Table,
   };
 }

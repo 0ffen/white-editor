@@ -2,6 +2,7 @@ import * as React from 'react';
 import { CheckIcon, ChevronRightIcon } from 'lucide-react';
 
 import { cn } from '@/shared/utils';
+import { usePortalContainer } from '@/shared/contexts';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 
 function DropdownMenu({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) {
@@ -9,7 +10,8 @@ function DropdownMenu({ ...props }: React.ComponentProps<typeof DropdownMenuPrim
 }
 
 function DropdownMenuPortal({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Portal>) {
-  return <DropdownMenuPrimitive.Portal data-slot='dropdown-menu-portal' {...props} />;
+  const portalContainer = usePortalContainer();
+  return <DropdownMenuPrimitive.Portal data-slot='dropdown-menu-portal' container={portalContainer} {...props} />;
 }
 
 function DropdownMenuTrigger({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
@@ -21,8 +23,10 @@ function DropdownMenuContent({
   sideOffset = 4,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
+  const portalContainer = usePortalContainer();
+
   return (
-    <DropdownMenuPrimitive.Portal>
+    <DropdownMenuPrimitive.Portal container={portalContainer}>
       <DropdownMenuPrimitive.Content
         data-slot='dropdown-menu-content'
         sideOffset={sideOffset}

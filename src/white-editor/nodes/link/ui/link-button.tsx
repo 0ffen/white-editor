@@ -1,8 +1,9 @@
 import React from 'react';
-import { getTranslate } from '@/shared';
+import { useTranslate } from '@/shared';
 import { Button, type ButtonProps } from '@/shared/components';
 
 export const LinkButton = React.forwardRef<HTMLButtonElement, ButtonProps>(({ className, children, ...props }, ref) => {
+  const t = useTranslate();
   return (
     <Button
       type='button'
@@ -12,7 +13,7 @@ export const LinkButton = React.forwardRef<HTMLButtonElement, ButtonProps>(({ cl
       role='button'
       tabIndex={-1}
       aria-label='Link'
-      tooltip={getTranslate('link')}
+      tooltip={t('link')}
       ref={ref}
       {...props}
     >

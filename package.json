@@ -13,7 +13,7 @@
   },
   "private": false,
   "license": "MIT",
-  "version": "2.0.0-rc.0",
+  "version": "2.0.0-rc.1",
   "description": "A WYSIWYG editor and viewer built with TipTap and Tui Image Editor",
   "keywords": [
     "editor",
@@ -60,10 +60,7 @@
     "preview": "vite preview",
     "format": "prettier --check \"src/**/*\" --write",
     "lint-staged": "lint-staged",
-    "prepare": "husky",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "prepare": "husky"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
@@ -173,7 +170,6 @@
     "vite-plugin-lib-inject-css": "^2.2.2",
     "vite-plugin-static-copy": "^3.2.0",
     "vite-plugin-svgr": "^4.5.0",
-    "vite-tsconfig-paths": "^5.1.4",
-    "vitepress": "2.0.0-alpha.12"
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }

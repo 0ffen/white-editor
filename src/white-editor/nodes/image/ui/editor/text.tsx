@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { Button, cn, getTranslate, Textarea } from '@/shared';
+import { Button, cn, useTranslate, Textarea } from '@/shared';
 import { EDITOR_COLORS, normalizeCanvasColor } from '@/white-editor';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
@@ -13,6 +13,7 @@ interface TextEditorProps {
 
 export function TextEditor(props: TextEditorProps) {
   const { editorRef } = props;
+  const t = useTranslate();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [textColor, setTextColor] = useState<string>(EDITOR_COLORS[0].editorHex);
@@ -114,7 +115,7 @@ export function TextEditor(props: TextEditorProps) {
   return (
     <div className='we:flex we:flex-col we:space-y-2 we:py-4 we:gap-2'>
       <div className='we:flex we:w-full we:gap-2 we:items-start'>
-        <h3 className='we:text-text-normal we:text-sm we:m-0! we:min-w-[80px] we:pt-2'>{getTranslate('텍스트')}</h3>
+        <h3 className='we:text-text-normal we:text-sm we:m-0! we:min-w-[80px] we:pt-2'>{t('텍스트')}</h3>
         <div className='we:flex we:w-full we:space-x-2'>
           <Textarea
             ref={textareaRef}
@@ -128,7 +129,7 @@ export function TextEditor(props: TextEditorProps) {
               }
             }}
             className='we:w-full we:min-h-[40px] we:max-h-[200px] we:resize-none we:overflow-y-auto'
-            placeholder={getTranslate('내용을 입력하세요')}
+            placeholder={t('내용을 입력하세요')}
             rows={1}
           />
           {!isEditing && (
@@ -152,7 +153,7 @@ export function TextEditor(props: TextEditorProps) {
 
       {/* Color Picker */}
       <div className='we:flex we:w-full we:gap-2 we:items-center'>
-        <h3 className='we:text-text-normal we:text-sm we:m-0! we:min-w-[80px]'>{getTranslate('텍스트 색상')}</h3>
+        <h3 className='we:text-text-normal we:text-sm we:m-0! we:min-w-[80px]'>{t('텍스트 색상')}</h3>
         <div className='we:flex we:flex-wrap we:items-center we:gap-1'>
           {EDITOR_COLORS.map((color) => (
             <Button

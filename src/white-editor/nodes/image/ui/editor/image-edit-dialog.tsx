@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { cn, Dialog, DialogContent, DialogHeader, DialogTitle, getTranslate } from '@/shared';
+import { cn, Dialog, DialogContent, DialogHeader, DialogTitle, useTranslate } from '@/shared';
 import { ImageEditor, ImageEditorFooter, type ImageEditorRef } from '@/white-editor';
 
 interface ImageEditDialogProps {
@@ -13,6 +13,7 @@ interface ImageEditDialogProps {
 
 export function ImageEditDialog(props: ImageEditDialogProps) {
   const { isOpen, onOpenChange, imageUrl, onSave, cancelText, saveText } = props;
+  const t = useTranslate();
 
   const imageRef = useRef<ImageEditorRef>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -48,7 +49,7 @@ export function ImageEditDialog(props: ImageEditDialogProps) {
         onInteractOutside={(e) => e.preventDefault()}
       >
         <DialogHeader className='we:px-4 we:pt-5 we:border-b we:border-border-default we:pb-4'>
-          <DialogTitle className='we:text-[16px] we:text-text-normal'>{getTranslate('이미지 편집')}</DialogTitle>
+          <DialogTitle className='we:text-[16px] we:text-text-normal'>{t('이미지 편집')}</DialogTitle>
         </DialogHeader>
 
         <div
@@ -64,8 +65,8 @@ export function ImageEditDialog(props: ImageEditDialogProps) {
           <ImageEditorFooter
             onCancel={() => onOpenChange(false)}
             onApply={handleSaveClick}
-            cancelLabel={cancelText || getTranslate('취소')}
-            applyLabel={saveText || getTranslate('확인')}
+            cancelLabel={cancelText || t('취소')}
+            applyLabel={saveText || t('확인')}
             isApplyLoading={isSaving}
             isApplyDisabled={isSaving}
             isCancelDisabled={isSaving}

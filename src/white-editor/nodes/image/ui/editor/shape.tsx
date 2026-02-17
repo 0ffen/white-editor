@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Ban, Circle, Square, Triangle } from 'lucide-react';
-import { Button, cn, getTranslate, Slider } from '@/shared';
+import { Button, cn, useTranslate, Slider } from '@/shared';
 import { EDITOR_COLORS } from '@/white-editor';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
@@ -14,6 +14,7 @@ const DEFAULT_SHAPE_COLOR = '#161616';
 
 export function ShapeEditor(props: ShapeEditorProps) {
   const { editorRef } = props;
+  const t = useTranslate();
 
   const [shapeFillColor, setShapeFillColor] = useState<string>(DEFAULT_SHAPE_COLOR);
   const [shapeStrokeColor, setShapeStrokeColor] = useState<string>(DEFAULT_SHAPE_COLOR);
@@ -114,7 +115,7 @@ export function ShapeEditor(props: ShapeEditorProps) {
     <div className='we:flex we:w-full we:flex-col we:gap-2 we:space-y-2 we:p-2 we:mt-2'>
       <div className='we:flex we:w-full we:gap-2'>
         <div className='we:flex we:w-full we:gap-3 we:h-full we:items-center'>
-          <h3 className='we:text-text-normal we:w-fit we:text-sm we:min-w-[72px]'>{getTranslate('도형')}</h3>
+          <h3 className='we:text-text-normal we:w-fit we:text-sm we:min-w-[72px]'>{t('도형')}</h3>
           <div className='we:flex we:items-center we:justify-center we:gap-2'>
             <Button
               type='button'
@@ -130,7 +131,7 @@ export function ShapeEditor(props: ShapeEditorProps) {
                 )}
               >
                 <Square size={20} color={shapeType === 'rect' ? 'var(--we-brand-default)' : 'var(--we-text-light)'} />
-                {getTranslate('사각형')}
+                {t('사각형')}
               </div>
             </Button>
             <Button
@@ -150,7 +151,7 @@ export function ShapeEditor(props: ShapeEditorProps) {
                   size={20}
                   color={shapeType === 'triangle' ? 'var(--we-brand-default)' : 'var(--we-text-light)'}
                 />
-                {getTranslate('삼각형')}
+                {t('삼각형')}
               </div>
             </Button>
             <Button
@@ -167,13 +168,13 @@ export function ShapeEditor(props: ShapeEditorProps) {
                 )}
               >
                 <Circle size={20} color={shapeType === 'circle' ? 'var(--we-brand-default)' : 'var(--we-text-light)'} />
-                {getTranslate('원형')}
+                {t('원형')}
               </div>
             </Button>
           </div>
         </div>
         <div className='we:space-y-2 we:flex we:w-full we:gap-3 we:justify-between we:items-center'>
-          <h3 className='we:text-text-normal we:text-sm we:m-0! we:min-w-[80px]'>{getTranslate('두께')}</h3>
+          <h3 className='we:text-text-normal we:text-sm we:m-0! we:min-w-[80px]'>{t('두께')}</h3>
           <div className='we:flex we:w-full we:items-center we:gap-3 we:py-2'>
             <Slider
               max={50}
@@ -191,7 +192,7 @@ export function ShapeEditor(props: ShapeEditorProps) {
 
       <div className='we:flex we:w-full we:gap-2'>
         <div className='we:flex we:w-full we:gap-2 we:items-center'>
-          <h3 className='we:text-text-normal we:text-sm we:m-0! we:min-w-[80px]'>{getTranslate('도형 색상')}</h3>
+          <h3 className='we:text-text-normal we:text-sm we:m-0! we:min-w-[80px]'>{t('도형 색상')}</h3>
           <div className='we:flex we:flex-wrap we:items-center we:gap-1'>
             {EDITOR_COLORS.map((color) => (
               <Button
@@ -223,7 +224,7 @@ export function ShapeEditor(props: ShapeEditorProps) {
         </div>
 
         <div className='we:flex we:w-full we:gap-2 we:items-center'>
-          <h3 className='we:text-text-normal we:text-sm we:m-0! we:min-w-[80px]'>{getTranslate('도형 획')}</h3>
+          <h3 className='we:text-text-normal we:text-sm we:m-0! we:min-w-[80px]'>{t('도형 획')}</h3>
           <div className='we:flex we:flex-wrap we:items-center we:gap-1'>
             {EDITOR_COLORS.map((color) => (
               <Button

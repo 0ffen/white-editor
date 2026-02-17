@@ -76,6 +76,7 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
     try {
       return normalizeContentSchema(content);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.warn('Failed to normalize content schema, using fallback:', error);
       return EMPTY_DOC;
     }

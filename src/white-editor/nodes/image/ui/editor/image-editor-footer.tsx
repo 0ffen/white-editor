@@ -1,5 +1,5 @@
 import { Check, Loader2 } from 'lucide-react';
-import { Button, cn, getTranslate } from '@/shared';
+import { Button, cn, useTranslate } from '@/shared';
 
 export interface ImageEditorFooterProps {
   onCancel: () => void;
@@ -25,19 +25,22 @@ export function ImageEditorFooter(props: ImageEditorFooterProps) {
   const {
     onCancel,
     onApply,
-    cancelLabel = getTranslate('취소'),
-    applyLabel = getTranslate('적용'),
+    cancelLabel,
+    applyLabel,
     showApplyIcon = true,
     isApplyLoading = false,
     isApplyDisabled = false,
     isCancelDisabled = false,
     showBorderTop = false,
   } = props;
+  const t = useTranslate();
+  const resolvedCancelLabel = cancelLabel ?? t('취소');
+  const resolvedApplyLabel = applyLabel ?? t('적용');
 
   return (
     <div className={cn(FOOTER_BASE_CLASS, showBorderTop && 'we:border-t we:border-border-default')}>
       <Button type='button' variant='secondary' className='we:w-fit' onClick={onCancel} disabled={isCancelDisabled}>
-        {cancelLabel}
+        {resolvedCancelLabel}
       </Button>
       <Button type='button' variant='default' className='we:w-fit' onClick={onApply} disabled={isApplyDisabled}>
         {isApplyLoading ? (
@@ -45,7 +48,7 @@ export function ImageEditorFooter(props: ImageEditorFooterProps) {
         ) : (
           <>
             {showApplyIcon && <Check className='we:mr-1 we:h-4 we:w-4' />}
-            {applyLabel}
+            {resolvedApplyLabel}
           </>
         )}
       </Button>

@@ -45,6 +45,11 @@
   margin-bottom: 0;
 }
 
+/* 첫 번째 p, heading 요소의 margin-top 제거 */
+.white-editor .markdown .tiptap > :is(p, h1, h2, h3, h4, h5, h6):first-child {
+  margin-top: 8px !important;
+}
+
 /* Paragraph Styles - 본문 1, 본문 2 */
 .white-editor .markdown .tiptap p[data-variant='1'] {
   font-size: 16px;
@@ -275,6 +280,7 @@
   max-width: 1440px;
   border: 1px solid var(--we-border-default);
   table-layout: fixed;
+  margin-top: 18px;
 }
 
 .white-editor .markdown tr {
@@ -302,7 +308,7 @@
 
 .white-editor .markdown hr {
   border-color: var(--we-border-default);
-  margin-block: calc(var(--we-spacing) * 6);
+  margin-block: 15px;
   border-width: 0;
   border-bottom-width: 1px;
 }
@@ -428,3 +434,4 @@
   -webkit-text-decoration-skip-ink: none;
   text-decoration-skip-ink: none;
 }
+
