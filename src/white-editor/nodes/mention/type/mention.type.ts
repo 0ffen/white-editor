@@ -30,7 +30,7 @@ interface MentionConfig<T> {
   label: string;
   renderLabel?: (item: T) => React.ReactNode; // 커스텀 이름 렌더링 (optional)
   sectionLabel?: string; // 섹션 라벨 (기본값: 'People')
-  showSectionLabel?: boolean; // 섹션 라벨 표시 여부 (기본값: true)
+  showSectionLabel?: boolean; // 섹션 라벨 표시 여부 (기본값: false)
 }
 
 interface UnifiedMentionItem {
