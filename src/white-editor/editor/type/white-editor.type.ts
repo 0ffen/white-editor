@@ -19,7 +19,7 @@ interface EditorExtensions<T = Record<string, unknown>, P = Record<string, unkno
     icon?: keyof P; // 아이콘 (optional)
     renderLabel?: (item: P) => React.ReactNode; // 커스텀 제목 렌더링 (optional)
     sectionLabel?: string; // 섹션 라벨 (기본값: 'Pages')
-    showSectionLabel?: boolean; // 섹션 라벨 표시 여부 (기본값: true)
+    showSectionLabel?: boolean; // 섹션 라벨 표시 여부 (기본값: false)
   };
   character?: {
     show?: boolean;
@@ -55,6 +55,7 @@ interface WhiteEditorUIProps {
   disabled?: boolean;
   placeholder?: string;
   showToolbar?: boolean;
+  showSelectionToolbar?: boolean;
   /** 국제화 locale (ko | en | es). 지정 시 에디터 내 텍스트가 해당 언어로 동기화됨 */
   locale?: 'ko' | 'en' | 'es';
 }
