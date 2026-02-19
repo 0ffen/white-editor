@@ -101,9 +101,9 @@ const unifiedMentionSuggestion = <T, P extends Record<string, unknown>>({
         const peopleLabel = mentionConfig?.sectionLabel || 'People';
         const pagesLabel = pageLinkConfig?.sectionLabel || 'Page Link';
 
-        // 섹션 라벨 표시 여부 결정 (기본값: true, 명시적으로 false로 설정된 경우에만 false)
-        const showPeopleLabel = mentionConfig?.showSectionLabel !== false;
-        const showPagesLabel = pageLinkConfig?.showSectionLabel !== false;
+        // 섹션 라벨 표시 여부 결정 (기본값: false)
+        const showPeopleLabel = mentionConfig?.showSectionLabel === true;
+        const showPagesLabel = pageLinkConfig?.showSectionLabel === true;
 
         component = new ReactRenderer(UnifiedMentionList, {
           props: {
@@ -141,9 +141,9 @@ const unifiedMentionSuggestion = <T, P extends Record<string, unknown>>({
         const peopleLabel = mentionConfig?.sectionLabel || 'People';
         const pagesLabel = pageLinkConfig?.sectionLabel || 'Page Link';
 
-        // 섹션 라벨 표시 여부 결정 (기본값: true, 명시적으로 false로 설정된 경우에만 false)
-        const showPeopleLabel = mentionConfig?.showSectionLabel !== false;
-        const showPagesLabel = pageLinkConfig?.showSectionLabel !== false;
+        // 섹션 라벨 표시 여부 결정 (기본값: false)
+        const showPeopleLabel = mentionConfig?.showSectionLabel === true;
+        const showPagesLabel = pageLinkConfig?.showSectionLabel === true;
 
         component.updateProps({
           items: props.items as UnifiedMentionItem[],

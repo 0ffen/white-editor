@@ -143,6 +143,7 @@ export default function App() {
                 editorClassName='we:h-[1000px] we:rounded-md we:border we:border-border-default'
                 contentClassName='we:h-full we:px-2'
                 toolbarItems={WHITE_EDITOR_TOOLBAR_ITEMS}
+                showSelectionToolbar={true}
                 toolbarProps={{
                   image: {
                     icon: <CheckIcon className='we:w-4 we:h-4' />, // UI만
@@ -158,13 +159,13 @@ export default function App() {
                     id: 'uuid',
                     label: 'nickname',
                   },
-                  pageMention: {
-                    data: pageLinksData,
-                    id: 'id',
-                    title: 'title',
-                    href: 'href',
-                    path: 'path',
-                  },
+                  // pageMention: {
+                  //   data: pageLinksData,
+                  //   id: 'id',
+                  //   title: 'title',
+                  //   href: 'href',
+                  //   path: 'path',
+                  // },
                   character: {
                     show: true,
                   },

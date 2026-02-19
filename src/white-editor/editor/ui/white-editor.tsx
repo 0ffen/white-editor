@@ -32,6 +32,7 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
     disabled,
     extension,
     showToolbar = true,
+    showSelectionToolbar = true,
     locale = 'ko',
   } = props;
   const t = useTranslate();
@@ -116,7 +117,7 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
                 contentClassName
               )}
             />
-            <SelectionToolbar editor={editor} />
+            {showSelectionToolbar && <SelectionToolbar editor={editor} />}
             <LinkFloatingDropdown editor={editor} />
             <div className='we:mt-auto we:flex we:flex-col we:justify-end we:px-2'>
               {extension?.character?.show && (

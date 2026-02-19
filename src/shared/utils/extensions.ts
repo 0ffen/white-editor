@@ -329,7 +329,7 @@ export function createEditorExtensions<T, P extends Record<string, unknown> = Re
           }),
         ]
       : []),
-    ...(mentionDataRef
+    ...(mentionDataRef && (mentionDataRef.current || pageMentionConfigRef?.current)
       ? [
           MentionNode<T, P>({
             mentionDataRef,

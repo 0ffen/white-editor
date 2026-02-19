@@ -304,6 +304,10 @@
 .white-editor .markdown td {
   border: 1px solid var(--we-border-default);
   padding: calc(var(--we-spacing) * 2);
+
+  p {
+    margin-top: 0 !important;
+  }
 }
 
 .white-editor .markdown hr {
