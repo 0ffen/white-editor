@@ -3,7 +3,7 @@ import { useImperativeHandle, forwardRef, useMemo } from 'react';
 
 import { Toolbar, TooltipProvider } from '@/shared/components';
 import { ImageUploadContext } from '@/shared/contexts';
-import { cn, normalizeContent } from '@/shared/utils';
+import { applyTheme, cn, normalizeContent, removeTheme } from '@/shared/utils';
 import { useTranslate, i18n } from '@/shared/utils/i18n';
 import {
   useWhiteEditor,
@@ -26,6 +26,7 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
   const {
     toolbarItems,
     toolbarProps,
+    theme,
     contentClassName,
     editorClassName,
     footer,
@@ -41,6 +42,17 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
   if (i18n.language !== locale) {
     i18n.changeLanguage(locale);
   }
+
+  const containerRefCallback = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!node || !theme) return;
+      applyTheme(theme, node);
+      return () => {
+        removeTheme(node);
+      };
+    },
+    [theme]
+  );
 
   const toolbarRef = React.useRef<HTMLDivElement>(null);
 
@@ -95,6 +107,7 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
   return (
     <TooltipProvider>
       <div
+        ref={containerRefCallback}
         className={cn(
           'white-editor group/editor',
           disabled && 'we:bg-elevation-level1 we:pointer-events-none',

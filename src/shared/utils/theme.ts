@@ -1,5 +1,58 @@
 'use client';
 
+const THEME_COLOR_VARIABLES = [
+  '--we-text-normal',
+  '--we-text-light',
+  '--we-text-sub',
+  '--we-text-placeholder',
+  '--we-elevation-background',
+  '--we-elevation-level1',
+  '--we-elevation-level2',
+  '--we-elevation-dropdown',
+  '--we-border-default',
+  '--we-interaction-hover',
+  '--we-brand-weak',
+  '--we-brand-light',
+  '--we-brand-default',
+] as const;
+
+const THEME_ZINDEX_VARIABLES = [
+  '--we-z-index-toolbar',
+  '--we-z-index-inline',
+  '--we-z-index-handle',
+  '--we-z-index-overlay',
+  '--we-z-index-floating',
+] as const;
+
+const ALL_THEME_VARIABLES = [...THEME_COLOR_VARIABLES, ...THEME_ZINDEX_VARIABLES] as const;
+
+type ThemeColorVariable = (typeof THEME_COLOR_VARIABLES)[number];
+type ThemeZIndexVariable = (typeof THEME_ZINDEX_VARIABLES)[number];
+
+const COLOR_KEY_TO_VAR: Record<keyof WhiteEditorThemeColors, ThemeColorVariable> = {
+  textNormal: '--we-text-normal',
+  textLight: '--we-text-light',
+  textSub: '--we-text-sub',
+  textPlaceholder: '--we-text-placeholder',
+  elevationBackground: '--we-elevation-background',
+  elevationLevel1: '--we-elevation-level1',
+  elevationLevel2: '--we-elevation-level2',
+  elevationDropdown: '--we-elevation-dropdown',
+  borderDefault: '--we-border-default',
+  interactionHover: '--we-interaction-hover',
+  brandWeak: '--we-brand-weak',
+  brandLight: '--we-brand-light',
+  brandDefault: '--we-brand-default',
+};
+
+const ZINDEX_KEY_TO_VAR: Record<keyof WhiteEditorThemeZIndex, ThemeZIndexVariable> = {
+  toolbar: '--we-z-index-toolbar',
+  inline: '--we-z-index-inline',
+  handle: '--we-z-index-handle',
+  overlay: '--we-z-index-overlay',
+  floating: '--we-z-index-floating',
+};
+
 /**
  * design-tokens.css 변수명과 1:1 대응하는 테마 컬러 (camelCase).
  * 지정한 항목만 --we-* CSS 변수로 적용되고, 나머지는 design-tokens.css 기본값 사용.
@@ -103,32 +156,50 @@ export function applyTheme(theme: 'light' | 'dark' | ThemeConfig, target: HTMLEl
 
   if (themeConfig.colors) {
     const c = themeConfig.colors;
-    if (c.textNormal != null) cssVariables['--we-text-normal'] = c.textNormal;
-    if (c.textLight != null) cssVariables['--we-text-light'] = c.textLight;
-    if (c.textSub != null) cssVariables['--we-text-sub'] = c.textSub;
-    if (c.textPlaceholder != null) cssVariables['--we-text-placeholder'] = c.textPlaceholder;
-    if (c.elevationBackground != null) cssVariables['--we-elevation-background'] = c.elevationBackground;
-    if (c.elevationLevel1 != null) cssVariables['--we-elevation-level1'] = c.elevationLevel1;
-    if (c.elevationLevel2 != null) cssVariables['--we-elevation-level2'] = c.elevationLevel2;
-    if (c.elevationDropdown != null) cssVariables['--we-elevation-dropdown'] = c.elevationDropdown;
-    if (c.borderDefault != null) cssVariables['--we-border-default'] = c.borderDefault;
-    if (c.interactionHover != null) cssVariables['--we-interaction-hover'] = c.interactionHover;
-    if (c.brandWeak != null) cssVariables['--we-brand-weak'] = c.brandWeak;
-    if (c.brandLight != null) cssVariables['--we-brand-light'] = c.brandLight;
-    if (c.brandDefault != null) cssVariables['--we-brand-default'] = c.brandDefault;
+    for (const [key, varName] of Object.entries(COLOR_KEY_TO_VAR)) {
+      const value = c[key as keyof WhiteEditorThemeColors];
+      if (value != null) cssVariables[varName] = value;
+    }
   }
 
   if (themeConfig.zIndex) {
     const z = themeConfig.zIndex;
-    if (z.toolbar != null) cssVariables['--we-z-index-toolbar'] = String(z.toolbar);
-    if (z.inline != null) cssVariables['--we-z-index-inline'] = String(z.inline);
-    if (z.handle != null) cssVariables['--we-z-index-handle'] = String(z.handle);
-    if (z.overlay != null) cssVariables['--we-z-index-overlay'] = String(z.overlay);
-    if (z.floating != null) cssVariables['--we-z-index-floating'] = String(z.floating);
+    for (const [key, varName] of Object.entries(ZINDEX_KEY_TO_VAR)) {
+      const value = z[key as keyof WhiteEditorThemeZIndex];
+      if (value != null) cssVariables[varName] = String(value);
+    }
   }
 
   if (Object.keys(cssVariables).length > 0) {
     setCSSVariables(cssVariables, target);
+  }
+}
+
+/**
+ * applyTheme로 설정된 테마를 완전히 제거합니다.
+ * 'dark' 클래스를 제거하고, applyTheme이 설정하는 모든 --we-* CSS 변수를
+ * target 요소의 인라인 스타일에서 제거합니다.
+ * 호스트 앱이 설정한 다른 인라인 스타일에는 영향을 주지 않습니다.
+ * 서버사이드에서는 아무 작업도 수행하지 않습니다.
+ *
+ * @param target - 테마를 제거할 대상 요소 (기본값: document.documentElement)
+ * @example
+ * ```ts
+ * removeTheme();
+ *
+ * // 특정 요소에서 제거
+ * removeTheme(myElement);
+ * ```
+ */
+export function removeTheme(target: HTMLElement = document.documentElement) {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  target.classList.remove('dark');
+
+  for (const varName of ALL_THEME_VARIABLES) {
+    target.style.removeProperty(varName);
   }
 }
 

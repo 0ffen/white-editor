@@ -1,8 +1,8 @@
 import React, { useMemo, useEffect, useRef, useCallback } from 'react';
-import { cn, getHeadingsFromContent, normalizeContentSchema } from '@/shared/utils';
+import { applyTheme, cn, getHeadingsFromContent, normalizeContentSchema, removeTheme } from '@/shared/utils';
 import { createViewerExtensions } from '@/shared/utils/extensions';
 import type { HeadingItem } from '@/shared/utils/get-headings-from-content';
-import type { ExtensibleEditorConfig } from '@/white-editor';
+import type { ExtensibleEditorConfig, WhiteEditorTheme } from '@/white-editor';
 import { EditorContent, useEditor, type JSONContent } from '@tiptap/react';
 
 import '@/shared/styles/viewer.css';
@@ -37,6 +37,7 @@ export interface TableOfContentsConfig {
 export interface WhiteViewerProps extends ExtensibleEditorConfig {
   /** JSONContent 또는 { content: JSONContent, html?: string } 등 래퍼 형태. 내부에서 정규화합니다. */
   content: unknown;
+  theme?: 'light' | 'dark' | WhiteEditorTheme;
   className?: string;
   footer?: React.ReactNode;
   /** 목차 표시. true면 상단 기본 설정, 객체면 position/maxLevel 지정. */
@@ -48,6 +49,7 @@ export interface WhiteViewerProps extends ExtensibleEditorConfig {
 export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerProps) {
   const {
     content,
+    theme,
     className,
     footer,
     tableOfContents: tableOfContentsProp,
@@ -66,6 +68,18 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
   const showHeadingAnchors = Boolean(tocConfig || onHeadingsReady);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const containerRefCallback = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!node) return;
+      containerRef.current = node;
+      if (!theme) return;
+      applyTheme(theme, node);
+      return () => {
+        removeTheme(node);
+      };
+    },
+    [theme]
+  );
 
   const extensions = useMemo(
     () => createViewerExtensions(addExtensions, customNodes, overrideExtensions, customNodeViews),
@@ -246,7 +260,7 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
 
   if (!hasBuiltInToc) {
     return (
-      <div ref={containerRef} className={cn('white-editor viewer', className)}>
+      <div ref={containerRefCallback} className={cn('white-editor viewer', className)}>
         {contentArea}
       </div>
     );
@@ -277,7 +291,10 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
 
   if (position === 'top') {
     return (
-      <div ref={containerRef} className={cn('white-editor viewer we:viewer-with-toc we:viewer-toc-top', className)}>
+      <div
+        ref={containerRefCallback}
+        className={cn('white-editor viewer we:viewer-with-toc we:viewer-toc-top', className)}
+      >
         {tocSidebar}
         <div className='we:viewer-body'>{contentArea}</div>
       </div>
@@ -285,7 +302,7 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
   }
 
   return (
-    <div ref={containerRef} className={cn('white-editor viewer we:viewer-with-toc', className)}>
+    <div ref={containerRefCallback} className={cn('white-editor viewer we:viewer-with-toc', className)}>
       {position === 'left' ? (
         <>
           {tocSidebar}
