@@ -6,7 +6,7 @@
  */
 import '@/shared/styles/index.css';
 
-export { WhiteEditor, useWhiteEditor, WhiteEditorThemeProvider } from '@/white-editor';
+export { WhiteEditor, useWhiteEditor, WhiteEditorThemeStyle } from '@/white-editor';
 
 export type {
   BlockquoteButtonProps,

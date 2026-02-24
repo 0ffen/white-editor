@@ -3,7 +3,7 @@
 import './shared/styles/index.css';
 
 //editor, viewer
-export { WhiteEditor, useWhiteEditor, WhiteViewer, WhiteEditorThemeProvider } from './white-editor';
+export { WhiteEditor, useWhiteEditor, WhiteViewer, WhiteEditorThemeStyle } from './white-editor';
 
 //toolbar types & preset items (toolbar-items.ts)
 export type {
