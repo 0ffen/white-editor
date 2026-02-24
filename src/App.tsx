@@ -15,7 +15,7 @@ import { cn, i18n } from './shared/utils';
 import {
   WHITE_EDITOR_TOOLBAR_ITEMS,
   WhiteEditor,
-  WhiteEditorThemeProvider,
+  WhiteEditorThemeStyle,
   WhiteViewer,
   type WhiteEditorRef,
 } from './white-editor';
@@ -126,95 +126,88 @@ export default function App() {
                 {mode === 'light' ? 'Dark Mode' : 'Light Mode'}
               </Button>
             </div>
-            <WhiteEditorThemeProvider
-              theme={{
-                mode: mode,
-                colors: {},
-                zIndex: {},
+            <WhiteEditorThemeStyle theme={{ mode: mode, colors: {}, zIndex: {} }} />
+            <WhiteEditor
+              placeholder='내용을 입력해주세요.'
+              key={locale}
+              locale={locale}
+              ref={editorRef}
+              disabled={false}
+              onEmptyChange={setEditorEmpty}
+              editorClassName='we:h-[1000px] we:rounded-md we:border we:border-border-default'
+              contentClassName='we:h-full we:px-2'
+              toolbarItems={WHITE_EDITOR_TOOLBAR_ITEMS}
+              showSelectionToolbar={true}
+              toolbarProps={{
+                image: {
+                  icon: <CheckIcon className='we:w-4 we:h-4' />, // UI만
+                  className: 'my-class', // UI만
+                },
               }}
-            >
-              <WhiteEditor
-                placeholder='내용을 입력해주세요.'
-                key={locale}
-                locale={locale}
-                ref={editorRef}
-                disabled={false}
-                onEmptyChange={setEditorEmpty}
-                editorClassName='we:h-[1000px] we:rounded-md we:border we:border-border-default'
-                contentClassName='we:h-full we:px-2'
-                toolbarItems={WHITE_EDITOR_TOOLBAR_ITEMS}
-                showSelectionToolbar={true}
-                toolbarProps={{
-                  image: {
-                    icon: <CheckIcon className='we:w-4 we:h-4' />, // UI만
-                    className: 'my-class', // UI만
+              extension={{
+                mention: {
+                  data: [
+                    { uuid: 1, name: 'White Lee', nickname: 'white' },
+                    { uuid: 2, name: 'Black Kim', nickname: 'black' },
+                  ],
+                  id: 'uuid',
+                  label: 'nickname',
+                },
+                // pageMention: {
+                //   data: pageLinksData,
+                //   id: 'id',
+                //   title: 'title',
+                //   href: 'href',
+                //   path: 'path',
+                // },
+                character: {
+                  show: true,
+                },
+                imageUpload: {
+                  upload: handleImageUpload,
+                  maxSize: 1024 * 1024 * 10,
+                  accept: 'image/*',
+                  limit: 1,
+                  onSuccess: (url) => {
+                    // eslint-disable-next-line no-console
+                    console.log('✅ 이미지 업로드 성공:', url);
                   },
-                }}
-                extension={{
-                  mention: {
-                    data: [
-                      { uuid: 1, name: 'White Lee', nickname: 'white' },
-                      { uuid: 2, name: 'Black Kim', nickname: 'black' },
-                    ],
-                    id: 'uuid',
-                    label: 'nickname',
+                  onError: (error) => {
+                    // eslint-disable-next-line no-console
+                    console.error('❌ 이미지 업로드 실패:', error.message);
                   },
-                  // pageMention: {
-                  //   data: pageLinksData,
-                  //   id: 'id',
-                  //   title: 'title',
-                  //   href: 'href',
-                  //   path: 'path',
-                  // },
-                  character: {
-                    show: true,
-                  },
-                  imageUpload: {
-                    upload: handleImageUpload,
-                    maxSize: 1024 * 1024 * 10,
-                    accept: 'image/*',
-                    limit: 1,
-                    onSuccess: (url) => {
-                      // eslint-disable-next-line no-console
-                      console.log('✅ 이미지 업로드 성공:', url);
-                    },
-                    onError: (error) => {
-                      // eslint-disable-next-line no-console
-                      console.error('❌ 이미지 업로드 실패:', error.message);
-                    },
-                  },
-                }}
-                footer={
-                  <div className='we:flex we:flex-col we:gap-2'>
-                    <div className='we:flex we:justify-end we:gap-2'>
-                      <Button
-                        type='button'
-                        variant='default'
-                        className='we:w-fit'
-                        disabled={editorEmpty}
-                        onClick={() => alert('제출 (예시)')}
-                      >
-                        제출
-                      </Button>
-                      <Button
-                        type='button'
-                        variant='secondary'
-                        className='we:w-fit we:bg-brand-weak we:text-brand-default'
-                        onClick={handleInsertText}
-                      >
-                        텍스트 삽입
-                      </Button>
-                      <Button type='button' variant='secondary' className='we:w-fit' onClick={handleInsertFailedImage}>
-                        실패 이미지 삽입
-                      </Button>
-                      <Button type='button' variant='secondary' className='we:w-fit' onClick={handleClear}>
-                        초기화
-                      </Button>
-                    </div>
+                },
+              }}
+              footer={
+                <div className='we:flex we:flex-col we:gap-2'>
+                  <div className='we:flex we:justify-end we:gap-2'>
+                    <Button
+                      type='button'
+                      variant='default'
+                      className='we:w-fit'
+                      disabled={editorEmpty}
+                      onClick={() => alert('제출 (예시)')}
+                    >
+                      제출
+                    </Button>
+                    <Button
+                      type='button'
+                      variant='secondary'
+                      className='we:w-fit we:bg-brand-weak we:text-brand-default'
+                      onClick={handleInsertText}
+                    >
+                      텍스트 삽입
+                    </Button>
+                    <Button type='button' variant='secondary' className='we:w-fit' onClick={handleInsertFailedImage}>
+                      실패 이미지 삽입
+                    </Button>
+                    <Button type='button' variant='secondary' className='we:w-fit' onClick={handleClear}>
+                      초기화
+                    </Button>
                   </div>
-                }
-              />
-            </WhiteEditorThemeProvider>
+                </div>
+              }
+            />
           </section>
 
           <section className='we:space-y-3 we:h-fit'>
