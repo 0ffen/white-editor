@@ -46,8 +46,8 @@
 }
 
 /* 첫 번째 p, heading 요소의 margin-top 제거 */
-.white-editor .markdown .tiptap > :is(p, h1, h2, h3, h4, h5, h6):first-child {
-  margin-top: 8px !important;
+.white-editor .markdown .tiptap>:is(p,h1,h2,h3,h4,h5,h6):first-child  {
+  margin-top: 0 !important;
 }
 
 /* Paragraph Styles - 본문 1, 본문 2 */
