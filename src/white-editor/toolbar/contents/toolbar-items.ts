@@ -13,8 +13,8 @@ export const DEFAULT_TOOLBAR_ITEMS: ToolbarItem[][] = [
   ['heading'],
   ['color'],
   ['bold', 'italic', 'strike', 'underline', 'highlight', 'link'],
-  ['code', 'codeblock'],
   ['blockquote', 'bulletList', 'orderedList'],
+  ['code', 'codeblock'],
   ['table', 'image'],
   ['textAlignLeft', 'textAlignCenter', 'textAlignRight'],
 ];
@@ -22,6 +22,7 @@ export const DEFAULT_TOOLBAR_ITEMS: ToolbarItem[][] = [
 export const MINIMAL_TOOLBAR_ITEMS: ToolbarItem[][] = [
   ['heading', 'color'],
   ['blockquote', 'bulletList', 'orderedList'],
+  ['code', 'codeblock'],
   ['table', 'image'],
   ['textAlignLeft', 'textAlignCenter', 'textAlignRight'],
 ];
