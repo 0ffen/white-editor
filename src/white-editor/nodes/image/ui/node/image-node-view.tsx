@@ -163,7 +163,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
         ref={containerRef}
         className={cn(
           'we:group we:relative',
-          currentWidth === '100%' ? 'we:w-full we:block' : 'we:inline-block',
+          currentWidth === '100%' ? 'we:w-full we:block' : 'we:inline-block we:max-w-full',
           caption && 'we:mb-2',
           resizeState.isResizing ? 'we:resizing' : '',
           props.selected && props.editor.isEditable

@@ -118,12 +118,15 @@ export default function App() {
           </div>
         </div>
 
-        <div className='we:grid we:grid-cols-2 we:gap-8'>
-          <section className='we:space-y-3'>
+        <div className='we:flex we:gap-8 we:flex-col we:w-full'>
+          <section className='we:space-y-3 we:w-full'>
             <div className='we:mb-8 we:flex we:items-center we:justify-center we:gap-3'>
               <h2 className='we:text-3xl we:font-bold'>Editor</h2>
               <Button type='button' variant='secondary' className='we:w-fit' onClick={toggleMode}>
                 {mode === 'light' ? 'Dark Mode' : 'Light Mode'}
+              </Button>
+              <Button type='button' variant='secondary' className='we:w-fit' onClick={handleTransformToViewer}>
+                변환
               </Button>
             </div>
             <WhiteEditorThemeStyle theme={{ mode: mode, colors: {}, zIndex: {} }} />
@@ -152,6 +155,11 @@ export default function App() {
                   ],
                   id: 'uuid',
                   label: 'nickname',
+                },
+                codeBlock: {
+                  onCopy: (code) => {
+                    console.log(code);
+                  },
                 },
                 // pageMention: {
                 //   data: pageLinksData,
@@ -210,20 +218,23 @@ export default function App() {
             />
           </section>
 
-          <section className='we:space-y-3 we:h-fit'>
+          <section className='we:space-y-3 we:h-fit we:w-full'>
             <div className='we:mb-8 we:flex we:items-center we:justify-center we:gap-3'>
               <h2 className='we:text-3xl we:font-bold'>Viewer</h2>
-              <Button
-                type='button'
-                variant='secondary'
-                className='we:w-fit we:bg-brand-weak we:text-brand-default'
-                onClick={handleTransformToViewer}
-              >
-                변환
-              </Button>
             </div>
             <div className='we:h-[1000px] we:p-4 we:bg-elevation-background we:overflow-y-auto we:border we:border-border-default we:rounded-md'>
-              <WhiteViewer key={viewerKey} className='we:h-full' content={content} />
+              <WhiteViewer
+                key={viewerKey}
+                className='we:h-full'
+                content={content}
+                extension={{
+                  codeBlock: {
+                    onCopy: (code) => {
+                      console.log(code);
+                    },
+                  },
+                }}
+              />
             </div>
           </section>
         </div>

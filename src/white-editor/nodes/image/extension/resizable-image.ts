@@ -1,6 +1,7 @@
 import type { ResizableImageOptions } from '@/shared/utils/extensions';
 import { ImageNodeView } from '@/white-editor';
 import Image from '@tiptap/extension-image';
+import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import type { EditorExtensions } from '../../../editor/type/white-editor.type';
 
@@ -47,7 +48,6 @@ export const ResizableImage = Image.extend<ResizableImageOptions>({
   },
 
   onCreate() {
-    // Extension 정보를 storage에 저장
     this.storage.extension = this.options.extension || null;
   },
 
@@ -149,6 +149,25 @@ export const ResizableImage = Image.extend<ResizableImageOptions>({
 
   addNodeView() {
     return ReactNodeViewRenderer(ImageNodeView);
+  },
+
+  addProseMirrorPlugins() {
+    return [
+      new Plugin({
+        key: new PluginKey('imageNativeCopy'),
+        props: {
+          handleDOMEvents: {
+            copy: (view) => {
+              // 뷰어(읽기 전용)에서는 ProseMirror의 clipboard 직렬화를 우회하고
+              // 브라우저 네이티브 복사를 사용하여 DOM의 <img> 요소가
+              // 텍스트와 함께 그대로 복사되도록 합니다.
+              if (!view.editable) return true;
+              return false;
+            },
+          },
+        },
+      }),
+    ];
   },
 
   addCommands() {

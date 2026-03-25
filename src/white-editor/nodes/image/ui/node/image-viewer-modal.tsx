@@ -118,6 +118,15 @@ export const ImageViewerModal: React.FC<ImageViewerModalProps> = ({ open, onOpen
     [onOpenChange]
   );
 
+  const handleBackdropClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.target === e.currentTarget) {
+        handleOpenChange(false);
+      }
+    },
+    [handleOpenChange]
+  );
+
   if (!open) return null;
 
   return (
@@ -125,13 +134,14 @@ export const ImageViewerModal: React.FC<ImageViewerModalProps> = ({ open, onOpen
       <DialogTitle className='we:sr-only'>View Image</DialogTitle>
       <DialogContent
         hideCloseButton
-        className='we:bg-transparent we:shadow-none we:p-0 we:max-w-none we:w-full we:h-full we:min-h-[100dvh] we:top-0 we:left-0 we:translate-x-0 we:translate-y-0 we:rounded-none we:flex we:flex-col we:overflow-hidden'
+        className='we:bg-transparent we:shadow-none we:p-0 we:mx-0 we:gap-0 we:max-w-none we:w-full we:h-full we:min-h-[100dvh] we:top-0 we:left-0 we:translate-x-0 we:translate-y-0 we:rounded-none we:flex we:flex-col we:overflow-hidden'
       >
         <TooltipProvider>
           <div className='we:flex we:flex-1 we:min-h-0 we:flex-col we:items-center we:justify-center'>
             <div
               className='we:relative we:flex we:flex-1 we:w-full we:items-center we:justify-center we:overflow-hidden'
               onMouseDown={handleMouseDown}
+              onClick={handleBackdropClick}
               style={{ cursor: zoomLevel > 100 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
             >
               <img

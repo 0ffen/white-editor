@@ -44,6 +44,12 @@ export interface WhiteViewerProps extends ExtensibleEditorConfig {
   tableOfContents?: boolean | TableOfContentsConfig;
   /** 헤딩 목록과 scrollToIndex를 전달. 목차를 뷰어 밖 원하는 위치에 직접 렌더할 때 사용. */
   onHeadingsReady?: (headings: HeadingItem[], scrollToIndex: (index: number) => void) => void;
+  /** 확장 기능 콜백 (codeBlock 복사 등) */
+  extension?: {
+    codeBlock?: {
+      onCopy?: (code: string) => void;
+    };
+  };
 }
 
 export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerProps) {
@@ -58,6 +64,7 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
     customNodes,
     overrideExtensions,
     customNodeViews,
+    extension,
   } = props;
 
   const tocConfig =
@@ -148,6 +155,16 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
         spellcheck: 'false',
         contenteditable: 'false',
       },
+    },
+    onCreate: ({ editor: currentEditor }) => {
+      if (extension?.codeBlock?.onCopy) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const storage = currentEditor.storage as any;
+        storage.codeBlock = {
+          ...storage.codeBlock,
+          onCopy: extension.codeBlock.onCopy,
+        };
+      }
     },
   });
 
