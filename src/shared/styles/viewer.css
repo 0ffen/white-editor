@@ -64,6 +64,12 @@
   cursor: pointer !important;
 }
 
+.white-editor .readonly .react-renderer.node-image {
+  user-select: all !important;
+  -webkit-user-select: all !important;
+}
+
+
 .white-editor .readonly p,
 .white-editor .readonly h1,
 .white-editor .readonly h2,

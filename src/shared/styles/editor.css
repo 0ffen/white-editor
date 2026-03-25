@@ -315,3 +315,7 @@
   pointer-events: none;
   font-size: 14px;
 }
+
+.image-caption-pseudo::after {
+  content: attr(data-image-caption);
+}

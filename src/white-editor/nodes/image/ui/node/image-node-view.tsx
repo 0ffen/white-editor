@@ -232,6 +232,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
               src={src}
               alt={alt}
               title={title}
+              data-caption={caption || undefined}
               className='we:mb-0 we:block we:h-auto we:w-full we:max-w-full we:rounded we:shadow-md we:mt-0'
               style={{
                 width: currentWidth !== 'auto' ? currentWidth : undefined,
@@ -273,12 +274,10 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
               e.stopPropagation();
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.stopPropagation();
-                if (!e.shiftKey) {
-                  e.preventDefault();
-                  (e.target as HTMLTextAreaElement).blur();
-                }
+              e.stopPropagation();
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                (e.target as HTMLTextAreaElement).blur();
               }
             }}
             placeholder={t('캡션을 입력하세요')}
