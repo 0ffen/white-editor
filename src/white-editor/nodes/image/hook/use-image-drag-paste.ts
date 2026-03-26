@@ -97,7 +97,7 @@ export const useImageDragPaste = (extension: EditorExtensions<Record<string, unk
           src: blobUrl,
           alt: 'Image',
           caption: '',
-          width: '500px',
+          width: '100%',
           height: 'auto',
           uploadId,
           uploadingProgress: 0,

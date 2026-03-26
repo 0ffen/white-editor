@@ -32,6 +32,7 @@ interface Props {
   };
   editor: {
     isEditable: boolean;
+    storage: Record<string, Record<string, unknown>>;
   };
 }
 
@@ -67,22 +68,28 @@ export const CodeBlock = ({
     return languages;
   }, [extension.options.lowlight, defaultLanguage]);
 
-  const handleCopy = React.useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
+  const handleCopy = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
 
-    // CSR 환경에서만 clipboard API 사용
-    if (typeof window === 'undefined' || !navigator.clipboard) {
-      return;
-    }
+      if (typeof window === 'undefined' || !navigator.clipboard) {
+        return;
+      }
 
-    setIsCopied(true);
-    navigator.clipboard.writeText(preRef.current?.textContent || '');
+      const code = preRef.current?.textContent || '';
+      setIsCopied(true);
+      navigator.clipboard.writeText(code);
 
-    setTimeout(() => {
-      setIsCopied(false);
-    }, 2000);
-  }, []);
+      const onCopy = editor.storage?.codeBlock?.onCopy as ((code: string) => void) | undefined;
+      onCopy?.(code);
+
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    },
+    [editor.storage]
+  );
 
   return (
     <NodeViewWrapper>

@@ -18,13 +18,12 @@ export const ImageCaption: React.FC<ImageCaptionProps> = (props: ImageCaptionPro
 
   return (
     <div
+      data-image-caption={caption}
       className={cn(
-        'we:text-text-sub we:break-all we:mt-2 we:text-center we:text-xs we:whitespace-pre-wrap',
+        'image-caption-pseudo we:text-text-sub we:break-all we:mt-2 we:text-center we:text-xs we:whitespace-pre-wrap',
         className
       )}
       style={captionStyle}
-    >
-      {caption}
-    </div>
+    />
   );
 };

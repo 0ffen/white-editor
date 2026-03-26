@@ -249,6 +249,9 @@ export function createEditorExtensions<T, P extends Record<string, unknown> = Re
       maxSize?: number;
       limit?: number;
     };
+    codeBlock?: {
+      onCopy?: (code: string) => void;
+    };
   },
   placeholder?: string,
   addExtensions?: Array<Extension>,

@@ -123,6 +123,16 @@ export const useWhiteEditor = <T>(props: WhiteEditorProps<T>): UseWhiteEditorRet
     ),
     onCreate: ({ editor: currentEditor }) => {
       editorInstanceRef.current = currentEditor;
+
+      if (extension?.codeBlock?.onCopy) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const storage = currentEditor.storage as any;
+        storage.codeBlock = {
+          ...storage.codeBlock,
+          onCopy: extension.codeBlock.onCopy,
+        };
+      }
+
       if (onEmptyChange) {
         const initialJSON = normalizeContent(currentEditor.getJSON());
         scheduleEmptyCheck(initialJSON);

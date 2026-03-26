@@ -31,7 +31,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
 
   const [_align, setAlign] = useState<AlignType>(textAlign || 'center');
 
-  const [currentWidth, setCurrentWidth] = useState<string>(width || '500px');
+  const [currentWidth, setCurrentWidth] = useState<string>(width || '100%');
   const [currentHeight, setCurrentHeight] = useState<string>(height || 'auto');
   const [isViewerImageDialogOpen, setIsViewerImageDialogOpen] = useState<boolean>(false);
   const [isCaptionEditing, setIsCaptionEditing] = useState<boolean>(false);
@@ -163,7 +163,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
         ref={containerRef}
         className={cn(
           'we:group we:relative',
-          currentWidth === '100%' ? 'we:w-full we:block' : 'we:inline-block',
+          currentWidth === '100%' ? 'we:w-full we:block' : 'we:inline-block we:max-w-full',
           caption && 'we:mb-2',
           resizeState.isResizing ? 'we:resizing' : '',
           props.selected && props.editor.isEditable
@@ -232,6 +232,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
               src={src}
               alt={alt}
               title={title}
+              data-caption={caption || undefined}
               className='we:mb-0 we:block we:h-auto we:w-full we:max-w-full we:rounded we:shadow-md we:mt-0'
               style={{
                 width: currentWidth !== 'auto' ? currentWidth : undefined,
@@ -273,12 +274,10 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
               e.stopPropagation();
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.stopPropagation();
-                if (!e.shiftKey) {
-                  e.preventDefault();
-                  (e.target as HTMLTextAreaElement).blur();
-                }
+              e.stopPropagation();
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                (e.target as HTMLTextAreaElement).blur();
               }
             }}
             placeholder={t('캡션을 입력하세요')}

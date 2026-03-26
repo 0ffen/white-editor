@@ -35,6 +35,9 @@ interface EditorExtensions<T = Record<string, unknown>, P = Record<string, unkno
     maxSize?: number;
     limit?: number;
   };
+  codeBlock?: {
+    onCopy?: (code: string) => void;
+  };
 }
 
 /** Design token 기반 테마 (colors, zIndex는 선택 항목만 넘기면 됨) */
