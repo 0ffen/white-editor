@@ -16,13 +16,42 @@ function ensureExtension(name: string, ext: string): string {
 }
 
 /**
+ * execCommand fallback으로 이미지를 클립보드에 복사합니다.
+ * HTTP(비보안 컨텍스트)에서 Clipboard API를 사용할 수 없을 때 사용됩니다.
+ */
+function copyImageViaExecCommand(dataUrl: string): boolean {
+  const container = document.createElement('div');
+  container.contentEditable = 'true';
+  container.style.position = 'fixed';
+  container.style.left = '-9999px';
+  container.style.opacity = '0';
+
+  const imgEl = document.createElement('img');
+  imgEl.src = dataUrl;
+  container.appendChild(imgEl);
+  document.body.appendChild(container);
+
+  const range = document.createRange();
+  range.selectNode(container);
+  const sel = window.getSelection();
+  sel?.removeAllRanges();
+  sel?.addRange(range);
+
+  const success = document.execCommand('copy');
+  document.body.removeChild(container);
+  sel?.removeAllRanges();
+  return success;
+}
+
+/**
  * 이미지 URL을 클립보드에 복사합니다.
  * PNG blob으로 변환하여 Clipboard API로 복사합니다.
  * CORS 등으로 실패하면 false를 반환합니다.
+ * HTTP 환경에서는 execCommand fallback을 사용합니다.
  */
 export async function copyImage(src: string): Promise<boolean> {
   try {
-    if (typeof window === 'undefined' || !navigator.clipboard) return false;
+    if (typeof window === 'undefined') return false;
 
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -40,11 +69,19 @@ export async function copyImage(src: string): Promise<boolean> {
     if (!ctx) return false;
     ctx.drawImage(loaded, 0, 0);
 
-    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
-    if (!blob) return false;
+    if (navigator.clipboard?.write) {
+      try {
+        const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+        if (blob) {
+          await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+          return true;
+        }
+      } catch {
+        // Clipboard API 실패 시 execCommand fallback으로 전환
+      }
+    }
 
-    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-    return true;
+    return copyImageViaExecCommand(canvas.toDataURL('image/png'));
   } catch {
     return false;
   }
