@@ -1,4 +1,5 @@
 import { useCallback, useRef } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import type { EditorView } from '@tiptap/pm/view';
 import type { EditorExtensions } from '../../../editor/type/white-editor.type';
 
@@ -91,7 +92,7 @@ export const useImageDragPaste = (extension: EditorExtensions<Record<string, unk
           continue;
         }
 
-        const uploadId = crypto.randomUUID();
+        const uploadId = uuidv4();
         const blobUrl = URL.createObjectURL(file);
         const node = schema.nodes.image.create({
           src: blobUrl,

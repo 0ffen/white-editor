@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { ImagePlusIcon } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
 import { handleImageUpload as defaultHandleImageUpload, useTranslate } from '@/shared';
 import { Button, type ButtonProps } from '@/shared/components';
 import { useImageUploadConfig } from '@/shared/contexts';
@@ -79,7 +80,7 @@ export const ImageUploadButton = React.forwardRef<HTMLButtonElement, ImageUpload
         const items: { file: File; uploadId: string; blobUrl: string }[] = [];
 
         for (const file of fileList) {
-          const uploadId = crypto.randomUUID();
+          const uploadId = uuidv4();
           const blobUrl = URL.createObjectURL(file);
           items.push({ file, uploadId, blobUrl });
           (editor as Editor).commands.setResizableImage({
