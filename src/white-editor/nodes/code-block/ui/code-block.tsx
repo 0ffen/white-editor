@@ -73,16 +73,16 @@ export const CodeBlock = ({
       event.preventDefault();
       event.stopPropagation();
 
-      if (typeof window === 'undefined' || !navigator.clipboard) {
-        return;
-      }
+      const onCopy = editor.storage?.codeBlock?.onCopy as ((code: string) => void) | undefined;
 
       const code = preRef.current?.textContent || '';
       setIsCopied(true);
-      navigator.clipboard.writeText(code);
 
-      const onCopy = editor.storage?.codeBlock?.onCopy as ((code: string) => void) | undefined;
-      onCopy?.(code);
+      if (onCopy) {
+        onCopy(code);
+      } else {
+        navigator.clipboard.writeText(code);
+      }
 
       setTimeout(() => {
         setIsCopied(false);
