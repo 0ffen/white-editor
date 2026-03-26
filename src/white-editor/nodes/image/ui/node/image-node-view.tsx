@@ -31,7 +31,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
 
   const [_align, setAlign] = useState<AlignType>(textAlign || 'center');
 
-  const [currentWidth, setCurrentWidth] = useState<string>(width || '500px');
+  const [currentWidth, setCurrentWidth] = useState<string>(width || '100%');
   const [currentHeight, setCurrentHeight] = useState<string>(height || 'auto');
   const [isViewerImageDialogOpen, setIsViewerImageDialogOpen] = useState<boolean>(false);
   const [isCaptionEditing, setIsCaptionEditing] = useState<boolean>(false);
