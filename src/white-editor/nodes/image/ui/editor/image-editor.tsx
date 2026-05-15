@@ -4,8 +4,13 @@ import { Minus, Plus } from 'lucide-react';
 import TuiImageEditor from 'tui-image-editor';
 import { Button } from '@/shared';
 import { base64ToBlob } from '@/shared/utils/base64-to-blob';
-import { CropEditor, DrawEditor, ImageEditorFooter, ImageEditorToolbar, ShapeEditor, TextEditor } from '@/white-editor';
 import { useImageZoom } from '@/white-editor/nodes/image/hook';
+import { CropEditor } from './crop';
+import { DrawEditor } from './draw';
+import { ImageEditorFooter } from './image-editor-footer';
+import { ImageEditorToolbar } from './image-editor-toolbar';
+import { ShapeEditor } from './shape';
+import { TextEditor } from './text';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
 export interface ImageEditorRef {
