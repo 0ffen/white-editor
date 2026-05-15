@@ -7,6 +7,9 @@ import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import { visualizer } from 'rollup-plugin-visualizer';
+
+const enableVisualizer = process.env.ANALYZE === 'true' || process.env.ANALYZE === '1';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -33,6 +36,17 @@ export default defineConfig({
         },
       ],
     }),
+    ...(enableVisualizer
+      ? [
+          visualizer({
+            filename: 'dist/stats.html',
+            template: 'treemap',
+            gzipSize: true,
+            brotliSize: true,
+            open: true,
+          }),
+        ]
+      : []),
   ],
   resolve: {
     alias: {
@@ -61,7 +75,37 @@ export default defineConfig({
       },
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime'],
+      external: [
+        /^react($|\/)/,
+        /^react-dom($|\/)/,
+        /^@tiptap\//,
+        /^prosemirror-/,
+        // @radix-ui: 직접 의존하는 패키지만 명시. regex로 전부 잡으면 cmdk 등이 내부적으로
+        // 쓰는 transitive(@radix-ui/react-primitive, react-id, compose-refs)까지 external로 잡혀
+        // 컨슈머 측에서 resolution 실패함.
+        '@radix-ui/react-context-menu',
+        '@radix-ui/react-dialog',
+        '@radix-ui/react-dropdown-menu',
+        '@radix-ui/react-popover',
+        '@radix-ui/react-select',
+        '@radix-ui/react-separator',
+        '@radix-ui/react-slider',
+        '@radix-ui/react-slot',
+        '@radix-ui/react-toggle',
+        '@radix-ui/react-toggle-group',
+        '@radix-ui/react-tooltip',
+        '@floating-ui/dom',
+        '@floating-ui/react',
+        'katex',
+        'lowlight',
+        'highlight.js',
+        'tui-image-editor',
+        '@toast-ui/react-image-editor',
+        'i18next',
+        'react-i18next',
+        'lucide-react',
+        'tiptap-markdown',
+      ],
       output: {
         entryFileNames: '[name].js',
         chunkFileNames: 'chunks/[name]-[hash].js',

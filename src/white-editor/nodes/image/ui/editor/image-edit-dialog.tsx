@@ -1,6 +1,9 @@
-import { useRef, useState } from 'react';
+import { lazy, Suspense, useRef, useState } from 'react';
 import { cn, Dialog, DialogContent, DialogHeader, DialogTitle, useTranslate } from '@/shared';
-import { ImageEditor, ImageEditorFooter, type ImageEditorRef } from '@/white-editor';
+import { ImageEditorFooter } from '@/white-editor';
+import type { ImageEditorRef } from './image-editor';
+
+const ImageEditor = lazy(() => import('./image-editor').then((m) => ({ default: m.ImageEditor })));
 
 interface ImageEditDialogProps {
   isOpen: boolean;
@@ -58,7 +61,9 @@ export function ImageEditDialog(props: ImageEditDialogProps) {
             isSaving ? 'we:pointer-events-none we:opacity-60' : ''
           )}
         >
-          <ImageEditor ref={imageRef} imageUrl={imageUrl} activeMode={activeMode} setActiveMode={setActiveMode} />
+          <Suspense fallback={null}>
+            <ImageEditor ref={imageRef} imageUrl={imageUrl} activeMode={activeMode} setActiveMode={setActiveMode} />
+          </Suspense>
         </div>
 
         {!activeMode && (

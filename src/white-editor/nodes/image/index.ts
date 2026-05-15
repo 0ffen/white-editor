@@ -4,14 +4,10 @@ export * from './ui/node/image-error-block';
 export * from './ui/node/floating-controls';
 export * from './ui/node/caption';
 
-export * from './ui/editor/image-editor';
+// image-editor 및 그 서브 에디터(crop/draw/shape/text/toolbar)는 dynamic import 전용.
+// 정적 re-export 시 viewer 트리에 tui-image-editor 가 끌려 들어가므로 의도적으로 제외함.
 export * from './ui/editor/image-edit-dialog';
 export * from './ui/editor/image-editor-footer';
-export * from './ui/editor/crop';
-export * from './ui/editor/draw';
-export * from './ui/editor/shape';
-export * from './ui/editor/text';
-export * from './ui/editor/image-editor-toolbar';
 
 export * from './ui/upload/image-upload-button';
 
