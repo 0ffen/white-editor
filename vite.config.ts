@@ -132,6 +132,18 @@ export default defineConfig({
         'react-i18next',
         'lucide-react',
         'tiptap-markdown',
+        // tiptap-markdown의 transitive deps — 컨슈머 측에서 자동 해결됨
+        'markdown-it',
+        'markdown-it-task-lists',
+        'entities',
+        'linkify-it',
+        'mdurl',
+        'punycode.js',
+        'uc.micro',
+        // cmdk / tailwind-merge / lodash-es — 컨슈머 node_modules에 라이브러리 dep로 자동 설치됨
+        'cmdk',
+        'tailwind-merge',
+        /^lodash-es($|\/)/,
       ],
       output: {
         entryFileNames: '[name].js',
