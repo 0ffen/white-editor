@@ -156,7 +156,25 @@ export default defineConfig({
         },
         manualChunks(id) {
           const nodeModules = path.sep + 'node_modules' + path.sep;
-          if (!id.includes(nodeModules)) return undefined;
+          if (!id.includes(nodeModules)) {
+            // src 코드: viewer-only 컨슈머는 editor 청크를 받지 않게 분리한다.
+            const norm = id.replaceAll(path.sep, '/');
+
+            // 명시 분리: extension 빌더는 entry별로 강제 배치
+            if (norm.endsWith('/shared/utils/viewer-extensions.ts')) return 'viewer';
+            if (norm.endsWith('/shared/utils/editor-extensions.ts')) return 'editor';
+
+            // 폴더 단위 분리
+            if (norm.includes('/src/white-editor/viewer/')) return 'viewer';
+            if (norm.includes('/src/white-editor/editor/') || norm.includes('/src/white-editor/toolbar/')) {
+              return 'editor';
+            }
+
+            // shared utils/hooks는 공통 청크로 (양쪽 entry가 import).
+            if (norm.includes('/src/shared/')) return 'shared';
+
+            return undefined; // nodes 등은 자동 분배 (자동 분류가 더 자연스럽게 갈림)
+          }
           if (id.includes(nodeModules + '@tiptap')) return 'tiptap';
           if (id.includes(nodeModules + 'lowlight') || id.includes(nodeModules + 'highlight.js')) return 'lowlight';
           if (id.includes(nodeModules + 'katex')) return 'katex';
