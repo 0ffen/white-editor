@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { checkEditorEmpty, normalizeContent, transformPastedToTextNormal } from '@/shared/utils';
-import { createEditorExtensions } from '@/shared/utils/extensions';
+import { createEditorExtensions } from '@/shared/utils/editor-extensions';
 import {
   useImageDragPaste,
   type EditorExtensions,

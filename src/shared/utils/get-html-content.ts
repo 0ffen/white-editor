@@ -1,7 +1,7 @@
 'use client';
 
 import { generateHTML, type JSONContent } from '@tiptap/react';
-import { createViewerExtensions } from './extensions';
+import { createViewerExtensions } from './viewer-extensions';
 
 /**
  * TipTap JSONContent를 HTML 문자열로 변환합니다.

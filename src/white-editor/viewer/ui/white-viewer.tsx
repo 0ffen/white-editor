@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useRef, useCallback } from 'react';
 import { applyTheme, cn, getHeadingsFromContent, normalizeContentSchema, removeTheme } from '@/shared/utils';
-import { createViewerExtensions } from '@/shared/utils/extensions';
+import { createViewerExtensions } from '@/shared/utils/viewer-extensions';
 import type { HeadingItem } from '@/shared/utils/get-headings-from-content';
 import type { ExtensibleEditorConfig, WhiteEditorTheme } from '@/white-editor';
 import { EditorContent, useEditor, type JSONContent } from '@tiptap/react';
