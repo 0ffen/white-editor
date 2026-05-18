@@ -1,6 +1,5 @@
 import path from 'node:path';
 import { defineConfig } from 'vite';
-import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import dts from 'vite-plugin-dts';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
@@ -25,10 +24,6 @@ export default defineConfig({
       tsconfigPath: path.resolve(__dirname, './tsconfig.app.json'),
       insertTypesEntry: true,
     }),
-    cssInjectedByJsPlugin({
-      // 멀티 진입점에서 각 번들(index/editor/viewer)에 해당 진입점이 사용한 CSS만 주입
-      relativeCSSInjection: true,
-    }),
     tailwindcss(),
     viteStaticCopy({
       targets: [
@@ -40,6 +35,12 @@ export default defineConfig({
         //   컨슈머: `import '@0ffen/white-editor/pretendard.css'`
         {
           src: 'src/shared/styles/pretendard.css',
+          dest: '.',
+        },
+        // D2Coding(코드블록 모노스페이스) @font-face도 opt-in subpath로 분리
+        //   컨슈머: `import '@0ffen/white-editor/codeblock.css'`
+        {
+          src: 'src/shared/styles/codeblock.css',
           dest: '.',
         },
         // KaTeX CSS를 dist/katex.css로 재배포 (woff2 only). 컨슈머: `import '@0ffen/white-editor/katex.css'`
@@ -135,6 +136,12 @@ export default defineConfig({
       output: {
         entryFileNames: '[name].js',
         chunkFileNames: 'chunks/[name]-[hash].js',
+        // 라이브러리 CSS 청크를 단일 style.css로 통일 (entry별로 분리되지 않고 한 파일로 묶임)
+        assetFileNames: (assetInfo) => {
+          const name = assetInfo.names?.[0] ?? '';
+          if (name.endsWith('.css')) return 'style.css';
+          return 'assets/[name]-[hash][extname]';
+        },
         manualChunks(id) {
           const nodeModules = path.sep + 'node_modules' + path.sep;
           if (!id.includes(nodeModules)) return undefined;

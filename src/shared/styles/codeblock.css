@@ -1,0 +1,26 @@
+/*
+ * D2Coding — 코드블록 전용 모노스페이스 폰트
+ * Copyright NAVER. SIL Open Font License 1.1
+ * https://github.com/naver/d2codingfont
+ *
+ * 이 파일은 컨슈머가 opt-in으로 import할 때만 적용된다.
+ *   import '@0ffen/white-editor/codeblock.css';
+ *
+ * 라이브러리 본체 CSS(@0ffen/white-editor/style.css)는 이 폰트를 자동 로드하지 않으며,
+ * 코드블록은 컨슈머의 시스템 모노스페이스 폰트로 fallback된다.
+ */
+@font-face {
+  font-family: 'D2Coding';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url('./assets/fonts/D2Coding.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'D2Coding';
+  font-style: normal;
+  font-weight: bold;
+  font-display: swap;
+  src: url('./assets/fonts/D2CodingBold.woff2') format('woff2');
+}

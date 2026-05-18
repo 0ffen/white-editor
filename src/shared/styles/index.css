@@ -1,7 +1,10 @@
 @import 'tailwindcss' prefix(we);
 @plugin '@tailwindcss/typography';
 
-/* KaTeX CSS는 라이브러리에서 분리. 컨슈머가 `import '@0ffen/white-editor/katex.css'`로 명시 import (수식 사용 시) */
+/* 폰트/특수 스타일은 본체에서 분리. 컨슈머가 opt-in subpath로 명시 import:
+ *   - `@0ffen/white-editor/codeblock.css`   (D2Coding, 코드블록 모노스페이스 폰트)
+ *   - `@0ffen/white-editor/pretendard.css`  (Pretendard Variable)
+ *   - `@0ffen/white-editor/katex.css`       (KaTeX, 수식 사용 시) */
 @import './design-tokens.css';
 @import './github-dark.css';
 @import './editor.css';
