@@ -1,5 +1,5 @@
 import * as React from 'react';
-import throttle from 'lodash.throttle';
+import { throttle } from 'lodash-es';
 import { useUnmount } from '@/shared/hooks';
 
 interface ThrottleSettings {
