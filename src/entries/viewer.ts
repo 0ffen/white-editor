@@ -7,5 +7,6 @@
 import '@/shared/styles/viewer.css';
 
 export { WhiteViewer } from '@/white-editor/viewer';
+export { WhiteEditorThemeStyle } from '@/white-editor/theme-style/white-editor-theme-style';
 export type { WhiteViewerProps } from '@/white-editor/viewer';
 export type { ExtensibleEditorConfig } from '@/white-editor/editor';

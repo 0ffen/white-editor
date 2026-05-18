@@ -1,7 +1,7 @@
 'use client';
 
 import { generateText, type JSONContent } from '@tiptap/core';
-import { createViewerExtensions } from './extensions';
+import { createViewerExtensions } from './viewer-extensions';
 
 /**
  * TipTap JSONContent에서 순수 텍스트를 추출합니다.

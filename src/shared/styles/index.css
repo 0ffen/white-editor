@@ -1,7 +1,10 @@
 @import 'tailwindcss' prefix(we);
 @plugin '@tailwindcss/typography';
 
-@import './katex.css';
+/* 폰트/특수 스타일은 본체에서 분리. 컨슈머가 opt-in subpath로 명시 import:
+ *   - `@0ffen/white-editor/codeblock.css`   (D2Coding, 코드블록 모노스페이스 폰트)
+ *   - `@0ffen/white-editor/pretendard.css`  (Pretendard Variable)
+ *   - `@0ffen/white-editor/katex.css`       (KaTeX, 수식 사용 시) */
 @import './design-tokens.css';
 @import './github-dark.css';
 @import './editor.css';
@@ -37,32 +40,14 @@
   .white-editor select,
   .white-editor textarea {
     font-size: 14px !important;
-    font-family: var(--we-font-pretendard);
+    font-family: var(--we-font-family-base);
   }
 
   .white-editor input::placeholder,
   .white-editor textarea::placeholder,
   .white-editor select::placeholder {
     font-size: 14px !important;
-    font-family: var(--we-font-pretendard);
-  }
-
-  .white-editor .font-pretendard {
-    font-family:
-      'Pretendard Variable',
-      Pretendard,
-      -apple-system,
-      BlinkMacSystemFont,
-      'Segoe UI',
-      'Roboto',
-      'Oxygen',
-      'Ubuntu',
-      'Cantarell',
-      'Fira Sans',
-      'Droid Sans',
-      'Helvetica Neue',
-      sans-serif;
-    font-display: swap;
+    font-family: var(--we-font-family-base);
   }
 
   .white-editor ::-webkit-scrollbar {
@@ -292,7 +277,7 @@
 }
 
 @theme {
-  --font-pretendard:
+  --font-base:
     'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
     'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   --font-code: 'D2Coding', monospace;
@@ -435,11 +420,15 @@
   --we-radius: 0.65rem;
   --we-radius-sm: calc(var(--we-radius) - 4px);
   --we-spacing: 0.25rem;
-  --we-font-pretendard:
+  /**
+   * 라이브러리 UI 전역 기본 폰트 패밀리. 컨슈머가 자유롭게 오버라이드 가능.
+   *   예: `.white-editor { --we-font-family-base: 'Interop', sans-serif; }`
+   * 라이브러리는 폰트 파일을 동봉하지 않는다.
+   *   Pretendard를 라이브러리에서 받으려면: `import '@0ffen/white-editor/pretendard.css';`
+   */
+  --we-font-family-base:
     'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
     'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  /** 전역 기본 폰트 (KaTeX 제외). 소비 앱에서 오버라이드 가능. */
-  --we-font-base: var(--we-font-pretendard);
   /* Shadcn/shell colors → design-tokens (design-tokens.css) */
   --we-background: var(--we-elevation-background);
   --we-foreground: var(--we-text-normal);

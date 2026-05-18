@@ -24,7 +24,9 @@ const THEME_ZINDEX_VARIABLES = [
   '--we-z-index-floating',
 ] as const;
 
-const ALL_THEME_VARIABLES = [...THEME_COLOR_VARIABLES, ...THEME_ZINDEX_VARIABLES] as const;
+const THEME_FONT_VARIABLES = ['--we-font-family-base'] as const;
+
+const ALL_THEME_VARIABLES = [...THEME_COLOR_VARIABLES, ...THEME_ZINDEX_VARIABLES, ...THEME_FONT_VARIABLES] as const;
 
 type ThemeColorVariable = (typeof THEME_COLOR_VARIABLES)[number];
 type ThemeZIndexVariable = (typeof THEME_ZINDEX_VARIABLES)[number];
@@ -106,6 +108,12 @@ export interface ThemeConfig {
   mode?: 'light' | 'dark';
   colors?: WhiteEditorThemeColors;
   zIndex?: WhiteEditorThemeZIndex;
+  /**
+   * 라이브러리 UI 전역 기본 폰트 패밀리. `--we-font-family-base` CSS 변수로 설정됨.
+   * 미지정 시 라이브러리의 fallback chain(Pretendard → -apple-system → ...)을 사용한다.
+   * 예: `"'Interop', sans-serif"`, `'inherit'`
+   */
+  fontFamily?: string;
 }
 
 /**
@@ -121,6 +129,7 @@ export interface ThemeConfig {
  * applyTheme('dark');
  * applyTheme({ mode: 'dark', colors: { textNormal: '#e0e0e0', elevationBackground: '#1a1a1a' } });
  * applyTheme({ mode: 'light', zIndex: { overlay: 100, floating: 100 } });
+ * applyTheme({ mode: 'light', fontFamily: "'Interop', sans-serif" });
  *
  * // 특정 요소에 스코핑
  * applyTheme('dark', myElement);
@@ -168,6 +177,10 @@ export function applyTheme(theme: 'light' | 'dark' | ThemeConfig, target: HTMLEl
       const value = z[key as keyof WhiteEditorThemeZIndex];
       if (value != null) cssVariables[varName] = String(value);
     }
+  }
+
+  if (themeConfig.fontFamily) {
+    cssVariables['--we-font-family-base'] = themeConfig.fontFamily;
   }
 
   if (Object.keys(cssVariables).length > 0) {
