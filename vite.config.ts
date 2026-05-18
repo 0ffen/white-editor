@@ -82,7 +82,7 @@ export default defineConfig({
     target: 'es2020',
     minify: 'terser',
     sourcemap: false,
-    cssCodeSplit: true,
+    cssCodeSplit: false,
     assetsInlineLimit: 0,
     // 라이브러리 빌드 산출물(dist/)에는 demo/의 데모 자산을 복사하지 않는다 (dev 미리보기 전용).
     copyPublicDir: false,
@@ -147,42 +147,16 @@ export default defineConfig({
       ],
       output: {
         entryFileNames: '[name].js',
-        chunkFileNames: 'chunks/[name]-[hash].js',
+        chunkFileNames: 'chunks/[hash].js',
         // 라이브러리 CSS 청크를 단일 style.css로 통일 (entry별로 분리되지 않고 한 파일로 묶임)
         assetFileNames: (assetInfo) => {
           const name = assetInfo.names?.[0] ?? '';
           if (name.endsWith('.css')) return 'style.css';
           return 'assets/[name]-[hash][extname]';
         },
-        manualChunks(id) {
-          const nodeModules = path.sep + 'node_modules' + path.sep;
-          if (!id.includes(nodeModules)) {
-            // src 코드: viewer-only 컨슈머는 editor 청크를 받지 않게 분리한다.
-            const norm = id.replaceAll(path.sep, '/');
-
-            // 명시 분리: extension 빌더는 entry별로 강제 배치
-            if (norm.endsWith('/shared/utils/viewer-extensions.ts')) return 'viewer';
-            if (norm.endsWith('/shared/utils/editor-extensions.ts')) return 'editor';
-
-            // 폴더 단위 분리
-            if (norm.includes('/src/white-editor/viewer/')) return 'viewer';
-            if (norm.includes('/src/white-editor/editor/') || norm.includes('/src/white-editor/toolbar/')) {
-              return 'editor';
-            }
-
-            // shared utils/hooks는 공통 청크로 (양쪽 entry가 import).
-            if (norm.includes('/src/shared/')) return 'shared';
-
-            return undefined; // nodes 등은 자동 분배 (자동 분류가 더 자연스럽게 갈림)
-          }
-          if (id.includes(nodeModules + '@tiptap')) return 'tiptap';
-          if (id.includes(nodeModules + 'lowlight') || id.includes(nodeModules + 'highlight.js')) return 'lowlight';
-          if (id.includes(nodeModules + 'katex')) return 'katex';
-          if (id.includes(nodeModules + 'prosemirror')) return 'prosemirror';
-          if (id.includes(nodeModules + '@radix-ui')) return 'radix-ui';
-          if (id.includes(nodeModules + '@floating-ui')) return 'floating-ui';
-          return undefined;
-        },
+        // manualChunks 미지정 — Rollup이 entry(viewer/editor/util/index) 기준으로 자동 분류한다.
+        // 여러 entry에서 reachable한 모듈은 자동으로 shared chunk로 추출됨.
+        // `sideEffects: ["**/*.css"]` (package.json)로 cross-chunk side-effect import는 차단됨.
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',

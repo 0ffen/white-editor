@@ -32,6 +32,9 @@
     "dist",
     "scripts"
   ],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.js",
