@@ -49,7 +49,9 @@
       "import": "./dist/viewer.js",
       "types": "./dist/viewer.d.ts"
     },
-    "./dist/index.css": "./dist/index.css"
+    "./dist/index.css": "./dist/index.css",
+    "./katex.css": "./dist/katex.css",
+    "./pretendard.css": "./dist/pretendard.css"
   },
   "scripts": {
     "dev": "vite",

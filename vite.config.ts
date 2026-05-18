@@ -13,6 +13,8 @@ const enableVisualizer = process.env.ANALYZE === 'true' || process.env.ANALYZE =
 
 // https://vite.dev/config/
 export default defineConfig({
+  // 데모용 자산(logo/white.png 등)은 demo/에 둔다. dev에서만 서빙하고, 라이브러리 빌드(dist/)에는 build.copyPublicDir=false로 복사 차단.
+  publicDir: 'demo',
   plugins: [
     react(),
     svgr(),
@@ -33,6 +35,28 @@ export default defineConfig({
         {
           src: 'src/shared/assets/fonts/*',
           dest: 'assets/fonts',
+        },
+        // Pretendard @font-face 선언만 분리해 컨슈머가 opt-in import하도록 노출
+        //   컨슈머: `import '@0ffen/white-editor/pretendard.css'`
+        {
+          src: 'src/shared/styles/pretendard.css',
+          dest: '.',
+        },
+        // KaTeX CSS를 dist/katex.css로 재배포 (woff2 only). 컨슈머: `import '@0ffen/white-editor/katex.css'`
+        {
+          src: 'node_modules/katex/dist/katex.min.css',
+          dest: '.',
+          rename: 'katex.css',
+          transform: (content) =>
+            (content as unknown as string)
+              .toString()
+              .replace(/,url\(fonts\/[^)]+\.woff\) format\("woff"\)/g, '')
+              .replace(/,url\(fonts\/[^)]+\.ttf\) format\("truetype"\)/g, ''),
+        },
+        // KaTeX woff2 폰트만 (woff/ttf 폴백 제외) — dist/katex.css가 ./fonts/ 상대경로로 참조
+        {
+          src: 'node_modules/katex/dist/fonts/*.woff2',
+          dest: 'fonts',
         },
       ],
     }),
@@ -59,6 +83,8 @@ export default defineConfig({
     sourcemap: false,
     cssCodeSplit: true,
     assetsInlineLimit: 0,
+    // 라이브러리 빌드 산출물(dist/)에는 demo/의 데모 자산을 복사하지 않는다 (dev 미리보기 전용).
+    copyPublicDir: false,
     lib: {
       entry: {
         index: path.resolve(__dirname, './src/index.ts'),
