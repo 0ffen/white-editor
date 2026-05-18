@@ -1,0 +1,19 @@
+/*
+ * Pretendard Variable
+ * Copyright (c) 2021 Kil Hyung-jin, with Reserved Font Name Pretendard.
+ * https://github.com/orioncactus/pretendard
+ * Licensed under the SIL Open Font License, Version 1.1.
+ *
+ * 이 파일은 컨슈머가 opt-in으로 import할 때만 적용된다.
+ *   import '@0ffen/white-editor/pretendard.css';
+ *
+ * 라이브러리 본체 CSS(@0ffen/white-editor/dist/index.css)는 이 폰트를 자동으로 로드하지 않으며,
+ * font-family 토큰은 시스템 폰트 fallback chain으로 동작한다.
+ */
+@font-face {
+  font-family: 'Pretendard Variable';
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+  src: url('./assets/fonts/PretendardVariable.woff2') format('woff2');
+}

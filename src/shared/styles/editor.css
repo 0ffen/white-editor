@@ -2,7 +2,7 @@
 /* @layer base로 감싸서 소비자 Tailwind utilities(editorClassName)가 important 없이 우선 적용되도록 함 */
 @layer base {
   .white-editor {
-    font-family: var(--we-font-pretendard);
+    font-family: var(--we-font-family-base);
     font-display: swap;
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;

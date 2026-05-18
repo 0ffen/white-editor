@@ -194,7 +194,7 @@ function DropdownMenuSubContent({
     <DropdownMenuPrimitive.SubContent
       data-slot='dropdown-menu-sub-content'
       className={cn(
-        'we:bg-elevation-dropdown we:text-text-normal we:font-pretendard we:text-sm we:data-[state=open]:animate-in we:data-[state=closed]:animate-out we:data-[state=closed]:fade-out-0 we:data-[state=open]:fade-in-0 we:data-[state=closed]:zoom-out-95 we:data-[state=open]:zoom-in-95 we:data-[side=bottom]:slide-in-from-top-2 we:data-[side=left]:slide-in-from-right-2 we:data-[side=right]:slide-in-from-left-2 we:data-[side=top]:slide-in-from-bottom-2 we:z-floating we:min-w-[8rem] we:origin-(--radix-dropdown-menu-content-transform-origin) we:overflow-hidden we:rounded-md we:border we:p-1',
+        'we:bg-elevation-dropdown we:text-text-normal we:font-base we:text-sm we:data-[state=open]:animate-in we:data-[state=closed]:animate-out we:data-[state=closed]:fade-out-0 we:data-[state=open]:fade-in-0 we:data-[state=closed]:zoom-out-95 we:data-[state=open]:zoom-in-95 we:data-[side=bottom]:slide-in-from-top-2 we:data-[side=left]:slide-in-from-right-2 we:data-[side=right]:slide-in-from-left-2 we:data-[side=top]:slide-in-from-bottom-2 we:z-floating we:min-w-[8rem] we:origin-(--radix-dropdown-menu-content-transform-origin) we:overflow-hidden we:rounded-md we:border we:p-1',
         className
       )}
       {...props}

@@ -1,9 +1,13 @@
-import type { ResizableImageOptions } from '@/shared/utils/extensions';
-import { ImageNodeView } from '@/white-editor';
+// 직접 경로 사용 — `@/white-editor` barrel은 editor/toolbar 까지 끌어와 viewer 청크 분리를 깨뜨림.
+import { ImageNodeView } from '@/white-editor/nodes/image/ui/node/image-node-view';
 import Image from '@tiptap/extension-image';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import type { EditorExtensions } from '../../../editor/type/white-editor.type';
+
+export interface ResizableImageOptions {
+  extension?: EditorExtensions<Record<string, unknown>> | null;
+}
 
 declare module '@tiptap/react' {
   interface Commands<ReturnType> {

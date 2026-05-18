@@ -29,21 +29,6 @@ export default function App() {
   const [editorEmpty, setEditorEmpty] = useState(true);
   const editorRef = useRef<WhiteEditorRef>(null);
 
-  const pageLinksData = [
-    {
-      id: '1',
-      title: 'v2.0 콜렉션 - 경고',
-      href: 'https://white-platform.com/pages/v2-collection-warning',
-      path: '/pages/v2-collection-warning',
-    },
-    {
-      id: '2',
-      title: 'v2.0 프로젝트 상세 - 이슈 생성/수정',
-      href: 'https://white-platform.com/pages/v2-project-detail',
-      path: '/pages/v2-project-detail',
-    },
-  ];
-
   const handleClear = () => {
     if (editorRef.current) {
       editorRef.current.clear();
