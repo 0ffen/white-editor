@@ -52,6 +52,10 @@
       "import": "./dist/viewer.js",
       "types": "./dist/viewer.d.ts"
     },
+    "./theme-style": {
+      "import": "./dist/theme-style.js",
+      "types": "./dist/theme-style.d.ts"
+    },
     "./style.css": "./dist/style.css",
     "./dist/index.css": "./dist/style.css",
     "./katex.css": "./dist/katex.css",
