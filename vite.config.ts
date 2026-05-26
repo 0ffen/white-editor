@@ -92,6 +92,7 @@ export default defineConfig({
         util: path.resolve(__dirname, './src/entries/util.ts'),
         editor: path.resolve(__dirname, './src/entries/editor.ts'),
         viewer: path.resolve(__dirname, './src/entries/viewer.ts'),
+        'theme-style': path.resolve(__dirname, './src/entries/theme-style.ts'),
       },
       formats: ['es'],
     },

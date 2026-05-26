@@ -13,7 +13,7 @@
   },
   "private": false,
   "license": "MIT",
-  "version": "2.0.0-rc.10",
+  "version": "2.0.0-rc.11",
   "description": "A WYSIWYG editor and viewer built with TipTap and Tui Image Editor",
   "keywords": [
     "editor",
@@ -51,6 +51,10 @@
     "./viewer": {
       "import": "./dist/viewer.js",
       "types": "./dist/viewer.d.ts"
+    },
+    "./theme-style": {
+      "import": "./dist/theme-style.js",
+      "types": "./dist/theme-style.d.ts"
     },
     "./style.css": "./dist/style.css",
     "./dist/index.css": "./dist/style.css",
