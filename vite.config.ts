@@ -135,6 +135,8 @@ export default defineConfig({
         'tiptap-markdown',
         // tiptap-markdown의 transitive deps — 컨슈머 측에서 자동 해결됨
         'markdown-it',
+        // CJK 강조(**) 파싱 보정 플러그인 — 직접 의존성이라 컨슈머 node_modules에서 자동 해결됨
+        'markdown-it-cjk-friendly',
         'markdown-it-task-lists',
         'entities',
         'linkify-it',
