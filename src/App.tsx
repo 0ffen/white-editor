@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { CheckIcon } from 'lucide-react';
 import type { JSONContent } from '@tiptap/react';
 import {
@@ -11,7 +11,7 @@ import {
   SelectValue,
   TooltipProvider,
 } from './shared';
-import { cn, i18n } from './shared/utils';
+import { cn, i18n, markdownToHtml } from './shared/utils';
 import {
   WHITE_EDITOR_TOOLBAR_ITEMS,
   WhiteEditor,
@@ -28,6 +28,16 @@ export default function App() {
   const [locale, setLocale] = useState<Locale>('ko');
   const [editorEmpty, setEditorEmpty] = useState(true);
   const editorRef = useRef<WhiteEditorRef>(null);
+
+  // CJK 강조(**) 파싱 테스트용 — 문제의 문장을 미리 채워둠
+  const [markdown, setMarkdown] = useState(
+    '실제 웹 서비스에서 서버는 단독으로 동작하지 않습니다. 사용자 정보, 게시글, 상품 목록 등 다양한 데이터를 저장하고 조회하기 위해 **데이터베이스(Database)**와 함께 동작합니다.'
+  );
+  const markdownHtml = useMemo(() => markdownToHtml(markdown), [markdown]);
+
+  const handleLoadMarkdownToEditor = () => {
+    editorRef.current?.editor?.commands.setContent(markdownToHtml(markdown));
+  };
 
   const handleClear = () => {
     if (editorRef.current) {
@@ -104,6 +114,29 @@ export default function App() {
         </div>
 
         <div className='we:flex we:gap-8 we:flex-col we:w-full'>
+          <section className='we:space-y-3 we:w-full'>
+            <div className='we:mb-4 we:flex we:items-center we:justify-center we:gap-3'>
+              <h2 className='we:text-3xl we:font-bold'>Markdown 입력 테스트</h2>
+              <Button type='button' variant='secondary' className='we:w-fit' onClick={handleLoadMarkdownToEditor}>
+                에디터에 불러오기
+              </Button>
+            </div>
+            <div className='we:grid we:grid-cols-2 we:gap-4'>
+              <textarea
+                value={markdown}
+                onChange={(e) => setMarkdown(e.target.value)}
+                spellCheck={false}
+                placeholder='마크다운을 입력하세요'
+                className='we:h-64 we:w-full we:resize-none we:rounded-md we:border we:border-border-default we:p-3 we:font-mono we:text-sm'
+              />
+              {/* 개발용 미리보기: markdownToHtml() 출력을 그대로 렌더. App.tsx는 dev 하네스라 dist에 포함되지 않음. */}
+              <div
+                className='markdown we:prose we:dark:prose-invert we:max-w-full we:h-64 we:overflow-y-auto we:rounded-md we:border we:border-border-default we:p-3'
+                dangerouslySetInnerHTML={{ __html: markdownHtml }}
+              />
+            </div>
+          </section>
+
           <section className='we:space-y-3 we:w-full'>
             <div className='we:mb-8 we:flex we:items-center we:justify-center we:gap-3'>
               <h2 className='we:text-3xl we:font-bold'>Editor</h2>
