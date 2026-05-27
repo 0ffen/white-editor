@@ -13,7 +13,7 @@
   },
   "private": false,
   "license": "MIT",
-  "version": "2.0.0-rc.11",
+  "version": "2.0.0-rc.12",
   "description": "A WYSIWYG editor and viewer built with TipTap and Tui Image Editor",
   "keywords": [
     "editor",
@@ -124,6 +124,7 @@
     "lowlight": "^3.3.0",
     "lucide-react": "^0.544.0",
     "markdown-it": "^14.1.1",
+    "markdown-it-cjk-friendly": "^2.0.2",
     "react-hotkeys-hook": "^5.1.0",
     "react-i18next": "^16.5.4",
     "tailwind-merge": "^3.3.1",
