@@ -46,7 +46,7 @@ jobs:
           CURRENT_VERSION=$(node -p "require('./package.json').version")
           echo "current-version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
 
-          if git tag --list | grep -q "v$CURRENT_VERSION"; then
+          if git tag --list | grep -Fxq "v$CURRENT_VERSION"; then
             echo "version-changed=false" >> $GITHUB_OUTPUT
           else
             echo "version-changed=true" >> $GITHUB_OUTPUT
