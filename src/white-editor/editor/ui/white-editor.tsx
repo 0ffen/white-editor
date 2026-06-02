@@ -34,12 +34,13 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
     extension,
     showToolbar = true,
     showSelectionToolbar = true,
-    locale = 'ko',
+    locale,
   } = props;
   const t = useTranslate();
 
-  // locale이 변경되면 즉시 i18n 언어를 동기적으로 설정
-  if (i18n.language !== locale) {
+  // locale prop이 명시적으로 주어진 경우에만 i18n 언어를 동기적으로 설정한다.
+  // 호스트 앱이 언어를 관리하는 경우(locale 미지정) 호스트의 언어를 바꾸지 않는다.
+  if (locale !== undefined && i18n.language !== locale) {
     i18n.changeLanguage(locale);
   }
 
