@@ -6,7 +6,7 @@
 
 pre:has(.hljs),
 .hljs {
-  font-family: 'D2Coding', monospace;
+  font-family: var(--we-font-family-code);
   color: var(--we-text-normal);
   background: var(--we-elevation-level1);
   border: 1px solid var(--we-border-default);

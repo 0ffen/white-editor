@@ -80,7 +80,7 @@
 }
 
 .white-editor .markdown code:not(pre > code) {
-  font-family: 'D2Coding', monospace;
+  font-family: var(--we-font-family-code);
   background-color: var(--we-elevation-level2);
   border-radius: 4px;
   padding: 4px;
@@ -97,7 +97,7 @@
 .white-editor .markdown pre {
   border-radius: 4px;
   padding: 4px;
-  font-family: 'D2Coding', monospace;
+  font-family: var(--we-font-family-code);
   font-size: 0.875rem;
 }
 
