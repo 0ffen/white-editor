@@ -24,7 +24,7 @@ const THEME_ZINDEX_VARIABLES = [
   '--we-z-index-floating',
 ] as const;
 
-const THEME_FONT_VARIABLES = ['--we-font-family-base'] as const;
+const THEME_FONT_VARIABLES = ['--we-font-family-base', '--we-font-family-code'] as const;
 
 const ALL_THEME_VARIABLES = [...THEME_COLOR_VARIABLES, ...THEME_ZINDEX_VARIABLES, ...THEME_FONT_VARIABLES] as const;
 
@@ -114,6 +114,12 @@ export interface ThemeConfig {
    * 예: `"'Interop', sans-serif"`, `'inherit'`
    */
   fontFamily?: string;
+  /**
+   * 코드블록/인라인 코드 전용 모노스페이스 폰트 패밀리. `--we-font-family-code` CSS 변수로 설정됨.
+   * 미지정 시 라이브러리의 fallback chain(D2Coding → monospace)을 사용한다.
+   * 예: `"'JetBrains Mono', monospace"`
+   */
+  fontFamilyCode?: string;
 }
 
 /**
@@ -181,6 +187,10 @@ export function applyTheme(theme: 'light' | 'dark' | ThemeConfig, target: HTMLEl
 
   if (themeConfig.fontFamily) {
     cssVariables['--we-font-family-base'] = themeConfig.fontFamily;
+  }
+
+  if (themeConfig.fontFamilyCode) {
+    cssVariables['--we-font-family-code'] = themeConfig.fontFamilyCode;
   }
 
   if (Object.keys(cssVariables).length > 0) {

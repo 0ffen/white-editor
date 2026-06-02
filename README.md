@@ -46,7 +46,10 @@ import { WhiteEditor } from '@0ffen/white-editor';
 라이브러리 UI 전역 폰트를 다른 폰트로 바꾸려면 CSS 변수 한 줄로 가능합니다:
 
 ```css
-.white-editor { --we-font-family-base: 'Interop', sans-serif; }
+.white-editor {
+  --we-font-family-base: 'Interop', sans-serif;   /* 본문 폰트 */
+  --we-font-family-code: 'JetBrains Mono', monospace;  /* 코드블록 폰트 */
+}
 ```
 
 자세한 폰트 정책과 JS API(`applyTheme`)는 아래 [폰트 정책](#폰트-정책) 섹션 참고.
@@ -121,14 +124,15 @@ CSS custom property를 재정의해서 라이브러리 UI 전체 폰트를 한 �
 
 `!important` 없이도 cascade로 자연스럽게 적용됩니다.
 
-JS API로도 가능합니다 (`applyTheme`의 `fontFamily` 옵션):
+JS API로도 가능합니다 (`applyTheme`의 `fontFamily` / `fontFamilyCode` 옵션):
 
 ```ts
 import { applyTheme } from '@0ffen/white-editor/util';
 
 applyTheme({
   mode: 'light',
-  fontFamily: "'Interop', sans-serif",
+  fontFamily: "'Interop', sans-serif",          // 본문 폰트 (--we-font-family-base)
+  fontFamilyCode: "'JetBrains Mono', monospace", // 코드블록 폰트 (--we-font-family-code)
 });
 ```
 
@@ -152,7 +156,15 @@ import '@0ffen/white-editor/style.css';
 import '@0ffen/white-editor/codeblock.css'; // D2Coding woff2 @font-face 활성화 (~3MB)
 ```
 
-import하지 않으면 코드블록은 컨슈머의 시스템 모노스페이스 폰트(`Menlo`, `Consolas` 등)로 fallback됩니다.
+import하지 않으면 코드블록은 `--we-font-family-code` 토큰의 fallback chain(`D2Coding` → `monospace`)을 따라, 컨슈머의 시스템 모노스페이스 폰트(`Menlo`, `Consolas` 등)로 표시됩니다.
+
+D2Coding 대신 다른 코드 폰트를 쓰려면 본문 폰트와 동일하게 `--we-font-family-code`를 재정의하면 됩니다 (CSS 한 줄 또는 `applyTheme`의 `fontFamilyCode`):
+
+```css
+.white-editor {
+  --we-font-family-code: 'JetBrains Mono', monospace;
+}
+```
 
 ### 수식(KaTeX) 사용 시
 
