@@ -26,18 +26,33 @@ function buildEditorResources(): {
 
 const { ko: koEditor, en: enEditor, es: esEditor } = buildEditorResources();
 
-i18n.use(initReactI18next).init({
-  lng: 'ko',
-  fallbackLng: 'ko',
-  ns: [EDITOR_NS],
-  defaultNS: EDITOR_NS,
-  resources: {
-    ko: { [EDITOR_NS]: koEditor },
-    en: { [EDITOR_NS]: enEditor },
-    es: { [EDITOR_NS]: esEditor },
-  },
-  interpolation: { escapeValue: false },
-});
+const editorResources: Record<string, Record<string, string>> = {
+  ko: koEditor,
+  en: enEditor,
+  es: esEditor,
+};
+
+if (!i18n.isInitialized) {
+  // 라이브러리를 단독으로 쓰는 경우: 기존처럼 전역 i18next를 초기화한다.
+  i18n.use(initReactI18next).init({
+    lng: 'ko',
+    fallbackLng: 'ko',
+    ns: [EDITOR_NS],
+    defaultNS: EDITOR_NS,
+    resources: {
+      ko: { [EDITOR_NS]: koEditor },
+      en: { [EDITOR_NS]: enEditor },
+      es: { [EDITOR_NS]: esEditor },
+    },
+    interpolation: { escapeValue: false },
+  });
+} else {
+  // 호스트 앱이 i18next를 소유한 경우: editor 네임스페이스 리소스만 추가하고
+  // defaultNS / ns / lng / fallbackLng 등 전역 옵션은 절대 건드리지 않는다.
+  for (const [lng, resources] of Object.entries(editorResources)) {
+    i18n.addResourceBundle(lng, EDITOR_NS, resources, true, true);
+  }
+}
 
 /** 한글 키 또는 툴바 키로 번역 문구 반환 (현재 locale 기준) */
 export function getTranslate(key: string): string {
