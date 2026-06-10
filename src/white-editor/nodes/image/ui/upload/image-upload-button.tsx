@@ -7,6 +7,12 @@ import { Button, type ButtonProps } from '@/shared/components';
 import { useImageUploadConfig } from '@/shared/contexts';
 import { useTiptapEditor } from '@/shared/hooks';
 import { useImageUpload, type UseImageUploadConfig } from '@/white-editor';
+import {
+  addImageUploadPlaceholder,
+  completeImageUploadPlaceholder,
+  setImageUploadPlaceholderError,
+  updateImageUploadPlaceholderProgress,
+} from '@/white-editor/nodes/image/extension/image-upload-placeholder';
 import type { Editor } from '@tiptap/react';
 
 /** 툴바에서 사용자에게 노출되는 UI 전용 props (icon, className) */
@@ -77,21 +83,18 @@ export const ImageUploadButton = React.forwardRef<HTMLButtonElement, ImageUpload
         }
 
         const uploadFn = wrappedUpload;
-        const items: { file: File; uploadId: string; blobUrl: string }[] = [];
+        const items: { file: File; uploadId: string; previewUrl: string }[] = [];
 
+        // 업로드 중에는 공유 문서에 노드를 넣지 않고 로컬 전용 placeholder decoration만 표시.
+        // 실제 이미지 노드는 업로드 완료 후 최종 URL로 1회만 삽입된다. (협업 환경 대응)
+        const view = (editor as Editor).view;
+        const insertPos = (editor as Editor).state.selection.from;
         for (const file of fileList) {
+          if (file.size > maxBytes) continue;
           const uploadId = uuidv4();
-          const blobUrl = URL.createObjectURL(file);
-          items.push({ file, uploadId, blobUrl });
-          (editor as Editor).commands.setResizableImage({
-            src: blobUrl,
-            alt: 'Image',
-            caption: '',
-            width: '100%',
-            height: 'auto',
-            uploadId,
-            uploadingProgress: 0,
-          });
+          const previewUrl = URL.createObjectURL(file);
+          items.push({ file, uploadId, previewUrl });
+          addImageUploadPlaceholder(view, { id: uploadId, pos: insertPos, previewUrl, fileName: file.name });
         }
 
         const runUpload = async (item: (typeof items)[0]) => {
@@ -99,23 +102,30 @@ export const ImageUploadButton = React.forwardRef<HTMLButtonElement, ImageUpload
             const url = await uploadFn(
               item.file,
               (event) => {
-                (editor as Editor).commands.updateImageUploadState(item.uploadId, { progress: event.progress });
+                // 진행률은 decoration DOM에서만 갱신 (트랜잭션/문서 변경 없음)
+                if (!(editor as Editor).isDestroyed) {
+                  updateImageUploadPlaceholderProgress((editor as Editor).view, item.uploadId, event.progress);
+                }
               },
               new AbortController().signal
             );
+            if ((editor as Editor).isDestroyed) return;
             if (url) {
-              (editor as Editor).commands.updateImageUploadState(item.uploadId, { src: url });
-              onSuccess?.(url);
-              onImageInserted?.(url, '');
+              const inserted = completeImageUploadPlaceholder((editor as Editor).view, item.uploadId, { src: url });
+              if (inserted) {
+                onSuccess?.(url);
+                onImageInserted?.(url, '');
+              }
+            } else {
+              setImageUploadPlaceholderError((editor as Editor).view, item.uploadId, item.file.name);
             }
           } catch (err) {
-            (editor as Editor).commands.updateImageUploadState(item.uploadId, {
-              uploadError: true,
-              uploadErrorFileName: item.file.name,
-            });
+            if (!(editor as Editor).isDestroyed) {
+              setImageUploadPlaceholderError((editor as Editor).view, item.uploadId, item.file.name);
+            }
             onError?.(err instanceof Error ? err : new Error('Upload failed'));
           } finally {
-            URL.revokeObjectURL(item.blobUrl);
+            URL.revokeObjectURL(item.previewUrl);
           }
         };
 

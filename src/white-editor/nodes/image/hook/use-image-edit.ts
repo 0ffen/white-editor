@@ -42,10 +42,16 @@ export function useImageEdit(options: UseImageEditOptions = {}) {
           uploadedUrl = await uploadFn(newImageFile);
           extension?.imageUpload?.onSuccess?.(uploadedUrl);
         } else {
-          // extension의 upload 함수가 없으면 로컬 URL 사용 (개발용)
-          uploadedUrl = URL.createObjectURL(newImageFile);
+          // extension의 upload 함수가 없으면 data URL 사용 (개발용).
+          // blob: URL은 생성한 브라우저에서만 유효해 협업(Yjs) 피어/새로고침 시 깨지므로 사용하지 않는다.
+          uploadedUrl = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = () => reject(reader.error ?? new Error('Failed to read file'));
+            reader.readAsDataURL(newImageFile);
+          });
           // eslint-disable-next-line no-console
-          console.warn('Image upload callback not provided. Using local URL for development.');
+          console.warn('Image upload callback not provided. Using local data URL for development.');
         }
 
         // 서버에서 받은 URL로 에디터 노드 업데이트 (캡션은 플로팅 캡션 버튼으로만 수정)
