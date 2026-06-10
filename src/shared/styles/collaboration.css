@@ -1,0 +1,57 @@
+/* 협업(Yjs) 원격 커서/선택 스타일 — opt-in subpath
+   컨슈머: `import '@0ffen/white-editor/collaboration.css'`
+   색상(border/background/outline)은 CollaborationCaret extension이 awareness user.color로 inline 주입한다. */
+
+/* 원격 텍스트 캐럿 — upstream collaboration-caret과 동일한 클래스/DOM 구조 */
+.collaboration-carets__caret {
+  border-left: 1px solid;
+  border-right: 1px solid;
+  margin-left: -1px;
+  margin-right: -1px;
+  pointer-events: none;
+  position: relative;
+  word-break: normal;
+}
+
+/* 캐럿 상단 사용자 이름 라벨 */
+.collaboration-carets__label {
+  border-radius: 3px 3px 3px 0;
+  color: #fff;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  left: -1px;
+  line-height: normal;
+  padding: 0.1rem 0.3rem;
+  position: absolute;
+  top: -1.4em;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* 원격 NodeSelection(이미지 등 block 노드 선택) 외곽선 — CollaborationCaret이 Decoration.node로 주입 */
+.we-remote-node-selection {
+  position: relative;
+  outline: 2px solid var(--we-remote-selection-color, #ffa500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 외곽선 모서리에 사용자 이름 라벨 (data-remote-user 속성에서 읽음) */
+.we-remote-node-selection::after {
+  content: attr(data-remote-user);
+  position: absolute;
+  top: -1.6em;
+  left: -2px;
+  z-index: 10;
+  border-radius: 3px 3px 3px 0;
+  background-color: var(--we-remote-selection-color, #ffa500);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: normal;
+  padding: 0.1rem 0.3rem;
+  user-select: none;
+  pointer-events: none;
+  white-space: nowrap;
+}

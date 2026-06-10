@@ -13,7 +13,7 @@
   },
   "private": false,
   "license": "MIT",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "A WYSIWYG editor and viewer built with TipTap and Tui Image Editor",
   "keywords": [
     "editor",
@@ -56,6 +56,11 @@
       "import": "./dist/theme-style.js",
       "types": "./dist/theme-style.d.ts"
     },
+    "./collaboration": {
+      "import": "./dist/collaboration.js",
+      "types": "./dist/collaboration.d.ts"
+    },
+    "./collaboration.css": "./dist/collaboration.css",
     "./style.css": "./dist/style.css",
     "./dist/index.css": "./dist/style.css",
     "./katex.css": "./dist/katex.css",
@@ -138,9 +143,19 @@
     "@tiptap/core": "^3.17.1",
     "@tiptap/pm": "^3.17.1",
     "@tiptap/react": "^3.17.1",
+    "@tiptap/y-tiptap": "^3.0.0",
     "i18next": "^25.8.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "yjs": "^13.6.0"
+  },
+  "peerDependenciesMeta": {
+    "@tiptap/y-tiptap": {
+      "optional": true
+    },
+    "yjs": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
@@ -149,6 +164,7 @@
     "@tailwindcss/postcss": "^4.1.13",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.13",
+    "@tiptap/y-tiptap": "^3.0.4",
     "@types/lodash-es": "^4.17.12",
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^24.4.0",
@@ -178,6 +194,7 @@
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-static-copy": "^3.2.0",
     "vite-plugin-svgr": "^4.5.0",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "yjs": "^13.6.31"
   }
 }

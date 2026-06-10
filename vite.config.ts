@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
@@ -6,7 +7,6 @@ import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import { visualizer } from 'rollup-plugin-visualizer';
 
 const enableVisualizer = process.env.ANALYZE === 'true' || process.env.ANALYZE === '1';
 
@@ -41,6 +41,13 @@ export default defineConfig({
         //   컨슈머: `import '@0ffen/white-editor/codeblock.css'`
         {
           src: 'src/shared/styles/codeblock.css',
+          dest: '.',
+        },
+        // 협업(Yjs) 원격 커서/선택 스타일 — collaboration 서브패스 사용자만 opt-in
+        //   컨슈머: `import '@0ffen/white-editor/collaboration.css'`
+        //   (entry에서 import하면 cssCodeSplit=false로 style.css에 합쳐지므로 정적 복사로 분리)
+        {
+          src: 'src/shared/styles/collaboration.css',
           dest: '.',
         },
         // KaTeX CSS를 dist/katex.css로 재배포 (woff2 only). 컨슈머: `import '@0ffen/white-editor/katex.css'`
@@ -78,6 +85,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  optimizeDeps: {
+    include: ['mermaid', '@mermaid-js/layout-elk', 'dagre-d3-es'],
+  },
   build: {
     target: 'es2020',
     minify: 'terser',
@@ -93,6 +103,7 @@ export default defineConfig({
         editor: path.resolve(__dirname, './src/entries/editor.ts'),
         viewer: path.resolve(__dirname, './src/entries/viewer.ts'),
         'theme-style': path.resolve(__dirname, './src/entries/theme-style.ts'),
+        collaboration: path.resolve(__dirname, './src/entries/collaboration.ts'),
       },
       formats: ['es'],
     },
@@ -108,6 +119,8 @@ export default defineConfig({
         /^react-dom($|\/)/,
         /^@tiptap\//,
         /^prosemirror-/,
+        // 협업 서브패스 전용 optional peerDependency — 메인 번들에는 도달하지 않음
+        /^yjs($|\/)/,
         // @radix-ui: 직접 의존하는 패키지만 명시. regex로 전부 잡으면 cmdk 등이 내부적으로
         // 쓰는 transitive(@radix-ui/react-primitive, react-id, compose-refs)까지 external로 잡혀
         // 컨슈머 측에서 resolution 실패함.
@@ -127,6 +140,8 @@ export default defineConfig({
         'katex',
         'lowlight',
         'highlight.js',
+        /^mermaid($|\/)/,
+        /^@mermaid-js\//,
         'tui-image-editor',
         '@toast-ui/react-image-editor',
         'i18next',
