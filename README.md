@@ -62,7 +62,9 @@ import { WhiteEditor } from '@0ffen/white-editor';
 | `@0ffen/white-editor/editor` | 에디터 전용 | 선택 |
 | `@0ffen/white-editor/viewer` | 뷰어 전용 | 선택 |
 | `@0ffen/white-editor/util` | 유틸 함수만 (`getHtmlContent`, `createEmptyContent`, `checkEditorEmpty`, `normalizeContentSchema` 등) | 선택 |
+| `@0ffen/white-editor/collaboration` | Yjs 협업 원격 커서/선택 렌더링 (`CollaborationCaret`) | 협업 사용 시 |
 | `@0ffen/white-editor/style.css` | UI 스타일시트 | ✓ |
+| `@0ffen/white-editor/collaboration.css` | 협업 원격 커서/선택 스타일 | 협업 사용 시 |
 | `@0ffen/white-editor/katex.css` | KaTeX 스타일 + 폰트 | 수식 사용 시 |
 | `@0ffen/white-editor/codeblock.css` | D2Coding 코드블록 모노스페이스 폰트 (~3MB) | 코드 폰트 필요 시 |
 | `@0ffen/white-editor/pretendard.css` | Pretendard Variable 폰트 (~2MB) | Pretendard 직접 동봉 필요 시 |
@@ -177,5 +179,52 @@ import '@0ffen/white-editor/katex.css'; // 수식 사용 시에만
 ```
 
 폰트는 `woff2`만 동봉되며, 컨슈머 번들러(Vite/Webpack/Turbopack)가 자동으로 폰트 경로를 처리합니다. 수식을 쓰지 않는 컨슈머는 import를 생략해 ~300KB 폰트를 받지 않을 수 있습니다.
+
+## 협업 (Yjs Collaboration, opt-in)
+
+`@0ffen/white-editor/collaboration` 서브패스는 Yjs 협업 환경에서 **원격 커서/선택 렌더링**을 담당하는 `CollaborationCaret` extension을 제공합니다. 공식 `@tiptap/extension-collaboration-caret`과 달리, 이미지 같은 block 노드의 NodeSelection을 "노드 다음 줄 캐럿"이 아닌 **노드 외곽선 + 사용자 이름 라벨**로 표시합니다.
+
+문서 동기화(`@tiptap/extension-collaboration`)와 provider(y-websocket, Hocuspocus 등)는 컨슈머가 직접 설치/구성합니다. white-editor는 커서/선택 렌더링만 제공합니다.
+
+### 설치
+
+```bash
+pnpm add yjs @tiptap/extension-collaboration @tiptap/y-tiptap y-websocket
+```
+
+`yjs`, `@tiptap/y-tiptap`은 optional peerDependency입니다 — 협업을 쓰지 않는 컨슈머는 설치할 필요가 없고, 메인 번들(`/`, `/editor`, `/viewer`)에는 yjs가 포함되지 않습니다.
+
+### 사용
+
+```tsx
+import Collaboration from '@tiptap/extension-collaboration';
+import { WebsocketProvider } from 'y-websocket';
+import * as Y from 'yjs';
+import { WhiteEditor } from '@0ffen/white-editor';
+import { CollaborationCaret } from '@0ffen/white-editor/collaboration';
+
+import '@0ffen/white-editor/style.css';
+import '@0ffen/white-editor/collaboration.css';
+
+const ydoc = new Y.Doc();
+const provider = new WebsocketProvider('ws://localhost:1234', 'my-room', ydoc);
+
+<WhiteEditor
+  addExtensions={[
+    Collaboration.configure({ document: ydoc }),
+    CollaborationCaret.configure({
+      provider, // { awareness }를 노출하는 어떤 provider든 가능 (y-websocket / Hocuspocus / y-webrtc)
+      user: { name: '사용자명', color: '#3279ec' },
+    }),
+  ]}
+  overrideExtensions={{ starterKit: { undoRedo: false } }}
+/>;
+```
+
+### 주의사항
+
+- **`overrideExtensions: { starterKit: { undoRedo: false } }` 필수** — Collaboration이 Y.UndoManager 기반 undo/redo 커맨드를 재등록하므로 StarterKit 기본 히스토리를 꺼야 합니다 (TipTap v3 옵션 키는 `history`가 아닌 `undoRedo`). 툴바의 undo/redo 버튼은 그대로 동작합니다.
+- **`content`를 넘기지 마세요** — Collaboration 사용 시 에디터에 초기 `content`를 넘기면 접속할 때마다 내용이 중복 삽입됩니다. 초기 내용은 Y.Doc에 1회만 주입하세요.
+- provider의 connect/disconnect 생명주기(StrictMode 이중 mount 포함)는 앱 책임입니다. white-editor는 `provider.awareness`만 소비합니다.
 
 Next.js(App Router), React 19에서 정적 import로 사용할 수 있도록 `"use client"`가 포함되어 있습니다.
