@@ -91,6 +91,8 @@ export const EDITOR_I18N: Record<string, EditorI18nEntry> = {
   },
   적용: { id: 'apply', ko: '적용', en: 'Apply', es: 'Aplicar' },
   텍스트: { id: 'text', ko: '텍스트', en: 'Text', es: 'Texto' },
+  스타일: { id: 'style', ko: '스타일', en: 'Style', es: 'Estilo' },
+  '배경 색상': { id: 'backgroundColor', ko: '배경 색상', en: 'Background color', es: 'Color de fondo' },
   입력하세요: { id: 'enter', ko: '입력하세요.', en: 'Please enter.', es: 'Por favor, entre.' },
   '텍스트 색상': { id: 'textColorAlt', ko: '텍스트 색상', en: 'Text color', es: 'Color del texto' },
   '브러시 색상': { id: 'brushColor', ko: '브러시 색상', en: 'Brush color', es: 'Color del pincel' },
