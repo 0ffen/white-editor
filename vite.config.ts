@@ -43,6 +43,13 @@ export default defineConfig({
           src: 'src/shared/styles/codeblock.css',
           dest: '.',
         },
+        // 협업(Yjs) 원격 커서/선택 스타일 — collaboration 서브패스 사용자만 opt-in
+        //   컨슈머: `import '@0ffen/white-editor/collaboration.css'`
+        //   (entry에서 import하면 cssCodeSplit=false로 style.css에 합쳐지므로 정적 복사로 분리)
+        {
+          src: 'src/shared/styles/collaboration.css',
+          dest: '.',
+        },
         // KaTeX CSS를 dist/katex.css로 재배포 (woff2 only). 컨슈머: `import '@0ffen/white-editor/katex.css'`
         {
           src: 'node_modules/katex/dist/katex.min.css',
@@ -93,6 +100,7 @@ export default defineConfig({
         editor: path.resolve(__dirname, './src/entries/editor.ts'),
         viewer: path.resolve(__dirname, './src/entries/viewer.ts'),
         'theme-style': path.resolve(__dirname, './src/entries/theme-style.ts'),
+        collaboration: path.resolve(__dirname, './src/entries/collaboration.ts'),
       },
       formats: ['es'],
     },
@@ -108,6 +116,8 @@ export default defineConfig({
         /^react-dom($|\/)/,
         /^@tiptap\//,
         /^prosemirror-/,
+        // 협업 서브패스 전용 optional peerDependency — 메인 번들에는 도달하지 않음
+        /^yjs($|\/)/,
         // @radix-ui: 직접 의존하는 패키지만 명시. regex로 전부 잡으면 cmdk 등이 내부적으로
         // 쓰는 transitive(@radix-ui/react-primitive, react-id, compose-refs)까지 external로 잡혀
         // 컨슈머 측에서 resolution 실패함.
