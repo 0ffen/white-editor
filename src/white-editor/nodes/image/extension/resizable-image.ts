@@ -158,7 +158,7 @@ export const ResizableImage = Image.extend<ResizableImageOptions>({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(ImageNodeView);
+    return ReactNodeViewRenderer(ImageNodeView, { trackNodeViewPosition: true });
   },
 
   addProseMirrorPlugins() {

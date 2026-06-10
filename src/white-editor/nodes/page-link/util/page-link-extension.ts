@@ -131,7 +131,7 @@ export function createPageLinkExtension<T = Record<string, unknown>>({ pageLinks
         return null;
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return ReactNodeViewRenderer(PageLinkNodeView as any);
+      return ReactNodeViewRenderer(PageLinkNodeView as any, { trackNodeViewPosition: true });
     },
     addOptions() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
