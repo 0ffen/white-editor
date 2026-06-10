@@ -78,6 +78,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  optimizeDeps: {
+    include: ['mermaid', '@mermaid-js/layout-elk', 'dagre-d3-es'],
+  },
   build: {
     target: 'es2020',
     minify: 'terser',
