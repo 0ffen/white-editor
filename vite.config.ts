@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
@@ -6,7 +7,6 @@ import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import { visualizer } from 'rollup-plugin-visualizer';
 
 const enableVisualizer = process.env.ANALYZE === 'true' || process.env.ANALYZE === '1';
 
@@ -127,6 +127,8 @@ export default defineConfig({
         'katex',
         'lowlight',
         'highlight.js',
+        /^mermaid($|\/)/,
+        /^@mermaid-js\//,
         'tui-image-editor',
         '@toast-ui/react-image-editor',
         'i18next',

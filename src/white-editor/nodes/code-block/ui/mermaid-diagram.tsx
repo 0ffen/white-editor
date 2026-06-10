@@ -131,6 +131,10 @@ export const MermaidDiagram = ({ code, className }: MermaidDiagramProps) => {
           }
         })
         .catch((e: unknown) => {
+          // mermaid는 렌더 실패 시 임시 측정 노드(#d{id})와 에러 다이어그램을 DOM에 남긴다.
+          // 우리 자체 에러 UI만 보여주기 위해 잔여 노드를 제거한다.
+          document.getElementById(`d${idRef.current}`)?.remove();
+          document.getElementById(idRef.current)?.remove();
           if (!cancelled) {
             setSvg('');
             setError(e instanceof Error ? e.message : String(e));
