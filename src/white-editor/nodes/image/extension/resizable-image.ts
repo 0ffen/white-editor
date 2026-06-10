@@ -3,6 +3,7 @@ import { ImageNodeView } from '@/white-editor/nodes/image/ui/node/image-node-vie
 import Image from '@tiptap/extension-image';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { ReactNodeViewRenderer } from '@tiptap/react';
+import { imageUploadPlaceholderPlugin } from './image-upload-placeholder';
 import type { EditorExtensions } from '../../../editor/type/white-editor.type';
 
 export interface ResizableImageOptions {
@@ -24,7 +25,12 @@ declare module '@tiptap/react' {
         uploadId?: string | null;
         uploadingProgress?: number | null;
       }) => ReturnType;
-      /** uploadId에 해당하는 이미지 노드의 업로드 상태 업데이트 */
+      /**
+       * uploadId에 해당하는 이미지 노드의 업로드 상태 업데이트
+       * @deprecated 업로드 임시 상태를 노드 attr에 넣는 방식은 협업(Yjs) 환경에서
+       * 다른 피어에게 동기화되는 문제가 있어 decoration 기반 placeholder
+       * (`image-upload-placeholder.ts`)로 대체됨. 하위 호환을 위해서만 유지.
+       */
       updateImageUploadState: (
         uploadId: string,
         state: { progress?: number | null; src?: string; uploadError?: boolean; uploadErrorFileName?: string }
@@ -157,6 +163,7 @@ export const ResizableImage = Image.extend<ResizableImageOptions>({
 
   addProseMirrorPlugins() {
     return [
+      imageUploadPlaceholderPlugin(),
       new Plugin({
         key: new PluginKey('imageNativeCopy'),
         props: {
@@ -205,6 +212,10 @@ export const ResizableImage = Image.extend<ResizableImageOptions>({
             },
           });
         },
+      /**
+       * @deprecated decoration 기반 placeholder(`image-upload-placeholder.ts`)로 대체됨.
+       * selection을 건드리지 않도록 위치 기반(`setNodeMarkup`)으로만 attr을 갱신한다.
+       */
       updateImageUploadState:
         (
           uploadId: string,
@@ -216,15 +227,18 @@ export const ResizableImage = Image.extend<ResizableImageOptions>({
           }
         ) =>
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ({ state: editorState, chain }: { state: any; chain: any }) => {
+        ({ state: editorState, dispatch }: { state: any; dispatch: any }) => {
           let pos: number | null = null;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let found: any = null;
           editorState.doc.descendants((node: { type: { name: string }; attrs: { uploadId?: string } }, p: number) => {
             if (node.type.name === 'image' && node.attrs.uploadId === uploadId) {
               pos = p;
+              found = node;
               return false; // stop
             }
           });
-          if (pos == null) return false;
+          if (pos == null || !found) return false;
           const attrs: {
             uploadingProgress?: number | null;
             src?: string;
@@ -246,7 +260,10 @@ export const ResizableImage = Image.extend<ResizableImageOptions>({
             attrs.uploadId = null;
             if (state.uploadErrorFileName !== undefined) attrs.uploadErrorFileName = state.uploadErrorFileName;
           }
-          return chain().setNodeSelection(pos).updateAttributes('image', attrs).run();
+          if (dispatch) {
+            dispatch(editorState.tr.setNodeMarkup(pos, undefined, { ...found.attrs, ...attrs }));
+          }
+          return true;
         },
     };
   },
