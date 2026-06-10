@@ -16,13 +16,19 @@ const DialogClose = DialogPrimitive.Close;
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, ...props }, ref) => (
+>(({ className, onClick, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
       'we:data-[state=open]:animate-in we:data-[state=closed]:animate-out we:data-[state=closed]:fade-out-0 we:data-[state=open]:fade-in-0 we:fixed we:inset-0 we:z-overlay we:bg-[var(--Neutral-Opacity-Light-40,rgba(22,22,22,0.4))]',
       className
     )}
+    // portal로 에디터 서브트리 안에 렌더되므로, 오버레이 클릭이 에디터(.white-editor)의
+    // click-to-focus 핸들러로 버블링되지 않도록 전파를 막는다.
+    onClick={(e) => {
+      e.stopPropagation();
+      onClick?.(e);
+    }}
     {...props}
   />
 ));
@@ -36,7 +42,7 @@ interface DialogContentProps extends React.ComponentPropsWithoutRef<typeof Dialo
 }
 
 const DialogContent = React.forwardRef<React.ElementRef<typeof DialogPrimitive.Content>, DialogContentProps>(
-  ({ className, children, hideCloseButton = false, overlayClassName, ...props }, ref) => {
+  ({ className, children, hideCloseButton = false, overlayClassName, onClick, ...props }, ref) => {
     const portalContainer = usePortalContainer();
 
     return (
@@ -46,8 +52,13 @@ const DialogContent = React.forwardRef<React.ElementRef<typeof DialogPrimitive.C
           aria-describedby={props['aria-describedby']}
           ref={ref}
           tabIndex={-1}
+          // 모달 내부 클릭이 에디터 click-to-focus로 버블링되지 않도록 전파를 막는다.
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick?.(e);
+          }}
           className={cn(
-            'we:bg-elevation-background we:data-[state=open]:animate-in we:data-[state=closed]:animate-out we:data-[state=closed]:fade-out-0 we:data-[state=open]:fade-in-0 we:data-[state=closed]:zoom-out-95 we:data-[state=open]:zoom-in-95 we:fixed we:top-[50%] we:left-[50%] we:z-floating we:mx-4 we:grid we:w-full we:max-w-lg we:translate-x-[-50%] we:translate-y-[-50%] we:gap-4 we:overflow-y-auto we:rounded-lg we:p-6 we:shadow-lg we:duration-200 we:outline-none we:focus:outline-none we:focus-visible:outline-none we:focus-visible:ring-0',
+            'we:bg-elevation-background we:data-[state=open]:animate-in we:data-[state=closed]:animate-out we:data-[state=closed]:fade-out-0 we:data-[state=open]:fade-in-0 we:data-[state=closed]:zoom-out-95 we:data-[state=open]:zoom-in-95 we:fixed we:top-[50%] we:left-[50%] we:z-modal we:mx-4 we:grid we:w-full we:max-w-lg we:translate-x-[-50%] we:translate-y-[-50%] we:gap-4 we:overflow-y-auto we:rounded-lg we:p-6 we:shadow-lg we:duration-200 we:outline-none we:focus:outline-none we:focus-visible:outline-none we:focus-visible:ring-0',
             className
           )}
           {...props}

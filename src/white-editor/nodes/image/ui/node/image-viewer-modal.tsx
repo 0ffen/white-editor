@@ -160,7 +160,9 @@ export const ImageViewerModal: React.FC<ImageViewerModalProps> = ({ open, onOpen
       role='dialog'
       aria-modal='true'
       aria-label='View Image'
-      className='we:fixed we:inset-0 we:z-floating we:flex we:flex-col we:overflow-hidden'
+      className='we:fixed we:inset-0 we:z-modal we:flex we:flex-col we:overflow-hidden'
+      // portal로 뷰어 서브트리 안에 렌더되므로, 모달 클릭이 배경(에디터/뷰어)으로 버블링되지 않도록 막는다.
+      onClick={(e) => e.stopPropagation()}
     >
       <div
         className='we:absolute we:inset-0 we:bg-[var(--Neutral-Opacity-Light-40,rgba(22,22,22,0.4))]'
