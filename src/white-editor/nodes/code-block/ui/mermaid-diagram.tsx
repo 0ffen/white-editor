@@ -3,6 +3,7 @@
 import React from 'react';
 import { useTranslate } from '@/shared';
 import { cn } from '@/shared/utils';
+import { MermaidViewerModal } from './mermaid-viewer-modal';
 
 let mermaidIdSeq = 0;
 let elkRegistered = false;
@@ -64,6 +65,8 @@ function buildMermaidConfig(el: HTMLElement | null) {
 interface MermaidDiagramProps {
   code: string;
   className?: string;
+  /** true이면 다이어그램 클릭 시 확대 모달을 연다 (뷰어 모드 전용) */
+  zoomable?: boolean;
 }
 
 /**
@@ -72,20 +75,26 @@ interface MermaidDiagramProps {
  * - 구문 오류 시 에러 메시지를 노출한다.
  * - SSR 환경에서는 NodeView 자체가 마운트되지 않으므로 브라우저 전용으로 동작한다.
  */
-export const MermaidDiagram = ({ code, className }: MermaidDiagramProps) => {
+export const MermaidDiagram = ({ code, className, zoomable = false }: MermaidDiagramProps) => {
   const t = useTranslate();
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [svg, setSvg] = React.useState<string>('');
   const [error, setError] = React.useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
   // 다크/라이트 전환 시 재렌더를 유발하기 위한 버전 카운터
   const [themeVersion, setThemeVersion] = React.useState<number>(0);
   const idRef = React.useRef<string>(`we-mermaid-${(mermaidIdSeq += 1)}`);
 
-  // document의 .dark 클래스 토글을 감지해 테마를 다시 적용한다.
+  // 다크/라이트 전환을 감지해 다이어그램을 다시 렌더한다.
+  // 테마는 .dark 클래스 + 인라인 CSS 변수(--we-*) 형태로 `.white-editor` 래퍼(또는 documentElement)에 적용되므로,
+  // 가장 가까운 .white-editor 래퍼와 documentElement의 class·style 변화를 모두 감시한다. (style: 인라인 CSS 변수 변경 감지)
   React.useEffect(() => {
     if (typeof MutationObserver === 'undefined') return;
     const observer = new MutationObserver(() => setThemeVersion((v) => v + 1));
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    const opts: MutationObserverInit = { attributes: true, attributeFilter: ['class', 'style'] };
+    const themedWrapper = containerRef.current?.closest('.white-editor');
+    if (themedWrapper) observer.observe(themedWrapper, opts);
+    observer.observe(document.documentElement, opts);
     return () => observer.disconnect();
   }, []);
 
@@ -110,21 +119,34 @@ export const MermaidDiagram = ({ code, className }: MermaidDiagramProps) => {
             elkRegistered = true;
           }
 
-          mermaid.initialize({
+          const baseConfig = {
             startOnLoad: false,
-            securityLevel: 'strict',
-            theme: 'base',
-            // dagre 대신 ELK를 사용해 중첩 subgraph가 가로로 퍼지지 않고 조밀하게 배치되도록 한다
-            layout: 'elk',
+            securityLevel: 'strict' as const,
+            theme: 'base' as const,
             fontFamily,
             themeVariables,
             themeCSS,
             htmlLabels: false,
             flowchart: { htmlLabels: false, useMaxWidth: true },
-          });
-          // 유효성 먼저 검사 → 오류 시 잔여 DOM 노드 생성을 방지
+          };
+
+          mermaid.initialize({ ...baseConfig, layout: 'elk' });
           await mermaid.parse(source);
-          const { svg: rendered } = await mermaid.render(idRef.current, source);
+
+          const renderWith = (layout: 'elk' | 'dagre') => {
+            mermaid.initialize({ ...baseConfig, layout });
+            return mermaid.render(idRef.current, source);
+          };
+
+          let rendered: string;
+          try {
+            ({ svg: rendered } = await renderWith('elk'));
+          } catch {
+            document.getElementById(`d${idRef.current}`)?.remove();
+            document.getElementById(idRef.current)?.remove();
+            ({ svg: rendered } = await renderWith('dagre'));
+          }
+
           if (!cancelled) {
             setSvg(rendered);
             setError(null);
@@ -166,10 +188,25 @@ export const MermaidDiagram = ({ code, className }: MermaidDiagramProps) => {
   }
 
   return (
-    <div
-      ref={containerRef}
-      className={cn('we:flex we:justify-center we:overflow-x-auto we:py-4', className)}
-      dangerouslySetInnerHTML={{ __html: svg }}
-    />
+    <>
+      <div
+        ref={containerRef}
+        className={cn(
+          'we:flex we:justify-center we:overflow-x-auto we:py-4',
+          zoomable && 'we:cursor-zoom-in',
+          className
+        )}
+        onClick={
+          zoomable
+            ? (e) => {
+                e.stopPropagation();
+                setIsModalOpen(true);
+              }
+            : undefined
+        }
+        dangerouslySetInnerHTML={{ __html: svg }}
+      />
+      {zoomable && <MermaidViewerModal open={isModalOpen} onOpenChange={setIsModalOpen} svg={svg} />}
+    </>
   );
 };
