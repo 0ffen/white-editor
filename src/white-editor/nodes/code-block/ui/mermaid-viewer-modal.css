@@ -1,0 +1,7 @@
+/* 모달 안의 mermaid SVG를 화면에 맞게 크게 보여준다 (비율 유지). */
+.we-mermaid-modal-media svg {
+  max-width: 100%;
+  max-height: calc(100dvh - 120px);
+  height: auto;
+  width: auto;
+}
