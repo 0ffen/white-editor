@@ -399,6 +399,7 @@
   --z-index-handle: var(--we-z-index-handle);
   --z-index-overlay: var(--we-z-index-overlay);
   --z-index-floating: var(--we-z-index-floating);
+  --z-index-modal: var(--we-z-index-modal);
 }
 
 :root {
@@ -508,6 +509,7 @@
   --we-z-index-handle: 10;
   --we-z-index-overlay: 10;
   --we-z-index-floating: 10;
+  --we-z-index-modal: 10;
 }
 
 .dark {

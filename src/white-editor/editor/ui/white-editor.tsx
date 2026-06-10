@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useImperativeHandle, forwardRef, useMemo } from 'react';
 
 import { Toolbar, TooltipProvider } from '@/shared/components';
-import { ImageUploadContext } from '@/shared/contexts';
+import { ImageUploadContext, PortalContainerContext } from '@/shared/contexts';
 import { applyTheme, cn, normalizeContent, removeTheme } from '@/shared/utils';
 import { useTranslate, i18n } from '@/shared/utils/i18n';
 import {
@@ -44,8 +44,14 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
     i18n.changeLanguage(locale);
   }
 
+  // theme CSS 변수가 적용되는 루트 엘리먼트를 portal container로 사용한다.
+  // Dialog/Popover/Tooltip 등 portal되는 오버레이가 themed 서브트리 안에서 렌더링되어
+  // --we-z-index-* 등 theme 변수를 정상 상속받게 하기 위함.
+  const [portalContainer, setPortalContainer] = React.useState<HTMLDivElement | null>(null);
+
   const containerRefCallback = React.useCallback(
     (node: HTMLDivElement | null) => {
+      setPortalContainer(node);
       if (!node || !theme) return;
       applyTheme(theme, node);
       return () => {
@@ -115,40 +121,43 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
           editorClassName
         )}
         data-disabled={disabled || undefined}
+        data-we-portal-container=''
         onClick={handleEditorClick}
       >
-        <ImageUploadContext.Provider value={imageUploadConfig}>
-          <EditorContext.Provider value={{ editor }}>
-            {showToolbar && (
-              <Toolbar ref={toolbarRef} role='toolbar'>
-                <div className={cn('toolbar-wrapper')}>{renderToolbar()}</div>
-              </Toolbar>
-            )}
-            <EditorContent
-              editor={editor}
-              className={cn(
-                'markdown we:prose we:dark:prose-invert we:max-w-full we:flex-1 we:overflow-y-auto',
-                contentClassName
+        <PortalContainerContext.Provider value={portalContainer}>
+          <ImageUploadContext.Provider value={imageUploadConfig}>
+            <EditorContext.Provider value={{ editor }}>
+              {showToolbar && (
+                <Toolbar ref={toolbarRef} role='toolbar'>
+                  <div className={cn('toolbar-wrapper')}>{renderToolbar()}</div>
+                </Toolbar>
               )}
-            />
-            {showSelectionToolbar && <SelectionToolbar editor={editor} />}
-            <LinkFloatingDropdown editor={editor} />
-            <div className='we:mt-auto we:flex we:flex-col we:justify-end we:px-2'>
-              {extension?.character?.show && (
-                <span
-                  className={cn(
-                    'we:text-border we:text-sm we:flex we:justify-end we:select-none',
-                    extension?.character?.className
-                  )}
-                >
-                  {charactersCount}
-                  {extension?.character?.limit && `/${extension.character.limit}`}
-                </span>
-              )}
-              {footer && <>{footer}</>}
-            </div>
-          </EditorContext.Provider>
-        </ImageUploadContext.Provider>
+              <EditorContent
+                editor={editor}
+                className={cn(
+                  'markdown we:prose we:dark:prose-invert we:max-w-full we:flex-1 we:overflow-y-auto',
+                  contentClassName
+                )}
+              />
+              {showSelectionToolbar && <SelectionToolbar editor={editor} />}
+              <LinkFloatingDropdown editor={editor} />
+              <div className='we:mt-auto we:flex we:flex-col we:justify-end we:px-2'>
+                {extension?.character?.show && (
+                  <span
+                    className={cn(
+                      'we:text-border we:text-sm we:flex we:justify-end we:select-none',
+                      extension?.character?.className
+                    )}
+                  >
+                    {charactersCount}
+                    {extension?.character?.limit && `/${extension.character.limit}`}
+                  </span>
+                )}
+                {footer && <>{footer}</>}
+              </div>
+            </EditorContext.Provider>
+          </ImageUploadContext.Provider>
+        </PortalContainerContext.Provider>
       </div>
     </TooltipProvider>
   );
