@@ -19,6 +19,7 @@ export * from './hook/use-image-save';
 export * from './hook/use-image-drag-paste';
 
 export * from './extension/resizable-image';
+export * from './extension/image-upload-placeholder';
 
 export * from './content/editor-colors';
 export * from './util';

@@ -1,34 +1,20 @@
 import { useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import type { EditorView } from '@tiptap/pm/view';
+import {
+  addImageUploadPlaceholder,
+  completeImageUploadPlaceholder,
+  setImageUploadPlaceholderError,
+  updateImageUploadPlaceholderProgress,
+} from '../extension/image-upload-placeholder';
 import type { EditorExtensions } from '../../../editor/type/white-editor.type';
-
-function findImagePosByUploadId(view: EditorView, uploadId: string): number | null {
-  let pos: number | null = null;
-  view.state.doc.descendants((node, p) => {
-    if (node.type.name === 'image' && node.attrs.uploadId === uploadId) {
-      pos = p;
-      return false;
-    }
-  });
-  return pos;
-}
-
-function updateImageAttrsByUploadId(view: EditorView, uploadId: string, attrs: Record<string, unknown>): void {
-  const pos = findImagePosByUploadId(view, uploadId);
-  if (pos == null) return;
-  const node = view.state.doc.nodeAt(pos);
-  if (!node) return;
-  const tr = view.state.tr.setNodeMarkup(pos, undefined, { ...node.attrs, ...attrs });
-  view.dispatch(tr);
-}
 
 export const useImageDragPaste = (extension: EditorExtensions<Record<string, unknown>> | undefined) => {
   // ref를 사용하여 항상 최신 extension 값을 참조 (stale closure 방지)
   const extensionRef = useRef(extension);
   extensionRef.current = extension;
 
-  const runUploadInBackground = useCallback((view: EditorView, file: File, uploadId: string, blobUrl: string) => {
+  const runUploadInBackground = useCallback((view: EditorView, file: File, uploadId: string, previewUrl: string) => {
     const uploadFn = extensionRef.current?.imageUpload?.upload;
     if (!uploadFn) return;
 
@@ -36,7 +22,8 @@ export const useImageDragPaste = (extension: EditorExtensions<Record<string, unk
     const progressInterval = setInterval(() => {
       currentProgress += 10;
       if (currentProgress <= 90) {
-        updateImageAttrsByUploadId(view, uploadId, { uploadingProgress: currentProgress });
+        // 진행률은 decoration DOM에서만 갱신 (트랜잭션/문서 변경 없음)
+        updateImageUploadPlaceholderProgress(view, uploadId, currentProgress);
       }
     }, 100);
 
@@ -46,29 +33,22 @@ export const useImageDragPaste = (extension: EditorExtensions<Record<string, unk
         clearInterval(progressInterval);
 
         if (url) {
-          updateImageAttrsByUploadId(view, uploadId, {
-            src: url,
-            uploadingProgress: null,
-            uploadId: null,
-            uploadError: false,
-            uploadErrorFileName: undefined,
-          });
-          extensionRef.current?.imageUpload?.onSuccess?.(url);
-          extensionRef.current?.imageUpload?.onImageInserted?.(url, '');
+          const inserted = completeImageUploadPlaceholder(view, uploadId, { src: url });
+          if (inserted) {
+            extensionRef.current?.imageUpload?.onSuccess?.(url);
+            extensionRef.current?.imageUpload?.onImageInserted?.(url, '');
+          }
+        } else {
+          setImageUploadPlaceholderError(view, uploadId, file.name);
         }
       } catch (error) {
         clearInterval(progressInterval);
-        updateImageAttrsByUploadId(view, uploadId, {
-          uploadError: true,
-          uploadingProgress: null,
-          uploadId: null,
-          uploadErrorFileName: file.name,
-        });
+        setImageUploadPlaceholderError(view, uploadId, file.name);
         extensionRef.current?.imageUpload?.onError?.(
           error instanceof Error ? error : new Error('Failed to upload image')
         );
       } finally {
-        URL.revokeObjectURL(blobUrl);
+        URL.revokeObjectURL(previewUrl);
       }
     };
 
@@ -82,9 +62,11 @@ export const useImageDragPaste = (extension: EditorExtensions<Record<string, unk
 
       const ext = extensionRef.current;
       const maxSize = ext?.imageUpload?.maxSize;
-      const uploadItems: { file: File; uploadId: string; blobUrl: string }[] = [];
+      const uploadItems: { file: File; uploadId: string; previewUrl: string }[] = [];
 
-      const tr = view.state.tr;
+      // 업로드 중에는 공유 문서에 노드를 넣지 않고 로컬 전용 placeholder decoration만 표시.
+      // 실제 이미지 노드는 업로드 완료 후 최종 URL로 1회만 삽입된다. (협업 환경 대응)
+      const pos = insertPos ?? view.state.selection.from;
 
       for (const file of files) {
         if (maxSize && file.size > maxSize) {
@@ -93,33 +75,13 @@ export const useImageDragPaste = (extension: EditorExtensions<Record<string, unk
         }
 
         const uploadId = uuidv4();
-        const blobUrl = URL.createObjectURL(file);
-        const node = schema.nodes.image.create({
-          src: blobUrl,
-          alt: 'Image',
-          caption: '',
-          width: '100%',
-          height: 'auto',
-          uploadId,
-          uploadingProgress: 0,
-        });
-
-        if (insertPos != null) {
-          const mappedPos = tr.mapping.map(insertPos);
-          tr.replaceRangeWith(mappedPos, mappedPos, node);
-        } else {
-          tr.replaceSelectionWith(node, false);
-        }
-
-        uploadItems.push({ file, uploadId, blobUrl });
+        const previewUrl = URL.createObjectURL(file);
+        addImageUploadPlaceholder(view, { id: uploadId, pos, previewUrl, fileName: file.name });
+        uploadItems.push({ file, uploadId, previewUrl });
       }
 
-      if (uploadItems.length === 0) return;
-
-      view.dispatch(tr);
-
       for (const item of uploadItems) {
-        runUploadInBackground(view, item.file, item.uploadId, item.blobUrl);
+        runUploadInBackground(view, item.file, item.uploadId, item.previewUrl);
       }
     },
     [runUploadInBackground]

@@ -22,14 +22,38 @@ const THEME_ZINDEX_VARIABLES = [
   '--we-z-index-handle',
   '--we-z-index-overlay',
   '--we-z-index-floating',
+  '--we-z-index-modal',
+] as const;
+
+/**
+ * Tailwind 네임스페이스 z-index 변수.
+ * `we:z-*` 유틸리티 클래스(Dialog/Popover/Tooltip 등이 사용)는 `var(--z-index-*)`로 컴파일되며,
+ * `index.css`의 `@theme`에서 `--z-index-*: var(--we-z-index-*)`로 한 번 매핑된다.
+ * 이 매핑(var 치환)은 선언 위치인 `:root`에서 해석되므로, 스코프 엘리먼트에 `--we-z-index-*`만
+ * 설정하면 자손의 `--z-index-*`는 여전히 `:root` 기본값(10)으로 떨어진다.
+ * 따라서 스코프 테마가 유틸리티 클래스에도 적용되려면 `--z-index-*`도 함께 설정해야 한다.
+ */
+const THEME_TAILWIND_ZINDEX_VARIABLES = [
+  '--z-index-toolbar',
+  '--z-index-inline',
+  '--z-index-handle',
+  '--z-index-overlay',
+  '--z-index-floating',
+  '--z-index-modal',
 ] as const;
 
 const THEME_FONT_VARIABLES = ['--we-font-family-base', '--we-font-family-code'] as const;
 
-const ALL_THEME_VARIABLES = [...THEME_COLOR_VARIABLES, ...THEME_ZINDEX_VARIABLES, ...THEME_FONT_VARIABLES] as const;
+const ALL_THEME_VARIABLES = [
+  ...THEME_COLOR_VARIABLES,
+  ...THEME_ZINDEX_VARIABLES,
+  ...THEME_TAILWIND_ZINDEX_VARIABLES,
+  ...THEME_FONT_VARIABLES,
+] as const;
 
 type ThemeColorVariable = (typeof THEME_COLOR_VARIABLES)[number];
 type ThemeZIndexVariable = (typeof THEME_ZINDEX_VARIABLES)[number];
+type ThemeTailwindZIndexVariable = (typeof THEME_TAILWIND_ZINDEX_VARIABLES)[number];
 
 const COLOR_KEY_TO_VAR: Record<keyof WhiteEditorThemeColors, ThemeColorVariable> = {
   textNormal: '--we-text-normal',
@@ -47,12 +71,21 @@ const COLOR_KEY_TO_VAR: Record<keyof WhiteEditorThemeColors, ThemeColorVariable>
   brandDefault: '--we-brand-default',
 };
 
-const ZINDEX_KEY_TO_VAR: Record<keyof WhiteEditorThemeZIndex, ThemeZIndexVariable> = {
-  toolbar: '--we-z-index-toolbar',
-  inline: '--we-z-index-inline',
-  handle: '--we-z-index-handle',
-  overlay: '--we-z-index-overlay',
-  floating: '--we-z-index-floating',
+/**
+ * z-index 키 → 함께 설정할 CSS 변수 목록.
+ * `--we-z-index-*`(에디터 CSS가 직접 참조) 와 `--z-index-*`(Tailwind `we:z-*` 유틸리티가 참조) 모두
+ * 설정해야 직접 참조/유틸리티 양쪽 모두에서 스코프 테마가 동작한다.
+ */
+const ZINDEX_KEY_TO_VARS: Record<
+  keyof WhiteEditorThemeZIndex,
+  readonly [ThemeZIndexVariable, ThemeTailwindZIndexVariable]
+> = {
+  toolbar: ['--we-z-index-toolbar', '--z-index-toolbar'],
+  inline: ['--we-z-index-inline', '--z-index-inline'],
+  handle: ['--we-z-index-handle', '--z-index-handle'],
+  overlay: ['--we-z-index-overlay', '--z-index-overlay'],
+  floating: ['--we-z-index-floating', '--z-index-floating'],
+  modal: ['--we-z-index-modal', '--z-index-modal'],
 };
 
 /**
@@ -102,6 +135,7 @@ export interface WhiteEditorThemeZIndex {
   handle?: number;
   overlay?: number;
   floating?: number;
+  modal?: number;
 }
 
 export interface ThemeConfig {
@@ -179,9 +213,11 @@ export function applyTheme(theme: 'light' | 'dark' | ThemeConfig, target: HTMLEl
 
   if (themeConfig.zIndex) {
     const z = themeConfig.zIndex;
-    for (const [key, varName] of Object.entries(ZINDEX_KEY_TO_VAR)) {
+    for (const [key, varNames] of Object.entries(ZINDEX_KEY_TO_VARS)) {
       const value = z[key as keyof WhiteEditorThemeZIndex];
-      if (value != null) cssVariables[varName] = String(value);
+      if (value != null) {
+        for (const varName of varNames) cssVariables[varName] = String(value);
+      }
     }
   }
 
