@@ -1,7 +1,8 @@
 import React, { useMemo, useEffect, useRef, useCallback } from 'react';
+import { PortalContainerContext } from '@/shared/contexts';
 import { applyTheme, cn, getHeadingsFromContent, normalizeContentSchema, removeTheme } from '@/shared/utils';
-import { createViewerExtensions } from '@/shared/utils/viewer-extensions';
 import type { HeadingItem } from '@/shared/utils/get-headings-from-content';
+import { createViewerExtensions } from '@/shared/utils/viewer-extensions';
 import type { ExtensibleEditorConfig, WhiteEditorTheme } from '@/white-editor';
 import { EditorContent, useEditor, type JSONContent } from '@tiptap/react';
 
@@ -75,11 +76,15 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
   const showHeadingAnchors = Boolean(tocConfig || onHeadingsReady);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  // theme CSS 변수가 적용되는 루트 엘리먼트를 portal container로 사용한다.
+  // ImageViewerModal 등 portal되는 오버레이가 themed 서브트리 안에서 렌더링되어
+  // --we-z-index-* 등 theme 변수를 정상 상속받게 하기 위함.
+  const [portalContainer, setPortalContainer] = React.useState<HTMLDivElement | null>(null);
   const containerRefCallback = useCallback(
     (node: HTMLDivElement | null) => {
-      if (!node) return;
       containerRef.current = node;
-      if (!theme) return;
+      setPortalContainer(node);
+      if (!node || !theme) return;
       applyTheme(theme, node);
       return () => {
         removeTheme(node);
@@ -277,8 +282,8 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
 
   if (!hasBuiltInToc) {
     return (
-      <div ref={containerRefCallback} className={cn('white-editor viewer', className)}>
-        {contentArea}
+      <div ref={containerRefCallback} className={cn('white-editor viewer', className)} data-we-portal-container=''>
+        <PortalContainerContext.Provider value={portalContainer}>{contentArea}</PortalContainerContext.Provider>
       </div>
     );
   }
@@ -311,26 +316,35 @@ export const WhiteViewer = React.memo(function WhiteViewer(props: WhiteViewerPro
       <div
         ref={containerRefCallback}
         className={cn('white-editor viewer we:viewer-with-toc we:viewer-toc-top', className)}
+        data-we-portal-container=''
       >
-        {tocSidebar}
-        <div className='we:viewer-body'>{contentArea}</div>
+        <PortalContainerContext.Provider value={portalContainer}>
+          {tocSidebar}
+          <div className='we:viewer-body'>{contentArea}</div>
+        </PortalContainerContext.Provider>
       </div>
     );
   }
 
   return (
-    <div ref={containerRefCallback} className={cn('white-editor viewer we:viewer-with-toc', className)}>
-      {position === 'left' ? (
-        <>
-          {tocSidebar}
-          <div className='we:viewer-body'>{contentArea}</div>
-        </>
-      ) : (
-        <>
-          <div className='we:viewer-body'>{contentArea}</div>
-          {tocSidebar}
-        </>
-      )}
+    <div
+      ref={containerRefCallback}
+      className={cn('white-editor viewer we:viewer-with-toc', className)}
+      data-we-portal-container=''
+    >
+      <PortalContainerContext.Provider value={portalContainer}>
+        {position === 'left' ? (
+          <>
+            {tocSidebar}
+            <div className='we:viewer-body'>{contentArea}</div>
+          </>
+        ) : (
+          <>
+            <div className='we:viewer-body'>{contentArea}</div>
+            {tocSidebar}
+          </>
+        )}
+      </PortalContainerContext.Provider>
     </div>
   );
 });

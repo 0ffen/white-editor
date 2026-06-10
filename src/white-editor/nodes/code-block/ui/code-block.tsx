@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckIcon, ChevronDownIcon, Copy } from 'lucide-react';
+import { CheckIcon, ChevronDownIcon, Code2, Copy, Workflow } from 'lucide-react';
 import { useTranslate } from '@/shared';
 import {
   Button,
@@ -17,10 +17,14 @@ import { cn } from '@/shared/utils';
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 
 import '@/shared/styles/github-dark.css';
+import { MermaidDiagram } from './mermaid-diagram';
+
+const MERMAID_LANGUAGE = 'mermaid';
 
 interface Props {
   node: {
     attrs: { language: string };
+    textContent: string;
   };
   updateAttributes: (attrs: { language: string }) => void;
   extension: {
@@ -39,6 +43,7 @@ interface Props {
 export const CodeBlock = ({
   node: {
     attrs: { language: defaultLanguage },
+    textContent,
   },
   updateAttributes,
   extension,
@@ -49,23 +54,31 @@ export const CodeBlock = ({
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const preRef = React.useRef<HTMLPreElement>(null);
 
-  // 선택된 언어를 맨 위로 정렬
+  const isMermaid = defaultLanguage === MERMAID_LANGUAGE;
+  // mermaid일 때 코드/다이어그램 보기 전환 (기본값: 다이어그램)
+  const [showSource, setShowSource] = React.useState<boolean>(false);
+
+  // 다이어그램만 보여줄지 여부: 뷰어에서는 항상 다이어그램, 에디터에서는 토글 상태에 따름
+  const renderDiagram = isMermaid && (!editor.isEditable || !showSource);
+
   const languageOptions = React.useMemo(() => {
     const languages = extension.options.lowlight.listLanguages().map((lang) => ({
       label: lang,
       value: lang,
     }));
 
-    if (!defaultLanguage) return languages;
+    const withMermaid = [{ label: MERMAID_LANGUAGE, value: MERMAID_LANGUAGE }, ...languages];
+
+    if (!defaultLanguage) return withMermaid;
 
     // 선택된 언어를 맨 위로
-    const selectedIndex = languages.findIndex((lang) => lang.value === defaultLanguage);
+    const selectedIndex = withMermaid.findIndex((lang) => lang.value === defaultLanguage);
     if (selectedIndex > 0) {
-      const [selected] = languages.splice(selectedIndex, 1);
-      languages.unshift(selected);
+      const [selected] = withMermaid.splice(selectedIndex, 1);
+      withMermaid.unshift(selected);
     }
 
-    return languages;
+    return withMermaid;
   }, [extension.options.lowlight, defaultLanguage]);
 
   const handleCopy = React.useCallback(
@@ -107,55 +120,81 @@ export const CodeBlock = ({
       <pre className='hljs we:mt-5 we:mb-0'>
         <div className={cn('we:relative we:w-full', editor.isEditable ? 'we:flex we:justify-between' : '')}>
           {editor.isEditable && (
-            <Popover open={isOpen} onOpenChange={setIsOpen}>
-              <PopoverTrigger asChild>
+            <div className='we:flex we:items-center we:gap-1'>
+              <Popover open={isOpen} onOpenChange={setIsOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    type='button'
+                    variant='ghost'
+                    role='combobox'
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsOpen((prev) => !prev);
+                    }}
+                    className={cn(
+                      'we:text-text-light we:w-fit we:gap-1 we:justify-between we:cursor-pointer we:hover:bg-interaction-hover'
+                    )}
+                  >
+                    {defaultLanguage || 'Plain text'}
+                    <ChevronDownIcon className='we:size-3 we:text-text-light' />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className='we:w-[160px] we:p-0 we:bg-elevation-dropdown we:shadow-popover we:rounded-sm we:overflow-hidden'
+                  align='start'
+                >
+                  <Command>
+                    <CommandInput placeholder={t('검색')} iconPosition='right' />
+                    <CommandList className='we:p-[6px]'>
+                      <CommandEmpty>No language found</CommandEmpty>
+                      <CommandGroup>
+                        {languageOptions.map((language) => (
+                          <CommandItem
+                            value={language.label}
+                            key={language.value}
+                            onSelect={() => {
+                              updateAttributes({ language: language.value });
+                              setIsOpen(false);
+                            }}
+                            className='we:pr-8 we:relative'
+                          >
+                            {language.label}
+                            {language.value === defaultLanguage && (
+                              <CheckIcon className='we:absolute we:right-2 we:size-5 we:text-brand-default' />
+                            )}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              {isMermaid && (
                 <Button
                   type='button'
                   variant='ghost'
-                  role='combobox'
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setIsOpen((prev) => !prev);
+                    setShowSource((prev) => !prev);
                   }}
-                  className={cn(
-                    'we:text-text-light we:w-fit we:gap-1 we:justify-between we:cursor-pointer we:hover:bg-interaction-hover'
-                  )}
+                  className='we:text-text-light we:w-fit we:gap-1 we:cursor-pointer we:hover:bg-interaction-hover'
                 >
-                  {defaultLanguage || 'Plain text'}
-                  <ChevronDownIcon className='we:size-3 we:text-text-light' />
+                  {showSource ? (
+                    <>
+                      <Workflow className='we:size-3.5' />
+                      {t('다이어그램')}
+                    </>
+                  ) : (
+                    <>
+                      <Code2 className='we:size-3.5' />
+                      {t('코드')}
+                    </>
+                  )}
                 </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className='we:w-[160px] we:p-0 we:bg-elevation-dropdown we:shadow-popover we:rounded-sm we:overflow-hidden'
-                align='start'
-              >
-                <Command>
-                  <CommandInput placeholder={t('검색')} iconPosition='right' />
-                  <CommandList className='we:p-[6px]'>
-                    <CommandEmpty>No language found</CommandEmpty>
-                    <CommandGroup>
-                      {languageOptions.map((language) => (
-                        <CommandItem
-                          value={language.label}
-                          key={language.value}
-                          onSelect={() => {
-                            updateAttributes({ language: language.value });
-                            setIsOpen(false);
-                          }}
-                          className='we:pr-8 we:relative'
-                        >
-                          {language.label}
-                          {language.value === defaultLanguage && (
-                            <CheckIcon className='we:absolute we:right-2 we:size-5 we:text-brand-default' />
-                          )}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
+              )}
+            </div>
           )}
           <Button
             type='button'
@@ -170,7 +209,9 @@ export const CodeBlock = ({
             )}
           </Button>
         </div>
-        <code ref={preRef} className='we:block we:pr-10 we:py-3 we:px-4'>
+        {renderDiagram && <MermaidDiagram code={textContent} />}
+        {/* ProseMirror가 콘텐츠를 관리하도록 NodeViewContent는 항상 마운트하고, 다이어그램 표시 중에는 숨긴다 */}
+        <code ref={preRef} className={cn('we:block we:pr-10 we:py-3 we:px-4', renderDiagram && 'we:hidden')}>
           <NodeViewContent as='div' />
         </code>
       </pre>
