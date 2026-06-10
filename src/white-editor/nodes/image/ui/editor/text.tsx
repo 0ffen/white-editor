@@ -2,11 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Ban, Bold, Italic, Plus, Strikethrough, Trash2, Underline } from 'lucide-react';
 import { Button, cn, useTranslate, Textarea } from '@/shared';
 import { EDITOR_COLORS, normalizeCanvasColor, TRANSPARENT_COLOR } from '@/white-editor';
+import { applyHandleScale, getDisplayInverseScale, getEditorFontFamily } from '../../util';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
 const TEXTAREA_MIN_HEIGHT = 40;
 const TEXTAREA_MAX_HEIGHT = 300;
 
+/** 화면상 표시되는 기준 폰트 크기(px). 이미지 해상도와 무관하게 항상 이 크기로 보이도록 보정 */
 const DEFAULT_FONT_SIZE = 40;
 
 /** 흰 배경에서도 보이도록 회색 테두리. 텍스트 색상/배경 피커에만 흰색을 추가 (공유 EDITOR_COLORS는 변경하지 않음) */
@@ -39,9 +41,16 @@ export function TextEditor(props: TextEditorProps) {
   const { editorRef } = props;
   const t = useTranslate();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  /** IME 조합 진행 중 여부 (조합 중에는 캔버스 동기화를 미룸) */
+  const isComposingRef = useRef(false);
 
   const [textColor, setTextColor] = useState<string>(EDITOR_COLORS[0].editorHex);
   const [activeTextId, setActiveTextId] = useState<number | null>(null);
+  /** selectionCleared 이벤트 핸들러가 매 입력마다 재등록되지 않도록 최신 activeTextId를 ref로 참조 */
+  const activeTextIdRef = useRef<number | null>(null);
+  useEffect(() => {
+    activeTextIdRef.current = activeTextId;
+  }, [activeTextId]);
   const [textInput, setTextInput] = useState<string>('');
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
@@ -57,13 +66,15 @@ export function TextEditor(props: TextEditorProps) {
     el.style.height = `${Math.min(Math.max(el.scrollHeight, TEXTAREA_MIN_HEIGHT), TEXTAREA_MAX_HEIGHT)}px`;
   }, []);
 
-  /** 텍스트 객체의 크기 조절이 비율을 유지하도록 fabric 객체에 uniform scaling 적용 + 변/중간 핸들 숨김 */
+  /** 텍스트 객체의 크기 조절이 비율을 유지하도록 fabric 객체에 uniform scaling 적용 + 변/중간 핸들 숨김 + 핸들 크기 보정 */
   const constrainTextScaling = useCallback(
     (id: number) => {
       const fabricObj = (editorRef.current as unknown as GraphicsAccessor | null)?._graphics?.getObject?.(id);
       if (!fabricObj) return;
       fabricObj.lockUniScaling = true;
       fabricObj.setControlsVisibility?.({ mt: false, mb: false, ml: false, mr: false });
+      // 큰 이미지에서 선택 핸들이 작아지지 않도록 화면 표시 배율로 보정
+      if (editorRef.current) applyHandleScale(editorRef.current, id);
     },
     [editorRef]
   );
@@ -71,11 +82,15 @@ export function TextEditor(props: TextEditorProps) {
   const addNewText = useCallback(() => {
     const text = textInput.trimEnd();
     if (editorRef.current && text !== '') {
+      // 이미지 크기와 무관하게 화면상 항상 DEFAULT_FONT_SIZE로 보이도록 표시 배율로 폰트 크기 보정
+      const fontSize = Math.round(DEFAULT_FONT_SIZE * getDisplayInverseScale(editorRef.current));
       editorRef.current
         .addText(text, {
           styles: {
             fill: textColor,
-            fontSize: DEFAULT_FONT_SIZE,
+            fontSize,
+            // 한글 지원 폰트로 지정 (기본 'Times New Roman'은 한글이 없어 폴백 측정·렌더 불일치로 trailing 갭 발생)
+            fontFamily: getEditorFontFamily(),
             fontWeight: isBold ? 'bold' : 'normal',
             fontStyle: isItalic ? 'italic' : 'normal',
             textDecoration: decoration === 'none' ? '' : decoration,
@@ -92,6 +107,17 @@ export function TextEditor(props: TextEditorProps) {
     }
   }, [editorRef, textInput, textColor, isBold, isItalic, decoration, bgColor, constrainTextScaling]);
 
+  /** 캔버스 텍스트 끝의 공백/줄바꿈 제거. 편집 중 changeText는 trim하지 않으므로 완료 시점에 1회 정리 */
+  const trimActiveTextTrailing = useCallback(() => {
+    const editor = editorRef.current;
+    const id = activeTextIdRef.current;
+    if (!editor || !id) return;
+    const objProps = editor.getObjectProperties(id, ['text']) as { text?: string };
+    const text = typeof objProps?.text === 'string' ? objProps.text : '';
+    const trimmed = text.replace(/\s+$/, '');
+    if (trimmed !== text) editor.changeText(id, trimmed);
+  }, [editorRef]);
+
   const handleDeleteText = useCallback(() => {
     if (editorRef.current && activeTextId) {
       editorRef.current.removeObject(activeTextId);
@@ -103,6 +129,7 @@ export function TextEditor(props: TextEditorProps) {
 
   const handleAddButton = useCallback(() => {
     if (isEditing && editorRef.current) {
+      trimActiveTextTrailing();
       editorRef.current.discardSelection();
       setActiveTextId(null);
       setTextInput('');
@@ -110,7 +137,7 @@ export function TextEditor(props: TextEditorProps) {
     } else {
       addNewText();
     }
-  }, [isEditing, editorRef, addNewText]);
+  }, [isEditing, editorRef, addNewText, trimActiveTextTrailing]);
 
   const handleObjectActivated = useCallback(
     (obj: { type: string; id: number; text: string; fill: string }) => {
@@ -143,10 +170,11 @@ export function TextEditor(props: TextEditorProps) {
   );
 
   const handleSelectionCleared = useCallback(() => {
+    trimActiveTextTrailing();
     setActiveTextId(null);
     setTextInput('');
     setIsEditing(false);
-  }, []);
+  }, [trimActiveTextTrailing]);
 
   useEffect(() => {
     if (editorRef.current) {
@@ -159,12 +187,28 @@ export function TextEditor(props: TextEditorProps) {
     adjustTextareaHeight();
   }, [textInput, adjustTextareaHeight]);
 
+  /** 캔버스에는 끝 공백/줄바꿈을 제거하여 반영 (배경 색상 적용 시 trailing space가 보이는 문제 방지) */
+  const applyCanvasText = (value: string) => {
+    if (isEditing && editorRef.current && activeTextId) {
+      editorRef.current.changeText(activeTextId, value.replace(/\s+$/, ''));
+    }
+  };
+
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
     setTextInput(newText);
-    if (isEditing && editorRef.current && activeTextId) {
-      editorRef.current.changeText(activeTextId, newText);
-    }
+    // IME 조합(한글 등) 중에는 캔버스 동기화를 미룸. 조합 중간 상태가 fabric에 들어가면 캔버스에 trailing space가 렌더되는 문제 방지
+    if (!isComposingRef.current) applyCanvasText(newText);
+  };
+
+  const handleCompositionStart = () => {
+    isComposingRef.current = true;
+  };
+
+  const handleCompositionEnd = (e: React.CompositionEvent<HTMLTextAreaElement>) => {
+    isComposingRef.current = false;
+    // 조합 확정된 최종 값만 캔버스에 반영
+    applyCanvasText(e.currentTarget.value);
   };
 
   const handleColorChange = useCallback(
@@ -228,8 +272,14 @@ export function TextEditor(props: TextEditorProps) {
             id='text-input'
             value={textInput}
             onChange={handleTextChange}
+            onCompositionStart={handleCompositionStart}
+            onCompositionEnd={handleCompositionEnd}
             onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
+              // tui가 document에서 Backspace/Delete로 선택 객체 삭제, Ctrl+Z 등 단축키를 처리하므로
+              // textarea 편집 중 키 입력이 document로 전파되지 않도록 차단 (입력 중 글자 삭제 시 객체가 지워지는 문제 방지)
+              e.stopPropagation();
+              // IME 조합 중 Enter는 조합 확정용이므로 추가/완료를 트리거하지 않음
+              if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
                 e.preventDefault();
                 handleAddButton();
               }
@@ -308,8 +358,8 @@ export function TextEditor(props: TextEditorProps) {
               className='we:h-7 we:w-7'
               isActive={decoration === 'line-through'}
               onClick={() => handleSetDecoration('line-through')}
-              tooltip={t('강조')}
-              aria-label={t('강조')}
+              tooltip={t('취소선')}
+              aria-label={t('취소선')}
               aria-pressed={decoration === 'line-through'}
             >
               <Strikethrough />

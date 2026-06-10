@@ -5,12 +5,20 @@ import TuiImageEditor from 'tui-image-editor';
 import { Button } from '@/shared';
 import { base64ToBlob } from '@/shared/utils/base64-to-blob';
 import { useImageZoom } from '@/white-editor/nodes/image/hook';
+import {
+  changeActiveObjectZOrder,
+  onImageObjectDblClick,
+  preserveObjectStacking,
+  replaceImageObjectSrc,
+} from '../../util';
 import { CropEditor } from './crop';
 import { DrawEditor } from './draw';
+import { ImageCropDialog } from './image-crop-dialog';
 import { ImageEditorFooter } from './image-editor-footer';
 import { ImageEditorToolbar } from './image-editor-toolbar';
 import { ShapeEditor } from './shape';
 import { TextEditor } from './text';
+import type { RecropTarget, ZOrderAction } from '../../util';
 import type { default as TuiImageEditorType } from 'tui-image-editor';
 
 export interface ImageEditorRef {
@@ -35,6 +43,8 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
 
   const [drawingColor, setDrawingColor] = useState<string>('#161616');
   const [drawingRange, setDrawingRange] = useState<number>(10);
+  const [hasSelection, setHasSelection] = useState<boolean>(false);
+  const [recropTarget, setRecropTarget] = useState<RecropTarget | null>(null);
 
   const { zoomLevel, handleZoomIn, handleZoomOut, handleZoomReset } = useImageZoom();
   const BASE_WIDTH = 720;
@@ -61,7 +71,15 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
 
       editorRef.current = instance;
 
+      preserveObjectStacking(instance);
+
+      instance.on('objectActivated', () => setHasSelection(true));
+      instance.on('selectionCleared', () => setHasSelection(false));
+
+      const detachDblClick = onImageObjectDblClick(instance, setRecropTarget);
+
       instance.loadImageFromURL(imageUrl, 'UploadedImage').then(() => {
+        preserveObjectStacking(instance);
         // 초기 이미지 로드 후 undo 스택을 클리어하여 초기 상태가 undo되지 않도록 함
         setTimeout(() => {
           if (instance) {
@@ -71,6 +89,7 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
       });
 
       return () => {
+        detachDblClick();
         instance.destroy();
         editorRef.current = null;
       };
@@ -110,6 +129,19 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
       strokeWidth: 10,
     });
   }, [editorRef]);
+
+  const handleChangeZOrder = useCallback((action: ZOrderAction) => {
+    if (editorRef.current) changeActiveObjectZOrder(editorRef.current, action);
+  }, []);
+
+  const handleRecropApply = useCallback(
+    (croppedUrl: string) => {
+      const editor = editorRef.current;
+      if (!editor || !recropTarget) return;
+      replaceImageObjectSrc(editor, recropTarget.id, croppedUrl);
+    },
+    [recropTarget]
+  );
 
   const handleModeChange = useCallback(
     (mode: string | null) => {
@@ -159,7 +191,13 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
     <div className='white-editor we:flex we:w-full we:flex-col'>
       {/* Toolbar */}
       <div className='we:px-4 we:flex we:justify-between we:items-center'>
-        <ImageEditorToolbar editorRef={editorRef} activeMode={activeMode} handleModeChange={handleModeChange} />
+        <ImageEditorToolbar
+          editorRef={editorRef}
+          activeMode={activeMode}
+          handleModeChange={handleModeChange}
+          hasSelection={hasSelection}
+          onChangeZOrder={handleChangeZOrder}
+        />
 
         {/* 확대/축소 컨트롤 */}
         <div className='we:flex we:items-center we:gap-1 we:w-fit' onMouseDown={(e) => e.stopPropagation()}>
@@ -276,6 +314,16 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
           }}
         />
       )}
+
+      {/* 추가 이미지 더블클릭 시 자르기 다이얼로그 재오픈 */}
+      <ImageCropDialog
+        isOpen={recropTarget !== null}
+        imageUrl={recropTarget?.src ?? null}
+        onOpenChange={(open) => {
+          if (!open) setRecropTarget(null);
+        }}
+        onCropped={handleRecropApply}
+      />
     </div>
   );
 });
