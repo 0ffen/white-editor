@@ -126,7 +126,7 @@ export function createEditorExtensions<T, P extends Record<string, unknown> = Re
         }
         const NodeViewComponent = customNodeViews?.codeBlock || (CodeBlock as React.FC);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return ReactNodeViewRenderer(NodeViewComponent as any);
+        return ReactNodeViewRenderer(NodeViewComponent as any, { trackNodeViewPosition: true });
       },
     }).configure({ lowlight, enableTabIndentation: true }),
     Mathematics.configure({
