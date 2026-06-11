@@ -112,7 +112,7 @@ export function createViewerExtensions(
         if (typeof window === 'undefined') return null;
         const NodeViewComponent = customNodeViews?.codeBlock || (CodeBlock as React.FC);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return ReactNodeViewRenderer(NodeViewComponent as any);
+        return ReactNodeViewRenderer(NodeViewComponent as any, { trackNodeViewPosition: true });
       },
     }).configure({ lowlight }),
     Mathematics.configure({

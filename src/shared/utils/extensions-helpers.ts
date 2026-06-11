@@ -93,7 +93,7 @@ export function applyNodeViews(extension: any, customNodeViews?: CustomNodeViews
     return extension.extend({
       addNodeView() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return ReactNodeViewRenderer(CustomNodeView as any);
+        return ReactNodeViewRenderer(CustomNodeView as any, { trackNodeViewPosition: true });
       },
     });
   }
