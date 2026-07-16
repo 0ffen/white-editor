@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { Minus, Plus, Download, X } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import { Button, Separator, TooltipProvider, getTranslate, usePortalContainer } from '@/shared';
 import { downloadImage } from '../../util';
 
@@ -188,6 +188,7 @@ export const ImageViewerModal: React.FC<ImageViewerModalProps> = ({ open, onOpen
                 transformOrigin: 'center center',
               }}
               onDoubleClick={handleImageDoubleClick}
+              crossOrigin='anonymous'
             />
           </div>
 
