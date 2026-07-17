@@ -70,11 +70,10 @@ export const ResizableImage = Image.extend<ResizableImageOptions>({
           if (!attributes.src) {
             return {};
           }
-          // 직렬화/내보내기 HTML에서도 이미지를 CORS 모드로 로드하도록 crossorigin을 부여한다.
-          // NodeView(ImageNodeView)·뷰어·복사/다운로드/재크롭(canvas·fetch)이 모두 cors 모드로
-          // 같은 다운로드 URL을 요청하는데, 여기만 no-cors로 남으면 브라우저가 opaque 응답을
-          // 캐시했다가 cors 요청에서 재사용해 CORS 에러가 간헐적으로 발생한다. (data:/blob: URL은 무해)
-          return { src: attributes.src, crossorigin: 'anonymous' };
+          // 표시용 <img>에는 crossorigin을 붙이지 않는다(no-cors). CORS 모드로 표시하면 매 이미지마다
+          // ACAO 헤더가 있어야 보이고, 캐시가 오염되면 이미지 자체가 깨진다. 픽셀 접근이 필요한
+          // 편집/복사/다운로드는 각자 캐시를 우회한 cors 요청(toCorsSafeBlobUrl)으로 처리한다.
+          return { src: attributes.src };
         },
       },
       alt: {
