@@ -188,7 +188,6 @@ export const ImageViewerModal: React.FC<ImageViewerModalProps> = ({ open, onOpen
                 transformOrigin: 'center center',
               }}
               onDoubleClick={handleImageDoubleClick}
-              crossOrigin='anonymous'
             />
           </div>
 

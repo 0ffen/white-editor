@@ -16,6 +16,23 @@ function ensureExtension(name: string, ext: string): string {
 }
 
 /**
+ * 원격 이미지 URL을 CORS 모드로 받아 동일 출처 blob: URL로 변환한다.
+ *
+ * 표시용 <img>는 crossorigin 없이(no-cors) 로드되어 브라우저가 opaque 응답을 HTTP 캐시에
+ * 저장하는데, 같은 URL을 cors(crossOrigin/fetch)로 재요청하면 이 opaque 캐시를 재사용하려다
+ * "No 'Access-Control-Allow-Origin'" CORS 에러가 난다. `cache: 'reload'`로 HTTP 캐시를 우회해
+ * 항상 새 cors 응답을 받고, canvas taint가 없는 blob: URL로 바꿔 편집/복사/다운로드에서 쓴다.
+ * data:/blob: URL은 이미 로컬이라 그대로 반환한다. 호출부는 반환값이 원본과 다르면
+ * (= 새 blob이 생성됨) 사용 후 URL.revokeObjectURL로 해제해야 한다.
+ */
+export async function toCorsSafeBlobUrl(src: string): Promise<string> {
+  if (!src || src.startsWith('data:') || src.startsWith('blob:')) return src;
+  const res = await fetch(src, { mode: 'cors', cache: 'reload' });
+  const blob = await res.blob();
+  return URL.createObjectURL(blob);
+}
+
+/**
  * execCommand fallback으로 이미지를 클립보드에 복사합니다.
  * HTTP(비보안 컨텍스트)에서 Clipboard API를 사용할 수 없을 때 사용됩니다.
  */
@@ -50,16 +67,20 @@ function copyImageViaExecCommand(dataUrl: string): boolean {
  * HTTP 환경에서는 execCommand fallback을 사용합니다.
  */
 export async function copyImage(src: string): Promise<boolean> {
+  let objectUrl: string | null = null;
   try {
     if (typeof window === 'undefined') return false;
 
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
+    // 표시 <img>의 no-cors opaque 캐시와 충돌하지 않도록 캐시를 우회해 blob: URL로 로드한다.
+    // blob: URL은 동일 출처라 canvas가 taint되지 않아 toBlob/toDataURL이 정상 동작한다.
+    const loadUrl = await toCorsSafeBlobUrl(src);
+    if (loadUrl !== src) objectUrl = loadUrl;
 
+    const img = new Image();
     const loaded = await new Promise<HTMLImageElement>((resolve, reject) => {
       img.onload = () => resolve(img);
       img.onerror = reject;
-      img.src = src;
+      img.src = loadUrl;
     });
 
     const canvas = document.createElement('canvas');
@@ -84,6 +105,8 @@ export async function copyImage(src: string): Promise<boolean> {
     return copyImageViaExecCommand(canvas.toDataURL('image/png'));
   } catch {
     return false;
+  } finally {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
   }
 }
 
@@ -107,7 +130,8 @@ export async function downloadImage(src: string): Promise<void> {
       URL.revokeObjectURL(url);
       return;
     }
-    const res = await fetch(src, { mode: 'cors' });
+    // cache: 'reload'로 표시 <img>의 no-cors opaque 캐시를 우회 (섞인 모드로 인한 CORS 실패 방지)
+    const res = await fetch(src, { mode: 'cors', cache: 'reload' });
     const blob = await res.blob();
     const ext = blob.type.split('/')[1]?.replace('jpeg', 'jpg') || filename.split('.').pop() || 'png';
     const url = URL.createObjectURL(blob);

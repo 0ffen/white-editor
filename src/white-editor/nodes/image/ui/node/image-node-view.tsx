@@ -240,7 +240,6 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
               onError={() => setImageLoadError(true)}
               draggable={false}
               data-drag-handle
-              crossOrigin='anonymous'
             />
           )}
         </div>
