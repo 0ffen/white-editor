@@ -70,7 +70,11 @@ export const ResizableImage = Image.extend<ResizableImageOptions>({
           if (!attributes.src) {
             return {};
           }
-          return { src: attributes.src };
+          // 직렬화/내보내기 HTML에서도 이미지를 CORS 모드로 로드하도록 crossorigin을 부여한다.
+          // NodeView(ImageNodeView)·뷰어·복사/다운로드/재크롭(canvas·fetch)이 모두 cors 모드로
+          // 같은 다운로드 URL을 요청하는데, 여기만 no-cors로 남으면 브라우저가 opaque 응답을
+          // 캐시했다가 cors 요청에서 재사용해 CORS 에러가 간헐적으로 발생한다. (data:/blob: URL은 무해)
+          return { src: attributes.src, crossorigin: 'anonymous' };
         },
       },
       alt: {
