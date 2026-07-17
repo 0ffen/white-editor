@@ -10,6 +10,7 @@ import {
   onImageObjectDblClick,
   preserveObjectStacking,
   replaceImageObjectSrc,
+  toCorsSafeBlobUrl,
 } from '../../util';
 import { CropEditor } from './crop';
 import { DrawEditor } from './draw';
@@ -78,20 +79,36 @@ export const ImageEditor = forwardRef<ImageEditorRef, ImageEditorProps>((props, 
 
       const detachDblClick = onImageObjectDblClick(instance, setRecropTarget);
 
-      instance.loadImageFromURL(imageUrl, 'UploadedImage').then(() => {
-        preserveObjectStacking(instance);
-        // 초기 이미지 로드 후 undo 스택을 클리어하여 초기 상태가 undo되지 않도록 함
-        setTimeout(() => {
-          if (instance) {
-            instance.clearUndoStack();
-          }
-        }, 100);
-      });
+      // 표시용 <img>가 no-cors로 캐시한 opaque 응답과 충돌해 편집 캔버스(cors) 로드가 실패하는 것을
+      // 막기 위해, 캐시를 우회해 받아온 동일 출처 blob: URL로 로드한다. (data:/blob:은 그대로 통과)
+      let objectUrl: string | null = null;
+      let cancelled = false;
+      (async () => {
+        let loadUrl = imageUrl;
+        try {
+          loadUrl = await toCorsSafeBlobUrl(imageUrl);
+          if (loadUrl !== imageUrl) objectUrl = loadUrl;
+        } catch {
+          loadUrl = imageUrl; // 변환 실패 시 원본 URL로 폴백 (fabric이 직접 로드 시도)
+        }
+        if (cancelled) return;
+        instance.loadImageFromURL(loadUrl, 'UploadedImage').then(() => {
+          preserveObjectStacking(instance);
+          // 초기 이미지 로드 후 undo 스택을 클리어하여 초기 상태가 undo되지 않도록 함
+          setTimeout(() => {
+            if (instance) {
+              instance.clearUndoStack();
+            }
+          }, 100);
+        });
+      })();
 
       return () => {
+        cancelled = true;
         detachDblClick();
         instance.destroy();
         editorRef.current = null;
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
       };
     }
   }, [imageUrl]);
