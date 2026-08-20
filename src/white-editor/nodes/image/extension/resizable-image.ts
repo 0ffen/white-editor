@@ -39,6 +39,30 @@ declare module '@tiptap/react' {
   }
 }
 
+/**
+ * 뷰어에서 복사한 HTML에 포함된 캡션 DOM(`[data-image-caption]`)을 제거한다.
+ * 캡션 값은 같은 이미지의 `<img data-caption>`으로 이미 전달되므로, 그대로 두면
+ * 붙여넣기 시 캡션이 이미지 아래 문단으로 한 번 더 생긴다.
+ * 짝이 되는 `<img data-caption>`을 찾지 못하면(예: 이미지가 깨진 상태로 복사) 텍스트를 보존한다.
+ */
+function stripDuplicatedCaptionNodes(html: string): string {
+  if (typeof window === 'undefined' || !html.includes('data-image-caption')) return html;
+
+  try {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    doc.querySelectorAll('[data-image-caption]').forEach((el) => {
+      const caption = el.getAttribute('data-image-caption');
+      if (!caption) return;
+      const image = el.parentElement?.querySelector('img[data-caption]');
+      if (image?.getAttribute('data-caption') !== caption) return;
+      el.remove();
+    });
+    return doc.body.innerHTML;
+  } catch {
+    return html;
+  }
+}
+
 export const ResizableImage = Image.extend<ResizableImageOptions>({
   name: 'image',
 
@@ -174,11 +198,14 @@ export const ResizableImage = Image.extend<ResizableImageOptions>({
             copy: (view) => {
               // 뷰어(읽기 전용)에서는 ProseMirror의 clipboard 직렬화를 우회하고
               // 브라우저 네이티브 복사를 사용하여 DOM의 <img> 요소가
-              // 텍스트와 함께 그대로 복사되도록 합니다.
+              // 텍스트(캡션 포함)와 함께 그대로 복사되도록 합니다.
               if (!view.editable) return true;
               return false;
             },
           },
+          // 뷰어에서 네이티브 복사된 HTML에는 캡션이 <img data-caption>과 캡션 DOM 텍스트로
+          // 중복되어 담긴다. 붙여넣을 때 캡션 DOM은 제거하고 이미지 attribute만 남긴다.
+          transformPastedHTML: (html: string) => stripDuplicatedCaptionNodes(html),
         },
       }),
     ];
