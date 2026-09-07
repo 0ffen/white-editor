@@ -32,7 +32,8 @@ const ColorPickerButton = React.forwardRef<HTMLButtonElement, ButtonProps & { cu
   ({ className, currentTextColor, ...props }, ref) => (
     <Button
       type='button'
-      className={cn(className, 'we:flex we:items-center we:px-1 we:h-[28px]')}
+      size='icon'
+      className={cn(className, 'we:w-auto we:min-w-0 we:gap-1 we:px-0.5')}
       data-style='ghost'
       data-appearance='default'
       role='button'
@@ -42,10 +43,10 @@ const ColorPickerButton = React.forwardRef<HTMLButtonElement, ButtonProps & { cu
       {...props}
     >
       <span
-        className='we:h-5 we:w-5 we:rounded-full we:shrink-0'
+        className='we:size-4 we:shrink-0 we:rounded-full'
         style={{ backgroundColor: currentTextColor || 'var(--we-text-normal)' }}
       />
-      <ChevronDown className='we:h-3 we:w-3 we:text-foreground/60 we:shrink-0' />
+      <ChevronDown className='we:size-2.5 we:shrink-0 we:text-foreground/60' />
     </Button>
   )
 );
@@ -92,25 +93,25 @@ export function ColorPopover({
         />
       </PopoverTrigger>
 
-      <PopoverContent aria-label='Color picker' className='we:h-10 we:w-fit we:p-2' side='bottom' align='start'>
+      <PopoverContent aria-label='Color picker' className='we:h-auto we:w-fit we:p-1.5' side='bottom' align='start'>
         <div
           ref={containerRef}
           tabIndex={0}
-          className='we:flex we:h-full we:flex-1 we:items-center we:gap-1 we:outline-none focus:we:outline-none'
+          className='we:flex we:items-center we:gap-0.5 we:outline-none focus:we:outline-none'
         >
           {textColors?.map((color) => (
             <TextColorButton key={color.value} editor={editor} textColor={color} aria-label={`${color.label} color`} />
           ))}
-          <Separator orientation='vertical' className='mx-1' />
+          <Separator orientation='vertical' className='we:mx-0.5 we:h-4!' />
           <Button
             type='button'
             size='icon'
-            className='we:h-6 we:w-6'
+            className='we:h-7 we:w-7'
             onClick={handleRemoveTextColor}
             aria-label='Remove text color'
             tooltip={t('removeColor')}
           >
-            <Ban className='we:text-text-sub' size={20} />
+            <Ban className='we:text-text-sub' />
           </Button>
         </div>
       </PopoverContent>

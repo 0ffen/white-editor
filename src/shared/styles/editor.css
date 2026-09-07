@@ -26,8 +26,14 @@
     }
 
     .ProseMirror {
-      /* 왼쪽 gutter는 data-drag-handle 규칙(레이어 밖)에서 강제 — contentClassName px가 덮지 못하게 */
-      padding: 12px;
+      /* 좌우 page padding은 동일. 핸들 자리는 --we-block-gutter로만 추가 */
+      --we-editor-padding-x: 12px;
+      --we-editor-padding-y: 12px;
+      --we-block-gutter: 0px;
+      padding-top: var(--we-editor-padding-y);
+      padding-bottom: var(--we-editor-padding-y);
+      padding-right: var(--we-editor-padding-x);
+      padding-left: calc(var(--we-editor-padding-x) + var(--we-block-gutter));
       flex: 1;
       overflow-y: auto;
       min-height: 0px;
@@ -118,16 +124,16 @@
       outline-offset: 1px;
     }
 
-    /* Notion-like: 핸들 클릭으로 블록 전체 선택 시 배경 하이라이트 */
+    /* Notion-like: 핸들 클릭으로 블록 전체 선택 시 배경 하이라이트 (텍스트 selection과 동일) */
     .ProseMirror-selectednode {
       outline: none !important;
-      background-color: var(--we-brand-weak) !important;
+      background-color: var(--we-brand-weak2) !important;
       border-radius: 4px;
     }
 
     .ProseMirror-selectednode.node-image,
     .ProseMirror .node-image.ProseMirror-selectednode {
-      background-color: var(--we-brand-weak) !important;
+      background-color: var(--we-brand-weak2) !important;
       box-shadow: none !important;
     }
 
@@ -146,7 +152,7 @@
     }
 
     .selectedCell {
-      background-color: var(--we-brand-weak) !important;
+      background-color: var(--we-brand-weak2) !important;
     }
 
     .ProseMirror .node-image {
@@ -392,11 +398,14 @@
 
 /*
  * drag handle / + 버튼 gutter.
- * contentClassName의 we:px-* 유틸이 @layer base padding을 덮어쓰므로,
- * 핸들이 켜진 에디터는 레이어 밖에서 left padding을 강제한다.
+ * contentClassName의 we:px-* 유틸이 @layer base padding을 덮어쓸 수 있어
+ * reserve 모드는 레이어 밖에서 left padding을 강제한다.
+ * overlay / 미사용 시 --we-block-gutter는 0 → 좌우 page padding만 동일.
  */
-.white-editor[data-drag-handle] .ProseMirror {
-  padding-left: 2.75rem !important;
+.white-editor[data-drag-handle-gutter='reserve'] .ProseMirror {
+  --we-block-gutter: 2.75rem;
+  padding-left: calc(var(--we-editor-padding-x, 12px) + var(--we-block-gutter)) !important;
+  padding-right: var(--we-editor-padding-x, 12px) !important;
 }
 
 /*

@@ -11,6 +11,11 @@ import type { Editor } from '@tiptap/react';
 
 export interface BlockDragHandleProps {
   editor: Editor;
+  /**
+   * `overlay`일 때 핸들을 콘텐츠 왼쪽 padding 쪽으로 더 붙인다.
+   * `reserve`는 확보된 gutter 안에 둔다.
+   */
+  gutter?: 'reserve' | 'overlay';
 }
 
 /** 이 높이(px) 이하면 한 줄로 보고 핸들을 세로 중앙 정렬 */
@@ -37,7 +42,7 @@ function shouldAlignTop(node: ProseMirrorNode | null, height: number): boolean {
 /**
  * TipTap DragHandle 기반 블록 그립 + Notion-like `+` 버튼.
  */
-export function BlockDragHandle({ editor }: BlockDragHandleProps) {
+export function BlockDragHandle({ editor, gutter = 'reserve' }: BlockDragHandleProps) {
   const t = useTranslate();
   const currentRef = useRef<{ node: ProseMirrorNode | null; pos: number }>({ node: null, pos: -1 });
   const didDragRef = useRef(false);
@@ -47,9 +52,10 @@ export function BlockDragHandle({ editor }: BlockDragHandleProps) {
       // gutter 안쪽에 붙이고, 블록↔핸들 gap을 최소화
       placement: 'left' as const,
       strategy: 'absolute' as const,
-      middleware: [offset({ mainAxis: 2, crossAxis: 0 })],
+      // overlay: 콘텐츠 바로 왼쪽에 겹침 / reserve: 확보된 gutter 안
+      middleware: [offset({ mainAxis: gutter === 'overlay' ? 4 : 2, crossAxis: 0 })],
     }),
-    []
+    [gutter]
   );
 
   const getReferencedVirtualElement = useCallback(() => {

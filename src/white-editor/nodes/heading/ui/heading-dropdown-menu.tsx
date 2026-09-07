@@ -181,7 +181,7 @@ export const HeadingDropdownMenu = React.forwardRef<HTMLButtonElement, HeadingDr
             aria-pressed={isActive}
             tooltip={t('heading')}
             isActive={isActive}
-            className={cn('we:h-[28px] we:gap-1 we:px-2 we:select-none', triggerClassName)}
+            className={cn('we:h-[28px] we:gap-1 we:select-none we:w-fit', triggerClassName)}
             {...buttonProps}
             ref={ref}
           >
