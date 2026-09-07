@@ -363,6 +363,27 @@
   background-color: transparent;
 }
 
+/*
+ * 텍스트 선택 하이라이트.
+ * - native ::selection은 숨기고 VisibleSelection의 `.selection` 데코레이션만 사용
+ *   (Ctrl+A 등 contenteditable에서 ::selection이 거의 안 보이는 문제 대응)
+ * - @layer base 밖에 둬서 TipTap injectCSS와 우선순위 충돌을 피함
+ * - brand-weak(#f0f6ff)는 대비가 너무 낮아 weak2 사용
+ */
+.white-editor .ProseMirror .selection {
+  background-color: var(--we-brand-weak2);
+}
+
+.white-editor .ProseMirror ::selection,
+.white-editor .ProseMirror *::selection {
+  background-color: transparent;
+}
+
+.white-editor .ProseMirror ::-moz-selection,
+.white-editor .ProseMirror *::-moz-selection {
+  background-color: transparent;
+}
+
 .white-editor .tiptap p.is-editor-empty:first-child::before {
   color: var(--we-text-placeholder);
   content: attr(data-placeholder);

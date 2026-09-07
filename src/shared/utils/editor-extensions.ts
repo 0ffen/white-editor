@@ -27,11 +27,12 @@ import Superscript from '@tiptap/extension-superscript';
 import { Table, TableCell, TableRow } from '@tiptap/extension-table';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyleKit } from '@tiptap/extension-text-style';
-import { Selection, CharacterCount, Dropcursor } from '@tiptap/extensions';
+import { CharacterCount, Dropcursor } from '@tiptap/extensions';
 import { ReactNodeViewRenderer, type Extension } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
 import { CustomParagraph, mergeExtensions, processExtensions } from './extensions-helpers';
+import { VisibleSelection } from './visible-selection';
 import type { OverrideExtensionsConfig, CustomNodeViews } from '../../white-editor/editor/type/white-editor.type';
 
 // 에디터 전용 extensions
@@ -120,7 +121,7 @@ export function createEditorExtensions<T, P extends Record<string, unknown> = Re
     Highlight.configure({ multicolor: true }),
     Superscript,
     Subscript,
-    Selection,
+    VisibleSelection,
     CodeBlockLowlight.extend({
       addNodeView() {
         if (typeof window === 'undefined') {
