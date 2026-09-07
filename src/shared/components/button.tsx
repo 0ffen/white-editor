@@ -12,7 +12,7 @@ const buttonVariants = cva(
     'we:w-full we:justify-center we:gap-2 we:whitespace-nowrap we:rounded we:font-normal',
     'we:transition-colors we:outline-none we:focus:outline-none we:focus-visible:outline-none we:active:outline-none',
     'we:disabled:cursor-not-allowed we:disabled:opacity-85',
-    'we:[&_svg]:pointer-events-none we:[&_svg]:size-5 we:[&_svg]:shrink-0'
+    'we:[&_svg]:pointer-events-none we:[&_svg]:size-4 we:[&_svg]:shrink-0'
   ),
   {
     variants: {
