@@ -26,6 +26,7 @@
     }
 
     .ProseMirror {
+      /* 왼쪽 gutter는 data-drag-handle 규칙(레이어 밖)에서 강제 — contentClassName px가 덮지 못하게 */
       padding: 12px;
       flex: 1;
       overflow-y: auto;
@@ -57,6 +58,77 @@
       width: 100%;
       height: 2px !important;
       cursor: grabbing;
+    }
+
+    /* TipTap DragHandle portal wrapper — 플러그인이 visibility/position을 제어 */
+    .we-drag-handle-wrapper {
+      z-index: var(--we-z-index-handle, 20);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      width: auto;
+      height: 1.5rem;
+      /* 콘텐츠 쪽으로 히트 영역을 늘려 블록↔핸들 사이 gap에서 mouseleave로 사라지지 않게 */
+      padding-right: 12px;
+      margin-right: -12px;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .we-drag-handle-wrapper[data-dragging='true'] {
+      cursor: grabbing;
+    }
+
+    .we-block-handle-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.125rem;
+      height: 100%;
+    }
+
+    .we-block-add-handle,
+    .we-drag-handle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.25rem;
+      height: 100%;
+      padding: 0;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--we-text-light, #b0b0b0);
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .we-drag-handle {
+      cursor: inherit;
+    }
+
+    .we-block-add-handle:hover,
+    .we-drag-handle:hover {
+      background-color: color-mix(in srgb, var(--we-text-normal, #000) 4%, transparent);
+      color: var(--we-text-light, #8b8b8b);
+    }
+
+    .we-block-add-handle:focus-visible,
+    .we-drag-handle:focus-visible {
+      outline: 2px solid var(--we-brand-light);
+      outline-offset: 1px;
+    }
+
+    /* Notion-like: 핸들 클릭으로 블록 전체 선택 시 배경 하이라이트 */
+    .ProseMirror-selectednode {
+      outline: none !important;
+      background-color: var(--we-brand-weak) !important;
+      border-radius: 4px;
+    }
+
+    .ProseMirror-selectednode.node-image,
+    .ProseMirror .node-image.ProseMirror-selectednode {
+      background-color: var(--we-brand-weak) !important;
+      box-shadow: none !important;
     }
 
     .ProseMirror table {
@@ -150,6 +222,17 @@
       &:hover {
         background-color: var(--we-elevation-level1);
       }
+    }
+
+    /* katex.css 미로드 시 MathML+HTML이 둘 다 보이는 이중 텍스트 방지 */
+    .katex .katex-mathml {
+      position: absolute;
+      clip: rect(1px, 1px, 1px, 1px);
+      border: 0;
+      height: 1px;
+      width: 1px;
+      overflow: hidden;
+      padding: 0;
     }
 
     .ProseMirror-separator {
@@ -304,6 +387,36 @@
 
 .white-editor.viewer {
   border: none;
+  background-color: transparent;
+}
+
+/*
+ * drag handle / + 버튼 gutter.
+ * contentClassName의 we:px-* 유틸이 @layer base padding을 덮어쓰므로,
+ * 핸들이 켜진 에디터는 레이어 밖에서 left padding을 강제한다.
+ */
+.white-editor[data-drag-handle] .ProseMirror {
+  padding-left: 2.75rem !important;
+}
+
+/*
+ * 텍스트 선택 하이라이트.
+ * - native ::selection은 숨기고 VisibleSelection의 `.selection` 데코레이션만 사용
+ *   (Ctrl+A 등 contenteditable에서 ::selection이 거의 안 보이는 문제 대응)
+ * - @layer base 밖에 둬서 TipTap injectCSS와 우선순위 충돌을 피함
+ * - brand-weak(#f0f6ff)는 대비가 너무 낮아 weak2 사용
+ */
+.white-editor .ProseMirror .selection {
+  background-color: var(--we-brand-weak2);
+}
+
+.white-editor .ProseMirror ::selection,
+.white-editor .ProseMirror *::selection {
+  background-color: transparent;
+}
+
+.white-editor .ProseMirror ::-moz-selection,
+.white-editor .ProseMirror *::-moz-selection {
   background-color: transparent;
 }
 

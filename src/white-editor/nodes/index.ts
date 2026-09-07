@@ -15,3 +15,4 @@ export * from './highlight';
 export * from './mathematics';
 export * from './mention';
 export * from './page-link';
+export * from './slash-command';

@@ -8,31 +8,33 @@
 import type { RefObject } from 'react';
 import React from 'react';
 import { all, createLowlight } from 'lowlight';
+import {
+  CodeBlock,
+  CustomTableHeader,
+  MentionNode,
+  ResizableImage,
+  SlashCommand,
+  type MentionConfig,
+  createPageLinkExtension,
+} from '@/white-editor/nodes';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
 import Mathematics from '@tiptap/extension-mathematics';
+import { NodeRange } from '@tiptap/extension-node-range';
 import Placeholder from '@tiptap/extension-placeholder';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
 import { Table, TableCell, TableRow } from '@tiptap/extension-table';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyleKit } from '@tiptap/extension-text-style';
-import { Selection, CharacterCount, Dropcursor } from '@tiptap/extensions';
+import { CharacterCount, Dropcursor } from '@tiptap/extensions';
 import { ReactNodeViewRenderer, type Extension } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
-import {
-  CodeBlock,
-  CustomTableHeader,
-  MentionNode,
-  ResizableImage,
-  type MentionConfig,
-  createPageLinkExtension,
-} from '@/white-editor/nodes';
-
-import type { OverrideExtensionsConfig, CustomNodeViews } from '../../white-editor/editor/type/white-editor.type';
 import { CustomParagraph, mergeExtensions, processExtensions } from './extensions-helpers';
+import { VisibleSelection } from './visible-selection';
+import type { OverrideExtensionsConfig, CustomNodeViews } from '../../white-editor/editor/type/white-editor.type';
 
 // 에디터 전용 extensions
 export function createEditorExtensions<T, P extends Record<string, unknown> = Record<string, unknown>>(
@@ -101,8 +103,10 @@ export function createEditorExtensions<T, P extends Record<string, unknown> = Re
       color: 'var(--we-brand-light)',
       width: 2,
     }),
+    NodeRange,
     Table.configure({
       resizable: true,
+      allowTableNodeSelection: true,
     }),
     TableRow,
     CustomTableHeader,
@@ -118,7 +122,8 @@ export function createEditorExtensions<T, P extends Record<string, unknown> = Re
     Highlight.configure({ multicolor: true }),
     Superscript,
     Subscript,
-    Selection,
+    VisibleSelection,
+    SlashCommand,
     CodeBlockLowlight.extend({
       addNodeView() {
         if (typeof window === 'undefined') {

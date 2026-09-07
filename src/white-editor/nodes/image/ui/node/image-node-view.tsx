@@ -166,9 +166,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           currentWidth === '100%' ? 'we:w-full we:block' : 'we:inline-block we:max-w-full',
           caption && 'we:mb-2',
           resizeState.isResizing ? 'we:resizing' : '',
-          props.selected && props.editor.isEditable
-            ? 'we:selected we:border-none we:ring-2 we:ring-offset-2 we:ring-brand-default we:rounded-xs'
-            : ''
+          props.selected && props.editor.isEditable ? 'we:selected we:rounded-xs we:bg-brand-weak we:ring-0' : ''
         )}
         onMouseEnter={hoverHandlers.handleMouseEnter}
         onMouseLeave={hoverHandlers.handleMouseLeave}
@@ -239,7 +237,6 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
               }}
               onError={() => setImageLoadError(true)}
               draggable={false}
-              data-drag-handle
             />
           )}
         </div>
