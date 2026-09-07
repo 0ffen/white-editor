@@ -58,6 +58,8 @@ interface WhiteEditorUIProps {
   placeholder?: string;
   showToolbar?: boolean;
   showSelectionToolbar?: boolean;
+  /** 블록 왼쪽 drag handle 표시 여부. 기본 true */
+  showDragHandle?: boolean;
   /** 국제화 locale (ko | en | es). 지정 시 에디터 내 텍스트가 해당 언어로 동기화됨 */
   locale?: 'ko' | 'en' | 'es';
 }

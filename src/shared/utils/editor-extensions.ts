@@ -12,6 +12,7 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
 import Mathematics from '@tiptap/extension-mathematics';
+import { NodeRange } from '@tiptap/extension-node-range';
 import Placeholder from '@tiptap/extension-placeholder';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
@@ -101,6 +102,7 @@ export function createEditorExtensions<T, P extends Record<string, unknown> = Re
       color: 'var(--we-brand-light)',
       width: 2,
     }),
+    NodeRange,
     Table.configure({
       resizable: true,
     }),

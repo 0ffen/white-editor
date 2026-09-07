@@ -15,6 +15,7 @@ import {
   LinkFloatingDropdown,
 } from '@/white-editor';
 import { EditorContent, EditorContext, type JSONContent } from '@tiptap/react';
+import { BlockDragHandle } from './block-drag-handle';
 import '@/shared/styles/index.css';
 
 export type WhiteEditorRef = UseWhiteEditorReturn;
@@ -34,6 +35,7 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
     extension,
     showToolbar = true,
     showSelectionToolbar = true,
+    showDragHandle = true,
     locale,
   } = props;
   const t = useTranslate();
@@ -139,6 +141,7 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
                   contentClassName
                 )}
               />
+              {showDragHandle && editor && !disabled && <BlockDragHandle editor={editor} />}
               {showSelectionToolbar && <SelectionToolbar editor={editor} />}
               <LinkFloatingDropdown editor={editor} />
               <div className='we:mt-auto we:flex we:flex-col we:justify-end we:px-2'>
