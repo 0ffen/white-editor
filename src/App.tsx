@@ -156,7 +156,7 @@ export default function App() {
               disabled={false}
               onEmptyChange={setEditorEmpty}
               editorClassName='we:h-[1000px] we:rounded-md we:border we:border-border-default'
-              contentClassName='we:h-full we:px-2'
+              contentClassName='we:h-full we:py-2 we:pr-2'
               toolbarItems={WHITE_EDITOR_TOOLBAR_ITEMS}
               showSelectionToolbar={true}
               toolbarProps={{

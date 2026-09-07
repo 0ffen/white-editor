@@ -14,6 +14,8 @@ import {
   SelectionToolbar,
   LinkFloatingDropdown,
 } from '@/white-editor';
+import { SlashInputPanel } from '@/white-editor/nodes/slash-command/ui/slash-input-panel';
+import { SlashMenuPanel } from '@/white-editor/nodes/slash-command/ui/slash-menu-panel';
 import { EditorContent, EditorContext, type JSONContent } from '@tiptap/react';
 import { BlockDragHandle } from './block-drag-handle';
 import '@/shared/styles/index.css';
@@ -94,9 +96,9 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
         return;
       }
 
-      // 드래그 핸들이 블록 NodeSelection + focus를 직접 처리하므로 여기서 건드리지 않음
+      // 드래그 핸들 / + 버튼이 블록 NodeSelection·슬래시 트리거를 직접 처리
       const target = event.target as Element | null;
-      if (target?.closest?.('.we-drag-handle-wrapper, .we-drag-handle')) {
+      if (target?.closest?.('.we-drag-handle-wrapper, .we-drag-handle, .we-block-add-handle')) {
         return;
       }
 
@@ -129,6 +131,7 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
           editorClassName
         )}
         data-disabled={disabled || undefined}
+        data-drag-handle={showDragHandle && !disabled ? '' : undefined}
         data-we-portal-container=''
         onClick={handleEditorClick}
       >
@@ -150,6 +153,8 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
               {showDragHandle && editor && !disabled && <BlockDragHandle editor={editor} />}
               {showSelectionToolbar && <SelectionToolbar editor={editor} />}
               <LinkFloatingDropdown editor={editor} />
+              {editor && !disabled && <SlashInputPanel editor={editor} />}
+              {editor && !disabled && <SlashMenuPanel editor={editor} />}
               <div className='we:mt-auto we:flex we:flex-col we:justify-end we:px-2'>
                 {extension?.character?.show && (
                   <span

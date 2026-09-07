@@ -134,6 +134,9 @@ importers:
       '@tiptap/starter-kit':
         specifier: ^3.26.0
         version: 3.26.0
+      '@tiptap/suggestion':
+        specifier: 3.26.0
+        version: 3.26.0(@tiptap/core@3.26.0(@tiptap/pm@3.26.0))(@tiptap/pm@3.26.0)
       '@toast-ui/react-image-editor':
         specifier: ^3.15.2
         version: 3.15.2(react@19.2.3)

@@ -13,6 +13,7 @@ import {
   CustomTableHeader,
   MentionNode,
   ResizableImage,
+  SlashCommand,
   type MentionConfig,
   createPageLinkExtension,
 } from '@/white-editor/nodes';
@@ -122,6 +123,7 @@ export function createEditorExtensions<T, P extends Record<string, unknown> = Re
     Superscript,
     Subscript,
     VisibleSelection,
+    SlashCommand,
     CodeBlockLowlight.extend({
       addNodeView() {
         if (typeof window === 'undefined') {
