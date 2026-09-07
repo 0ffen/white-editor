@@ -8,6 +8,14 @@
 import type { RefObject } from 'react';
 import React from 'react';
 import { all, createLowlight } from 'lowlight';
+import {
+  CodeBlock,
+  CustomTableHeader,
+  MentionNode,
+  ResizableImage,
+  type MentionConfig,
+  createPageLinkExtension,
+} from '@/white-editor/nodes';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
@@ -23,17 +31,8 @@ import { Selection, CharacterCount, Dropcursor } from '@tiptap/extensions';
 import { ReactNodeViewRenderer, type Extension } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
-import {
-  CodeBlock,
-  CustomTableHeader,
-  MentionNode,
-  ResizableImage,
-  type MentionConfig,
-  createPageLinkExtension,
-} from '@/white-editor/nodes';
-
-import type { OverrideExtensionsConfig, CustomNodeViews } from '../../white-editor/editor/type/white-editor.type';
 import { CustomParagraph, mergeExtensions, processExtensions } from './extensions-helpers';
+import type { OverrideExtensionsConfig, CustomNodeViews } from '../../white-editor/editor/type/white-editor.type';
 
 // 에디터 전용 extensions
 export function createEditorExtensions<T, P extends Record<string, unknown> = Record<string, unknown>>(
@@ -105,6 +104,7 @@ export function createEditorExtensions<T, P extends Record<string, unknown> = Re
     NodeRange,
     Table.configure({
       resizable: true,
+      allowTableNodeSelection: true,
     }),
     TableRow,
     CustomTableHeader,

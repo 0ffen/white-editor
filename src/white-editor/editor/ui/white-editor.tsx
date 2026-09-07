@@ -94,6 +94,12 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
         return;
       }
 
+      // 드래그 핸들이 블록 NodeSelection + focus를 직접 처리하므로 여기서 건드리지 않음
+      const target = event.target as Element | null;
+      if (target?.closest?.('.we-drag-handle-wrapper, .we-drag-handle')) {
+        return;
+      }
+
       if (editor && !disabled) {
         focus();
       }

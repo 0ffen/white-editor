@@ -97,7 +97,9 @@ export function BlockDragHandle({ editor }: BlockDragHandleProps) {
       const { pos } = currentRef.current;
       if (pos < 0 || editor.isDestroyed || !editor.isEditable) return;
 
-      editor.chain().setNodeSelection(pos).run();
+      // NodeSelection 후 focus 필수 — 없으면 Delete/Copy/Cut 단축키가 에디터로 가지 않음.
+      // focus()는 NodeSelection을 유지한 채 view만 포커스한다 (TipTap focus null + non-text selection).
+      editor.chain().setNodeSelection(pos).focus().run();
     },
     [editor]
   );
