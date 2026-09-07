@@ -166,7 +166,7 @@ export const ImageNodeView: React.FC<NodeViewProps> = (props) => {
           currentWidth === '100%' ? 'we:w-full we:block' : 'we:inline-block we:max-w-full',
           caption && 'we:mb-2',
           resizeState.isResizing ? 'we:resizing' : '',
-          props.selected && props.editor.isEditable ? 'we:selected we:rounded-xs we:bg-brand-weak we:ring-0' : ''
+          props.selected && props.editor.isEditable ? 'we:selected we:rounded-xs we:bg-brand-weak2 we:ring-0' : ''
         )}
         onMouseEnter={hoverHandlers.handleMouseEnter}
         onMouseLeave={hoverHandlers.handleMouseLeave}

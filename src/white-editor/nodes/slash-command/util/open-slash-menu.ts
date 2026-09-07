@@ -2,12 +2,46 @@
 
 import type { Editor } from '@tiptap/core';
 import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
+import { exitSuggestion } from '@tiptap/suggestion';
+import { slashCommandPluginKey } from './slash-suggestion';
 
-export const SLASH_OPEN_MENU_EVENT = 'slash-open-menu';
+export const SLASH_OPEN_MENU_EVENT = 'we-slash-open-menu';
+export const SLASH_CLOSE_MENU_EVENT = 'we-slash-close-menu';
+
+export type SlashMenuEventDetail = {
+  editor: Editor;
+};
+
+function isSameEditor(detail: unknown, editor: Editor): detail is SlashMenuEventDetail {
+  return !!detail && typeof detail === 'object' && (detail as SlashMenuEventDetail).editor === editor;
+}
+
+export function isSlashMenuEventForEditor(event: Event, editor: Editor): boolean {
+  return isSameEditor((event as CustomEvent<SlashMenuEventDetail>).detail, editor);
+}
+
+/** `/` suggestion 팝업이 있으면 닫는다. */
+export function dismissSlashSuggestion(editor: Editor) {
+  if (editor.isDestroyed) return;
+  try {
+    exitSuggestion(editor.view, slashCommandPluginKey);
+  } catch {
+    // suggestion 미활성 시 무시
+  }
+}
 
 export function openSlashMenu(editor: Editor) {
+  dismissSlashSuggestion(editor);
   window.dispatchEvent(
-    new CustomEvent(SLASH_OPEN_MENU_EVENT, {
+    new CustomEvent<SlashMenuEventDetail>(SLASH_OPEN_MENU_EVENT, {
+      detail: { editor },
+    })
+  );
+}
+
+export function closeSlashMenu(editor: Editor) {
+  window.dispatchEvent(
+    new CustomEvent<SlashMenuEventDetail>(SLASH_CLOSE_MENU_EVENT, {
       detail: { editor },
     })
   );

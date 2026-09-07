@@ -17,17 +17,28 @@ import {
   WhiteEditor,
   WhiteEditorThemeStyle,
   WhiteViewer,
+  type DragHandleGutterMode,
   type WhiteEditorRef,
 } from './white-editor';
 
 type Locale = 'ko' | 'en' | 'es';
+
+const GUTTER_OPTIONS: { value: string; label: string; gutter: DragHandleGutterMode; show: boolean }[] = [
+  { value: 'reserve', label: 'reserve (자리 확보)', gutter: 'reserve', show: true },
+  { value: 'overlay', label: 'overlay (오버레이)', gutter: 'overlay', show: true },
+  { value: 'false', label: 'false (자리 없음)', gutter: false, show: true },
+  { value: 'off', label: '핸들 숨김', gutter: 'reserve', show: false },
+];
 
 export default function App() {
   const [content, setContent] = useState<JSONContent>(createEmptyContent());
   const [viewerKey, setViewerKey] = useState(0);
   const [locale, setLocale] = useState<Locale>('ko');
   const [editorEmpty, setEditorEmpty] = useState(true);
+  const [dragHandleMode, setDragHandleMode] = useState('reserve');
   const editorRef = useRef<WhiteEditorRef>(null);
+
+  const dragHandleConfig = GUTTER_OPTIONS.find((o) => o.value === dragHandleMode) ?? GUTTER_OPTIONS[0];
 
   // CJK 강조(**) 파싱 테스트용 — 문제의 문장을 미리 채워둠
   const [markdown, setMarkdown] = useState(
@@ -138,7 +149,7 @@ export default function App() {
           </section>
 
           <section className='we:space-y-3 we:w-full'>
-            <div className='we:mb-8 we:flex we:items-center we:justify-center we:gap-3'>
+            <div className='we:mb-8 we:flex we:flex-wrap we:items-center we:justify-center we:gap-3'>
               <h2 className='we:text-3xl we:font-bold'>Editor</h2>
               <Button type='button' variant='secondary' className='we:w-fit' onClick={toggleMode}>
                 {mode === 'light' ? 'Dark Mode' : 'Light Mode'}
@@ -146,6 +157,18 @@ export default function App() {
               <Button type='button' variant='secondary' className='we:w-fit' onClick={handleTransformToViewer}>
                 변환
               </Button>
+              <Select value={dragHandleMode} onValueChange={setDragHandleMode}>
+                <SelectTrigger className='we:w-[220px]'>
+                  <SelectValue placeholder='Drag gutter' />
+                </SelectTrigger>
+                <SelectContent>
+                  {GUTTER_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <WhiteEditorThemeStyle theme={{ mode: mode, colors: {}, zIndex: {} }} />
             <WhiteEditor
@@ -155,8 +178,10 @@ export default function App() {
               ref={editorRef}
               disabled={false}
               onEmptyChange={setEditorEmpty}
+              showDragHandle={dragHandleConfig.show}
+              dragHandleGutter={dragHandleConfig.gutter}
               editorClassName='we:h-[1000px] we:rounded-md we:border we:border-border-default'
-              contentClassName='we:h-full we:py-2 we:pr-2'
+              contentClassName='we:h-full we:py-2'
               toolbarItems={WHITE_EDITOR_TOOLBAR_ITEMS}
               showSelectionToolbar={true}
               toolbarProps={{
@@ -233,6 +258,54 @@ export default function App() {
                   </div>
                 </div>
               }
+            />
+          </section>
+
+          <section className='we:space-y-3 we:w-full'>
+            <div className='we:mb-4 we:flex we:items-center we:justify-center we:gap-3'>
+              <h2 className='we:text-2xl we:font-bold'>Editor B (멀티 에디터 테스트)</h2>
+            </div>
+            <WhiteEditor
+              placeholder='두 번째 에디터입니다. + 메뉴가 하나만 열려야 합니다.'
+              locale={locale}
+              disabled={false}
+              editorClassName='we:h-[320px] we:rounded-md we:border we:border-border-default'
+              contentClassName='we:h-full we:py-2 we:pr-2'
+              toolbarItems={WHITE_EDITOR_TOOLBAR_ITEMS}
+              showSelectionToolbar={true}
+              extension={{
+                character: { show: true },
+                imageUpload: {
+                  upload: handleImageUpload,
+                  maxSize: 1024 * 1024 * 10,
+                  accept: 'image/*',
+                  limit: 1,
+                },
+              }}
+            />
+          </section>
+
+          <section className='we:space-y-3 we:w-full'>
+            <div className='we:mb-4 we:flex we:items-center we:justify-center we:gap-3'>
+              <h2 className='we:text-2xl we:font-bold'>Editor C (멀티 에디터 테스트)</h2>
+            </div>
+            <WhiteEditor
+              placeholder='세 번째 에디터입니다.'
+              locale={locale}
+              disabled={false}
+              editorClassName='we:h-[320px] we:rounded-md we:border we:border-border-default'
+              contentClassName='we:h-full we:py-2 we:pr-2'
+              toolbarItems={WHITE_EDITOR_TOOLBAR_ITEMS}
+              showSelectionToolbar={true}
+              extension={{
+                character: { show: true },
+                imageUpload: {
+                  upload: handleImageUpload,
+                  maxSize: 1024 * 1024 * 10,
+                  accept: 'image/*',
+                  limit: 1,
+                },
+              }}
             />
           </section>
 

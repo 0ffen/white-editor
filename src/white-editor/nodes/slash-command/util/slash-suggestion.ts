@@ -1,12 +1,13 @@
 'use client';
 
-import { getPortalContainer, updatePosition } from '@/shared/utils';
+import { attachFloatingToSelection, getPortalContainer } from '@/shared/utils';
 import type { Editor } from '@tiptap/core';
 import { PluginKey } from '@tiptap/pm/state';
 import { ReactRenderer } from '@tiptap/react';
 import { exitSuggestion, type SuggestionOptions } from '@tiptap/suggestion';
 import { filterSlashItems } from '../content/slash-items';
 import { SlashCommandList } from '../ui/slash-command-list';
+import { closeSlashMenu } from './open-slash-menu';
 import type { SlashCommandItem } from '../type/slash-command.type';
 
 export const slashCommandPluginKey = new PluginKey('slashCommand');
@@ -36,10 +37,17 @@ export function createSlashSuggestion(): Omit<SuggestionOptions<SlashCommandItem
     },
     render: () => {
       let component: ReactRenderer | null = null;
+      let detachFloating: (() => void) | null = null;
+      let activeEditor: Editor | null = null;
 
       return {
         onStart: (props) => {
-          // 이전 팝업이 남아 있으면 정리 (moved/changed 또는 stale race 대비)
+          // + 버튼 메뉴와 동시에 뜨지 않도록 닫기
+          activeEditor = props.editor as Editor;
+          closeSlashMenu(activeEditor);
+
+          detachFloating?.();
+          detachFloating = null;
           destroySlashPopup(component);
           component = null;
 
@@ -48,16 +56,14 @@ export function createSlashSuggestion(): Omit<SuggestionOptions<SlashCommandItem
               items: props.items,
               command: props.command,
             },
-            editor: props.editor as Editor,
+            editor: activeEditor,
           });
 
           const element = component.element as HTMLElement;
-          element.style.position = 'absolute';
-          element.style.zIndex = 'var(--we-z-index-floating, 50)';
-          getPortalContainer(props.editor as Editor).appendChild(element);
+          getPortalContainer(activeEditor).appendChild(element);
 
           if (props.clientRect) {
-            updatePosition(props.editor as Editor, element);
+            detachFloating = attachFloatingToSelection(activeEditor, element);
           }
         },
         onUpdate: (props) => {
@@ -66,15 +72,18 @@ export function createSlashSuggestion(): Omit<SuggestionOptions<SlashCommandItem
             items: props.items,
             command: props.command,
           });
-          if (!props.clientRect) return;
-          updatePosition(props.editor as Editor, component.element as HTMLElement);
+          // selection 변경 시 autoUpdate가 따라가므로 별도 위치 갱신 불필요
         },
         onKeyDown: (props) => {
           if (!component) return false;
           if (props.event.key === 'Escape') {
+            detachFloating?.();
+            detachFloating = null;
             destroySlashPopup(component);
             component = null;
-            exitSuggestion(props.editor.view, slashCommandPluginKey);
+            if (activeEditor && !activeEditor.isDestroyed) {
+              exitSuggestion(activeEditor.view, slashCommandPluginKey);
+            }
             return true;
           }
           return (
@@ -83,16 +92,17 @@ export function createSlashSuggestion(): Omit<SuggestionOptions<SlashCommandItem
           );
         },
         onExit: (props) => {
-          // Suggestion view.update는 async라 start→stop→start 레이스에서
-          // 오래된 onExit가 새 팝업을 지울 수 있음. 플러그인이 다시 active면 유지.
           const editor = props.editor as Editor;
           if (!editor.isDestroyed) {
             const state = slashCommandPluginKey.getState(editor.state) as { active?: boolean } | undefined;
             if (state?.active) return;
           }
 
+          detachFloating?.();
+          detachFloating = null;
           destroySlashPopup(component);
           component = null;
+          activeEditor = null;
         },
       };
     },

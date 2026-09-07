@@ -38,9 +38,13 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
     showToolbar = true,
     showSelectionToolbar = true,
     showDragHandle = true,
+    dragHandleGutter = 'reserve',
     locale,
   } = props;
   const t = useTranslate();
+
+  const dragHandleEnabled = showDragHandle && !disabled;
+  const resolvedGutter = dragHandleEnabled ? (dragHandleGutter === false ? false : dragHandleGutter) : false;
 
   // locale prop이 명시적으로 주어진 경우에만 i18n 언어를 동기적으로 설정한다.
   // 호스트 앱이 언어를 관리하는 경우(locale 미지정) 호스트의 언어를 바꾸지 않는다.
@@ -131,7 +135,8 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
           editorClassName
         )}
         data-disabled={disabled || undefined}
-        data-drag-handle={showDragHandle && !disabled ? '' : undefined}
+        data-drag-handle={dragHandleEnabled ? '' : undefined}
+        data-drag-handle-gutter={resolvedGutter === false ? undefined : resolvedGutter}
         data-we-portal-container=''
         onClick={handleEditorClick}
       >
@@ -150,7 +155,9 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
                   contentClassName
                 )}
               />
-              {showDragHandle && editor && !disabled && <BlockDragHandle editor={editor} />}
+              {dragHandleEnabled && editor && (
+                <BlockDragHandle editor={editor} gutter={resolvedGutter === false ? 'overlay' : resolvedGutter} />
+              )}
               {showSelectionToolbar && <SelectionToolbar editor={editor} />}
               <LinkFloatingDropdown editor={editor} />
               {editor && !disabled && <SlashInputPanel editor={editor} />}
