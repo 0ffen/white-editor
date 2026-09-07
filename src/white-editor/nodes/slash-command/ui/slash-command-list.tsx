@@ -5,10 +5,10 @@ import { useTranslate } from '@/shared';
 import { cn } from '@/shared/utils';
 import type { SlashCommandItem, SlashSectionId } from '../type/slash-command.type';
 
-const SECTION_ORDER: SlashSectionId[] = ['basics', 'text', 'math'];
+const SECTION_ORDER: SlashSectionId[] = ['text', 'basics', 'math'];
 const SECTION_LABEL_KEY: Record<SlashSectionId, string> = {
-  basics: '기본',
   text: '텍스트',
+  basics: '기본',
   math: '수식',
 };
 
@@ -105,7 +105,7 @@ export const SlashCommandList = forwardRef<SlashCommandListHandle, SlashCommandL
             : 'we:bg-elevation-dropdown we:shadow-popover we:z-floating we:border-border-default we:w-64 we:rounded-md we:border'
         )}
       >
-        <div className='we:p-4 we:text-center we:text-sm we:text-muted-foreground'>{t('데이터가 없습니다')}</div>
+        <div className='we:p-4 we:text-center we:text-xs we:text-muted-foreground'>{t('데이터가 없습니다')}</div>
       </div>
     );
   }

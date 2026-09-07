@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { createPortal } from 'react-dom';
-import { getPortalContainer, sanitizeUrl, updatePosition } from '@/shared/utils';
+import { attachFloatingToSelection, getPortalContainer, sanitizeUrl } from '@/shared/utils';
 import { LinkMain } from '@/white-editor/nodes/link/ui/link-main';
 import type { MathType } from '@/white-editor/nodes/mathematics/type/math.type';
 import { MathPopoverContent } from '@/white-editor/nodes/mathematics/ui/math-popover-content';
@@ -30,11 +30,6 @@ export function SlashInputPanel({ editor }: SlashInputPanelProps) {
     setUrl('');
     setMathString('');
   }, []);
-
-  const reposition = React.useCallback(() => {
-    if (!editor || editor.isDestroyed || !panelRef.current) return;
-    updatePosition(editor, panelRef.current);
-  }, [editor]);
 
   React.useEffect(() => {
     if (!editor) return;
@@ -71,9 +66,7 @@ export function SlashInputPanel({ editor }: SlashInputPanelProps) {
     const element = panelRef.current;
     if (!element) return;
 
-    element.style.position = 'absolute';
-    element.style.zIndex = 'var(--we-z-index-floating, 50)';
-    reposition();
+    const detachFloating = attachFloatingToSelection(editor, element);
 
     const handlePointerDown = (event: MouseEvent) => {
       if (element.contains(event.target as Node)) return;
@@ -93,15 +86,14 @@ export function SlashInputPanel({ editor }: SlashInputPanelProps) {
       document.addEventListener('mousedown', handlePointerDown);
     }, 0);
     document.addEventListener('keydown', handleKeyDown);
-    editor.on('selectionUpdate', reposition);
 
     return () => {
+      detachFloating();
       window.clearTimeout(timer);
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('keydown', handleKeyDown);
-      editor.off('selectionUpdate', reposition);
     };
-  }, [mode, editor, close, reposition]);
+  }, [mode, editor, close]);
 
   const applyLink = React.useCallback(() => {
     if (!editor || editor.isDestroyed) return;

@@ -60,9 +60,20 @@ interface WhiteEditorUIProps {
   showSelectionToolbar?: boolean;
   /** 블록 왼쪽 drag handle 표시 여부. 기본 true */
   showDragHandle?: boolean;
+  /**
+   * drag handle용 왼쪽 거터 확보 방식.
+   * - `reserve`: 콘텐츠 왼쪽 padding에 핸들 자리 확보 (기본)
+   * - `overlay`: 좌우 padding은 동일하게 두고 핸들은 콘텐츠 위에 오버레이
+   * - `false`: 거터 없음 (`showDragHandle`이 true여도 자리 미확보)
+   * `showDragHandle={false}`이면 무시되고 거터도 없음.
+   */
+  dragHandleGutter?: DragHandleGutterMode;
   /** 국제화 locale (ko | en | es). 지정 시 에디터 내 텍스트가 해당 언어로 동기화됨 */
   locale?: 'ko' | 'en' | 'es';
 }
+
+/** drag handle 왼쪽 공간 확보 모드 */
+type DragHandleGutterMode = 'reserve' | 'overlay' | false;
 
 interface WhiteEditorExtensions<T = Record<string, unknown>> {
   extension?: EditorExtensions<T>;
@@ -158,5 +169,6 @@ export type {
   OverrideExtensionsConfig,
   CustomNodeViews,
   ExtensibleEditorConfig,
+  DragHandleGutterMode,
 };
 export type { WhiteEditorThemeColors, WhiteEditorThemeZIndex } from '@/shared/utils/theme';

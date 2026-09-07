@@ -38,6 +38,7 @@ export type {
   EditorExtensions,
   WhiteEditorRef,
   UseWhiteEditorReturn,
+  DragHandleGutterMode,
 } from '@/white-editor';
 
 export type { JSONContent } from '@tiptap/react';

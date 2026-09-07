@@ -37,6 +37,7 @@ export type {
   EditorExtensions,
   WhiteEditorRef,
   UseWhiteEditorReturn,
+  DragHandleGutterMode,
 } from './white-editor';
 
 //tiptap
