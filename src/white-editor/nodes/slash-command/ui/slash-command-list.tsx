@@ -19,12 +19,14 @@ export interface SlashCommandListHandle {
 export interface SlashCommandListProps {
   items: SlashCommandItem[];
   command: (item: SlashCommandItem) => void;
-  /** true면 외곽 테두리/배경 없이 리스트만 렌더 (상위에 패널 크롬이 있을 때) */
-  bare?: boolean;
 }
 
+/** `/` 슬래시 메뉴와 `+` 메뉴가 공유하는 패널 크롬 */
+export const SLASH_MENU_SURFACE_CLASS =
+  'we-slash-menu we:relative we:flex we:max-h-80 we:w-64 we:flex-col we:overflow-y-auto we:py-1.5 we:bg-elevation-dropdown we:shadow-popover we:z-modal we:border-border-default we:rounded-md we:border';
+
 export const SlashCommandList = forwardRef<SlashCommandListHandle, SlashCommandListProps>(function SlashCommandList(
-  { items, command, bare = false },
+  { items, command },
   ref
 ) {
   const t = useTranslate();
@@ -95,16 +97,7 @@ export const SlashCommandList = forwardRef<SlashCommandListHandle, SlashCommandL
 
   if (flatItems.length === 0) {
     return (
-      <div
-        ref={containerRef}
-        onMouseDown={preventEditorBlur}
-        className={cn(
-          'we-slash-menu we:relative we:flex we:max-h-72 we:w-full we:flex-col we:overflow-y-auto',
-          bare
-            ? 'we:py-1.5'
-            : 'we:bg-elevation-dropdown we:shadow-popover we:z-floating we:border-border-default we:w-64 we:rounded-md we:border'
-        )}
-      >
+      <div ref={containerRef} onMouseDown={preventEditorBlur} className={SLASH_MENU_SURFACE_CLASS}>
         <div className='we:p-4 we:text-center we:text-xs we:text-muted-foreground'>{t('데이터가 없습니다')}</div>
       </div>
     );
@@ -113,16 +106,7 @@ export const SlashCommandList = forwardRef<SlashCommandListHandle, SlashCommandL
   let runningIndex = 0;
 
   return (
-    <div
-      ref={containerRef}
-      onMouseDown={preventEditorBlur}
-      className={cn(
-        'we-slash-menu we:relative we:flex we:max-h-80 we:w-full we:flex-col we:overflow-y-auto we:py-1.5',
-        bare
-          ? null
-          : 'we:bg-elevation-dropdown we:shadow-popover we:z-floating we:border-border-default we:w-64 we:rounded-md we:border'
-      )}
-    >
+    <div ref={containerRef} onMouseDown={preventEditorBlur} className={SLASH_MENU_SURFACE_CLASS}>
       {sections.map((group) => (
         <div key={group.section} className='we:flex we:flex-col'>
           <div className='we:px-3 we:py-1 we:text-[11px] we:font-medium we:text-muted-foreground'>

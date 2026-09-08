@@ -10,6 +10,7 @@ import React from 'react';
 import { all, createLowlight } from 'lowlight';
 import {
   CodeBlock,
+  CustomTableCell,
   CustomTableHeader,
   MentionNode,
   ResizableImage,
@@ -25,7 +26,7 @@ import { NodeRange } from '@tiptap/extension-node-range';
 import Placeholder from '@tiptap/extension-placeholder';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
-import { Table, TableCell, TableRow } from '@tiptap/extension-table';
+import { Table, TableRow } from '@tiptap/extension-table';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyleKit } from '@tiptap/extension-text-style';
 import { CharacterCount, Dropcursor } from '@tiptap/extensions';
@@ -110,7 +111,7 @@ export function createEditorExtensions<T, P extends Record<string, unknown> = Re
     }),
     TableRow,
     CustomTableHeader,
-    TableCell,
+    CustomTableCell,
     TextAlign.configure({ types: ['heading', 'paragraph', 'image'] }),
     TaskList,
     TaskItem.configure({ nested: true }),

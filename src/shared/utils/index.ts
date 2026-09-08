@@ -13,3 +13,4 @@ export * from './get-headings-from-content';
 export * from './check-editor-empty';
 export * from './transform-pasted-text-normal';
 export * from './get-portal-container';
+export * from './is-event-for-editor';

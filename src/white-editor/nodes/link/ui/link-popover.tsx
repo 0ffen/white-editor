@@ -3,7 +3,7 @@ import * as React from 'react';
 import { LinkIcon } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger, type ButtonProps } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
-import { cn } from '@/shared/utils';
+import { cn, isEventForEditor } from '@/shared/utils';
 import { useLinkPopover, type UseLinkPopoverConfig, LinkMain, LinkButton } from '@/white-editor';
 
 export interface LinkPopoverProps extends Omit<ButtonProps, 'type'>, UseLinkPopoverConfig {
@@ -41,7 +41,8 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
 
     // 링크 드롭다운이 열려있으면 기본 Popover를 닫음
     React.useEffect(() => {
-      const handleLinkDropdownOpen = () => {
+      const handleLinkDropdownOpen = (event: Event) => {
+        if (!isEventForEditor(event, editor)) return;
         if (isOpen) {
           setIsOpen(false);
         }
@@ -52,7 +53,7 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
       return () => {
         window.removeEventListener('link-dropdown-open', handleLinkDropdownOpen);
       };
-    }, [isOpen]);
+    }, [editor, isOpen]);
 
     const handleOnOpenChange = React.useCallback(
       (nextIsOpen: boolean) => {
@@ -76,14 +77,14 @@ export const LinkPopover = React.forwardRef<HTMLButtonElement, LinkPopoverProps>
         if (isActive) {
           setIsOpen(false);
           // 커스텀 이벤트 발생
-          window.dispatchEvent(new CustomEvent('link-toolbar-button-click'));
+          window.dispatchEvent(new CustomEvent('link-toolbar-button-click', { detail: { editor } }));
           return;
         }
 
         // 링크가 없으면 일반 Popover 표시
         setIsOpen(!isOpen);
       },
-      [onClick, isOpen, isActive]
+      [onClick, isOpen, isActive, editor]
     );
 
     // 링크가 활성화되어 있을 때는 LinkFloatingDropdown을 사용하므로

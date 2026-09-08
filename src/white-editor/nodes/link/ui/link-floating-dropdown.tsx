@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useTranslate } from '@/shared';
 import { Popover, PopoverContent, PopoverAnchor } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
-import { cn } from '@/shared/utils';
+import { cn, isEventForEditor } from '@/shared/utils';
 import { useLinkPopover, LinkMain } from '@/white-editor';
 import type { Editor } from '@tiptap/react';
 
@@ -58,13 +58,23 @@ export function LinkFloatingDropdown({ editor: providedEditor, className }: Link
     [localUrl]
   );
 
+  const emitLinkEvent = React.useCallback(
+    (name: string) => {
+      if (!editor) return;
+      window.dispatchEvent(new CustomEvent(name, { detail: { editor } }));
+    },
+    [editor]
+  );
+
   const anchorRef = React.useRef<HTMLDivElement>(null);
 
   // 플로팅 툴바의 링크 버튼 클릭 시: 항상 선택 영역 아래에 드롭다운 노출 (첫 입력/수정 동일)
   React.useEffect(() => {
     if (!editor) return;
 
-    const handleToolbarLinkClick = () => {
+    const handleToolbarLinkClick = (event: Event) => {
+      if (!isEventForEditor(event, editor)) return;
+
       const { state } = editor;
       const { selection } = state;
       const { from, to } = selection;
@@ -103,8 +113,8 @@ export function LinkFloatingDropdown({ editor: providedEditor, className }: Link
         clickedLinkRef.current = null;
         hoveredLinkRef.current = null;
         toolbarButtonClickRef.current = false;
-        window.dispatchEvent(new CustomEvent('link-dropdown-close'));
-        window.dispatchEvent(new CustomEvent('link-hover-end'));
+        emitLinkEvent('link-dropdown-close');
+        emitLinkEvent('link-hover-end');
         return;
       }
 
@@ -115,8 +125,8 @@ export function LinkFloatingDropdown({ editor: providedEditor, className }: Link
         clickedLinkRef.current = null;
         hoveredLinkRef.current = null;
         toolbarButtonClickRef.current = false;
-        window.dispatchEvent(new CustomEvent('link-dropdown-close'));
-        window.dispatchEvent(new CustomEvent('link-hover-end'));
+        emitLinkEvent('link-dropdown-close');
+        emitLinkEvent('link-hover-end');
       }
     };
 
@@ -125,7 +135,7 @@ export function LinkFloatingDropdown({ editor: providedEditor, className }: Link
     return () => {
       editor.off('selectionUpdate', updatePosition);
     };
-  }, [editor, isVisible, isPositionReady]);
+  }, [editor, isVisible, isPositionReady, emitLinkEvent]);
 
   // 드래그 시작 시 드롭다운 닫기
   React.useEffect(() => {
@@ -145,8 +155,8 @@ export function LinkFloatingDropdown({ editor: providedEditor, className }: Link
           clickedLinkRef.current = null;
           hoveredLinkRef.current = null;
           toolbarButtonClickRef.current = false;
-          window.dispatchEvent(new CustomEvent('link-dropdown-close'));
-          window.dispatchEvent(new CustomEvent('link-hover-end'));
+          emitLinkEvent('link-dropdown-close');
+          emitLinkEvent('link-hover-end');
         }, 50);
       }
     };
@@ -157,7 +167,7 @@ export function LinkFloatingDropdown({ editor: providedEditor, className }: Link
     return () => {
       editorDom.removeEventListener('mousedown', handleMouseDown);
     };
-  }, [editor, isVisible]);
+  }, [editor, isVisible, emitLinkEvent]);
 
   // 외부 클릭 시 드롭다운 닫기
   React.useEffect(() => {
@@ -211,15 +221,15 @@ export function LinkFloatingDropdown({ editor: providedEditor, className }: Link
     clickedLinkRef.current = null;
     hoveredLinkRef.current = null;
     toolbarButtonClickRef.current = false;
-    window.dispatchEvent(new CustomEvent('link-dropdown-close'));
-    window.dispatchEvent(new CustomEvent('link-hover-end'));
+    emitLinkEvent('link-dropdown-close');
+    emitLinkEvent('link-hover-end');
 
     setTimeout(() => {
       editor.commands.blur();
       const { selection: currentSelection } = editor.state;
       if (!currentSelection.empty) editor.commands.setTextSelection(currentSelection.from);
     }, 10);
-  }, [editor, localUrl, url]);
+  }, [editor, localUrl, url, emitLinkEvent]);
 
   const handleRemoveLink = React.useCallback(() => {
     removeLink();
@@ -228,31 +238,33 @@ export function LinkFloatingDropdown({ editor: providedEditor, className }: Link
     clickedLinkRef.current = null;
     hoveredLinkRef.current = null;
     toolbarButtonClickRef.current = false;
-    window.dispatchEvent(new CustomEvent('link-dropdown-close'));
-    window.dispatchEvent(new CustomEvent('link-hover-end'));
-  }, [removeLink]);
+    emitLinkEvent('link-dropdown-close');
+    emitLinkEvent('link-hover-end');
+  }, [removeLink, emitLinkEvent]);
 
-  const handleOpenChange = React.useCallback((open: boolean) => {
-    // 팝오버가 닫히려고 할 때, 드롭다운에 호버 중이거나 링크에 호버 중이면 닫지 않음
-    if (!open) {
-      // 드롭다운에 호버 중이거나 링크에 호버 중이면 닫지 않음
-      if (isHoveringDropdownRef.current || hoveredLinkRef.current || clickedLinkRef.current) {
-        // 강제로 다시 열기
-        requestAnimationFrame(() => {
-          setIsVisible(true);
-        });
-        return;
+  const handleOpenChange = React.useCallback(
+    (open: boolean) => {
+      // 팝오버가 닫히려고 할 때, 드롭다운에 호버 중이거나 링크에 호버 중이면 닫지 않음
+      if (!open) {
+        // 드롭다운에 호버 중이거나 링크에 호버 중이면 닫지 않음
+        if (isHoveringDropdownRef.current || hoveredLinkRef.current || clickedLinkRef.current) {
+          // 강제로 다시 열기
+          requestAnimationFrame(() => {
+            setIsVisible(true);
+          });
+          return;
+        }
+        // 드롭다운 닫힘 이벤트 발생
+        setIsPositionReady(false);
+        emitLinkEvent('link-dropdown-close');
+        emitLinkEvent('link-hover-end');
+      } else {
+        emitLinkEvent('link-dropdown-open');
       }
-      // 드롭다운 닫힘 이벤트 발생
-      setIsPositionReady(false);
-      window.dispatchEvent(new CustomEvent('link-dropdown-close'));
-      window.dispatchEvent(new CustomEvent('link-hover-end'));
-    } else {
-      // 드롭다운 열림 이벤트 발생
-      window.dispatchEvent(new CustomEvent('link-dropdown-open'));
-    }
-    setIsVisible(open);
-  }, []);
+      setIsVisible(open);
+    },
+    [emitLinkEvent]
+  );
 
   // 플로팅 툴바 버튼 클릭으로 열린 경우 또는 링크가 활성화된 경우 표시
   const shouldShow = isVisible && (clickedLinkRef.current || toolbarButtonClickRef.current || isActive);

@@ -63,7 +63,7 @@ export function createSlashSuggestion(): Omit<SuggestionOptions<SlashCommandItem
           getPortalContainer(activeEditor).appendChild(element);
 
           if (props.clientRect) {
-            detachFloating = attachFloatingToSelection(activeEditor, element);
+            detachFloating = attachFloatingToSelection(activeEditor, element, { layer: 'modal' });
           }
         },
         onUpdate: (props) => {

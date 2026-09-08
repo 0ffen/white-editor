@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useTiptapEditor } from '@/shared/hooks';
 import { isNodeTypeSelected } from '@/shared/utils';
 import { isTableActive, shouldShowTableButton, type TableActionItem } from '@/white-editor';
+import { runTableAction } from '@/white-editor/nodes/table/util/run-table-action';
 import type { Editor } from '@tiptap/react';
 
 export interface UseTableDropdownMenuConfig {
@@ -40,10 +41,9 @@ const executeTableAction = (editor: Editor, action: string) => {
       chain.insertTable({ rows: 2, cols: 2, withHeaderRow: true }).run();
       break;
     case 'addColumnBefore':
-      chain.addColumnBefore().run();
-      break;
     case 'addColumnAfter':
-      chain.addColumnAfter().run();
+    case 'fitToWidth':
+      runTableAction(editor, action);
       break;
     case 'deleteColumn':
       chain.deleteColumn().run();
@@ -107,6 +107,8 @@ const canExecuteAction = (editor: Editor | null, action: string): boolean => {
       return editor.can().splitCell();
     case 'deleteTable':
       return editor.can().deleteTable();
+    case 'fitToWidth':
+      return editor.isActive('table');
     default:
       return false;
   }

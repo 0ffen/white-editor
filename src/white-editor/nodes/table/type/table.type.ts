@@ -22,6 +22,7 @@ type TableActions =
   | 'deleteRow'
   | 'mergeCells'
   | 'splitCell'
+  | 'fitToWidth'
   | 'deleteTable';
 
 type TableActionGroup = 'insert' | 'column' | 'row' | 'cell' | 'delete';
