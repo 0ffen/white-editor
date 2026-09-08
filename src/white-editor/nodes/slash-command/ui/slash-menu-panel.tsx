@@ -76,7 +76,7 @@ export function SlashMenuPanel({ editor }: SlashMenuPanelProps) {
     const element = panelRef.current;
     if (!element) return;
 
-    const detachFloating = attachFloatingToSelection(editor, element);
+    const detachFloating = attachFloatingToSelection(editor, element, { layer: 'modal' });
 
     const handlePointerDown = (event: MouseEvent) => {
       if (element.contains(event.target as Node)) return;
@@ -117,12 +117,8 @@ export function SlashMenuPanel({ editor }: SlashMenuPanelProps) {
   if (!open || !portalRoot) return null;
 
   return createPortal(
-    <div
-      ref={panelRef}
-      className='we-slash-menu-panel we:bg-elevation-dropdown we:shadow-popover we:border-border-default we:z-floating we:flex we:w-64 we:flex-col we:overflow-hidden we:rounded-md we:border'
-      onMouseDown={(event) => event.preventDefault()}
-    >
-      <SlashCommandList ref={listRef} items={SLASH_COMMAND_ITEMS} command={runCommand} bare />
+    <div ref={panelRef} className='we-slash-menu-panel' onMouseDown={(event) => event.preventDefault()}>
+      <SlashCommandList ref={listRef} items={SLASH_COMMAND_ITEMS} command={runCommand} />
     </div>,
     portalRoot
   );

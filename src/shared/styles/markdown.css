@@ -292,15 +292,10 @@
 
 .white-editor .markdown .selectedCell,
 .white-editor .markdown .selectedCell.tableSelection {
-  background-color: var(--we-brand-weak);
+  background-color: color-mix(in srgb, var(--we-brand-default) 8%, transparent);
 }
 
-.white-editor .markdown th {
-  border: 1px solid var(--we-border-default);
-  padding: calc(var(--we-spacing) * 2);
-  background-color: var(--we-elevation-level1);
-}
-
+.white-editor .markdown th,
 .white-editor .markdown td {
   border: 1px solid var(--we-border-default);
   padding: calc(var(--we-spacing) * 2);
@@ -308,6 +303,10 @@
   p {
     margin-top: 0 !important;
   }
+}
+
+.white-editor .markdown th {
+  background-color: var(--we-elevation-level1);
 }
 
 .white-editor .markdown hr {

@@ -91,7 +91,7 @@ export const TableButton = React.forwardRef<HTMLButtonElement, TableButtonProps>
           </Button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align='start' className={cn('w-fit')}>
+        <DropdownMenuContent align='start' className={cn('w-fit')} layer='modal'>
           <TableToolbar editor={editor} options={tableActions} hideWhenUnavailable={hideWhenUnavailable} />
         </DropdownMenuContent>
       </DropdownMenu>

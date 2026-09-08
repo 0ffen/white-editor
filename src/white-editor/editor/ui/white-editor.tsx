@@ -13,6 +13,8 @@ import {
   EditorToolbar,
   SelectionToolbar,
   LinkFloatingDropdown,
+  TableControls,
+  TableCellToolbar,
 } from '@/white-editor';
 import { SlashInputPanel } from '@/white-editor/nodes/slash-command/ui/slash-input-panel';
 import { SlashMenuPanel } from '@/white-editor/nodes/slash-command/ui/slash-menu-panel';
@@ -70,6 +72,7 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
   );
 
   const toolbarRef = React.useRef<HTMLDivElement>(null);
+  const editorSurfaceRef = React.useRef<HTMLDivElement>(null);
 
   // content를 정규화 (text 필드가 숫자인 경우 문자열로 변환)
   const normalizedContent = useMemo(() => {
@@ -102,7 +105,11 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
 
       // 드래그 핸들 / + 버튼이 블록 NodeSelection·슬래시 트리거를 직접 처리
       const target = event.target as Element | null;
-      if (target?.closest?.('.we-drag-handle-wrapper, .we-drag-handle, .we-block-add-handle')) {
+      if (
+        target?.closest?.(
+          '.we-drag-handle-wrapper, .we-drag-handle, .we-block-add-handle, .we-table-controls, .we-table-cell-toolbar'
+        )
+      ) {
         return;
       }
 
@@ -148,17 +155,18 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
                   <div className={cn('toolbar-wrapper')}>{renderToolbar()}</div>
                 </Toolbar>
               )}
-              <EditorContent
-                editor={editor}
-                className={cn(
-                  'markdown we:prose we:dark:prose-invert we:max-w-full we:flex-1 we:overflow-y-auto',
-                  contentClassName
-                )}
-              />
+              <div ref={editorSurfaceRef} className='we-editor-surface'>
+                <EditorContent
+                  editor={editor}
+                  className={cn('markdown we:prose we:dark:prose-invert we:max-w-full', contentClassName)}
+                />
+                {editor && !disabled && <TableControls editor={editor} containerRef={editorSurfaceRef} />}
+              </div>
               {dragHandleEnabled && editor && (
                 <BlockDragHandle editor={editor} gutter={resolvedGutter === false ? 'overlay' : resolvedGutter} />
               )}
               {showSelectionToolbar && <SelectionToolbar editor={editor} />}
+              {editor && !disabled && <TableCellToolbar editor={editor} />}
               <LinkFloatingDropdown editor={editor} />
               {editor && !disabled && <SlashInputPanel editor={editor} />}
               {editor && !disabled && <SlashMenuPanel editor={editor} />}

@@ -152,7 +152,7 @@
     }
 
     .selectedCell {
-      background-color: var(--we-brand-weak2) !important;
+      background-color: color-mix(in srgb, var(--we-brand-default) 8%, transparent);
     }
 
     .ProseMirror .node-image {
@@ -406,6 +406,170 @@
   --we-block-gutter: 2.75rem;
   padding-left: calc(var(--we-editor-padding-x, 12px) + var(--we-block-gutter)) !important;
   padding-right: var(--we-editor-padding-x, 12px) !important;
+}
+
+/*
+ * 표 가장자리 + 오버레이.
+ * 스크롤은 EditorContent가 아니라 surface 래퍼가 맡는다.
+ * ProseMirror overflow-y:auto 가 남으면 표와 오버레이 좌표가 어긋난다.
+ */
+.white-editor .we-editor-surface {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.white-editor .we-editor-surface .ProseMirror {
+  overflow: visible;
+  flex: none;
+  min-height: 100%;
+}
+
+.white-editor .we-table-controls {
+  position: absolute;
+  inset: 0;
+  z-index: var(--we-z-index-handle, 20);
+  pointer-events: none;
+}
+
+.white-editor .we-table-control {
+  position: absolute;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 4px;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.white-editor .we-table-control::before {
+  position: absolute;
+  inset: -8px;
+  content: '';
+}
+
+.white-editor .we-table-add-control {
+  border: 1px solid color-mix(in srgb, var(--we-border-default) 70%, transparent);
+  background: color-mix(in srgb, var(--we-text-normal) 7%, var(--we-elevation-background));
+  color: var(--we-text-light);
+  opacity: 0.86;
+}
+
+.white-editor .we-table-add-control[data-axis='row'] {
+  height: 24px;
+}
+
+.white-editor .we-table-add-control[data-axis='column-left'],
+.white-editor .we-table-add-control[data-axis='column-right'] {
+  width: 24px;
+}
+
+.white-editor .we-table-add-control[data-axis='column-right']::before {
+  left: 0;
+}
+
+.white-editor .we-table-add-control:hover,
+.white-editor .we-table-add-control:focus-visible {
+  background: color-mix(in srgb, var(--we-text-normal) 10%, var(--we-elevation-background));
+  color: var(--we-text-normal);
+  opacity: 1;
+}
+
+.white-editor .we-table-axis-control {
+  width: 20px;
+  height: 6px;
+  border: none;
+  border-radius: 999px;
+  background: var(--we-border-default);
+  color: transparent;
+  box-shadow: none;
+  transform: translate(-50%, -50%);
+}
+
+.white-editor .we-table-axis-control[data-axis='row'] {
+  width: 6px;
+  height: 20px;
+}
+
+.white-editor .we-table-axis-control svg {
+  opacity: 0;
+}
+
+.white-editor .we-table-axis-control:hover,
+.white-editor .we-table-axis-control:focus-visible,
+.white-editor .we-table-axis-control[data-state='open'],
+.white-editor .we-table-axis-control[data-emphasized='true'] {
+  width: 22px;
+  height: 16px;
+  border-radius: 4px;
+  background: var(--we-brand-default);
+  color: var(--we-elevation-background);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--we-text-normal) 18%, transparent);
+}
+
+.white-editor .we-table-axis-control[data-axis='row']:hover,
+.white-editor .we-table-axis-control[data-axis='row']:focus-visible,
+.white-editor .we-table-axis-control[data-axis='row'][data-state='open'],
+.white-editor .we-table-axis-control[data-axis='row'][data-emphasized='true'] {
+  width: 16px;
+  height: 22px;
+}
+
+.white-editor .we-table-axis-control:hover svg,
+.white-editor .we-table-axis-control:focus-visible svg,
+.white-editor .we-table-axis-control[data-state='open'] svg,
+.white-editor .we-table-axis-control[data-emphasized='true'] svg {
+  opacity: 1;
+}
+
+.white-editor .ProseMirror .selectedCell {
+  background-color: color-mix(in srgb, var(--we-brand-default) 8%, transparent);
+  outline: 1.5px solid var(--we-brand-default);
+  outline-offset: -1.5px;
+}
+
+.white-editor .ProseMirror table[data-we-selection='row'] tr:has(> .selectedCell):not(:has(> :not(.selectedCell))),
+.white-editor
+  .ProseMirror
+  table[data-we-preview='row']
+  tr:has(> .we-table-axis-cell):not(:has(> :not(.we-table-axis-cell))) {
+  outline: 1.5px solid var(--we-brand-default);
+  outline-offset: -1.5px;
+}
+
+.white-editor .ProseMirror table[data-we-selection='row'] .selectedCell,
+.white-editor .ProseMirror table[data-we-preview='row'] .we-table-axis-cell {
+  outline: none;
+}
+
+.white-editor .ProseMirror table[data-we-selection='column'] .selectedCell,
+.white-editor .ProseMirror table[data-we-preview='column'] .we-table-axis-cell {
+  outline: none;
+  box-shadow:
+    inset 2px 0 0 var(--we-brand-default),
+    inset -2px 0 0 var(--we-brand-default);
+}
+
+.white-editor .ProseMirror table[data-we-selection='column'] tr:first-child .selectedCell,
+.white-editor .ProseMirror table[data-we-preview='column'] tr:first-child .we-table-axis-cell {
+  box-shadow:
+    inset 2px 2px 0 var(--we-brand-default),
+    inset -2px 0 0 var(--we-brand-default);
+}
+
+.white-editor .ProseMirror table[data-we-selection='column'] tr:last-child .selectedCell,
+.white-editor .ProseMirror table[data-we-preview='column'] tr:last-child .we-table-axis-cell {
+  box-shadow:
+    inset 2px -2px 0 var(--we-brand-default),
+    inset -2px 0 0 var(--we-brand-default);
+}
+
+.white-editor .ProseMirror table[data-we-selection='column'] tr:first-child:last-child .selectedCell,
+.white-editor .ProseMirror table[data-we-preview='column'] tr:first-child:last-child .we-table-axis-cell {
+  box-shadow: inset 0 0 0 2px var(--we-brand-default);
 }
 
 /*

@@ -7,7 +7,12 @@ import { LinkMain } from '@/white-editor/nodes/link/ui/link-main';
 import type { MathType } from '@/white-editor/nodes/mathematics/type/math.type';
 import { MathPopoverContent } from '@/white-editor/nodes/mathematics/ui/math-popover-content';
 import type { Editor } from '@tiptap/core';
-import { SLASH_OPEN_LINK_EVENT, SLASH_OPEN_MATH_EVENT, type SlashOpenMathDetail } from '../util/open-slash-input';
+import {
+  isSlashInputEventForEditor,
+  SLASH_OPEN_LINK_EVENT,
+  SLASH_OPEN_MATH_EVENT,
+  type SlashOpenMathDetail,
+} from '../util/open-slash-input';
 
 type PanelMode = { kind: 'link' } | { kind: 'math'; type: MathType };
 
@@ -34,7 +39,11 @@ export function SlashInputPanel({ editor }: SlashInputPanelProps) {
   React.useEffect(() => {
     if (!editor) return;
 
-    const handleOpenLink = () => {
+    const handleOpenLink = (event: Event) => {
+      if (!isSlashInputEventForEditor(event, editor)) {
+        close();
+        return;
+      }
       if (editor.isDestroyed || !editor.isEditable) return;
       setMathString('');
       setUrl('');
@@ -43,6 +52,10 @@ export function SlashInputPanel({ editor }: SlashInputPanelProps) {
     };
 
     const handleOpenMath = (event: Event) => {
+      if (!isSlashInputEventForEditor(event, editor)) {
+        close();
+        return;
+      }
       if (editor.isDestroyed || !editor.isEditable) return;
       const detail = (event as CustomEvent<SlashOpenMathDetail>).detail;
       if (!detail?.type) return;
@@ -58,7 +71,7 @@ export function SlashInputPanel({ editor }: SlashInputPanelProps) {
       window.removeEventListener(SLASH_OPEN_LINK_EVENT, handleOpenLink);
       window.removeEventListener(SLASH_OPEN_MATH_EVENT, handleOpenMath);
     };
-  }, [editor]);
+  }, [editor, close]);
 
   React.useLayoutEffect(() => {
     if (!mode || !editor || editor.isDestroyed) return;
@@ -66,7 +79,7 @@ export function SlashInputPanel({ editor }: SlashInputPanelProps) {
     const element = panelRef.current;
     if (!element) return;
 
-    const detachFloating = attachFloatingToSelection(editor, element);
+    const detachFloating = attachFloatingToSelection(editor, element, { layer: 'modal' });
 
     const handlePointerDown = (event: MouseEvent) => {
       if (element.contains(event.target as Node)) return;
@@ -153,7 +166,7 @@ export function SlashInputPanel({ editor }: SlashInputPanelProps) {
   return createPortal(
     <div
       ref={panelRef}
-      className='we-slash-input-panel we:bg-elevation-dropdown we:shadow-popover we:border-border-default we:z-floating we:w-[280px] we:rounded-md we:border we:p-1.5'
+      className='we-slash-input-panel we:bg-elevation-dropdown we:shadow-popover we:border-border-default we:z-modal we:w-[280px] we:rounded-md we:border we:p-1.5'
       onMouseDown={(event) => event.preventDefault()}
     >
       {mode.kind === 'link' ? (

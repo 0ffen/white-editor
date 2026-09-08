@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { FloatingToolbar, Separator } from '@/shared/components';
 import { useTiptapEditor } from '@/shared/hooks';
-import { cn } from '@/shared/utils';
+import { cn, isEventForEditor } from '@/shared/utils';
 import { ColorPopover, MarkButton, HighlightPopover, LinkPopover, CodeBlockButton } from '@/white-editor';
 import { TextSelection } from '@tiptap/pm/state';
 import type { Editor } from '@tiptap/react';
@@ -116,11 +116,13 @@ export function SelectionToolbar({ editor: providedEditor, className }: Selectio
 
   // 링크 호버 드롭다운 상태 추적
   React.useEffect(() => {
-    const handleLinkDropdownOpen = () => {
+    const handleLinkDropdownOpen = (event: Event) => {
+      if (!isEventForEditor(event, editor)) return;
       setIsLinkHovered(true);
     };
 
-    const handleLinkDropdownClose = () => {
+    const handleLinkDropdownClose = (event: Event) => {
+      if (!isEventForEditor(event, editor)) return;
       setIsLinkHovered(false);
     };
 
@@ -135,7 +137,7 @@ export function SelectionToolbar({ editor: providedEditor, className }: Selectio
       window.removeEventListener('link-dropdown-open', handleLinkDropdownOpen);
       window.removeEventListener('link-dropdown-close', handleLinkDropdownClose);
     };
-  }, []);
+  }, [editor]);
 
   // 선택 변경 시: 유효하면 지연 후 표시, 무효하면 즉시 숨김
   React.useEffect(() => {

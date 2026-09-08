@@ -3,12 +3,27 @@
 import { autoUpdate, computePosition, flip, shift } from '@floating-ui/dom';
 import { Editor, posToDOMRect } from '@tiptap/react';
 
-function applyFloatingStyle(element: HTMLElement, { x, y, strategy }: { x: number; y: number; strategy: string }) {
+export type FloatingLayer = 'floating' | 'modal';
+
+const FLOATING_ZINDEX: Record<FloatingLayer, string> = {
+  floating: 'var(--we-z-index-floating)',
+  modal: 'var(--we-z-index-modal)',
+};
+
+export type AttachFloatingOptions = {
+  layer?: FloatingLayer;
+};
+
+function applyFloatingStyle(
+  element: HTMLElement,
+  { x, y, strategy }: { x: number; y: number; strategy: string },
+  layer: FloatingLayer = 'floating'
+) {
   element.style.width = 'max-content';
   element.style.position = strategy;
   element.style.left = `${x}px`;
   element.style.top = `${y}px`;
-  element.style.zIndex = 'var(--we-z-index-floating)';
+  element.style.zIndex = FLOATING_ZINDEX[layer];
 }
 
 /**
@@ -24,32 +39,37 @@ function applyFloatingStyle(element: HTMLElement, { x, y, strategy }: { x: numbe
  * // tooltipElement가 에디터 선택 영역 아래에 배치됨
  * ```
  */
-export const updatePosition = (editor: Editor, element: HTMLElement) => {
+export const updatePosition = (editor: Editor, element: HTMLElement, options?: AttachFloatingOptions) => {
   if (typeof window === 'undefined') {
     return;
   }
 
+  const layer = options?.layer ?? 'floating';
   const virtualElement = {
     getBoundingClientRect: () => posToDOMRect(editor.view, editor.state.selection.from, editor.state.selection.to),
   };
 
   computePosition(virtualElement, element, {
     placement: 'bottom-start',
-    // FloatingToolbar와 동일하게 viewport 기준 fixed + floating z-index
     strategy: 'fixed',
     middleware: [shift(), flip()],
-  }).then((coords) => applyFloatingStyle(element, coords));
+  }).then((coords) => applyFloatingStyle(element, coords, layer));
 };
 
 /**
  * 선택 영역에 팝업을 붙이고 스크롤/리사이즈 시에도 따라가게 한다.
  * @returns cleanup 함수
  */
-export function attachFloatingToSelection(editor: Editor, element: HTMLElement): () => void {
+export function attachFloatingToSelection(
+  editor: Editor,
+  element: HTMLElement,
+  options?: AttachFloatingOptions
+): () => void {
   if (typeof window === 'undefined') {
     return () => undefined;
   }
 
+  const layer = options?.layer ?? 'floating';
   const virtualElement = {
     getBoundingClientRect: () => {
       if (editor.isDestroyed) {
@@ -65,7 +85,7 @@ export function attachFloatingToSelection(editor: Editor, element: HTMLElement):
       placement: 'bottom-start',
       strategy: 'fixed',
       middleware: [shift(), flip()],
-    }).then((coords) => applyFloatingStyle(element, coords));
+    }).then((coords) => applyFloatingStyle(element, coords, layer));
   };
 
   update();
