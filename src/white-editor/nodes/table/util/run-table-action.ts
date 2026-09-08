@@ -494,9 +494,20 @@ export function selectTableCell(editor: Editor, cellPosition: number): boolean {
   }
 }
 
-export function editTableCell(editor: Editor, cellPosition: number): boolean {
+export function editTableCell(editor: Editor, cellPosition: number, at?: number): boolean {
+  const cell = editor.state.doc.nodeAt(cellPosition);
+  if (!cell) {
+    return false;
+  }
+  const from = cellPosition + 1;
+  const to = cellPosition + cell.nodeSize - 1;
+  const target = at != null && at >= from && at <= to ? at : to;
   try {
-    const caret = TextSelection.near(editor.state.doc.resolve(cellPosition + 1));
+    const caret = TextSelection.near(editor.state.doc.resolve(target), target >= to ? -1 : 1);
+    if (caret.from < from || caret.from > to) {
+      editor.view.dispatch(editor.state.tr.setSelection(TextSelection.near(editor.state.doc.resolve(to), -1)));
+      return true;
+    }
     editor.view.dispatch(editor.state.tr.setSelection(caret));
     return true;
   } catch {

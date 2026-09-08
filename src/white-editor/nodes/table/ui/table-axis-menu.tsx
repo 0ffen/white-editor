@@ -139,6 +139,7 @@ export function TableAxisMenu({
         align='start'
         side={isColumn ? 'bottom' : 'right'}
         className='we:w-60 we:p-1.5'
+        layer='modal'
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
         <div className='we:flex we:flex-col'>

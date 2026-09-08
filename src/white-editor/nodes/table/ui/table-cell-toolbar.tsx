@@ -119,6 +119,7 @@ export function TableCellToolbar({ editor }: { editor: Editor | null }) {
           align='center'
           side='top'
           className='we:w-auto we:p-2'
+          layer='modal'
           onOpenAutoFocus={(event) => event.preventDefault()}
         >
           <div className='we:flex we:items-center we:gap-2'>

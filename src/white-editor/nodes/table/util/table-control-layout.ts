@@ -3,7 +3,8 @@
 //   src/renderer/src/components/editor/rich-markdown-table-control-layout.ts
 //   https://github.com/stablyai/orca  ·  Copyright (c) Stably AI, MIT License
 //
-//   + 띠는 표 한 변만큼 길어진다. 열/행 손잡이는 표 가장자리(위·왼쪽) 가운데에 둔다.
+//   + 띠는 표 한 변만큼 길어진다. 행 + 는 표 아래, 열 + 는 표 오른쪽에 둔다.
+//   열/행 손잡이는 표 가장자리(위·왼쪽) 가운데에 둔다.
 // ─────────────────────────────────────────────────────────────
 
 export type TableControlPoint = { left: number; top: number };
@@ -68,7 +69,7 @@ export function getTableControlLayout({ container, cell, row, table }: TableCont
       top: visibleTop(table.top),
     },
     addColumnRight: {
-      left: visibleLeft(table.right - TABLE_ADD_STRIP_THICKNESS),
+      left: table.right + EDGE_GAP,
       top: visibleTop(table.top),
     },
     addRow: {

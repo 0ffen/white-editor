@@ -3,7 +3,8 @@
 //   src/renderer/src/components/editor/use-rich-markdown-table-control-target.ts
 //   https://github.com/stablyai/orca  ·  Copyright (c) Stably AI, MIT License
 //
-//   표의 아래·오른쪽 가장자리 8px 에 닿으면 행/열 추가 + 를 띄운다.
+//   표의 아래 가장자리 8px 에 닿으면 행 추가 + 를 띄운다.
+//   열 추가 + 는 오른쪽 선(리사이즈)과 겹치지 않게 표 옆 거터에서만 띄운다.
 //   위·왼쪽 가장자리는 열/행 손잡이 영역이다.
 // ─────────────────────────────────────────────────────────────
 import { useEffect, useRef, useState, type RefObject } from 'react';
@@ -17,6 +18,7 @@ import {
   type TableAxis,
   type TableSelectionKind,
 } from '@/white-editor/nodes/table/util/run-table-action';
+import { TABLE_ADD_STRIP_THICKNESS } from '@/white-editor/nodes/table/util/table-control-layout';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { CellSelection, isInTable, selectionCell } from '@tiptap/pm/tables';
 import type { Editor } from '@tiptap/react';
@@ -29,9 +31,10 @@ export type ActiveTableCell = {
 export type TableAddAxis = 'column-left' | 'column-right' | 'row';
 
 type PointerSample = { cell: HTMLTableCellElement; x: number; y: number };
-type PendingCellClick = { cellPosition: number; mode: 'edit' | 'select'; x: number; y: number };
+type PendingCellClick = { cellPosition: number; mode: 'edit' | 'select'; pos?: number; x: number; y: number };
 
 const TABLE_EDGE_HIT_AREA = 8;
+const TABLE_ADD_GUTTER_HIT = TABLE_ADD_STRIP_THICKNESS + TABLE_EDGE_HIT_AREA;
 const CELL_CLICK_DRAG_THRESHOLD = 4;
 const tableCellClickKey = new PluginKey('weTableCellClick');
 
@@ -56,10 +59,56 @@ function pointerAddAxis(sample: PointerSample): TableAddAxis | null {
   if (sample.y >= tableRect.bottom - TABLE_EDGE_HIT_AREA) {
     return 'row';
   }
-  if (sample.x >= tableRect.right - TABLE_EDGE_HIT_AREA) {
-    return 'column-right';
+  return null;
+}
+
+function tableGutterHit(
+  editorDom: HTMLElement,
+  x: number,
+  y: number
+): { axis: Exclude<TableAddAxis, 'column-left'>; table: HTMLTableElement } | null {
+  for (const table of editorDom.querySelectorAll('table')) {
+    if (!(table instanceof HTMLTableElement)) {
+      continue;
+    }
+    const rect = table.getBoundingClientRect();
+    if (y >= rect.top && y <= rect.bottom && x >= rect.right && x <= rect.right + TABLE_ADD_GUTTER_HIT) {
+      return { axis: 'column-right', table };
+    }
+    if (x >= rect.left && x <= rect.right && y >= rect.bottom && y <= rect.bottom + TABLE_ADD_GUTTER_HIT) {
+      return { axis: 'row', table };
+    }
   }
   return null;
+}
+
+function cellForGutter(
+  table: HTMLTableElement,
+  axis: Exclude<TableAddAxis, 'column-left'>,
+  x: number,
+  y: number
+): HTMLTableCellElement | null {
+  if (axis === 'column-right') {
+    for (const row of Array.from(table.rows)) {
+      const rowRect = row.getBoundingClientRect();
+      if (y >= rowRect.top && y <= rowRect.bottom) {
+        return row.cells.item(row.cells.length - 1);
+      }
+    }
+    const first = table.rows.item(0);
+    return first?.cells.item((first.cells.length ?? 1) - 1) ?? null;
+  }
+  const last = table.rows.item(table.rows.length - 1);
+  if (!last) {
+    return null;
+  }
+  for (const cell of Array.from(last.cells)) {
+    const cellRect = cell.getBoundingClientRect();
+    if (x >= cellRect.left && x <= cellRect.right) {
+      return cell;
+    }
+  }
+  return last.cells.item(0);
 }
 
 function pointerAxis(sample: PointerSample): TableAxis | null {
@@ -137,6 +186,13 @@ export function useTableControlTarget(
       setHoveredAddAxis(pointerAddAxis(sample));
       setHoveredAxis(pointerAxis(sample));
     };
+    const cancelPointerFlush = (): void => {
+      if (pointerFrameRef.current !== null) {
+        window.cancelAnimationFrame(pointerFrameRef.current);
+        pointerFrameRef.current = null;
+      }
+      pendingPointerRef.current = null;
+    };
     const onPointerMove = (event: PointerEvent): void => {
       const cell = tableCellFromTarget(event.target);
       if (cell && editorDom.contains(cell)) {
@@ -149,10 +205,20 @@ export function useTableControlTarget(
         pointerFrameRef.current ??= window.requestAnimationFrame(flushPointer);
         return;
       }
-      if (!(event.target instanceof Element) || !event.target.closest('.we-table-controls')) {
-        pendingPointerRef.current = null;
-        activateSelection();
+      if (event.target instanceof Element && event.target.closest('.we-table-controls')) {
+        return;
       }
+      const gutter = tableGutterHit(editorDom, event.clientX, event.clientY);
+      const gutterCell = gutter ? cellForGutter(gutter.table, gutter.axis, event.clientX, event.clientY) : null;
+      if (gutter && gutterCell) {
+        cancelPointerFlush();
+        activate(gutterCell);
+        setHoveredAddAxis(gutter.axis);
+        setHoveredAxis(null);
+        return;
+      }
+      cancelPointerFlush();
+      activateSelection();
     };
     const onPointerDown = (event: PointerEvent): void => {
       if (event.button !== 0) {
@@ -184,6 +250,7 @@ export function useTableControlTarget(
       pendingClickRef.current = {
         cellPosition,
         mode: selectedThisCell ? 'edit' : 'select',
+        pos: editor.view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos,
         x: event.clientX,
         y: event.clientY,
       };
@@ -192,7 +259,7 @@ export function useTableControlTarget(
       new Plugin({
         key: tableCellClickKey,
         props: {
-          handleClick: (_view, _pos, event) => {
+          handleClick: (_view, pos, event) => {
             const pending = pendingClickRef.current;
             pendingClickRef.current = null;
             if (!pending) {
@@ -204,7 +271,7 @@ export function useTableControlTarget(
             if (pending.mode === 'select') {
               return selectTableCell(editor, pending.cellPosition);
             }
-            return editTableCell(editor, pending.cellPosition);
+            return editTableCell(editor, pending.cellPosition, pos ?? pending.pos);
           },
         },
       })

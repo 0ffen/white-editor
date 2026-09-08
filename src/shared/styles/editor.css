@@ -467,6 +467,10 @@
   width: 24px;
 }
 
+.white-editor .we-table-add-control[data-axis='column-right']::before {
+  left: 0;
+}
+
 .white-editor .we-table-add-control:hover,
 .white-editor .we-table-add-control:focus-visible {
   background: color-mix(in srgb, var(--we-text-normal) 10%, var(--we-elevation-background));

@@ -3,8 +3,8 @@
 //   src/renderer/src/components/editor/RichMarkdownTableControls.tsx
 //   https://github.com/stablyai/orca  ·  Copyright (c) Stably AI, MIT License
 //
-//   표의 아래·오른쪽 선에 마우스를 대면 + 가 뜨고, 표 위·왼쪽 가장자리에는
-//   행/열 손잡이가 뜬다. 손잡이를 누르면 그 축 전체가 선택되고 메뉴가 열린다.
+//   표 아래·옆에 마우스를 대면 행/열 추가 + 가 뜨고, 표 위·왼쪽 가장자리에는
+//   행/열 손잡이가 뜬다. 오른쪽 선은 열 리사이즈가 쓴다.
 // ─────────────────────────────────────────────────────────────
 import { useEffect, useState, type CSSProperties, type RefObject } from 'react';
 import { Plus } from 'lucide-react';
