@@ -62,8 +62,8 @@ interface WhiteEditorUIProps {
   showDragHandle?: boolean;
   /**
    * drag handle용 왼쪽 거터 확보 방식.
-   * - `reserve`: 콘텐츠 왼쪽 padding에 핸들 자리 확보 (기본)
-   * - `overlay`: 좌우 padding은 동일하게 두고 핸들은 콘텐츠 위에 오버레이
+   * - `reserve`: 콘텐츠 왼쪽 padding에 핸들 자리 확보 (기본). 본문이 오른쪽으로 밀린다.
+   * - `overlay`: 거터 없이 블록 왼쪽에 fixed로 띄운다. 본문과 겹치지 않는다.
    * - `false`: 거터 없음 (`showDragHandle`이 true여도 자리 미확보)
    * `showDragHandle={false}`이면 무시되고 거터도 없음.
    */

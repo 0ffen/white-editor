@@ -6,7 +6,7 @@ import { useTranslate } from '@/shared';
 import { openSlashMenuFromBlock } from '@/white-editor/nodes/slash-command/util/open-slash-menu';
 import { TableHandleMenu } from '@/white-editor/nodes/table/ui/table-handle-menu';
 import { focusFirstTableCell } from '@/white-editor/nodes/table/util/run-table-action';
-import { offset } from '@floating-ui/dom';
+import { computePosition, offset } from '@floating-ui/dom';
 import { DragHandle } from '@tiptap/extension-drag-handle-react';
 import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
 import type { Editor } from '@tiptap/react';
@@ -14,8 +14,8 @@ import type { Editor } from '@tiptap/react';
 export interface BlockDragHandleProps {
   editor: Editor;
   /**
-   * `overlay`일 때 핸들을 콘텐츠 왼쪽 padding 쪽으로 더 붙인다.
-   * `reserve`는 확보된 gutter 안에 둔다.
+   * `overlay`: 거터 없이 블록 왼쪽에 fixed로 띄운다. 본문과 겹치지 않는다.
+   * `reserve`: 확보된 gutter 안에 둔다.
    */
   gutter?: 'reserve' | 'overlay';
 }
@@ -39,6 +39,17 @@ function shouldAlignTop(node: ProseMirrorNode | null, height: number): boolean {
   if (!node) return false;
   if (TOP_ALIGN_NODE_TYPES.has(node.type.name)) return true;
   return height > CENTER_ALIGN_MAX_HEIGHT;
+}
+
+function getOuterBlockDom(view: Editor['view'], pos: number): HTMLElement | null {
+  const raw = view.nodeDOM(pos);
+  if (!(raw instanceof HTMLElement)) return null;
+
+  let current: HTMLElement = raw;
+  while (current.parentElement && current.parentElement !== view.dom) {
+    current = current.parentElement;
+  }
+  return current.parentElement === view.dom ? current : raw;
 }
 
 const CLICK_MOVE_THRESHOLD_PX = 4;
@@ -75,11 +86,11 @@ export function BlockDragHandle({ editor, gutter = 'reserve' }: BlockDragHandleP
 
   const computePositionConfig = useMemo(
     () => ({
-      // gutter 안쪽에 붙이고, 블록↔핸들 gap을 최소화
       placement: 'left' as const,
-      strategy: 'absolute' as const,
-      // overlay: 콘텐츠 바로 왼쪽에 겹침 / reserve: 확보된 gutter 안
-      middleware: [offset({ mainAxis: gutter === 'overlay' ? 4 : 2, crossAxis: 0 })],
+      // overlay는 surface overflow에 잘리지 않게 viewport 기준으로 띄운다.
+      strategy: (gutter === 'overlay' ? 'fixed' : 'absolute') as 'fixed' | 'absolute',
+      // overlay: 본문 왼쪽과 핸들 사이 틈을 없앤다. 틈이 있으면 mouseleave로 핸들이 사라진다.
+      middleware: [offset({ mainAxis: gutter === 'overlay' ? -12 : 2, crossAxis: 0 })],
     }),
     [gutter]
   );
@@ -88,8 +99,8 @@ export function BlockDragHandle({ editor, gutter = 'reserve' }: BlockDragHandleP
     const { node, pos } = currentRef.current;
     if (pos < 0 || !editor.view || editor.isDestroyed) return null;
 
-    const dom = editor.view.nodeDOM(pos);
-    if (!(dom instanceof Element)) return null;
+    const dom = getOuterBlockDom(editor.view, pos);
+    if (!dom) return null;
 
     return {
       getBoundingClientRect: () => {
@@ -112,6 +123,51 @@ export function BlockDragHandle({ editor, gutter = 'reserve' }: BlockDragHandleP
       },
     };
   }, [editor]);
+
+  const repositionHandle = useCallback(() => {
+    if (!editor.view || editor.isDestroyed) return;
+    const floating = editor.view.dom.parentElement?.querySelector('.we-drag-handle-wrapper');
+    const virtual = getReferencedVirtualElement();
+    if (!(floating instanceof HTMLElement) || !virtual) return;
+    computePosition(virtual, floating, computePositionConfig).then((val) => {
+      Object.assign(floating.style, {
+        position: val.strategy,
+        left: `${val.x}px`,
+        top: `${val.y}px`,
+      });
+    });
+  }, [computePositionConfig, editor, getReferencedVirtualElement]);
+
+  useEffect(() => {
+    if (gutter !== 'overlay' || !editor.view) return;
+
+    const surface = editor.view.dom.closest('.we-editor-surface');
+    surface?.addEventListener('scroll', repositionHandle, { passive: true });
+    window.addEventListener('scroll', repositionHandle, { passive: true, capture: true });
+    window.addEventListener('resize', repositionHandle);
+    return () => {
+      surface?.removeEventListener('scroll', repositionHandle);
+      window.removeEventListener('scroll', repositionHandle, true);
+      window.removeEventListener('resize', repositionHandle);
+    };
+  }, [editor, gutter, repositionHandle]);
+
+  useEffect(() => {
+    if (gutter !== 'overlay' || !editor.view) return;
+
+    const onEditorMouseLeave = (event: MouseEvent) => {
+      const related = event.relatedTarget;
+      const handle = editor.view.dom.parentElement?.querySelector('.we-drag-handle-wrapper');
+      if (related instanceof Node && handle?.contains(related)) {
+        editor.commands.lockDragHandle();
+      }
+    };
+
+    editor.view.dom.addEventListener('mouseleave', onEditorMouseLeave, true);
+    return () => {
+      editor.view.dom.removeEventListener('mouseleave', onEditorMouseLeave, true);
+    };
+  }, [editor, gutter]);
 
   const handleNodeChange = useCallback(({ node, pos }: { node: ProseMirrorNode | null; pos: number }) => {
     currentRef.current = { node, pos };
@@ -152,23 +208,35 @@ export function BlockDragHandle({ editor, gutter = 'reserve' }: BlockDragHandleP
         pendingClickRef.current = false;
       }
     };
-    const onDragStart = (event: DragEvent) => {
-      if (pendingClickRef.current) {
-        event.preventDefault();
-      }
-    };
     window.addEventListener('pointermove', onPointerMove);
-    document.addEventListener('dragstart', onDragStart, true);
     return () => {
       window.removeEventListener('pointermove', onPointerMove);
-      document.removeEventListener('dragstart', onDragStart, true);
     };
   }, []);
 
-  const handleGripPointerDown = useCallback((event: React.PointerEvent) => {
-    pendingClickRef.current = true;
-    pointerStartRef.current = { x: event.clientX, y: event.clientY };
-  }, []);
+  const handleGripPointerDown = useCallback(
+    (event: React.PointerEvent) => {
+      pendingClickRef.current = true;
+      pointerStartRef.current = { x: event.clientX, y: event.clientY };
+      // lock은 핸들이 안 사라지게 하지만 draggable을 꺼서 이미지/코드블록 드래그가 죽는다.
+      editor.commands.unlockDragHandle();
+      const wrapper = event.currentTarget.closest('.we-drag-handle-wrapper');
+      if (wrapper instanceof HTMLElement) wrapper.draggable = true;
+    },
+    [editor]
+  );
+
+  const handleGroupMouseDown = useCallback(
+    (event: React.MouseEvent) => {
+      if ((event.target as Element).closest('.we-block-add-handle')) return;
+      requestAnimationFrame(() => {
+        if (!didDragRef.current && !editor.isDestroyed) {
+          editor.view.focus();
+        }
+      });
+    },
+    [editor]
+  );
 
   const handleGripClick = useCallback(
     (event: React.MouseEvent) => {
@@ -249,6 +317,7 @@ export function BlockDragHandle({ editor, gutter = 'reserve' }: BlockDragHandleP
       className='we-drag-handle'
       aria-label={t('블록 이동')}
       role='button'
+      tabIndex={-1}
       onPointerDown={handleGripPointerDown}
       onClick={handleGripClick}
     >
@@ -259,15 +328,17 @@ export function BlockDragHandle({ editor, gutter = 'reserve' }: BlockDragHandleP
   return (
     <DragHandle
       editor={editor}
-      nested={false}
+      nested // 빈 문단은 마우스 좌표 재계산이 빈 range를 만들어 드래그가 무시됨. hover 중인 노드를 그대로 옮긴다.
       className='we-drag-handle-wrapper'
       computePositionConfig={computePositionConfig}
       getReferencedVirtualElement={getReferencedVirtualElement}
       onNodeChange={handleNodeChange}
       onElementDragStart={() => {
-        if (pendingClickRef.current) return;
+        pendingClickRef.current = false;
         didDragRef.current = true;
-        handleMenuOpenChange(false);
+        if (menuOpenRef.current) {
+          handleMenuOpenChange(false);
+        }
       }}
       onElementDragEnd={() => {
         requestAnimationFrame(() => {
@@ -277,6 +348,7 @@ export function BlockDragHandle({ editor, gutter = 'reserve' }: BlockDragHandleP
     >
       <div
         className='we-block-handle-group'
+        onMouseDown={handleGroupMouseDown}
         onMouseEnter={handleHandleMouseEnter}
         onMouseLeave={handleHandleMouseLeave}
       >
@@ -284,6 +356,7 @@ export function BlockDragHandle({ editor, gutter = 'reserve' }: BlockDragHandleP
           className='we-block-add-handle'
           aria-label={t('블록 추가')}
           role='button'
+          tabIndex={-1}
           draggable={false}
           onMouseDown={stopDragFromControl}
           onClick={handleAddClick}
