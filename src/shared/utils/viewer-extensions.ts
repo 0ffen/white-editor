@@ -8,6 +8,13 @@
 
 import React from 'react';
 import { all, createLowlight } from 'lowlight';
+import {
+  CodeBlock,
+  CustomTableCell,
+  CustomTableHeader,
+  ResizableImage,
+  createPageLinkExtension,
+} from '@/white-editor/nodes';
 import { Node, type Node as TipTapNode } from '@tiptap/core';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
@@ -16,16 +23,14 @@ import Mathematics, { migrateMathStrings } from '@tiptap/extension-mathematics';
 import Mention from '@tiptap/extension-mention';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
-import { Table, TableCell, TableRow } from '@tiptap/extension-table';
+import { Table, TableRow } from '@tiptap/extension-table';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyleKit } from '@tiptap/extension-text-style';
 import { ReactNodeViewRenderer, type Extension } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 
-import { CodeBlock, CustomTableHeader, ResizableImage, createPageLinkExtension } from '@/white-editor/nodes';
-
-import type { OverrideExtensionsConfig, CustomNodeViews } from '../../white-editor/editor/type/white-editor.type';
 import { CustomParagraph, mergeExtensions, processExtensions } from './extensions-helpers';
+import type { OverrideExtensionsConfig, CustomNodeViews } from '../../white-editor/editor/type/white-editor.type';
 
 /** 마크다운/HTML 내 `<div>` 블록을 파싱·렌더링 (style, class 유지). 뷰어 전용. */
 const BlockDiv = Node.create({
@@ -95,7 +100,7 @@ export function createViewerExtensions(
     }),
     TableRow,
     CustomTableHeader,
-    TableCell,
+    CustomTableCell,
     TextAlign.configure({ types: ['heading', 'paragraph', 'image'] }),
     TaskList,
     TaskItem.configure({

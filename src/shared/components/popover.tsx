@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { usePortalContainer } from '@/shared/contexts';
-import { cn } from '@/shared/utils';
+import { cn, type FloatingLayer } from '@/shared/utils';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 
 const Popover = PopoverPrimitive.Root;
@@ -11,8 +11,8 @@ const PopoverAnchor = PopoverPrimitive.Anchor;
 
 const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
->(({ className, align = 'center', sideOffset = 4, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content> & { layer?: FloatingLayer }
+>(({ className, align = 'center', sideOffset = 4, layer = 'floating', ...props }, ref) => {
   const portalContainer = usePortalContainer();
 
   return (
@@ -22,7 +22,8 @@ const PopoverContent = React.forwardRef<
         align={align}
         sideOffset={sideOffset}
         className={cn(
-          'we:bg-elevation-dropdown we:text-text-normal we:shadow-popover we:data-[state=open]:animate-in we:data-[state=closed]:animate-out we:data-[state=closed]:fade-out-0 we:data-[state=open]:fade-in-0 we:data-[state=closed]:zoom-out-95 we:data-[state=open]:zoom-in-95 we:data-[side=bottom]:slide-in-from-top-2 we:data-[side=left]:slide-in-from-right-2 we:data-[side=right]:slide-in-from-left-2 we:data-[side=top]:slide-in-from-bottom-2 we:z-floating we:w-72 we:origin-[--radix-popover-content-transform-origin] we:rounded-[5px] we:p-4 we:outline-none',
+          'we:bg-elevation-dropdown we:text-text-normal we:shadow-popover we:data-[state=open]:animate-in we:data-[state=closed]:animate-out we:data-[state=closed]:fade-out-0 we:data-[state=open]:fade-in-0 we:data-[state=closed]:zoom-out-95 we:data-[state=open]:zoom-in-95 we:data-[side=bottom]:slide-in-from-top-2 we:data-[side=left]:slide-in-from-right-2 we:data-[side=right]:slide-in-from-left-2 we:data-[side=top]:slide-in-from-bottom-2 we:w-72 we:origin-[--radix-popover-content-transform-origin] we:rounded-[5px] we:p-4 we:outline-none',
+          layer === 'modal' ? 'we:z-modal' : 'we:z-floating',
           className
         )}
         {...props}

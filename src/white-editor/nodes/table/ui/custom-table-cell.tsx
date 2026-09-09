@@ -1,8 +1,8 @@
 import { mergeAttributes } from '@tiptap/core';
-import { TableHeader } from '@tiptap/extension-table';
+import { TableCell } from '@tiptap/extension-table';
 import { parseTableCellBackground, parseTableColwidth, tableCellRenderStyle } from '../util/table-cell-html';
 
-export const CustomTableHeader = TableHeader.extend({
+export const CustomTableCell = TableCell.extend({
   addAttributes() {
     return {
       colspan: {
@@ -26,7 +26,7 @@ export const CustomTableHeader = TableHeader.extend({
     const colwidth = HTMLAttributes.colwidth;
     const style = tableCellRenderStyle({ backgroundColor, colwidth });
     return [
-      'th',
+      'td',
       mergeAttributes(this.options.HTMLAttributes, attributes, {
         ...(style ? { style } : {}),
         ...(backgroundColor ? { 'data-background-color': backgroundColor } : {}),
