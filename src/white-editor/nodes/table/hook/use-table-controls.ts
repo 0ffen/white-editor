@@ -11,11 +11,9 @@ import { useEffect, useRef, useState, type RefObject } from 'react';
 import {
   cellContainsPosition,
   editTableCell,
-  getCellSelectionRect,
-  isSingleCellSelection,
   isTableCellRangeSelection,
   selectTableCell,
-  shouldShowTableCellToolbar,
+  selectTableCells,
   tableCellPositionAtElement,
   tableSelectionKind,
   type TableAxis,
@@ -34,11 +32,11 @@ export type ActiveTableCell = {
 export type TableAddAxis = 'column-left' | 'column-right' | 'row';
 
 type PointerSample = { cell: HTMLTableCellElement; x: number; y: number };
-type PendingCellClick = { cellPosition: number; mode: 'edit' | 'select'; pos?: number; x: number; y: number };
+type PendingCellClick = { cellPosition: number; pos?: number; x: number; y: number };
 
 const TABLE_EDGE_HIT_AREA = 8;
 const TABLE_ADD_GUTTER_HIT = TABLE_ADD_STRIP_THICKNESS + TABLE_EDGE_HIT_AREA;
-const CELL_CLICK_DRAG_THRESHOLD = 4;
+const CELL_CLICK_DRAG_THRESHOLD = 8;
 const tableCellClickKey = new PluginKey('weTableCellClick');
 
 function tableCellFromTarget(target: EventTarget | null): HTMLTableCellElement | null {
@@ -52,22 +50,8 @@ function isTableOverlayTarget(target: EventTarget | null): boolean {
   );
 }
 
-/** 첫 행 선택 메뉴는 표 위에 떠서, 메뉴로 가려면 표 밖을 지나야 한다. 표 안은 포함하지 않는다. */
-function isCellToolbarApproachZone(editor: Editor, x: number, y: number): boolean {
-  if (!shouldShowTableCellToolbar(editor)) {
-    return false;
-  }
-  const rect = getCellSelectionRect(editor);
-  if (!rect) {
-    return false;
-  }
-  const toolbar = document.querySelector('.we-table-cell-toolbar');
-  const toolbarRect = toolbar instanceof HTMLElement ? toolbar.getBoundingClientRect() : null;
-  const top = (toolbarRect?.top ?? rect.top - 56) - 8;
-  const bottom = rect.top;
-  const left = Math.min(rect.left, toolbarRect?.left ?? rect.left) - 12;
-  const right = Math.max(rect.right, toolbarRect?.right ?? rect.right) + 12;
-  return x >= left && x <= right && y >= top && y < bottom;
+function isColumnResizeTarget(target: EventTarget | null): boolean {
+  return target instanceof Element && Boolean(target.closest('.column-resize-handle'));
 }
 
 function selectionTableCell(editor: Editor): HTMLTableCellElement | null {
@@ -233,7 +217,7 @@ export function useTableControlTarget(
         pointerFrameRef.current ??= window.requestAnimationFrame(flushPointer);
         return;
       }
-      if (isTableOverlayTarget(event.target) || isCellToolbarApproachZone(editor, event.clientX, event.clientY)) {
+      if (isTableOverlayTarget(event.target)) {
         return;
       }
       if (isTableCellRangeSelection(editor)) {
@@ -257,7 +241,7 @@ export function useTableControlTarget(
         pendingClickRef.current = null;
         return;
       }
-      if (isTableOverlayTarget(event.target)) {
+      if (isTableOverlayTarget(event.target) || isColumnResizeTarget(event.target)) {
         pendingClickRef.current = null;
         return;
       }
@@ -272,20 +256,23 @@ export function useTableControlTarget(
         return;
       }
       const { selection } = editor.state;
-      const selectedThisCell = isSingleCellSelection(editor, cellPosition);
       const editingThisCell =
         !(selection instanceof CellSelection) && cellContainsPosition(editor, cellPosition, selection.from);
       if (editingThisCell) {
         pendingClickRef.current = null;
         return;
       }
+      const pos = editor.view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos;
       pendingClickRef.current = {
         cellPosition,
-        mode: selectedThisCell ? 'edit' : 'select',
-        pos: editor.view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos,
+        pos,
         x: event.clientX,
         y: event.clientY,
       };
+      // CellSelection 상태에서 다른 칸을 눌러도 커서가 들어가야 한다.
+      // mousedown을 가로채면 click이 안 올 수 있어 pointerdown에서 바로 편집으로 바꾼다.
+      editTableCell(editor, cellPosition, pos);
+      editor.view.focus();
     };
     editor.registerPlugin(
       new Plugin({
@@ -296,26 +283,33 @@ export function useTableControlTarget(
               if (event.button !== 0) {
                 return false;
               }
-              if (
-                isTableOverlayTarget(event.target) ||
-                isCellToolbarApproachZone(editor, event.clientX, event.clientY)
-              ) {
+              if (isTableOverlayTarget(event.target)) {
+                event.preventDefault();
+                return true;
+              }
+              if (pendingClickRef.current) {
                 event.preventDefault();
                 return true;
               }
               return false;
             },
             mousemove: (_view, event) => {
-              if (event.buttons !== 0 || !shouldShowTableCellToolbar(editor)) {
+              if (event.buttons !== 1) {
                 return false;
               }
-              if (
-                isTableOverlayTarget(event.target) ||
-                isCellToolbarApproachZone(editor, event.clientX, event.clientY)
-              ) {
+              const pending = pendingClickRef.current;
+              if (!pending) {
+                return false;
+              }
+              const cell = tableCellFromTarget(event.target);
+              const head = cell && editorDom.contains(cell) ? tableCellPositionAtElement(editor, cell) : null;
+              if (head === null) {
+                return false;
+              }
+              if (Math.hypot(event.clientX - pending.x, event.clientY - pending.y) <= CELL_CLICK_DRAG_THRESHOLD) {
                 return true;
               }
-              return false;
+              return selectTableCells(editor, pending.cellPosition, head);
             },
           },
           handleClick: (_view, pos, event) => {
@@ -325,12 +319,19 @@ export function useTableControlTarget(
               return false;
             }
             if (Math.hypot(event.clientX - pending.x, event.clientY - pending.y) > CELL_CLICK_DRAG_THRESHOLD) {
-              return false;
-            }
-            if (pending.mode === 'select') {
-              return selectTableCell(editor, pending.cellPosition);
+              return true;
             }
             return editTableCell(editor, pending.cellPosition, pos ?? pending.pos);
+          },
+          handleDoubleClick: (_view, _pos, event) => {
+            const cell = tableCellFromTarget(event.target);
+            const cellPosition = cell && editorDom.contains(cell) ? tableCellPositionAtElement(editor, cell) : null;
+            if (cellPosition === null) {
+              return false;
+            }
+            pendingClickRef.current = null;
+            event.preventDefault();
+            return selectTableCell(editor, cellPosition);
           },
         },
       })

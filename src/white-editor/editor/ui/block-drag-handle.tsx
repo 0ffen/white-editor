@@ -54,12 +54,22 @@ function getOuterBlockDom(view: Editor['view'], pos: number): HTMLElement | null
 
 const CLICK_MOVE_THRESHOLD_PX = 4;
 
-/** Dropcursor는 editor.dom에만 dragend를 듣는다. 핸들은 그 밖이라 파란 바가 남을 수 있다. */
+/** trailing dragover / DropCursorView.update() 이후에 한 번 더 지운다. 5초 fallback은 쓰지 않는다. */
+const DROP_CURSOR_HIDE_DELAYS_MS = [0, 50] as const;
+
+/**
+ * DropCursorView는 editor.view.dom의 dragend/drop에서만 scheduleRemoval(20)을 건다.
+ * overlay 핸들은 에디터 DOM 밖이라 네이티브 종료 이벤트가 안 들어가고, 선이 5초 남는다.
+ * 엘리먼트가 아직 없어도 dragend를 보낸다 — 쿼리 early return이면 합성 이벤트가 나가지 않는다.
+ */
 function hideDropCursor(editor: Editor) {
   if (editor.isDestroyed || !editor.view) return;
-  if (!document.querySelector('.prosemirror-dropcursor-block, .prosemirror-dropcursor-inline')) return;
-  // bubbles:true 면 document dragend 리스너가 다시 여기를 호출한다.
-  editor.view.dom.dispatchEvent(new DragEvent('dragend', { bubbles: false }));
+  const { dom } = editor.view;
+  // bubbles:false — document 리스너가 다시 여기로 들어오지 않게.
+  const eventInit: DragEventInit = { bubbles: false, cancelable: true };
+  dom.dispatchEvent(new DragEvent('dragend', eventInit));
+  // dragend는 20ms 뒤 제거. relatedTarget이 editor 밖이면 dragleave가 즉시 setCursor(null).
+  dom.dispatchEvent(new DragEvent('dragleave', { ...eventInit, relatedTarget: null }));
 }
 
 function findHoveredTablePos(editor: Editor): number | null {
@@ -87,10 +97,50 @@ export function BlockDragHandle({ editor, gutter = 'reserve' }: BlockDragHandleP
   const t = useTranslate();
   const currentRef = useRef<{ node: ProseMirrorNode | null; pos: number }>({ node: null, pos: -1 });
   const didDragRef = useRef(false);
+  const isBlockDraggingRef = useRef(false);
+  const suppressDropCursorRef = useRef(false);
+  const hideDropCursorRafRef = useRef<number | null>(null);
+  const hideDropCursorTimersRef = useRef<number[]>([]);
   const menuOpenRef = useRef(false);
   const pendingClickRef = useRef(false);
   const pointerStartRef = useRef<{ x: number; y: number } | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const clearHideDropCursorTimers = useCallback(() => {
+    if (hideDropCursorRafRef.current != null) {
+      cancelAnimationFrame(hideDropCursorRafRef.current);
+      hideDropCursorRafRef.current = null;
+    }
+    hideDropCursorTimersRef.current.forEach((id) => window.clearTimeout(id));
+    hideDropCursorTimersRef.current = [];
+  }, []);
+
+  const beginBlockDrag = useCallback(() => {
+    clearHideDropCursorTimers();
+    suppressDropCursorRef.current = false;
+    isBlockDraggingRef.current = true;
+  }, [clearHideDropCursorTimers]);
+
+  const finishBlockDrag = useCallback(() => {
+    if (editor.isDestroyed) return;
+    isBlockDraggingRef.current = false;
+    suppressDropCursorRef.current = true;
+    clearHideDropCursorTimers();
+    hideDropCursor(editor);
+
+    hideDropCursorRafRef.current = requestAnimationFrame(() => {
+      hideDropCursorRafRef.current = null;
+      hideDropCursor(editor);
+      const lastDelay = DROP_CURSOR_HIDE_DELAYS_MS[DROP_CURSOR_HIDE_DELAYS_MS.length - 1];
+      for (const delay of DROP_CURSOR_HIDE_DELAYS_MS) {
+        const id = window.setTimeout(() => {
+          hideDropCursor(editor);
+          if (delay === lastDelay) suppressDropCursorRef.current = false;
+        }, delay);
+        hideDropCursorTimersRef.current.push(id);
+      }
+    });
+  }, [clearHideDropCursorTimers, editor]);
 
   const computePositionConfig = useMemo(
     () => ({
@@ -223,15 +273,42 @@ export function BlockDragHandle({ editor, gutter = 'reserve' }: BlockDragHandleP
   }, []);
 
   useEffect(() => {
-    const onDragFinished = (event: Event) => {
-      if (editor.isDestroyed || event.target === editor.view.dom) return;
+    if (!editor.view) return;
+
+    const onTrailingDragOver = (event: DragEvent) => {
+      if (!suppressDropCursorRef.current) return;
+      // DropCursorView보다 먼저 막아 trailing dragover가 scheduleRemoval(5000)을 다시 걸지 못하게 한다.
+      event.stopImmediatePropagation();
       hideDropCursor(editor);
     };
-    document.addEventListener('dragend', onDragFinished);
-    return () => {
-      document.removeEventListener('dragend', onDragFinished);
+
+    const onBlockDragFinished = () => {
+      if (editor.isDestroyed || !isBlockDraggingRef.current) return;
+      finishBlockDrag();
     };
-  }, [editor]);
+
+    // overlay 핸들은 drop이 editor.view.dom을 못 치는 경우가 있어 window pointerup에서 한 번 더 지운다.
+    const onPointerUp = () => {
+      if (editor.isDestroyed) return;
+      if (isBlockDraggingRef.current || suppressDropCursorRef.current) {
+        finishBlockDrag();
+      }
+    };
+
+    const { dom } = editor.view;
+    dom.addEventListener('dragover', onTrailingDragOver, true);
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('dragend', onBlockDragFinished);
+    window.addEventListener('drop', onBlockDragFinished);
+
+    return () => {
+      dom.removeEventListener('dragover', onTrailingDragOver, true);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('dragend', onBlockDragFinished);
+      window.removeEventListener('drop', onBlockDragFinished);
+      clearHideDropCursorTimers();
+    };
+  }, [clearHideDropCursorTimers, editor, finishBlockDrag]);
 
   const handleGripPointerDown = useCallback(
     (event: React.PointerEvent) => {
@@ -355,15 +432,15 @@ export function BlockDragHandle({ editor, gutter = 'reserve' }: BlockDragHandleP
       onElementDragStart={() => {
         pendingClickRef.current = false;
         didDragRef.current = true;
+        beginBlockDrag();
         if (menuOpenRef.current) {
           handleMenuOpenChange(false);
         }
       }}
       onElementDragEnd={() => {
-        hideDropCursor(editor);
+        finishBlockDrag();
         requestAnimationFrame(() => {
           didDragRef.current = false;
-          hideDropCursor(editor);
         });
       }}
     >
