@@ -11,8 +11,11 @@ import { useEffect, useRef, useState, type RefObject } from 'react';
 import {
   cellContainsPosition,
   editTableCell,
+  getCellSelectionRect,
   isSingleCellSelection,
+  isTableCellRangeSelection,
   selectTableCell,
+  shouldShowTableCellToolbar,
   tableCellPositionAtElement,
   tableSelectionKind,
   type TableAxis,
@@ -40,6 +43,31 @@ const tableCellClickKey = new PluginKey('weTableCellClick');
 
 function tableCellFromTarget(target: EventTarget | null): HTMLTableCellElement | null {
   return target instanceof Element ? target.closest<HTMLTableCellElement>('td, th') : null;
+}
+
+function isTableOverlayTarget(target: EventTarget | null): boolean {
+  return (
+    target instanceof Element &&
+    Boolean(target.closest('.we-table-controls, .we-table-cell-toolbar, [data-radix-popper-content-wrapper]'))
+  );
+}
+
+/** 첫 행 선택 메뉴는 표 위에 떠서, 메뉴로 가려면 표 밖을 지나야 한다. 표 안은 포함하지 않는다. */
+function isCellToolbarApproachZone(editor: Editor, x: number, y: number): boolean {
+  if (!shouldShowTableCellToolbar(editor)) {
+    return false;
+  }
+  const rect = getCellSelectionRect(editor);
+  if (!rect) {
+    return false;
+  }
+  const toolbar = document.querySelector('.we-table-cell-toolbar');
+  const toolbarRect = toolbar instanceof HTMLElement ? toolbar.getBoundingClientRect() : null;
+  const top = (toolbarRect?.top ?? rect.top - 56) - 8;
+  const bottom = rect.top;
+  const left = Math.min(rect.left, toolbarRect?.left ?? rect.left) - 12;
+  const right = Math.max(rect.right, toolbarRect?.right ?? rect.right) + 12;
+  return x >= left && x <= right && y >= top && y < bottom;
 }
 
 function selectionTableCell(editor: Editor): HTMLTableCellElement | null {
@@ -205,7 +233,11 @@ export function useTableControlTarget(
         pointerFrameRef.current ??= window.requestAnimationFrame(flushPointer);
         return;
       }
-      if (event.target instanceof Element && event.target.closest('.we-table-controls')) {
+      if (isTableOverlayTarget(event.target) || isCellToolbarApproachZone(editor, event.clientX, event.clientY)) {
+        return;
+      }
+      if (isTableCellRangeSelection(editor)) {
+        activateSelection();
         return;
       }
       const gutter = tableGutterHit(editorDom, event.clientX, event.clientY);
@@ -225,7 +257,7 @@ export function useTableControlTarget(
         pendingClickRef.current = null;
         return;
       }
-      if (event.target instanceof Element && event.target.closest('.we-table-controls')) {
+      if (isTableOverlayTarget(event.target)) {
         pendingClickRef.current = null;
         return;
       }
@@ -259,6 +291,33 @@ export function useTableControlTarget(
       new Plugin({
         key: tableCellClickKey,
         props: {
+          handleDOMEvents: {
+            mousedown: (_view, event) => {
+              if (event.button !== 0) {
+                return false;
+              }
+              if (
+                isTableOverlayTarget(event.target) ||
+                isCellToolbarApproachZone(editor, event.clientX, event.clientY)
+              ) {
+                event.preventDefault();
+                return true;
+              }
+              return false;
+            },
+            mousemove: (_view, event) => {
+              if (event.buttons !== 0 || !shouldShowTableCellToolbar(editor)) {
+                return false;
+              }
+              if (
+                isTableOverlayTarget(event.target) ||
+                isCellToolbarApproachZone(editor, event.clientX, event.clientY)
+              ) {
+                return true;
+              }
+              return false;
+            },
+          },
           handleClick: (_view, pos, event) => {
             const pending = pendingClickRef.current;
             pendingClickRef.current = null;

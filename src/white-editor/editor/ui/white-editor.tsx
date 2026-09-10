@@ -107,13 +107,14 @@ export const WhiteEditor = forwardRef<WhiteEditorRef, WhiteEditorProps<unknown>>
       const target = event.target as Element | null;
       if (
         target?.closest?.(
-          '.we-drag-handle-wrapper, .we-drag-handle, .we-block-add-handle, .we-table-controls, .we-table-cell-toolbar'
+          '.we-drag-handle-wrapper, .we-drag-handle, .we-block-add-handle, .we-table-controls, .we-table-cell-toolbar, [data-radix-popper-content-wrapper]'
         )
       ) {
         return;
       }
 
-      if (editor && !disabled) {
+      // CellSelection이면 바깥 클릭 포커스가 셀 선택을 텍스트 커서로 접을 수 있다.
+      if (editor && !disabled && !editor.state.selection.constructor.name.includes('CellSelection')) {
         focus();
       }
     },

@@ -54,6 +54,14 @@ function getOuterBlockDom(view: Editor['view'], pos: number): HTMLElement | null
 
 const CLICK_MOVE_THRESHOLD_PX = 4;
 
+/** Dropcursor는 editor.dom에만 dragend를 듣는다. 핸들은 그 밖이라 파란 바가 남을 수 있다. */
+function hideDropCursor(editor: Editor) {
+  if (editor.isDestroyed || !editor.view) return;
+  if (!document.querySelector('.prosemirror-dropcursor-block, .prosemirror-dropcursor-inline')) return;
+  // bubbles:true 면 document dragend 리스너가 다시 여기를 호출한다.
+  editor.view.dom.dispatchEvent(new DragEvent('dragend', { bubbles: false }));
+}
+
 function findHoveredTablePos(editor: Editor): number | null {
   if (editor.isDestroyed || !editor.view) return null;
 
@@ -214,6 +222,17 @@ export function BlockDragHandle({ editor, gutter = 'reserve' }: BlockDragHandleP
     };
   }, []);
 
+  useEffect(() => {
+    const onDragFinished = (event: Event) => {
+      if (editor.isDestroyed || event.target === editor.view.dom) return;
+      hideDropCursor(editor);
+    };
+    document.addEventListener('dragend', onDragFinished);
+    return () => {
+      document.removeEventListener('dragend', onDragFinished);
+    };
+  }, [editor]);
+
   const handleGripPointerDown = useCallback(
     (event: React.PointerEvent) => {
       pendingClickRef.current = true;
@@ -341,8 +360,10 @@ export function BlockDragHandle({ editor, gutter = 'reserve' }: BlockDragHandleP
         }
       }}
       onElementDragEnd={() => {
+        hideDropCursor(editor);
         requestAnimationFrame(() => {
           didDragRef.current = false;
+          hideDropCursor(editor);
         });
       }}
     >

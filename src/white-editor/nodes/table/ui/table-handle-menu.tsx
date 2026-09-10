@@ -105,7 +105,14 @@ export function TableHandleMenu({
   return (
     <Popover modal open={menuOpen} onOpenChange={onOpenChange}>
       <PopoverAnchor asChild>{children}</PopoverAnchor>
-      <PopoverContent align='start' side='right' className='we:w-56 we:p-2' layer='modal'>
+      <PopoverContent
+        align='start'
+        side='right'
+        className='we:w-56 we:p-2'
+        layer='modal'
+        onPointerDown={(event) => event.preventDefault()}
+        onMouseDown={(event) => event.preventDefault()}
+      >
         <p className='we:text-text-light we:px-2 we:pt-1 we:pb-1.5 we:text-xs'>{t('tableBlock')}</p>
         <MenuItem disabled={!canExecuteAction(editor, 'fitToWidth')} onClick={() => run('fitToWidth')}>
           <ArrowLeftRight className='we:size-4' aria-hidden />

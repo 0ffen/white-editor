@@ -125,6 +125,7 @@ export function TableAxisMenu({
           data-state={open ? 'open' : undefined}
           onMouseDown={(event) => {
             event.preventDefault();
+            window.dispatchEvent(new CustomEvent('we-table-axis-menu', { detail: true }));
             selectTableAxis(editor, axis, cellPosition);
           }}
         >
@@ -141,6 +142,8 @@ export function TableAxisMenu({
         className='we:w-60 we:p-1.5'
         layer='modal'
         onOpenAutoFocus={(event) => event.preventDefault()}
+        onPointerDown={(event) => event.preventDefault()}
+        onMouseDown={(event) => event.preventDefault()}
       >
         <div className='we:flex we:flex-col'>
           {items.map((item) => {

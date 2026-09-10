@@ -537,7 +537,7 @@ export function selectTableAxis(editor: Editor, axis: TableAxis, cellPosition: n
     editor.view.dispatch(editor.state.tr.setSelection(selection));
     return true;
   } catch {
-    return false;
+    return selectTableCell(editor, cellPosition);
   }
 }
 
@@ -552,20 +552,43 @@ export function tableSelectionKind(editor: Editor): TableSelectionKind | null {
     return null;
   }
   const coverage = selectedTableCoverage(editor, context);
-  if (coverage.rows.size === 1 && coverage.columns.size === context.columnCount) {
+  let selectedCount = 0;
+  selection.forEachCell(() => {
+    selectedCount += 1;
+  });
+  // rowspan 한 칸이 여러 맵 칸을 덮으면 열/행 전체처럼 보이지만, 실제 셀이 더 적으면 범위 선택이다.
+  if (
+    coverage.rows.size === 1 &&
+    coverage.columns.size === context.columnCount &&
+    selectedCount === context.columnCount
+  ) {
     return 'row';
   }
-  if (coverage.columns.size === 1 && coverage.rows.size === context.rowCount) {
+  if (coverage.columns.size === 1 && coverage.rows.size === context.rowCount && selectedCount === context.rowCount) {
     return 'column';
   }
-  if (coverage.rows.size === 1 && coverage.columns.size === 1) {
+  // rowspan/colspan 한 칸은 맵에서 여러 칸으로 잡히지만, 실제 선택 셀은 하나다.
+  if (selectedCount === 1 || (coverage.rows.size === 1 && coverage.columns.size === 1)) {
     return 'cell';
   }
   return 'range';
 }
 
 export function isTableCellRangeSelection(editor: Editor): boolean {
-  return tableSelectionKind(editor) === 'range';
+  const selection = editor.state.selection;
+  if (!(selection instanceof CellSelection)) {
+    return false;
+  }
+  let selectedCount = 0;
+  selection.forEachCell(() => {
+    selectedCount += 1;
+  });
+  return selectedCount > 1;
+}
+
+/** 셀이 선택된 상태(CellSelection)면 플로팅 메뉴를 띄운다. 병합/분할 버튼은 가능할 때만 보인다. */
+export function shouldShowTableCellToolbar(editor: Editor): boolean {
+  return editor.state.selection instanceof CellSelection;
 }
 
 function selectedCellPositions(editor: Editor): number[] {
