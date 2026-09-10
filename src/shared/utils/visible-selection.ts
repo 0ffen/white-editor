@@ -23,6 +23,7 @@ export const VisibleSelection = Selection.extend({
               state.selection.empty ||
               !editor.isEditable ||
               isNodeSelection(state.selection) ||
+              state.selection.jsonID === 'cell' ||
               editor.view.dragging
             ) {
               return null;

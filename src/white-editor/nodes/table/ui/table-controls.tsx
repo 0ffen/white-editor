@@ -60,15 +60,29 @@ function AddControl({
 }
 
 function axisCells(table: HTMLTableElement, cell: HTMLTableCellElement, axis: TableAxis): HTMLTableCellElement[] {
+  const origin = cell.getBoundingClientRect();
+  const epsilon = 2;
+  const cells = Array.from(table.querySelectorAll<HTMLTableCellElement>('th, td'));
   if (axis === 'column') {
-    const index = cell.cellIndex;
-    return Array.from(table.rows).flatMap((row) => {
-      const next = row.cells.item(index);
-      return next ? [next] : [];
+    return cells.filter((item) => {
+      const rect = item.getBoundingClientRect();
+      return rect.left < origin.right - epsilon && rect.right > origin.left + epsilon;
     });
   }
-  const row = cell.closest('tr');
-  return row ? Array.from(row.cells) : [];
+  return cells.filter((item) => {
+    const rect = item.getBoundingClientRect();
+    return rect.top < origin.bottom - epsilon && rect.bottom > origin.top + epsilon;
+  });
+}
+
+function unionContentRect(cells: HTMLTableCellElement[], container: HTMLElement) {
+  const rects = cells.map((cell) => contentRect(cell, container));
+  return {
+    left: Math.min(...rects.map((rect) => rect.left)),
+    top: Math.min(...rects.map((rect) => rect.top)),
+    right: Math.max(...rects.map((rect) => rect.right)),
+    bottom: Math.max(...rects.map((rect) => rect.bottom)),
+  };
 }
 
 export function TableControls({
@@ -91,35 +105,26 @@ export function TableControls({
   const showRow = showHandles && openAxis !== 'column' && selectionKind !== 'column' && selectionKind !== 'range';
 
   useEffect(() => {
-    const table = active?.table;
-    if (!table) {
+    const container = containerRef.current;
+    if (!container) {
       return;
     }
     if (selectionKind) {
-      table.dataset.weSelection = selectionKind;
+      container.dataset.weSelection = selectionKind;
     } else {
-      delete table.dataset.weSelection;
+      delete container.dataset.weSelection;
     }
     return () => {
-      delete table.dataset.weSelection;
+      delete container.dataset.weSelection;
     };
-  }, [active?.table, selectionKind]);
+  }, [containerRef, selectionKind]);
 
   useEffect(() => {
-    const table = active?.table;
-    const cell = active?.cell;
-    const axis = openAxis ? null : hoveredAxis;
-    if (!table || !cell || !axis) {
-      return;
-    }
-    table.dataset.wePreview = axis;
-    const highlighted = axisCells(table, cell, axis);
-    highlighted.forEach((item) => item.classList.add('we-table-axis-cell'));
+    window.dispatchEvent(new CustomEvent('we-table-axis-menu', { detail: openAxis !== null }));
     return () => {
-      delete table.dataset.wePreview;
-      highlighted.forEach((item) => item.classList.remove('we-table-axis-cell'));
+      window.dispatchEvent(new CustomEvent('we-table-axis-menu', { detail: false }));
     };
-  }, [active?.cell, active?.table, hoveredAxis, openAxis]);
+  }, [openAxis]);
 
   if (
     disabled ||
@@ -163,9 +168,25 @@ export function TableControls({
   const addRowLabel = t('행 추가');
   const addColumnLabel = t('열 추가');
   const isHeaderRow = active.cell.tagName === 'TH' && active.cell.parentElement === firstRow;
+  const previewAxis = openAxis ? null : hoveredAxis;
+  const previewCells = previewAxis ? axisCells(active.table, active.cell, previewAxis) : [];
+  const previewRect = previewCells.length > 0 ? unionContentRect(previewCells, container) : null;
 
   return (
     <div className={cn('we-table-controls')} role='group' aria-label={t('table')}>
+      {previewRect && previewAxis ? (
+        <div
+          className='we-table-axis-preview'
+          data-axis={previewAxis}
+          style={style(
+            { left: previewRect.left, top: previewRect.top },
+            {
+              width: previewRect.right - previewRect.left,
+              height: previewRect.bottom - previewRect.top,
+            }
+          )}
+        />
+      ) : null}
       {showColumn && cellPosition !== null ? (
         <TableAxisMenu
           axis='column'
