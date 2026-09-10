@@ -192,7 +192,7 @@ export function TableControls({
           axis='column'
           cellPosition={cellPosition}
           editor={editor}
-          emphasized={hoveredAxis === 'column' || openAxis === 'column'}
+          emphasized={openAxis === 'column'}
           isHeaderRow={false}
           open={openAxis === 'column'}
           style={style(layout.columnMenu)}
@@ -204,7 +204,7 @@ export function TableControls({
           axis='row'
           cellPosition={cellPosition}
           editor={editor}
-          emphasized={hoveredAxis === 'row' || openAxis === 'row'}
+          emphasized={openAxis === 'row'}
           isHeaderRow={isHeaderRow}
           open={openAxis === 'row'}
           style={style(layout.rowMenu)}
