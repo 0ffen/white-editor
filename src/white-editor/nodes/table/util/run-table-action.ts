@@ -556,10 +556,15 @@ export function tableSelectionKind(editor: Editor): TableSelectionKind | null {
   selection.forEachCell(() => {
     selectedCount += 1;
   });
-  if (coverage.rows.size === 1 && coverage.columns.size === context.columnCount) {
+  // rowspan 한 칸이 여러 맵 칸을 덮으면 열/행 전체처럼 보이지만, 실제 셀이 더 적으면 범위 선택이다.
+  if (
+    coverage.rows.size === 1 &&
+    coverage.columns.size === context.columnCount &&
+    selectedCount === context.columnCount
+  ) {
     return 'row';
   }
-  if (coverage.columns.size === 1 && coverage.rows.size === context.rowCount) {
+  if (coverage.columns.size === 1 && coverage.rows.size === context.rowCount && selectedCount === context.rowCount) {
     return 'column';
   }
   // rowspan/colspan 한 칸은 맵에서 여러 칸으로 잡히지만, 실제 선택 셀은 하나다.
@@ -570,7 +575,15 @@ export function tableSelectionKind(editor: Editor): TableSelectionKind | null {
 }
 
 export function isTableCellRangeSelection(editor: Editor): boolean {
-  return tableSelectionKind(editor) === 'range';
+  const selection = editor.state.selection;
+  if (!(selection instanceof CellSelection)) {
+    return false;
+  }
+  let selectedCount = 0;
+  selection.forEachCell(() => {
+    selectedCount += 1;
+  });
+  return selectedCount > 1;
 }
 
 function selectedCellPositions(editor: Editor): number[] {
