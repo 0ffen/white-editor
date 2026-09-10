@@ -131,7 +131,8 @@
       border-collapse: collapse;
       table-layout: fixed;
       width: 100%;
-      overflow: hidden;
+      /* hidden이면 맨 아래 rowspan 셀의 선택 테두리가 잘린다. */
+      overflow: visible;
     }
 
     .ProseMirror td,
@@ -438,6 +439,20 @@
   pointer-events: none;
 }
 
+/* 첫 행 선택 메뉴는 표 위에 떠서, 표→메뉴 사이 틈을 호버하면 선택이 풀린다. */
+.we-table-cell-toolbar {
+  overflow: visible !important;
+}
+
+.we-table-cell-toolbar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 12px;
+}
+
 .white-editor .we-table-control {
   position: absolute;
   z-index: 1;
@@ -532,49 +547,23 @@
 
 .white-editor .ProseMirror .selectedCell {
   background-color: color-mix(in srgb, var(--we-brand-default) 8%, transparent);
+  /* outline은 표 가장자리에서 잘릴 수 있다. inset shadow는 셀 안에 그려진다. */
+  box-shadow: inset 0 0 0 1.5px var(--we-brand-default);
+}
+
+.white-editor .we-editor-surface[data-we-selection='row'] tr:has(> .selectedCell):not(:has(> :not(.selectedCell))) {
   outline: 1.5px solid var(--we-brand-default);
   outline-offset: -1.5px;
 }
 
-.white-editor .ProseMirror table[data-we-selection='row'] tr:has(> .selectedCell):not(:has(> :not(.selectedCell))),
-.white-editor
-  .ProseMirror
-  table[data-we-preview='row']
-  tr:has(> .we-table-axis-cell):not(:has(> :not(.we-table-axis-cell))) {
-  outline: 1.5px solid var(--we-brand-default);
-  outline-offset: -1.5px;
+.white-editor .we-editor-surface[data-we-selection='row'] .selectedCell {
+  box-shadow: none;
 }
 
-.white-editor .ProseMirror table[data-we-selection='row'] .selectedCell,
-.white-editor .ProseMirror table[data-we-preview='row'] .we-table-axis-cell {
-  outline: none;
-}
-
-.white-editor .ProseMirror table[data-we-selection='column'] .selectedCell,
-.white-editor .ProseMirror table[data-we-preview='column'] .we-table-axis-cell {
-  outline: none;
-  box-shadow:
-    inset 2px 0 0 var(--we-brand-default),
-    inset -2px 0 0 var(--we-brand-default);
-}
-
-.white-editor .ProseMirror table[data-we-selection='column'] tr:first-child .selectedCell,
-.white-editor .ProseMirror table[data-we-preview='column'] tr:first-child .we-table-axis-cell {
-  box-shadow:
-    inset 2px 2px 0 var(--we-brand-default),
-    inset -2px 0 0 var(--we-brand-default);
-}
-
-.white-editor .ProseMirror table[data-we-selection='column'] tr:last-child .selectedCell,
-.white-editor .ProseMirror table[data-we-preview='column'] tr:last-child .we-table-axis-cell {
-  box-shadow:
-    inset 2px -2px 0 var(--we-brand-default),
-    inset -2px 0 0 var(--we-brand-default);
-}
-
-.white-editor .ProseMirror table[data-we-selection='column'] tr:first-child:last-child .selectedCell,
-.white-editor .ProseMirror table[data-we-preview='column'] tr:first-child:last-child .we-table-axis-cell {
-  box-shadow: inset 0 0 0 2px var(--we-brand-default);
+.white-editor .we-table-axis-preview {
+  position: absolute;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1.5px var(--we-brand-default);
 }
 
 /*

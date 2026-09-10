@@ -537,7 +537,7 @@ export function selectTableAxis(editor: Editor, axis: TableAxis, cellPosition: n
     editor.view.dispatch(editor.state.tr.setSelection(selection));
     return true;
   } catch {
-    return false;
+    return selectTableCell(editor, cellPosition);
   }
 }
 
@@ -552,13 +552,18 @@ export function tableSelectionKind(editor: Editor): TableSelectionKind | null {
     return null;
   }
   const coverage = selectedTableCoverage(editor, context);
+  let selectedCount = 0;
+  selection.forEachCell(() => {
+    selectedCount += 1;
+  });
   if (coverage.rows.size === 1 && coverage.columns.size === context.columnCount) {
     return 'row';
   }
   if (coverage.columns.size === 1 && coverage.rows.size === context.rowCount) {
     return 'column';
   }
-  if (coverage.rows.size === 1 && coverage.columns.size === 1) {
+  // rowspan/colspan 한 칸은 맵에서 여러 칸으로 잡히지만, 실제 선택 셀은 하나다.
+  if (selectedCount === 1 || (coverage.rows.size === 1 && coverage.columns.size === 1)) {
     return 'cell';
   }
   return 'range';

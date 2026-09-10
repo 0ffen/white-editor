@@ -18,6 +18,9 @@ interface FloatingToolbarProps {
   /** 툴바에 넘길 추가 style (fade 등) */
   style?: React.CSSProperties;
   onMouseDown?: React.MouseEventHandler<HTMLDivElement>;
+  onPointerDown?: React.PointerEventHandler<HTMLDivElement>;
+  onPointerEnter?: React.PointerEventHandler<HTMLDivElement>;
+  onPointerLeave?: React.PointerEventHandler<HTMLDivElement>;
 }
 
 export const FloatingToolbar = React.forwardRef<HTMLDivElement, FloatingToolbarProps>(
@@ -32,6 +35,9 @@ export const FloatingToolbar = React.forwardRef<HTMLDivElement, FloatingToolbarP
       placement = 'bottom',
       style: styleProp,
       onMouseDown,
+      onPointerDown,
+      onPointerEnter,
+      onPointerLeave,
     },
     ref
   ) => {
@@ -138,7 +144,10 @@ export const FloatingToolbar = React.forwardRef<HTMLDivElement, FloatingToolbarP
           ...styleProp,
         }}
         onClick={(e) => e.stopPropagation()}
+        onPointerDown={onPointerDown}
         onMouseDown={onMouseDown}
+        onPointerEnter={onPointerEnter}
+        onPointerLeave={onPointerLeave}
       >
         <ToolbarGroup>{children}</ToolbarGroup>
       </Toolbar>

@@ -27,6 +27,8 @@ export function TableCellToolbar({ editor }: { editor: Editor | null }) {
   const showDelayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const getAnchorRect = useCallback(() => (editor ? getCellSelectionRect(editor) : null), [editor]);
+  const pointerDownRef = useRef(false);
+  const hoveringToolbarRef = useRef(false);
 
   useEffect(() => {
     if (!isVisible) {
@@ -47,7 +49,12 @@ export function TableCellToolbar({ editor }: { editor: Editor | null }) {
         clearTimeout(showDelayTimerRef.current);
         showDelayTimerRef.current = null;
       }
-      if (!editor.isEditable || !isTableCellRangeSelection(editor) || !getCellSelectionRect(editor)) {
+      if (
+        !editor.isEditable ||
+        !isTableCellRangeSelection(editor) ||
+        !getCellSelectionRect(editor) ||
+        (pointerDownRef.current && !hoveringToolbarRef.current)
+      ) {
         setIsVisible(false);
         return;
       }
@@ -55,19 +62,35 @@ export function TableCellToolbar({ editor }: { editor: Editor | null }) {
       setCanSplit(editor.can().splitCell());
       showDelayTimerRef.current = setTimeout(() => {
         showDelayTimerRef.current = null;
-        if (!editor.isDestroyed && editor.isEditable && isTableCellRangeSelection(editor)) {
+        if (!editor.isDestroyed && editor.isEditable && !pointerDownRef.current && isTableCellRangeSelection(editor)) {
           setCanMerge(editor.can().mergeCells());
           setCanSplit(editor.can().splitCell());
           setIsVisible(true);
         }
       }, SHOW_DELAY_MS);
     };
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.button !== 0) return;
+      if (event.target instanceof Element && event.target.closest('.we-table-cell-toolbar')) return;
+      pointerDownRef.current = true;
+      sync();
+    };
+    const onPointerUp = () => {
+      pointerDownRef.current = false;
+      sync();
+    };
     editor.on('selectionUpdate', sync);
     editor.on('transaction', sync);
+    window.addEventListener('pointerdown', onPointerDown, true);
+    window.addEventListener('pointerup', onPointerUp, true);
+    window.addEventListener('pointercancel', onPointerUp, true);
     sync();
     return () => {
       editor.off('selectionUpdate', sync);
       editor.off('transaction', sync);
+      window.removeEventListener('pointerdown', onPointerDown, true);
+      window.removeEventListener('pointerup', onPointerUp, true);
+      window.removeEventListener('pointercancel', onPointerUp, true);
       if (showDelayTimerRef.current) {
         clearTimeout(showDelayTimerRef.current);
       }
@@ -89,7 +112,14 @@ export function TableCellToolbar({ editor }: { editor: Editor | null }) {
         opacity: isFadedIn ? 1 : 0,
         transition: `opacity ${FADE_DURATION_MS}ms ease-out`,
       }}
+      onPointerDown={(event) => event.preventDefault()}
       onMouseDown={(event) => event.preventDefault()}
+      onPointerEnter={() => {
+        hoveringToolbarRef.current = true;
+      }}
+      onPointerLeave={() => {
+        hoveringToolbarRef.current = false;
+      }}
     >
       {canMerge ? (
         <ToolbarButton
@@ -121,6 +151,8 @@ export function TableCellToolbar({ editor }: { editor: Editor | null }) {
           className='we:w-auto we:p-2'
           layer='modal'
           onOpenAutoFocus={(event) => event.preventDefault()}
+          onPointerDown={(event) => event.preventDefault()}
+          onMouseDown={(event) => event.preventDefault()}
         >
           <div className='we:flex we:items-center we:gap-2'>
             <button

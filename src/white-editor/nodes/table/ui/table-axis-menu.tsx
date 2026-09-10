@@ -141,6 +141,8 @@ export function TableAxisMenu({
         className='we:w-60 we:p-1.5'
         layer='modal'
         onOpenAutoFocus={(event) => event.preventDefault()}
+        onPointerDown={(event) => event.preventDefault()}
+        onMouseDown={(event) => event.preventDefault()}
       >
         <div className='we:flex we:flex-col'>
           {items.map((item) => {
