@@ -15,6 +15,7 @@ import {
   isSingleCellSelection,
   isTableCellRangeSelection,
   selectTableCell,
+  shouldShowTableCellToolbar,
   tableCellPositionAtElement,
   tableSelectionKind,
   type TableAxis,
@@ -53,7 +54,7 @@ function isTableOverlayTarget(target: EventTarget | null): boolean {
 
 /** 첫 행 선택 메뉴는 표 위에 떠서, 메뉴로 가려면 표 밖을 지나야 한다. 표 안은 포함하지 않는다. */
 function isCellToolbarApproachZone(editor: Editor, x: number, y: number): boolean {
-  if (!isTableCellRangeSelection(editor)) {
+  if (!shouldShowTableCellToolbar(editor)) {
     return false;
   }
   const rect = getCellSelectionRect(editor);
@@ -305,7 +306,7 @@ export function useTableControlTarget(
               return false;
             },
             mousemove: (_view, event) => {
-              if (event.buttons !== 0 || !isTableCellRangeSelection(editor)) {
+              if (event.buttons !== 0 || !shouldShowTableCellToolbar(editor)) {
                 return false;
               }
               if (

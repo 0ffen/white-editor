@@ -586,6 +586,11 @@ export function isTableCellRangeSelection(editor: Editor): boolean {
   return selectedCount > 1;
 }
 
+/** 셀이 선택된 상태(CellSelection)면 플로팅 메뉴를 띄운다. 병합/분할 버튼은 가능할 때만 보인다. */
+export function shouldShowTableCellToolbar(editor: Editor): boolean {
+  return editor.state.selection instanceof CellSelection;
+}
+
 function selectedCellPositions(editor: Editor): number[] {
   const selection = editor.state.selection;
   if (!(selection instanceof CellSelection)) {

@@ -119,6 +119,13 @@ export function TableControls({
     };
   }, [containerRef, selectionKind]);
 
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('we-table-axis-menu', { detail: openAxis !== null }));
+    return () => {
+      window.dispatchEvent(new CustomEvent('we-table-axis-menu', { detail: false }));
+    };
+  }, [openAxis]);
+
   if (
     disabled ||
     !editor ||

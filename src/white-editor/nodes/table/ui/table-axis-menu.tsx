@@ -125,6 +125,7 @@ export function TableAxisMenu({
           data-state={open ? 'open' : undefined}
           onMouseDown={(event) => {
             event.preventDefault();
+            window.dispatchEvent(new CustomEvent('we-table-axis-menu', { detail: true }));
             selectTableAxis(editor, axis, cellPosition);
           }}
         >
