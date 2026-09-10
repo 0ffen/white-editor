@@ -482,11 +482,18 @@ export function cellContainsPosition(editor: Editor, cellPosition: number, docum
 }
 
 export function selectTableCell(editor: Editor, cellPosition: number): boolean {
+  return selectTableCells(editor, cellPosition, cellPosition);
+}
+
+export function selectTableCells(editor: Editor, anchorCell: number, headCell: number): boolean {
   if (!editor.isEditable) {
     return false;
   }
   try {
-    const selection = CellSelection.create(editor.state.doc, cellPosition, cellPosition);
+    const selection = CellSelection.create(editor.state.doc, anchorCell, headCell);
+    if (editor.state.selection.eq(selection)) {
+      return true;
+    }
     editor.view.dispatch(editor.state.tr.setSelection(selection));
     return true;
   } catch {
@@ -586,7 +593,7 @@ export function isTableCellRangeSelection(editor: Editor): boolean {
   return selectedCount > 1;
 }
 
-/** 셀이 선택된 상태(CellSelection)면 플로팅 메뉴를 띄운다. 병합/분할 버튼은 가능할 때만 보인다. */
+/** 셀 전체 선택(더블클릭·드래그·행/열 손잡이)일 때 플로팅 메뉴를 띄운다. */
 export function shouldShowTableCellToolbar(editor: Editor): boolean {
   return editor.state.selection instanceof CellSelection;
 }

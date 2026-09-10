@@ -14,8 +14,7 @@ import {
 } from '@/white-editor/nodes/table/util/run-table-action';
 import type { Editor } from '@tiptap/react';
 
-const SHOW_DELAY_MS = 120;
-const FADE_DURATION_MS = 200;
+const FADE_DURATION_MS = 120;
 
 export function TableCellToolbar({ editor }: { editor: Editor | null }) {
   const t = useTranslate();
@@ -24,11 +23,9 @@ export function TableCellToolbar({ editor }: { editor: Editor | null }) {
   const [colorOpen, setColorOpen] = useState(false);
   const [canMerge, setCanMerge] = useState(false);
   const [canSplit, setCanSplit] = useState(false);
-  const showDelayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [selectionKey, setSelectionKey] = useState('');
 
-  const getAnchorRect = useCallback(() => (editor ? getCellSelectionRect(editor) : null), [editor]);
-  const pointerDownRef = useRef(false);
-  const hoveringToolbarRef = useRef(false);
+  const getAnchorRect = useCallback(() => (editor ? getCellSelectionRect(editor) : null), [editor, selectionKey]);
   const axisMenuOpenRef = useRef(false);
 
   useEffect(() => {
@@ -46,46 +43,16 @@ export function TableCellToolbar({ editor }: { editor: Editor | null }) {
       return;
     }
     const sync = () => {
-      if (showDelayTimerRef.current) {
-        clearTimeout(showDelayTimerRef.current);
-        showDelayTimerRef.current = null;
-      }
-      if (
-        !editor.isEditable ||
-        axisMenuOpenRef.current ||
-        !shouldShowTableCellToolbar(editor) ||
-        !getCellSelectionRect(editor) ||
-        (pointerDownRef.current && !hoveringToolbarRef.current)
-      ) {
+      const rect = getCellSelectionRect(editor);
+      if (!editor.isEditable || axisMenuOpenRef.current || !shouldShowTableCellToolbar(editor) || !rect) {
         setIsVisible(false);
+        setSelectionKey('');
         return;
       }
       setCanMerge(editor.can().mergeCells());
       setCanSplit(editor.can().splitCell());
-      showDelayTimerRef.current = setTimeout(() => {
-        showDelayTimerRef.current = null;
-        if (
-          !editor.isDestroyed &&
-          editor.isEditable &&
-          !pointerDownRef.current &&
-          !axisMenuOpenRef.current &&
-          shouldShowTableCellToolbar(editor)
-        ) {
-          setCanMerge(editor.can().mergeCells());
-          setCanSplit(editor.can().splitCell());
-          setIsVisible(true);
-        }
-      }, SHOW_DELAY_MS);
-    };
-    const onPointerDown = (event: PointerEvent) => {
-      if (event.button !== 0) return;
-      if (event.target instanceof Element && event.target.closest('.we-table-cell-toolbar')) return;
-      pointerDownRef.current = true;
-      sync();
-    };
-    const onPointerUp = () => {
-      pointerDownRef.current = false;
-      sync();
+      setSelectionKey(`${rect.top},${rect.left},${rect.bottom},${rect.right}`);
+      setIsVisible(true);
     };
     const onAxisMenu = (event: Event) => {
       axisMenuOpenRef.current = Boolean((event as CustomEvent<boolean>).detail);
@@ -93,21 +60,12 @@ export function TableCellToolbar({ editor }: { editor: Editor | null }) {
     };
     editor.on('selectionUpdate', sync);
     editor.on('transaction', sync);
-    window.addEventListener('pointerdown', onPointerDown, true);
-    window.addEventListener('pointerup', onPointerUp, true);
-    window.addEventListener('pointercancel', onPointerUp, true);
     window.addEventListener('we-table-axis-menu', onAxisMenu);
     sync();
     return () => {
       editor.off('selectionUpdate', sync);
       editor.off('transaction', sync);
-      window.removeEventListener('pointerdown', onPointerDown, true);
-      window.removeEventListener('pointerup', onPointerUp, true);
-      window.removeEventListener('pointercancel', onPointerUp, true);
       window.removeEventListener('we-table-axis-menu', onAxisMenu);
-      if (showDelayTimerRef.current) {
-        clearTimeout(showDelayTimerRef.current);
-      }
     };
   }, [editor]);
 
@@ -128,12 +86,6 @@ export function TableCellToolbar({ editor }: { editor: Editor | null }) {
       }}
       onPointerDown={(event) => event.preventDefault()}
       onMouseDown={(event) => event.preventDefault()}
-      onPointerEnter={() => {
-        hoveringToolbarRef.current = true;
-      }}
-      onPointerLeave={() => {
-        hoveringToolbarRef.current = false;
-      }}
     >
       {canMerge ? (
         <ToolbarButton

@@ -439,18 +439,13 @@
   pointer-events: none;
 }
 
-/* 첫 행 선택 메뉴는 표 위에 떠서, 표→메뉴 사이 틈을 호버하면 선택이 풀린다. */
 .we-table-cell-toolbar {
   overflow: visible !important;
+  pointer-events: none;
 }
 
-.we-table-cell-toolbar::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 100%;
-  height: 12px;
+.we-table-cell-toolbar button {
+  pointer-events: auto;
 }
 
 .white-editor .we-table-control {
@@ -518,10 +513,8 @@
   opacity: 0;
 }
 
-.white-editor .we-table-axis-control:hover,
 .white-editor .we-table-axis-control:focus-visible,
-.white-editor .we-table-axis-control[data-state='open'],
-.white-editor .we-table-axis-control[data-emphasized='true'] {
+.white-editor .we-table-axis-control[data-state='open'] {
   width: 22px;
   height: 16px;
   border-radius: 4px;
@@ -530,18 +523,14 @@
   box-shadow: 0 1px 3px color-mix(in srgb, var(--we-text-normal) 18%, transparent);
 }
 
-.white-editor .we-table-axis-control[data-axis='row']:hover,
 .white-editor .we-table-axis-control[data-axis='row']:focus-visible,
-.white-editor .we-table-axis-control[data-axis='row'][data-state='open'],
-.white-editor .we-table-axis-control[data-axis='row'][data-emphasized='true'] {
+.white-editor .we-table-axis-control[data-axis='row'][data-state='open'] {
   width: 16px;
   height: 22px;
 }
 
-.white-editor .we-table-axis-control:hover svg,
 .white-editor .we-table-axis-control:focus-visible svg,
-.white-editor .we-table-axis-control[data-state='open'] svg,
-.white-editor .we-table-axis-control[data-emphasized='true'] svg {
+.white-editor .we-table-axis-control[data-state='open'] svg {
   opacity: 1;
 }
 
